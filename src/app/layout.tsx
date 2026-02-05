@@ -3,13 +3,13 @@ import "./globals.css";
 
 export const metadata = {
   title: "Orion | Reservas, Pagos y Comisiones",
-  description: "Panel de Orion.",
+  description: "Orion Dashboard",
   icons: {
     icon: "/favicon.png"
   },
   openGraph: {
     title: "Orion | Reservas, Pagos y Comisiones",
-    description: "Panel de Orion.",
+    description: "Orion Dashboard",
     images: [
       {
         url: "/og-image.png",
