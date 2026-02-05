@@ -1,4 +1,4 @@
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { User } from "@supabase/supabase-js";
@@ -10,13 +10,13 @@ const superuserEmails = (process.env.SUPERUSER_EMAILS ?? "")
   .map((email) => email.trim().toLowerCase())
   .filter(Boolean);
 
-function getSupabaseAuthClient() {
-  const cookieStore = cookies();
+async function getSupabaseAuthClient() {
+  const cookieStore = await cookies();
   return createServerClient(supabaseUrl, supabaseAnonKey, {
     cookies: {
-      get: (name) => cookieStore.get(name)?.value,
-      set: () => {},
-      remove: () => {}
+      get: (name: string) => cookieStore.get(name)?.value,
+      set: (_name: string, _value: string, _options: CookieOptions) => {},
+      remove: (_name: string, _options: CookieOptions) => {}
     }
   });
 }
@@ -31,7 +31,7 @@ export async function requireAuth() {
     };
   }
 
-  const supabase = getSupabaseAuthClient();
+  const supabase = await getSupabaseAuthClient();
   const { data, error } = await supabase.auth.getUser();
   if (error || !data.user) {
     return { response: NextResponse.json({ error: "No autorizado" }, { status: 401 }) };

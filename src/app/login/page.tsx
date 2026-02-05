@@ -1,22 +1,22 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import LoginForm from "./login-form";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
 
 async function getUser() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   if (!supabaseUrl || !supabaseAnonKey) {
     return null;
   }
 
   const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
     cookies: {
-      get: (name) => cookieStore.get(name)?.value,
-      set: () => {},
-      remove: () => {}
+      get: (name: string) => cookieStore.get(name)?.value,
+      set: (_name: string, _value: string, _options: CookieOptions) => {},
+      remove: (_name: string, _options: CookieOptions) => {}
     }
   });
 
