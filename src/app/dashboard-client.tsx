@@ -277,7 +277,7 @@ export default function DashboardClient({
 
       <Tabs
         value={tab}
-        onChange={setTab}
+        onChange={(value) => setTab(value as TabKey)}
         tabs={[
           { id: "payments", label: "Payments" },
           { id: "commissions", label: "Commissions" },

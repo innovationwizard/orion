@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { headers } from "next/headers";
 import DashboardClient from "./dashboard-client";
 import type { Commission, Payment, Sale } from "@/lib/types";
@@ -8,15 +9,15 @@ type DashboardData = {
   sales: Sale[];
 };
 
-function getBaseUrl() {
-  const headerList = headers();
+async function getBaseUrl() {
+  const headerList = await headers();
   const host = headerList.get("host");
   const protocol = host?.includes("localhost") ? "http" : "https";
   return host ? `${protocol}://${host}` : "";
 }
 
 async function fetchJson<T>(path: string) {
-  const baseUrl = getBaseUrl();
+  const baseUrl = await getBaseUrl();
   if (!baseUrl) {
     return { data: [] as T };
   }
@@ -46,5 +47,18 @@ export default async function DashboardPage() {
     initialData = { payments: [], commissions: [], sales: [] };
   }
 
-  return <DashboardClient initialData={initialData} />;
+  return (
+    <Suspense
+      fallback={
+        <section className="card skeleton">
+          <div className="skeleton-line" style={{ width: "40%" }} />
+          <div className="skeleton-line" style={{ width: "90%" }} />
+          <div className="skeleton-line" style={{ width: "85%" }} />
+          <div className="skeleton-line" style={{ width: "80%" }} />
+        </section>
+      }
+    >
+      <DashboardClient initialData={initialData} />
+    </Suspense>
+  );
 }
