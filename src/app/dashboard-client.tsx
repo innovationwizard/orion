@@ -47,6 +47,14 @@ const currency = new Intl.NumberFormat("es-GT", {
   maximumFractionDigits: 0
 });
 
+function formatPaymentType(type: string) {
+  const map: Record<string, string> = {
+    down_payment: "Enganche",
+    reservation: "Reserva"
+  };
+  return map[type] ?? type;
+}
+
 export default function DashboardClient({
   initialData
 }: {
@@ -251,7 +259,7 @@ export default function DashboardClient({
   return (
     <section className="page">
       <header className="header">
-        <h1>Seguimiento de Pagos Inmobiliarios</h1>
+        <h1>Seguimiento de Pagos y Comisiones</h1>
         <div className="header-actions">
           <Filters
             projects={projects}
@@ -326,7 +334,7 @@ export default function DashboardClient({
                     <td>{currency.format(payment.amount)}</td>
                     <td>{payment.payment_date}</td>
                     <td>
-                      <span className="pill">{payment.payment_type}</span>
+                      <span className="pill">{formatPaymentType(payment.payment_type)}</span>
                     </td>
                     <td>
                       <div className="row-actions">
@@ -521,7 +529,7 @@ export default function DashboardClient({
           {selectedPayment ? (
             <>
               <div>Monto: {currency.format(selectedPayment.amount)}</div>
-              <div>Tipo: {selectedPayment.payment_type}</div>
+              <div>Tipo: {formatPaymentType(selectedPayment.payment_type)}</div>
               <div>Fecha: {selectedPayment.payment_date}</div>
               <div>Notas: {selectedPayment.notes ?? "—"}</div>
               <div>
@@ -563,7 +571,7 @@ export default function DashboardClient({
                 selectedSalePayments.map((payment) => (
                   <div key={payment.id}>
                     {payment.payment_date} · {currency.format(payment.amount)} ·{" "}
-                    {payment.payment_type}
+                    {formatPaymentType(payment.payment_type)}
                   </div>
                 ))
               ) : (
