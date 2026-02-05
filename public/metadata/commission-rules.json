@@ -1,0 +1,89 @@
+{
+  "base_commission_rate": 0.05,
+  "phase_allocation": {
+    "1": {
+      "name": "Promise Signed",
+      "percentage": 0.3,
+      "trigger": "promise_signed_date"
+    },
+    "2": {
+      "name": "Down Payment Installment",
+      "percentage": 0.3,
+      "trigger": "payment_type = 'down_payment'"
+    },
+    "3": {
+      "name": "Deed Signed",
+      "percentage": 0.4,
+      "trigger": "deed_signed_date AND down_payment_complete"
+    }
+  },
+  "recipients": {
+    "management": [
+      {
+        "id": "otto_herrera",
+        "name": "Otto Herrera",
+        "rate": 0.006,
+        "always_paid": true
+      },
+      {
+        "id": "alek_hernandez",
+        "name": "Alek Hernández",
+        "rate": 0.003,
+        "always_paid": true
+      },
+      {
+        "id": "ahorro_comercial",
+        "name": "Ahorro G. Comercial",
+        "rate": 0.002,
+        "always_paid": true
+      },
+      {
+        "id": "antonio_rada",
+        "name": "Supervisor / Antonio R.",
+        "rate": 0.0025,
+        "always_paid": true
+      }
+    ],
+    "sales_reps": [
+      {
+        "id": "05",
+        "name": "Sales Rep 05",
+        "rate": 0.009
+      },
+      {
+        "id": "06",
+        "name": "Sales Rep 06",
+        "rate": 0.019
+      },
+      {
+        "id": "35",
+        "name": "Sales Rep 35",
+        "rate": 0.01
+      },
+      {
+        "id": "GV1",
+        "name": "Sales Rep GV1",
+        "rate": 0.01
+      }
+    ],
+    "special": {
+      "referral": {
+        "name": "Referral Bonus",
+        "rate": 0.01,
+        "condition": "referral_applies = true"
+      },
+      "ahorro": {
+        "id": "ahorro",
+        "name": "Ahorro",
+        "rate": 0.0035,
+        "always_paid": true
+      },
+      "walk_in": {
+        "name": "Puerta Abierta",
+        "rate": 0.025,
+        "condition": "sales_rep_id IS NULL OR sales_rep_id = 'walk_in'"
+      }
+    }
+  },
+  "total_rate": 0.055
+}
