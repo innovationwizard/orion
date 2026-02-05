@@ -106,6 +106,9 @@ export default function DashboardClient({
           cache: "no-store"
         });
         const payload = await response.json();
+        if (!response.ok) {
+          throw new Error(payload.error ?? "Failed to load projects.");
+        }
         setProjects(payload.data ?? []);
       } catch {
         setProjects([]);
@@ -138,15 +141,20 @@ export default function DashboardClient({
           fetch(`/api/sales?${query.toString()}`, { cache: "no-store" })
         ]);
 
-        if (!paymentsRes.ok || !commissionsRes.ok || !salesRes.ok) {
-          throw new Error("Failed to load dashboard data.");
-        }
-
         const [paymentsPayload, commissionsPayload, salesPayload] = await Promise.all([
           paymentsRes.json(),
           commissionsRes.json(),
           salesRes.json()
         ]);
+
+        if (!paymentsRes.ok || !commissionsRes.ok || !salesRes.ok) {
+          const message =
+            paymentsPayload?.error ||
+            commissionsPayload?.error ||
+            salesPayload?.error ||
+            "Failed to load dashboard data.";
+          throw new Error(message);
+        }
 
         setPayments(paymentsPayload.data ?? []);
         setCommissions(commissionsPayload.data ?? []);

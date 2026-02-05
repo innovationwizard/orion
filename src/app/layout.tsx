@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata = {
   title: "Orion | Payment Tracking",
-  description: "Real estate payment tracking dashboard."
+  description: "Orion Dashboard."
 };
 
 type RootLayoutProps = {

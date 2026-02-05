@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { supabase } from "@/lib/supabase";
+import { getSupabaseConfigError, getSupabaseServerClient } from "@/lib/supabase";
 import { jsonError, jsonOk, parseQuery } from "@/lib/api";
 import type { Commission } from "@/lib/types";
 
@@ -20,6 +20,11 @@ type CommissionWithContext = Commission & {
 };
 
 export async function GET(request: Request) {
+  const configError = getSupabaseConfigError();
+  if (configError) {
+    return jsonError(500, configError);
+  }
+  const supabase = getSupabaseServerClient();
   const { data: query, error } = parseQuery(request, commissionsQuerySchema);
   if (error) {
     return jsonError(400, error.error, error.details);

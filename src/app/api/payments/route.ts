@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { supabase } from "@/lib/supabase";
+import { getSupabaseConfigError, getSupabaseServerClient } from "@/lib/supabase";
 import { jsonError, jsonOk, parseJson, parseQuery, paymentTypeValues, assertExists } from "@/lib/api";
 import type { Commission, Payment, PaymentType } from "@/lib/types";
 
@@ -26,6 +26,11 @@ type PaymentWithContext = Payment & {
 };
 
 export async function GET(request: Request) {
+  const configError = getSupabaseConfigError();
+  if (configError) {
+    return jsonError(500, configError);
+  }
+  const supabase = getSupabaseServerClient();
   const { data: query, error } = parseQuery(request, paymentQuerySchema);
   if (error) {
     return jsonError(400, error.error, error.details);
@@ -85,6 +90,11 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const configError = getSupabaseConfigError();
+  if (configError) {
+    return jsonError(500, configError);
+  }
+  const supabase = getSupabaseServerClient();
   const { data: payload, error } = await parseJson(request, createPaymentSchema);
   if (error || !payload) {
     return jsonError(400, error?.error ?? "Invalid input", error?.details);

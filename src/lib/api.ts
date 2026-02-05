@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { supabase } from "./supabase";
+import { getSupabaseServerClient } from "./supabase";
 
 export const paymentTypeValues = [
   "reservation",
@@ -68,6 +68,7 @@ export async function assertExists(
   id: string,
   notFoundMessage: string
 ): Promise<{ error?: ApiError }> {
+  const supabase = getSupabaseServerClient();
   const { data, error } = await supabase
     .from(table)
     .select("id")

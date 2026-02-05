@@ -1,9 +1,14 @@
-import { supabase } from "@/lib/supabase";
+import { getSupabaseConfigError, getSupabaseServerClient } from "@/lib/supabase";
 import { jsonError, jsonOk } from "@/lib/api";
 import type { CommissionPhase } from "@/lib/types";
 
 export async function GET() {
   try {
+    const configError = getSupabaseConfigError();
+    if (configError) {
+      return jsonError(500, configError);
+    }
+    const supabase = getSupabaseServerClient();
     const { data, error } = await supabase
       .from("commission_phases")
       .select("*")

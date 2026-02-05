@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { supabase } from "@/lib/supabase";
+import { getSupabaseConfigError, getSupabaseServerClient } from "@/lib/supabase";
 import { assertExists, jsonError, jsonOk, parseJson, parseQuery, saleStatusValues } from "@/lib/api";
 import type { Sale } from "@/lib/types";
 
@@ -34,6 +34,11 @@ type SaleWithContext = Sale & {
 };
 
 export async function GET(request: Request) {
+  const configError = getSupabaseConfigError();
+  if (configError) {
+    return jsonError(500, configError);
+  }
+  const supabase = getSupabaseServerClient();
   const { data: query, error } = parseQuery(request, salesQuerySchema);
   if (error) {
     return jsonError(400, error.error, error.details);
@@ -102,6 +107,11 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const configError = getSupabaseConfigError();
+  if (configError) {
+    return jsonError(500, configError);
+  }
+  const supabase = getSupabaseServerClient();
   const { data: payload, error } = await parseJson(request, createSaleSchema);
   if (error || !payload) {
     return jsonError(400, error?.error ?? "Invalid input", error?.details);
