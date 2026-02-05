@@ -3,6 +3,7 @@
 import { Fragment, useMemo, useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { Commission, Payment, Sale } from "@/lib/types";
+import { supabaseBrowser } from "@/lib/supabase-browser";
 import Filters from "@/components/filters";
 import KpiCard from "@/components/kpi-card";
 import Tabs from "@/components/tabs";
@@ -12,6 +13,12 @@ type DashboardData = {
   payments: Payment[];
   commissions: Commission[];
   sales: Sale[];
+};
+
+type SessionInfo = {
+  email: string | null;
+  is_superuser: boolean;
+  role: string | null;
 };
 
 type ProjectOption = {
@@ -76,6 +83,11 @@ export default function DashboardClient({
   const [selectedSaleId, setSelectedSaleId] = useState<string | null>(null);
   const [selectedCommissionId, setSelectedCommissionId] = useState<string | null>(null);
   const [paidOverrides, setPaidOverrides] = useState<Record<string, boolean>>({});
+  const [isSigningOut, setIsSigningOut] = useState(false);
+  const [sessionInfo, setSessionInfo] = useState<SessionInfo | null>(null);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteStatus, setInviteStatus] = useState<string | null>(null);
+  const [isInviting, setIsInviting] = useState(false);
 
   const paymentDialogRef = useRef<HTMLDialogElement>(null);
   const saleDialogRef = useRef<HTMLDialogElement>(null);
@@ -124,6 +136,23 @@ export default function DashboardClient({
     }
 
     fetchProjects();
+  }, []);
+
+  useEffect(() => {
+    async function fetchSession() {
+      try {
+        const response = await fetch("/api/me", { cache: "no-store" });
+        const payload = await response.json();
+        if (!response.ok) {
+          return;
+        }
+        setSessionInfo(payload.data ?? null);
+      } catch {
+        setSessionInfo(null);
+      }
+    }
+
+    fetchSession();
   }, []);
 
   useEffect(() => {
@@ -244,6 +273,37 @@ export default function DashboardClient({
     commissionDialogRef.current?.showModal();
   }
 
+  async function handleSignOut() {
+    setIsSigningOut(true);
+    await supabaseBrowser.auth.signOut();
+    router.replace("/login");
+    router.refresh();
+  }
+
+  async function handleInvite(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setInviteStatus(null);
+    setIsInviting(true);
+
+    try {
+      const response = await fetch("/api/admin/invite", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: inviteEmail })
+      });
+      const payload = await response.json();
+      if (!response.ok) {
+        throw new Error(payload.error ?? "No se pudo enviar la invitación.");
+      }
+      setInviteStatus(`Invitación enviada a ${payload.data?.email ?? inviteEmail}.`);
+      setInviteEmail("");
+    } catch (err) {
+      setInviteStatus(err instanceof Error ? err.message : "Error al enviar invitación.");
+    } finally {
+      setIsInviting(false);
+    }
+  }
+
   const selectedPayment = payments.find((payment) => payment.id === selectedPaymentId);
   const selectedSale = sales.find((sale) => sale.id === selectedSaleId);
   const selectedCommission = commissions.find((commission) => commission.id === selectedCommissionId);
@@ -271,6 +331,9 @@ export default function DashboardClient({
           <button className="button" onClick={() => newSaleDialogRef.current?.showModal()}>
             + Nueva venta
           </button>
+          <button className="button" onClick={handleSignOut} disabled={isSigningOut}>
+            {isSigningOut ? "Saliendo..." : "Salir"}
+          </button>
         </div>
       </header>
 
@@ -290,6 +353,29 @@ export default function DashboardClient({
           positive
         />
       </section>
+
+      {sessionInfo?.is_superuser || sessionInfo?.role === "master" ? (
+        <section className="card">
+          <h3 style={{ margin: 0 }}>Master</h3>
+          <p style={{ margin: 0, color: "var(--muted)" }}>
+            Envía un enlace mágico para crear usuarios.
+          </p>
+          <form onSubmit={handleInvite} style={{ display: "grid", gap: 12 }}>
+            <input
+              className="input"
+              type="email"
+              placeholder="Correo del usuario"
+              value={inviteEmail}
+              onChange={(event) => setInviteEmail(event.target.value)}
+              required
+            />
+            <button className="button" type="submit" disabled={isInviting}>
+              {isInviting ? "Enviando..." : "Enviar enlace mágico"}
+            </button>
+            {inviteStatus ? <div className="banner">{inviteStatus}</div> : null}
+          </form>
+        </section>
+      ) : null}
 
       <Tabs
         value={tab}

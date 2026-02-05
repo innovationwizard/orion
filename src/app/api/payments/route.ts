@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { getSupabaseConfigError, getSupabaseServerClient } from "@/lib/supabase";
 import { jsonError, jsonOk, parseJson, parseQuery, paymentTypeValues, assertExists } from "@/lib/api";
+import { requireAuth } from "@/lib/auth";
 import type { Commission, Payment, PaymentType } from "@/lib/types";
 
 const paymentQuerySchema = z.object({
@@ -29,6 +30,10 @@ export async function GET(request: Request) {
   const configError = getSupabaseConfigError();
   if (configError) {
     return jsonError(500, configError);
+  }
+  const auth = await requireAuth();
+  if (auth.response) {
+    return auth.response;
   }
   const supabase = getSupabaseServerClient();
   const { data: query, error } = parseQuery(request, paymentQuerySchema);
@@ -93,6 +98,10 @@ export async function POST(request: Request) {
   const configError = getSupabaseConfigError();
   if (configError) {
     return jsonError(500, configError);
+  }
+  const auth = await requireAuth();
+  if (auth.response) {
+    return auth.response;
   }
   const supabase = getSupabaseServerClient();
   const { data: payload, error } = await parseJson(request, createPaymentSchema);

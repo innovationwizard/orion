@@ -1,5 +1,6 @@
 import { getSupabaseConfigError, getSupabaseServerClient } from "@/lib/supabase";
 import { jsonError, jsonOk } from "@/lib/api";
+import { requireAuth } from "@/lib/auth";
 import type { CommissionPhase } from "@/lib/types";
 
 export async function GET() {
@@ -8,11 +9,15 @@ export async function GET() {
     if (configError) {
       return jsonError(500, configError);
     }
+    const auth = await requireAuth();
+    if (auth.response) {
+      return auth.response;
+    }
     const supabase = getSupabaseServerClient();
     const { data, error } = await supabase
       .from("commission_phases")
       .select("*")
-      .order("created_at", { ascending: false });
+      .order("phase", { ascending: true });
 
     if (error) {
       return jsonError(500, "Database error", error.message);

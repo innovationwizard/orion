@@ -1,21 +1,29 @@
 import type { ReactNode } from "react";
 import "./globals.css";
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined);
+
 export const metadata = {
   title: "Orion | Reservas, Pagos y Comisiones",
-  description: "Orion Dashboard",
+  description: "Panel de Orion.",
+  metadataBase: siteUrl ? new URL(siteUrl) : undefined,
   icons: {
     icon: "/favicon.png"
   },
   openGraph: {
     title: "Orion | Reservas, Pagos y Comisiones",
-    description: "Orion Dashboard",
+    description: "Panel de Orion.",
+    url: siteUrl ?? "https://example.com",
+    siteName: "Orion",
     images: [
       {
-        url: "/og-image.png",
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Orion"
+        alt: "Orion",
+        type: "image/jpeg"
       }
     ]
   }

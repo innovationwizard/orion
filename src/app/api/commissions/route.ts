@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { getSupabaseConfigError, getSupabaseServerClient } from "@/lib/supabase";
 import { jsonError, jsonOk, parseQuery } from "@/lib/api";
+import { requireAuth } from "@/lib/auth";
 import type { Commission } from "@/lib/types";
 
 const commissionsQuerySchema = z.object({
@@ -23,6 +24,10 @@ export async function GET(request: Request) {
   const configError = getSupabaseConfigError();
   if (configError) {
     return jsonError(500, configError);
+  }
+  const auth = await requireAuth();
+  if (auth.response) {
+    return auth.response;
   }
   const supabase = getSupabaseServerClient();
   const { data: query, error } = parseQuery(request, commissionsQuerySchema);
