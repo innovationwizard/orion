@@ -24,7 +24,7 @@ export default function DataTable({ columns, children, emptyState }: DataTablePr
         ) : (
           <tr>
             <td colSpan={columns.length}>
-              <div className="empty-state">{emptyState ?? "No data available."}</div>
+              <div className="empty-state">{emptyState ?? "No hay datos disponibles."}</div>
             </td>
           </tr>
         )}

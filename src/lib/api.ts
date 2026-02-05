@@ -5,21 +5,20 @@ import { getSupabaseServerClient } from "./supabase";
 export const paymentTypeValues = [
   "reservation",
   "down_payment",
-  "installment",
-  "final"
+  "financed_payment"
 ] as const;
 
 export const unitStatusValues = [
-  "active",
   "available",
   "reserved",
-  "sold"
+  "sold",
+  "cancelled"
 ] as const;
 
 export const saleStatusValues = [
-  "pending",
-  "confirmed",
-  "cancelled"
+  "active",
+  "cancelled",
+  "completed"
 ] as const;
 
 export type ApiError = {

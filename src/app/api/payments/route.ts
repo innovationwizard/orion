@@ -40,7 +40,7 @@ export async function GET(request: Request) {
     let builder = supabase
       .from("payments")
       .select(
-        "*, sales ( id, unit_id, client_id, project_id, units ( unit_number, label ), clients ( full_name ) )",
+        "*, sales ( id, unit_id, client_id, project_id, units ( unit_number ), clients ( full_name ) )",
         { count: "exact" }
       );
 
@@ -72,7 +72,7 @@ export async function GET(request: Request) {
       const sale = payment.sales;
       const unit = sale?.units;
       const client = sale?.clients;
-      const unitNumber = unit?.unit_number ?? unit?.label ?? null;
+      const unitNumber = unit?.unit_number ?? null;
       const clientName = client?.full_name ?? null;
 
       const typedPayment = payment as Payment;

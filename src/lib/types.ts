@@ -1,6 +1,6 @@
-export type UnitStatus = "active" | "available" | "reserved" | "sold";
-export type SaleStatus = "pending" | "confirmed" | "cancelled";
-export type PaymentType = "reservation" | "down_payment" | "installment" | "final";
+export type UnitStatus = "available" | "reserved" | "sold" | "cancelled";
+export type SaleStatus = "active" | "cancelled" | "completed";
+export type PaymentType = "reservation" | "down_payment" | "financed_payment";
 
 export type Project = {
   id: string;
@@ -11,10 +11,11 @@ export type Project = {
 export type Unit = {
   id: string;
   project_id: string;
-  label: string | null;
-  unit_number?: string | null;
+  unit_number: string;
+  price_with_tax: number;
+  price_without_tax: number;
+  down_payment_amount: number;
   status: UnitStatus;
-  price: number;
   created_at: string;
 };
 
@@ -31,7 +32,7 @@ export type Sale = {
   project_id: string;
   unit_id: string;
   client_id: string;
-  sales_rep_id: string | null;
+  sales_rep_id: string;
   status: SaleStatus;
   sale_date: string;
   price_with_tax: number;
@@ -59,27 +60,34 @@ export type Payment = {
 export type Commission = {
   id: string;
   sale_id: string;
-  payment_id?: string | null;
-  amount: number;
-  recipient_id?: string | null;
-  paid?: boolean;
+  payment_id: string;
+  recipient_id: string;
+  recipient_name: string;
+  phase: number;
+  rate: number;
+  base_amount: number;
+  commission_amount: number;
+  paid: boolean;
+  paid_date: string | null;
   created_at: string;
 };
 
 export type CommissionRate = {
   id: string;
-  recipient_id: string | null;
-  recipient_type: string;
+  recipient_id: string;
+  recipient_name: string;
   rate: number;
+  recipient_type: string;
+  description: string;
+  always_paid: boolean;
   active: boolean;
   created_at: string;
+  updated_at: string;
 };
 
 export type CommissionPhase = {
-  id: string;
+  phase: number;
   name: string;
   percentage: number;
-  trigger: string;
-  active: boolean;
-  created_at: string;
+  description: string;
 };

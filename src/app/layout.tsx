@@ -2,8 +2,8 @@ import type { ReactNode } from "react";
 import "./globals.css";
 
 export const metadata = {
-  title: "Orion | Payment Tracking",
-  description: "Orion Dashboard."
+  title: "Orion | Reservas, Pagos y Comisiones",
+  description: "Orion Dashboard"
 };
 
 type RootLayoutProps = {
@@ -12,7 +12,7 @@ type RootLayoutProps = {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en">
+    <html lang="es-419">
       <body>
         <main className="page">
           {children}

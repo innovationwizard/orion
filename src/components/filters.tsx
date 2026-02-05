@@ -20,7 +20,7 @@ export default function Filters({
         value={projectId}
         onChange={(event) => onChange({ project_id: event.target.value })}
       >
-        <option value="">All Projects</option>
+        <option value="">Todos los proyectos</option>
         {projects.map((project) => (
           <option key={project.id} value={project.id}>
             {project.name}

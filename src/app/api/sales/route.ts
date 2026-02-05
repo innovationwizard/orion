@@ -15,7 +15,7 @@ const createSaleSchema = z.object({
   project_id: z.string().uuid(),
   unit_id: z.string().uuid(),
   client_id: z.string().uuid(),
-  sales_rep_id: z.string().optional(),
+  sales_rep_id: z.string().min(1),
   sale_date: z.string(),
   price_with_tax: z.number().positive(),
   price_without_tax: z.number().positive(),
@@ -61,7 +61,7 @@ export async function GET(request: Request) {
     let builder = supabase
       .from("sales")
       .select(
-        "*, projects ( name ), units ( unit_number, label ), clients ( full_name )",
+        "*, projects ( name ), units ( unit_number ), clients ( full_name )",
         { count: "exact" }
       );
 
@@ -88,7 +88,7 @@ export async function GET(request: Request) {
 
     const mapped = (data ?? []).map((sale) => {
       const projectName = sale.projects?.name ?? null;
-      const unitNumber = sale.units?.unit_number ?? sale.units?.label ?? null;
+      const unitNumber = sale.units?.unit_number ?? null;
       const clientName = sale.clients?.full_name ?? null;
 
       const typedSale = sale as Sale;
@@ -149,7 +149,7 @@ export async function POST(request: Request) {
       .from("units")
       .update({ status: "sold" })
       .eq("id", payload.unit_id)
-      .eq("status", "active")
+      .eq("status", "available")
       .select("id")
       .maybeSingle();
 

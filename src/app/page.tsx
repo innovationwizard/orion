@@ -23,7 +23,7 @@ async function fetchJson<T>(path: string) {
   }
   const res = await fetch(`${baseUrl}${path}`, { cache: "no-store" });
   if (!res.ok) {
-    throw new Error(`Failed to load ${path}`);
+    throw new Error(`No se pudo cargar ${path}`);
   }
   return (await res.json()) as { data: T };
 }

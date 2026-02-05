@@ -41,7 +41,7 @@ type CommissionWithContext = Commission & {
 
 type TabKey = "payments" | "commissions" | "sales";
 
-const currency = new Intl.NumberFormat("en-US", {
+const currency = new Intl.NumberFormat("es-419", {
   style: "currency",
   currency: "USD",
   maximumFractionDigits: 0
@@ -95,7 +95,7 @@ export default function DashboardClient({
   );
 
   const totalCommissions = useMemo(
-    () => commissions.reduce((sum, commission) => sum + commission.amount, 0),
+    () => commissions.reduce((sum, commission) => sum + commission.commission_amount, 0),
     [commissions]
   );
 
@@ -107,7 +107,7 @@ export default function DashboardClient({
         });
         const payload = await response.json();
         if (!response.ok) {
-          throw new Error(payload.error ?? "Failed to load projects.");
+          throw new Error(payload.error ?? "No se pudieron cargar los proyectos.");
         }
         setProjects(payload.data ?? []);
       } catch {
@@ -152,7 +152,7 @@ export default function DashboardClient({
             paymentsPayload?.error ||
             commissionsPayload?.error ||
             salesPayload?.error ||
-            "Failed to load dashboard data.";
+            "No se pudieron cargar los datos del panel.";
           throw new Error(message);
         }
 
@@ -160,7 +160,7 @@ export default function DashboardClient({
         setCommissions(commissionsPayload.data ?? []);
         setSales(salesPayload.data ?? []);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Unexpected error");
+        setError(err instanceof Error ? err.message : "Error inesperado");
       } finally {
         setIsLoading(false);
       }
@@ -187,7 +187,7 @@ export default function DashboardClient({
     return Object.entries(paymentCommissions).map(([paymentId, items]) => ({
       paymentId,
       items,
-      total: items.reduce((sum, item) => sum + item.amount, 0)
+        total: items.reduce((sum, item) => sum + item.commission_amount, 0)
     }));
   }, [paymentCommissions]);
 
@@ -251,7 +251,7 @@ export default function DashboardClient({
   return (
     <section className="page">
       <header className="header">
-        <h1>Real Estate Payment Tracker</h1>
+        <h1>Seguimiento de Pagos Inmobiliarios</h1>
         <div className="header-actions">
           <Filters
             projects={projects}
@@ -261,7 +261,7 @@ export default function DashboardClient({
             onChange={updateFilters}
           />
           <button className="button" onClick={() => newSaleDialogRef.current?.showModal()}>
-            + New Sale
+            + Nueva venta
           </button>
         </div>
       </header>
@@ -269,16 +269,16 @@ export default function DashboardClient({
       {error ? <div className="banner">{error}</div> : null}
 
       <section className="kpi-grid">
-        <KpiCard label="Total Payments" value={currency.format(totalPayments)} hint="All time" />
+        <KpiCard label="Pagos totales" value={currency.format(totalPayments)} hint="Histórico" />
         <KpiCard
-          label="Pending Payments"
+          label="Pagos pendientes"
           value={currency.format(pendingPayments)}
-          hint="Down payment balance"
+          hint="Saldo de enganche"
         />
         <KpiCard
-          label="Total Commissions"
+          label="Comisiones totales"
           value={currency.format(totalCommissions)}
-          hint="Auto-calculated"
+          hint="Auto-calculado"
           positive
         />
       </section>
@@ -287,9 +287,9 @@ export default function DashboardClient({
         value={tab}
         onChange={(value) => setTab(value as TabKey)}
         tabs={[
-          { id: "payments", label: "Payments" },
-          { id: "commissions", label: "Commissions" },
-          { id: "sales", label: "Sales" }
+          { id: "payments", label: "Pagos" },
+          { id: "commissions", label: "Comisiones" },
+          { id: "sales", label: "Ventas" }
         ]}
       />
 
@@ -305,14 +305,14 @@ export default function DashboardClient({
           {tab === "payments" && (
             <DataTable
               columns={[
-                "Unit #",
-                "Client",
-                "Amount",
-                "Date",
-                "Type",
-                "Actions"
+                "Unidad #",
+                "Cliente",
+                "Monto",
+                "Fecha",
+                "Tipo",
+                "Acciones"
               ]}
-              emptyState="No payments yet."
+              emptyState="Aún no hay pagos."
             >
               {payments.map((payment) => (
                 <Fragment key={payment.id}>
@@ -337,7 +337,7 @@ export default function DashboardClient({
                             openPaymentModal(payment.id);
                           }}
                         >
-                          Details
+                          Detalles
                         </button>
                         <button
                           className="link-button"
@@ -348,7 +348,7 @@ export default function DashboardClient({
                             );
                           }}
                         >
-                          {expandedPaymentId === payment.id ? "Hide" : "Breakdown"}
+                          {expandedPaymentId === payment.id ? "Ocultar" : "Desglose"}
                         </button>
                       </div>
                     </td>
@@ -358,16 +358,18 @@ export default function DashboardClient({
                       <td colSpan={6}>
                         {paymentCommissions[payment.id]?.length ? (
                           <div className="card">
-                            <strong>Commission Breakdown</strong>
+                            <strong>Desglose de comisiones</strong>
                             {paymentCommissions[payment.id].map((commission) => (
                               <div key={commission.id}>
-                                {commission.recipient_id ?? "Recipient"} ·{" "}
-                                {currency.format(commission.amount)}
+                                {commission.recipient_id ?? "Beneficiario"} ·{" "}
+                                {currency.format(commission.commission_amount)}
                               </div>
                             ))}
                           </div>
                         ) : (
-                          <div className="empty-state">No commissions for this payment.</div>
+                          <div className="empty-state">
+                            No hay comisiones para este pago.
+                          </div>
                         )}
                       </td>
                     </tr>
@@ -380,28 +382,28 @@ export default function DashboardClient({
           {tab === "commissions" && (
             <DataTable
               columns={[
-                "Recipient",
-                "Amount",
-                "Phase",
-                "Payment Date",
-                "Paid",
-                "Actions"
+                "Beneficiario",
+                "Monto",
+                "Fase",
+                "Fecha de pago",
+                "Pagado",
+                "Acciones"
               ]}
-              emptyState="No commissions yet."
+              emptyState="Aún no hay comisiones."
             >
               {groupedCommissions.map((group) => (
                 <tr key={group.paymentId}>
                   <td colSpan={6}>
                     <details>
                       <summary>
-                        Payment {group.paymentId} · {currency.format(group.total)}
+                        Pago {group.paymentId} · {currency.format(group.total)}
                       </summary>
                       <table>
                         <tbody>
                           {group.items.map((commission) => (
                             <tr key={commission.id}>
-                              <td>{commission.recipient_id ?? "Recipient"}</td>
-                              <td>{currency.format(commission.amount)}</td>
+                              <td>{commission.recipient_id ?? "Beneficiario"}</td>
+                              <td>{currency.format(commission.commission_amount)}</td>
                               <td>{commission.phase_name ?? "—"}</td>
                               <td>{commission.payment_date ?? "—"}</td>
                               <td>
@@ -419,7 +421,7 @@ export default function DashboardClient({
                                       }))
                                     }
                                   />{" "}
-                                  Paid
+                                  Pagado
                                 </label>
                               </td>
                               <td>
@@ -427,7 +429,7 @@ export default function DashboardClient({
                                   className="link-button"
                                   onClick={() => openCommissionModal(commission.id)}
                                 >
-                                  Details
+                                  Detalles
                                 </button>
                               </td>
                             </tr>
@@ -444,15 +446,15 @@ export default function DashboardClient({
           {tab === "sales" && (
             <DataTable
               columns={[
-                "Unit #",
-                "Client",
-                "Price",
-                "Down Payment",
-                "Status",
-                "Rep",
-                "Actions"
+                "Unidad #",
+                "Cliente",
+                "Precio",
+                "Enganche",
+                "Estado",
+                "Asesor",
+                "Acciones"
               ]}
-              emptyState="No sales yet."
+              emptyState="Aún no hay ventas."
             >
               {sales.map((sale) => (
                 <tr key={sale.id} onClick={() => openSaleModal(sale.id)}>
@@ -472,7 +474,7 @@ export default function DashboardClient({
                         openSaleModal(sale.id);
                       }}
                     >
-                      Details
+                      Detalles
                     </button>
                   </td>
                 </tr>
@@ -485,7 +487,7 @@ export default function DashboardClient({
       <dialog ref={newSaleDialogRef}>
         <div className="modal-content">
           <div className="modal-header">
-            <h3>New Sale</h3>
+            <h3>Nueva venta</h3>
             <button
               className="modal-close"
               onClick={() => newSaleDialogRef.current?.close()}
@@ -494,15 +496,15 @@ export default function DashboardClient({
             </button>
           </div>
           <form className="card">
-            <input className="input" placeholder="Project ID" />
-            <input className="input" placeholder="Unit ID" />
-            <input className="input" placeholder="Client ID" />
-            <input className="input" placeholder="Sales Rep ID" />
-            <input className="input" type="date" placeholder="Sale Date" />
-            <input className="input" placeholder="Price with tax" />
-            <input className="input" placeholder="Down payment amount" />
+            <input className="input" placeholder="ID del proyecto" />
+            <input className="input" placeholder="ID de la unidad" />
+            <input className="input" placeholder="ID del cliente" />
+            <input className="input" placeholder="ID del asesor" />
+            <input className="input" type="date" placeholder="Fecha de venta" />
+            <input className="input" placeholder="Precio con impuestos" />
+            <input className="input" placeholder="Monto de enganche" />
             <button className="button" type="button">
-              Save Draft
+              Guardar borrador
             </button>
           </form>
         </div>
@@ -511,33 +513,33 @@ export default function DashboardClient({
       <dialog ref={paymentDialogRef}>
         <div className="modal-content">
           <div className="modal-header">
-            <h3>Payment Details</h3>
+            <h3>Detalles del pago</h3>
             <button className="modal-close" onClick={() => paymentDialogRef.current?.close()}>
               ×
             </button>
           </div>
           {selectedPayment ? (
             <>
-              <div>Amount: {currency.format(selectedPayment.amount)}</div>
-              <div>Type: {selectedPayment.payment_type}</div>
-              <div>Date: {selectedPayment.payment_date}</div>
-              <div>Notes: {selectedPayment.notes ?? "—"}</div>
+              <div>Monto: {currency.format(selectedPayment.amount)}</div>
+              <div>Tipo: {selectedPayment.payment_type}</div>
+              <div>Fecha: {selectedPayment.payment_date}</div>
+              <div>Notas: {selectedPayment.notes ?? "—"}</div>
               <div>
-                Commissions:
+                Comisiones:
                 {selectedPaymentCommissions.length ? (
                   selectedPaymentCommissions.map((commission) => (
                     <div key={commission.id}>
-                      {commission.recipient_id ?? "Recipient"} ·{" "}
-                      {currency.format(commission.amount)}
+                      {commission.recipient_id ?? "Beneficiario"} ·{" "}
+                      {currency.format(commission.commission_amount)}
                     </div>
                   ))
                 ) : (
-                  <div className="empty-state">No commissions generated.</div>
+                  <div className="empty-state">No se generaron comisiones.</div>
                 )}
               </div>
             </>
           ) : (
-            <div className="empty-state">Select a payment to view details.</div>
+            <div className="empty-state">Selecciona un pago para ver detalles.</div>
           )}
         </div>
       </dialog>
@@ -545,18 +547,18 @@ export default function DashboardClient({
       <dialog ref={saleDialogRef}>
         <div className="modal-content">
           <div className="modal-header">
-            <h3>Sale Details</h3>
+            <h3>Detalles de la venta</h3>
             <button className="modal-close" onClick={() => saleDialogRef.current?.close()}>
               ×
             </button>
           </div>
           {selectedSale ? (
             <>
-              <div>Price with tax: {currency.format(selectedSale.price_with_tax)}</div>
-              <div>Down payment: {currency.format(selectedSale.down_payment_amount)}</div>
-              <div>Status: {selectedSale.status}</div>
-              <div>Rep: {selectedSale.sales_rep_id ?? "—"}</div>
-              <div>Payments:</div>
+              <div>Precio con impuestos: {currency.format(selectedSale.price_with_tax)}</div>
+              <div>Enganche: {currency.format(selectedSale.down_payment_amount)}</div>
+              <div>Estado: {selectedSale.status}</div>
+              <div>Asesor: {selectedSale.sales_rep_id ?? "—"}</div>
+              <div>Pagos:</div>
               {selectedSalePayments.length ? (
                 selectedSalePayments.map((payment) => (
                   <div key={payment.id}>
@@ -565,11 +567,11 @@ export default function DashboardClient({
                   </div>
                 ))
               ) : (
-                <div className="empty-state">No payments yet.</div>
+                <div className="empty-state">Aún no hay pagos.</div>
               )}
             </>
           ) : (
-            <div className="empty-state">Click a sale to view details.</div>
+            <div className="empty-state">Selecciona una venta para ver detalles.</div>
           )}
         </div>
       </dialog>
@@ -577,7 +579,7 @@ export default function DashboardClient({
       <dialog ref={commissionDialogRef}>
         <div className="modal-content">
           <div className="modal-header">
-            <h3>Commission Details</h3>
+            <h3>Detalles de la comisión</h3>
             <button
               className="modal-close"
               onClick={() => commissionDialogRef.current?.close()}
@@ -587,13 +589,13 @@ export default function DashboardClient({
           </div>
           {selectedCommission ? (
             <>
-              <div>Recipient: {selectedCommission.recipient_id ?? "—"}</div>
-              <div>Amount: {currency.format(selectedCommission.amount)}</div>
-              <div>Paid: {selectedCommission.paid ? "Yes" : "No"}</div>
-              <div>Created: {selectedCommission.created_at}</div>
+              <div>Beneficiario: {selectedCommission.recipient_id ?? "—"}</div>
+              <div>Monto: {currency.format(selectedCommission.commission_amount)}</div>
+              <div>Pagado: {selectedCommission.paid ? "Sí" : "No"}</div>
+              <div>Creado: {selectedCommission.created_at}</div>
             </>
           ) : (
-            <div className="empty-state">Select a commission to view details.</div>
+            <div className="empty-state">Selecciona una comisión para ver detalles.</div>
           )}
         </div>
       </dialog>

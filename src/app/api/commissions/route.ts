@@ -77,7 +77,10 @@ export async function GET(request: Request) {
       } satisfies CommissionWithContext;
     });
 
-    const totalAmount = mapped.reduce((sum, item) => sum + (item.amount ?? 0), 0);
+    const totalAmount = mapped.reduce(
+      (sum, item) => sum + (item.commission_amount ?? 0),
+      0
+    );
 
     return jsonOk({ data: mapped, total_amount: totalAmount, count: count ?? 0 });
   } catch (error) {
