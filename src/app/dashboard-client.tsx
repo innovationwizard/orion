@@ -88,6 +88,9 @@ export default function DashboardClient({
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteStatus, setInviteStatus] = useState<string | null>(null);
   const [isInviting, setIsInviting] = useState(false);
+  const [expandedCommissionPaymentId, setExpandedCommissionPaymentId] = useState<
+    string | null
+  >(null);
 
   const paymentDialogRef = useRef<HTMLDialogElement>(null);
   const saleDialogRef = useRef<HTMLDialogElement>(null);
@@ -486,53 +489,84 @@ export default function DashboardClient({
               emptyState="Aún no hay comisiones."
             >
               {groupedCommissions.map((group) => (
-                <tr key={group.paymentId}>
-                  <td colSpan={6}>
-                    <details>
-                      <summary>
-                        Pago {group.paymentId} · {currency.format(group.total)}
-                      </summary>
-                      <table>
-                        <tbody>
-                          {group.items.map((commission) => (
-                            <tr key={commission.id}>
-                              <td>{commission.recipient_id ?? "Beneficiario"}</td>
-                              <td>{currency.format(commission.commission_amount)}</td>
-                              <td>{commission.phase_name ?? "—"}</td>
-                              <td>{commission.payment_date ?? "—"}</td>
-                              <td>
-                                <label>
-                                  <input
-                                    type="checkbox"
-                                    checked={
-                                      paidOverrides[commission.id] ??
-                                      Boolean(commission.paid)
-                                    }
-                                    onChange={(event) =>
-                                      setPaidOverrides((prev) => ({
-                                        ...prev,
-                                        [commission.id]: event.target.checked
-                                      }))
-                                    }
-                                  />{" "}
-                                  Pagado
-                                </label>
-                              </td>
-                              <td>
-                                <button
-                                  className="link-button"
-                                  onClick={() => openCommissionModal(commission.id)}
-                                >
-                                  Detalles
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </details>
-                  </td>
-                </tr>
+                <Fragment key={group.paymentId}>
+                  <tr
+                    onClick={() =>
+                      setExpandedCommissionPaymentId((prev) =>
+                        prev === group.paymentId ? null : group.paymentId
+                      )
+                    }
+                  >
+                    <td>
+                      <button
+                        className="link-button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setExpandedCommissionPaymentId((prev) =>
+                            prev === group.paymentId ? null : group.paymentId
+                          );
+                        }}
+                      >
+                        Pago {group.paymentId}
+                      </button>
+                    </td>
+                    <td>{currency.format(group.total)}</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>
+                      <button
+                        className="link-button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setExpandedCommissionPaymentId((prev) =>
+                            prev === group.paymentId ? null : group.paymentId
+                          );
+                        }}
+                      >
+                        {expandedCommissionPaymentId === group.paymentId
+                          ? "Ocultar"
+                          : "Ver"}
+                      </button>
+                    </td>
+                  </tr>
+                  {expandedCommissionPaymentId === group.paymentId
+                    ? group.items.map((commission) => (
+                        <tr key={commission.id}>
+                          <td>{commission.recipient_id ?? "Beneficiario"}</td>
+                          <td>{currency.format(commission.commission_amount)}</td>
+                          <td>{commission.phase_name ?? "—"}</td>
+                          <td>{commission.payment_date ?? "—"}</td>
+                          <td>
+                            <label>
+                              <input
+                                type="checkbox"
+                                checked={
+                                  paidOverrides[commission.id] ??
+                                  Boolean(commission.paid)
+                                }
+                                onChange={(event) =>
+                                  setPaidOverrides((prev) => ({
+                                    ...prev,
+                                    [commission.id]: event.target.checked
+                                  }))
+                                }
+                              />{" "}
+                              Pagado
+                            </label>
+                          </td>
+                          <td>
+                            <button
+                              className="link-button"
+                              onClick={() => openCommissionModal(commission.id)}
+                            >
+                              Detalles
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    : null}
+                </Fragment>
               ))}
             </DataTable>
           )}

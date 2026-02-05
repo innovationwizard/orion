@@ -1,0 +1,28 @@
+Filas con Error
+
+Filas que fueron rechazadas por la base de datos al importar los libros de trabajo originales: 
+
+Hoja BENESTARE - 10 Unidades Duplicadas (37 filas duplicadas en total)
+
+Cada unidad aparece múltiples veces. 
+La primera ocurrencia tuvo éxito.
+Filas duplicadas fallaron:
+
+Unidad 		Filas que fallaron 		Total de Ocurrencias
+305 		37, 77 					3
+104 		73, 194 				3
+209 		76, 136, 193, 200, 231 	6
+308 		78, 144, 212, 233 		5
+409 		81 						2 
+501 		84, 192, 237 			4 
+508 		85, 119 				3 
+601 		86, 102, 196, 238 		5
+604 		87, 199, 239 			4
+606 		88, 168 				3
+
+Hoja BL-TAPIAS - 1 Error de Red
+
+Fila 72 (Unidad 803)
+Conexión del socket cerrada durante la carga
+Acción Requerida: 
+Re-ejecutar el ETL para la fila 72 de BL-TAPIAS (timeout de red) 
