@@ -41,9 +41,9 @@ type CommissionWithContext = Commission & {
 
 type TabKey = "payments" | "commissions" | "sales";
 
-const currency = new Intl.NumberFormat("es-419", {
+const currency = new Intl.NumberFormat("es-GT", {
   style: "currency",
-  currency: "USD",
+  currency: "GTQ",
   maximumFractionDigits: 0
 });
 
