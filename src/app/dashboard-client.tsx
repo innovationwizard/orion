@@ -96,6 +96,7 @@ export default function DashboardClient({
   const saleDialogRef = useRef<HTMLDialogElement>(null);
   const newSaleDialogRef = useRef<HTMLDialogElement>(null);
   const commissionDialogRef = useRef<HTMLDialogElement>(null);
+  const adminDialogRef = useRef<HTMLDialogElement>(null);
 
   const projectId = searchParams.get("project_id") ?? "";
   const startDate = searchParams.get("start_date") ?? "";
@@ -334,6 +335,14 @@ export default function DashboardClient({
           <button className="button" onClick={() => newSaleDialogRef.current?.showModal()}>
             + Nueva venta
           </button>
+          {sessionInfo?.is_superuser || sessionInfo?.role === "master" ? (
+            <button
+              className="button secondary small"
+              onClick={() => adminDialogRef.current?.showModal()}
+            >
+              Master
+            </button>
+          ) : null}
           <button className="button" onClick={handleSignOut} disabled={isSigningOut}>
             {isSigningOut ? "Saliendo..." : "Salir"}
           </button>
@@ -357,9 +366,17 @@ export default function DashboardClient({
         />
       </section>
 
-      {sessionInfo?.is_superuser || sessionInfo?.role === "master" ? (
-        <section className="card">
-          <h3 style={{ margin: 0 }}>Master</h3>
+      <dialog ref={adminDialogRef}>
+        <div className="modal-content">
+          <div className="modal-header">
+            <h3>Master</h3>
+            <button
+              className="modal-close"
+              onClick={() => adminDialogRef.current?.close()}
+            >
+              ×
+            </button>
+          </div>
           <p style={{ margin: 0, color: "var(--muted)" }}>
             Envía un enlace mágico para crear usuarios.
           </p>
@@ -377,8 +394,8 @@ export default function DashboardClient({
             </button>
             {inviteStatus ? <div className="banner">{inviteStatus}</div> : null}
           </form>
-        </section>
-      ) : null}
+        </div>
+      </dialog>
 
       <Tabs
         value={tab}

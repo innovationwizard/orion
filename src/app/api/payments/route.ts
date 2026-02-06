@@ -75,10 +75,14 @@ export async function GET(request: Request) {
 
     const mapped = (data ?? []).map((payment) => {
       const sale = payment.sales;
-      const unit = sale?.units;
-      const client = sale?.clients;
-      const unitNumber = unit?.unit_number ?? null;
-      const clientName = client?.full_name ?? null;
+      const unitRel = sale?.units;
+      const clientRel = sale?.clients;
+      const unitNumber = Array.isArray(unitRel)
+        ? unitRel[0]?.unit_number ?? null
+        : unitRel?.unit_number ?? null;
+      const clientName = Array.isArray(clientRel)
+        ? clientRel[0]?.full_name ?? null
+        : clientRel?.full_name ?? null;
 
       const typedPayment = payment as Payment;
       return {

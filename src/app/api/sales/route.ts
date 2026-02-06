@@ -93,8 +93,14 @@ export async function GET(request: Request) {
 
     const mapped = (data ?? []).map((sale) => {
       const projectName = sale.projects?.name ?? null;
-      const unitNumber = sale.units?.unit_number ?? null;
-      const clientName = sale.clients?.full_name ?? null;
+      const unitRel = sale.units;
+      const clientRel = sale.clients;
+      const unitNumber = Array.isArray(unitRel)
+        ? unitRel[0]?.unit_number ?? null
+        : unitRel?.unit_number ?? null;
+      const clientName = Array.isArray(clientRel)
+        ? clientRel[0]?.full_name ?? null
+        : clientRel?.full_name ?? null;
 
       const typedSale = sale as Sale;
       return {

@@ -74,6 +74,23 @@ a {
   background: var(--primary-600);
 }
 
+.button.secondary {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.button.secondary:hover {
+  background: rgba(37, 99, 235, 0.08);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.button.small {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
 .filters {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
