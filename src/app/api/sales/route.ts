@@ -3,6 +3,7 @@ import { getSupabaseConfigError, getSupabaseServerClient } from "@/lib/supabase"
 import { assertExists, jsonError, jsonOk, parseJson, parseQuery, saleStatusValues } from "@/lib/api";
 import { requireAuth } from "@/lib/auth";
 import type { Sale } from "@/lib/types";
+import { generateId } from "@/lib/uuid";
 
 const salesQuerySchema = z.object({
   project_id: z.string().uuid().optional(),
@@ -179,6 +180,7 @@ export async function POST(request: Request) {
     const { data: inserted, error: insertError } = await supabase
       .from("sales")
       .insert({
+        id: generateId(),
         project_id: payload.project_id,
         unit_id: payload.unit_id,
         client_id: payload.client_id,

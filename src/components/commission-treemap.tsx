@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { hierarchy, treemap, treemapSquarify } from "d3-hierarchy";
+import {
+  hierarchy,
+  treemap,
+  treemapSquarify,
+  type HierarchyRectangularNode
+} from "d3-hierarchy";
 
 export type CommissionRecipient = {
   recipientId: string;
@@ -115,7 +120,7 @@ export default function CommissionTreemap({ data }: CommissionTreemapProps) {
       })) as CommissionGroup[];
   }, [data]);
 
-  const root = useMemo(() => {
+  const root = useMemo<HierarchyRectangularNode<CommissionGroup | CommissionRecipientNode>>(() => {
     const hierarchyRoot = hierarchy({
       name: "root",
       children: treemapData
@@ -130,7 +135,9 @@ export default function CommissionTreemap({ data }: CommissionTreemapProps) {
       .paddingInner(6)
       .paddingTop((node) => (node.depth === 1 ? 26 : 8))(hierarchyRoot as any);
 
-    return hierarchyRoot;
+    return hierarchyRoot as unknown as HierarchyRectangularNode<
+      CommissionGroup | CommissionRecipientNode
+    >;
   }, [size.height, size.width, treemapData]);
 
   return (

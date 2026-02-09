@@ -3,6 +3,7 @@ import { getSupabaseConfigError, getSupabaseServerClient } from "@/lib/supabase"
 import { jsonError, jsonOk, parseJson, parseQuery, paymentTypeValues, assertExists } from "@/lib/api";
 import { requireAuth } from "@/lib/auth";
 import type { Commission, Payment, PaymentType } from "@/lib/types";
+import { generateId } from "@/lib/uuid";
 
 const paymentQuerySchema = z.object({
   sale_id: z.string().uuid().optional(),
@@ -126,6 +127,7 @@ export async function POST(request: Request) {
     const { data: inserted, error: insertError } = await supabase
       .from("payments")
       .insert({
+        id: generateId(),
         sale_id: payload.sale_id,
         payment_date: payload.payment_date,
         amount: payload.amount,

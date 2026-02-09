@@ -17,7 +17,7 @@ type CommissionRow = {
   created_at: string;
   paid_date: string | null;
   recipient_type?: string | null;
-  sales?: { project_id: string | null } | null;
+  sales?: { project_id: string | null }[] | { project_id: string | null } | null;
 };
 
 type CommissionRateRow = {

@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 /**
- * ETL Script: Reservas.xlsx → PostgreSQL
+ * ETL Script: Reservas.xlsx → PostgreSQL (FIXED)
  * 
  * Extracts sales and payment data from Excel and loads into clean schema.
- * Run: npx tsx etl-reservas.ts
+ * Run: npx tsx etl-reservas-fixed.ts
  */
 
 import XLSX from 'xlsx';
 import { createClient } from '@supabase/supabase-js';
+import { v7 as uuidv7 } from 'uuid';
 
 // ============================================================================
 // CONFIGURATION
@@ -140,22 +141,58 @@ async function extractFromSheet(
   const headers = data[headerRowIndex];
   console.log(`   Found ${headers.length} columns, header at row ${headerRowIndex}, "Apto" at col ${aptoColIndex}`);
   
-  // Map column indices (search near Apto column)
+  // FIXED: Map column indices with priority to exact/simple matches
   const colMap: Record<string, number> = { unitNumber: aptoColIndex };
   
   headers.forEach((h: any, i: number) => {
     if (!h) return;
     const header = String(h).trim().toLowerCase();
+    const headerClean = header.replace(/\s+/g, ' ');
     
-    // Be flexible with matching
-    if (header.includes('cliente')) colMap.client = i;
-    if (header.includes('vendedor')) colMap.salesRep = i;
-    if ((header.includes('reserv') || header.includes('fecha')) && !header.includes('total')) {
-      if (!colMap.reservationDate) colMap.reservationDate = i;
+    // FIXED: Use FIRST match and prioritize exact/simple headers
+    // Cliente: prefer exact "cliente" over "estatus cliente"
+    if (!colMap.client && headerClean === 'cliente') {
+      colMap.client = i;
+    } else if (!colMap.client && header.includes('cliente') && headerClean.split(' ').length <= 2) {
+      colMap.client = i;
     }
-    if (header.includes('estatus') || header.includes('status')) colMap.status = i;
-    if (header.includes('precio') && header.includes('venta')) colMap.price = i;
-    if (header.includes('enganche')) colMap.downPayment = i;
+    
+    // Vendedor
+    if (!colMap.salesRep && (headerClean === 'vendedor' || headerClean.includes('vended'))) {
+      colMap.salesRep = i;
+    }
+    
+    // Reservation date
+    if (!colMap.reservationDate && 
+        (header.includes('reserv') || header.includes('fecha')) && 
+        !header.includes('total') && 
+        !header.includes('monto')) {
+      colMap.reservationDate = i;
+    }
+    
+    // Status: prefer "estatus cliente" over "status inmueble"
+    if (!colMap.status && header.includes('estatus') && header.includes('cliente')) {
+      colMap.status = i;
+    } else if (!colMap.status && (header.includes('estatus') || header.includes('status'))) {
+      colMap.status = i;
+    }
+    
+    // Price: exact match for "precio de venta"
+    if (!colMap.price && header.includes('precio') && header.includes('venta')) {
+      colMap.price = i;
+    }
+    
+    // FIXED: Down payment - prefer exact "enganche" not compound phrases
+    if (!colMap.downPayment && headerClean === 'enganche') {
+      colMap.downPayment = i;
+    } else if (!colMap.downPayment && 
+               header.includes('enganche') && 
+               !header.includes('saldo') && 
+               !header.includes('cuota') && 
+               !header.includes('+') &&
+               headerClean.split(' ').length <= 2) {
+      colMap.downPayment = i;
+    }
   });
   
   // Validate critical columns found
@@ -221,6 +258,11 @@ async function extractFromSheet(
     const statusStr = String(status).toLowerCase();
     
     if (!clientName || clientStr === '' || clientStr === 'RESERVADO' || clientStr === 'DESISTIDO') {
+      continue;
+    }
+    
+    // FIXED: Skip non-name values (numbers, formulas, status text)
+    if (/^\d+$/.test(clientStr) || clientStr.includes('ENGANCHE') || clientStr.includes('CLIENTE')) {
       continue;
     }
     
@@ -321,7 +363,7 @@ async function loadToDatabase(sales: ExtractedSale[]) {
       } else {
         const { data: newClient, error } = await supabase
           .from('clients')
-          .insert({ full_name: sale.clientName })
+          .insert({ id: uuidv7(), full_name: sale.clientName })
           .select('id')
           .single();
         
@@ -348,6 +390,7 @@ async function loadToDatabase(sales: ExtractedSale[]) {
         const { data: newUnit, error } = await supabase
           .from('units')
           .insert({
+            id: uuidv7(),
             project_id: project.id,
             unit_number: sale.unitNumber,
             price_with_tax: sale.priceWithTax,
@@ -385,6 +428,7 @@ async function loadToDatabase(sales: ExtractedSale[]) {
         const { data: newSale, error } = await supabase
           .from('sales')
           .insert({
+            id: uuidv7(),
             project_id: project.id,
             unit_id: unitId,
             client_id: clientId,
@@ -415,6 +459,7 @@ async function loadToDatabase(sales: ExtractedSale[]) {
           const { error: paymentError } = await supabase
             .from('payments')
             .insert({
+              id: uuidv7(),
               sale_id: saleId,
               payment_date: payment.date,
               amount: payment.amount,
@@ -444,7 +489,7 @@ async function loadToDatabase(sales: ExtractedSale[]) {
 // ============================================================================
 
 async function main() {
-  console.log('🚀 ETL: Reservas.xlsx → PostgreSQL\n');
+  console.log('🚀 ETL: Reservas.xlsx → PostgreSQL 🚀\n');
   console.log(`Reading: ${EXCEL_PATH}`);
   
   const workbook = XLSX.readFile(EXCEL_PATH);

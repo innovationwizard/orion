@@ -24,9 +24,9 @@ type SaleRow = {
   client_id: string;
   down_payment_amount: number;
   financed_amount: number;
-  projects?: { name: string | null } | null;
-  units?: { unit_number: string | null } | null;
-  clients?: { full_name: string | null } | null;
+  projects?: { name: string | null }[] | { name: string | null } | null;
+  units?: { unit_number: string | null }[] | { unit_number: string | null } | null;
+  clients?: { full_name: string | null }[] | { full_name: string | null } | null;
   payments?: PaymentRow[] | null;
 };
 
@@ -100,9 +100,16 @@ export async function GET(request: Request) {
     (data ?? []).forEach((sale) => {
       const typedSale = sale as SaleRow;
       const projectId = typedSale.project_id;
-      const projectName = typedSale.projects?.name ?? "Proyecto";
-      const unitNumber = typedSale.units?.unit_number ?? "—";
-      const clientName = typedSale.clients?.full_name ?? "—";
+      const projectRel = Array.isArray(typedSale.projects)
+        ? typedSale.projects[0]
+        : typedSale.projects;
+      const unitRel = Array.isArray(typedSale.units) ? typedSale.units[0] : typedSale.units;
+      const clientRel = Array.isArray(typedSale.clients)
+        ? typedSale.clients[0]
+        : typedSale.clients;
+      const projectName = projectRel?.name ?? "Proyecto";
+      const unitNumber = unitRel?.unit_number ?? "—";
+      const clientName = clientRel?.full_name ?? "—";
       const allPayments = (typedSale.payments ?? []).filter((payment) => Boolean(payment.payment_date));
       const filteredPayments =
         query?.start_date || query?.end_date

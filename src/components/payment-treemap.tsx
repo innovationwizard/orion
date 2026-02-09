@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { hierarchy, treemap, treemapSquarify } from "d3-hierarchy";
+import {
+  hierarchy,
+  treemap,
+  treemapSquarify,
+  type HierarchyRectangularNode
+} from "d3-hierarchy";
 
 export type PaymentAnalyticsUnit = {
   unitId: string;
@@ -139,7 +144,7 @@ export default function PaymentTreemap({ data, onUnitSelect }: PaymentTreemapPro
   const { ref, size } = useElementSize<HTMLDivElement>();
   const [tooltip, setTooltip] = useState<TooltipState>(null);
 
-  const root = useMemo(() => {
+  const root = useMemo<HierarchyRectangularNode<TreemapNode>>(() => {
     const hierarchyRoot = hierarchy({
       name: "root",
       children: data.map((project) => ({
@@ -161,7 +166,7 @@ export default function PaymentTreemap({ data, onUnitSelect }: PaymentTreemapPro
       .paddingInner(6)
       .paddingTop((node) => (node.depth === 1 ? 28 : 8))(hierarchyRoot as any);
 
-    return hierarchyRoot;
+    return hierarchyRoot as unknown as HierarchyRectangularNode<TreemapNode>;
   }, [data, size.height, size.width]);
 
   return (

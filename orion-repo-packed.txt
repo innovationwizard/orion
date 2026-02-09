@@ -1,0 +1,3788 @@
+This file is a merged representation of a subset of the codebase, containing files not matching ignore patterns, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching these patterns are excluded: **/node_modules/**, **/__pycache__/**, **/.git/**
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+public/
+  metadata/
+    commission-rules.json
+  favicon.png
+  og-image.png
+src/
+  app/
+    api/
+      admin/
+        invite/
+          route.ts
+      commission-phases/
+        route.ts
+      commission-rates/
+        route.ts
+      commissions/
+        route.ts
+      me/
+        route.ts
+      payments/
+        route.ts
+      sales/
+        route.ts
+    login/
+      login-form.tsx
+      page.tsx
+    dashboard-client.tsx
+    globals.css
+    layout.tsx
+    page.tsx
+  components/
+    .gitkeep
+    data-table.tsx
+    filters.tsx
+    kpi-card.tsx
+    tabs.tsx
+  lib/
+    api.ts
+    auth.ts
+    supabase-browser.ts
+    supabase.ts
+    types.ts
+.gitignore
+etl-reservas-one.ts
+etl-reservas.ts
+Filas con Error.txt
+middleware.ts
+next-env.d.ts
+next.config.js
+package.json
+tsconfig.json
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="etl-reservas-one.ts">
+#!/usr/bin/env node
+/**
+ * ETL Script: Reservas.xlsx → PostgreSQL
+ * 
+ * Extracts sales and payment data from Excel and loads into clean schema.
+ * Run: npx tsx etl-reservas.ts
+ */
+
+import XLSX from 'xlsx';
+import { createClient } from '@supabase/supabase-js';
+
+// ============================================================================
+// CONFIGURATION
+// ============================================================================
+
+const SUPABASE_URL = process.env.SUPABASE_URL!;
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const EXCEL_PATH = process.env.EXCEL_PATH || '/mnt/user-data/uploads/Reservas.xlsx';
+
+if (!SUPABASE_URL || !SUPABASE_KEY) {
+  console.error('Missing env vars: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY');
+  process.exit(1);
+}
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Project name mapping: Excel sheet → DB project name
+const PROJECT_MAPPING: Record<string, string> = {
+  'BENESTARE ': 'benestare',
+  'BOULEVARD 5': 'boulevard_5',
+  'BL-TAPIAS': 'bl_tapias',
+  'SANTA ELISA': 'santa_elisa',
+};
+
+// ============================================================================
+// UTILITY FUNCTIONS
+// ============================================================================
+
+/**
+ * Convert Excel serial date to YYYY-MM-DD
+ */
+function excelDateToISO(serial: number): string {
+  const epoch = new Date(1900, 0, 1);
+  const days = serial - 2; // Excel bug: treats 1900 as leap year
+  const date = new Date(epoch.getTime() + days * 86400000);
+  return date.toISOString().split('T')[0];
+}
+
+/**
+ * Normalize client name (trim, title case)
+ */
+function normalizeClientName(name: string): string {
+  return name
+    .trim()
+    .split(/\s+/)
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ');
+}
+
+/**
+ * Parse currency string or number to decimal
+ */
+function parseCurrency(value: any): number {
+  if (typeof value === 'number') return value;
+  if (typeof value === 'string') {
+    return parseFloat(value.replace(/[^0-9.-]/g, '')) || 0;
+  }
+  return 0;
+}
+
+/**
+ * Safe get cell value
+ */
+function getCellValue(row: any[], index: number): any {
+  return row && row[index] !== undefined && row[index] !== null ? row[index] : null;
+}
+
+// ============================================================================
+// ETL PIPELINE
+// ============================================================================
+
+interface ExtractedSale {
+  project: string;
+  unitNumber: string;
+  clientName: string;
+  salesRep: string | null;
+  reservationDate: string | null;
+  status: string;
+  priceWithTax: number;
+  priceWithoutTax: number;
+  downPayment: number;
+  referralName: string | null;
+  referralApplies: boolean;
+  promiseSignedDate: string | null;
+  deedSignedDate: string | null;
+  payments: Array<{
+    date: string;
+    amount: number;
+    type: 'reservation' | 'down_payment' | 'financed_payment';
+  }>;
+}
+
+async function extractFromSheet(
+  workbook: XLSX.WorkBook,
+  sheetName: string,
+  projectName: string
+): Promise<ExtractedSale[]> {
+  console.log(`\n📊 Processing: ${sheetName} → ${projectName}`);
+  
+  const sheet = workbook.Sheets[sheetName];
+  const data = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: null }) as any[][];
+  
+  // Find header row (search first 15 rows, look for "Apto")
+  let headerRowIndex = -1;
+  let aptoColIndex = -1;
+  
+  for (let i = 0; i < Math.min(15, data.length); i++) {
+    const row = data[i];
+    if (!row) continue;
+    
+    for (let j = 0; j < row.length; j++) {
+      const cell = row[j];
+      if (cell && typeof cell === 'string') {
+        const normalized = cell.trim().toLowerCase().replace(/\./g, '');
+        if (normalized === 'apto' || normalized === 'apto' || normalized === 'appto') {
+          headerRowIndex = i;
+          aptoColIndex = j;
+          break;
+        }
+      }
+    }
+    if (headerRowIndex >= 0) break;
+  }
+  
+  if (headerRowIndex === -1) {
+    console.warn(`⚠️  No header row found in ${sheetName}`);
+    return [];
+  }
+  
+  const headers = data[headerRowIndex];
+  console.log(`   Found ${headers.length} columns, header at row ${headerRowIndex}, "Apto" at col ${aptoColIndex}`);
+  
+  // Map column indices (search near Apto column)
+  const colMap: Record<string, number> = { unitNumber: aptoColIndex };
+  
+  headers.forEach((h: any, i: number) => {
+    if (!h) return;
+    const header = String(h).trim().toLowerCase();
+    
+    // Be flexible with matching
+    if (header.includes('cliente')) colMap.client = i;
+    if (header.includes('vendedor')) colMap.salesRep = i;
+    if ((header.includes('reserv') || header.includes('fecha')) && !header.includes('total')) {
+      if (!colMap.reservationDate) colMap.reservationDate = i;
+    }
+    if (header.includes('estatus') || header.includes('status')) colMap.status = i;
+    if (header.includes('precio') && header.includes('venta')) colMap.price = i;
+    if (header.includes('enganche')) colMap.downPayment = i;
+  });
+  
+  // Validate critical columns found
+  const criticalCols = ['unitNumber', 'client', 'status', 'price', 'downPayment'];
+  const missingCols = criticalCols.filter(col => colMap[col] === undefined);
+  if (missingCols.length > 0) {
+    console.warn(`   ⚠️  Missing columns: ${missingCols.join(', ')}`);
+  }
+  
+  console.log(`   Column mapping:`, {
+    unitNumber: colMap.unitNumber,
+    client: colMap.client,
+    salesRep: colMap.salesRep,
+    status: colMap.status,
+    price: colMap.price,
+    downPayment: colMap.downPayment,
+  });
+  
+  // Find date columns (Excel serial numbers >= 44000)
+  const dateColumns: Array<{ index: number; date: string }> = [];
+  headers.forEach((h: any, i: number) => {
+    if (typeof h === 'number' && h >= 44000 && h <= 50000) {
+      dateColumns.push({ index: i, date: excelDateToISO(h) });
+    }
+  });
+  
+  console.log(`   Found ${dateColumns.length} date columns`);
+  
+  // Extract sales
+  const sales: ExtractedSale[] = [];
+  
+  // Keywords that indicate summary/aggregate sections (stop processing)
+  const STOP_KEYWORDS = ['TOTAL', 'FLUJO', 'DESISTIMIENTO', 'PORCENTAJE', 'DIFERENCIA', 'PPTO', 'ESTIMADO'];
+  
+  for (let rowIdx = headerRowIndex + 1; rowIdx < data.length; rowIdx++) {
+    const row = data[rowIdx];
+    if (!row || row.length === 0) continue;
+    
+    // Check if this is a summary/aggregate row (stop processing)
+    const firstFewCells = row.slice(0, 10).filter(c => c !== null && c !== undefined);
+    const hasSummaryKeyword = firstFewCells.some((cell: any) => {
+      if (typeof cell === 'string') {
+        const normalized = cell.trim().toUpperCase();
+        return STOP_KEYWORDS.some(kw => normalized.includes(kw));
+      }
+      return false;
+    });
+    
+    if (hasSummaryKeyword) {
+      console.log(`   Stopped at row ${rowIdx} (summary section detected)`);
+      break;
+    }
+    
+    const unitNumber = getCellValue(row, colMap.unitNumber);
+    const clientName = getCellValue(row, colMap.client);
+    const status = getCellValue(row, colMap.status);
+    
+    // Skip if no unit or status
+    if (!unitNumber || !status) continue;
+    
+    // Skip reserved/cancelled/special rows (no actual client)
+    const clientStr = String(clientName || '').trim().toUpperCase();
+    const statusStr = String(status).toLowerCase();
+    
+    if (!clientName || clientStr === '' || clientStr === 'RESERVADO' || clientStr === 'DESISTIDO') {
+      continue;
+    }
+    
+    // Skip available units
+    if (statusStr.includes('disponible')) continue;
+    
+    // Skip if status indicates cancellation
+    if (statusStr.includes('cancel') || statusStr.includes('desisti')) continue;
+    
+    const price = parseCurrency(getCellValue(row, colMap.price));
+    const downPayment = parseCurrency(getCellValue(row, colMap.downPayment));
+    
+    // Skip if no price (critical field)
+    if (price <= 0) {
+      console.warn(`   ⚠️  Row ${rowIdx}: Unit ${unitNumber} has no valid price, skipping`);
+      continue;
+    }
+    
+    // Default down payment to 10% if missing
+    const finalDownPayment = downPayment > 0 ? downPayment : price * 0.10;
+    
+    const salesRep = getCellValue(row, colMap.salesRep);
+    const reservationDateRaw = getCellValue(row, colMap.reservationDate);
+    
+    // Extract payments from date columns
+    const payments: ExtractedSale['payments'] = [];
+    dateColumns.forEach(({ index, date }) => {
+      const amount = parseCurrency(getCellValue(row, index));
+      if (amount > 0) {
+        payments.push({
+          date,
+          amount,
+          type: 'down_payment', // Will refine based on first payment
+        });
+      }
+    });
+    
+    // First payment is likely reservation
+    if (payments.length > 0) {
+      payments[0].type = 'reservation';
+    }
+    
+    sales.push({
+      project: projectName,
+      unitNumber: String(unitNumber),
+      clientName: normalizeClientName(String(clientName)),
+      salesRep: salesRep ? String(salesRep).trim() : null,
+      reservationDate: typeof reservationDateRaw === 'number' 
+        ? excelDateToISO(reservationDateRaw) 
+        : null,
+      status: String(status),
+      priceWithTax: price,
+      priceWithoutTax: price / 1.12, // Guatemala IVA 12%
+      downPayment: finalDownPayment,
+      referralName: null, // Not in current data
+      referralApplies: false,
+      promiseSignedDate: null, // Not easily extractable
+      deedSignedDate: null,
+      payments,
+    });
+  }
+  
+  console.log(`   ✅ Extracted ${sales.length} sales with ${sales.reduce((sum, s) => sum + s.payments.length, 0)} payments`);
+  return sales;
+}
+
+async function loadToDatabase(sales: ExtractedSale[]) {
+  console.log(`\n💾 Loading ${sales.length} sales to database...`);
+  
+  let successCount = 0;
+  let errorCount = 0;
+  
+  for (const sale of sales) {
+    try {
+      // 1. Get or create project
+      const { data: project } = await supabase
+        .from('projects')
+        .select('id')
+        .eq('name', sale.project)
+        .single();
+      
+      if (!project) {
+        console.error(`Project not found: ${sale.project}`);
+        errorCount++;
+        continue;
+      }
+      
+      // 2. Get or create client
+      let clientId: string;
+      const { data: existingClient } = await supabase
+        .from('clients')
+        .select('id')
+        .eq('full_name', sale.clientName)
+        .maybeSingle();
+      
+      if (existingClient) {
+        clientId = existingClient.id;
+      } else {
+        const { data: newClient, error } = await supabase
+          .from('clients')
+          .insert({ full_name: sale.clientName })
+          .select('id')
+          .single();
+        
+        if (error || !newClient) {
+          console.error(`Failed to create client: ${sale.clientName}`, error);
+          errorCount++;
+          continue;
+        }
+        clientId = newClient.id;
+      }
+      
+      // 3. Get or create unit
+      let unitId: string;
+      const { data: existingUnit } = await supabase
+        .from('units')
+        .select('id')
+        .eq('project_id', project.id)
+        .eq('unit_number', sale.unitNumber)
+        .maybeSingle();
+      
+      if (existingUnit) {
+        unitId = existingUnit.id;
+      } else {
+        const { data: newUnit, error } = await supabase
+          .from('units')
+          .insert({
+            project_id: project.id,
+            unit_number: sale.unitNumber,
+            price_with_tax: sale.priceWithTax,
+            price_without_tax: sale.priceWithoutTax,
+            down_payment_amount: sale.downPayment,
+            status: 'sold',
+          })
+          .select('id')
+          .single();
+        
+        if (error || !newUnit) {
+          console.error(`Failed to create unit: ${sale.unitNumber}`, error);
+          errorCount++;
+          continue;
+        }
+        unitId = newUnit.id;
+      }
+      
+      // 4. Check if sale already exists
+      const { data: existingSale } = await supabase
+        .from('sales')
+        .select('id')
+        .eq('unit_id', unitId)
+        .eq('client_id', clientId)
+        .eq('status', 'active')
+        .maybeSingle();
+      
+      let saleId: string;
+      
+      if (existingSale) {
+        saleId = existingSale.id;
+        console.log(`   ⏭️  Sale exists: ${sale.project} - ${sale.unitNumber}`);
+      } else {
+        // Create sale
+        const { data: newSale, error } = await supabase
+          .from('sales')
+          .insert({
+            project_id: project.id,
+            unit_id: unitId,
+            client_id: clientId,
+            sales_rep_id: sale.salesRep || 'unknown',
+            sale_date: sale.reservationDate || new Date().toISOString().split('T')[0],
+            price_with_tax: sale.priceWithTax,
+            price_without_tax: sale.priceWithoutTax,
+            down_payment_amount: sale.downPayment,
+            financed_amount: sale.priceWithTax - sale.downPayment,
+            referral_name: sale.referralName,
+            referral_applies: sale.referralApplies,
+            status: 'active',
+            promise_signed_date: sale.promiseSignedDate,
+            deed_signed_date: sale.deedSignedDate,
+          })
+          .select('id')
+          .single();
+        
+        if (error || !newSale) {
+          console.error(`Failed to create sale: ${sale.project} - ${sale.unitNumber}`, error);
+          errorCount++;
+          continue;
+        }
+        saleId = newSale.id;
+        
+        // 5. Create payments (will auto-trigger commission calculation)
+        for (const payment of sale.payments) {
+          const { error: paymentError } = await supabase
+            .from('payments')
+            .insert({
+              sale_id: saleId,
+              payment_date: payment.date,
+              amount: payment.amount,
+              payment_type: payment.type,
+              payment_method: 'cash', // Default
+            });
+          
+          if (paymentError) {
+            console.error(`Failed to create payment: ${payment.date}`, paymentError);
+          }
+        }
+        
+        console.log(`   ✅ Created: ${sale.project} - ${sale.unitNumber} (${sale.payments.length} payments)`);
+        successCount++;
+      }
+    } catch (error) {
+      console.error(`Error processing sale: ${sale.project} - ${sale.unitNumber}`, error);
+      errorCount++;
+    }
+  }
+  
+  console.log(`\n📊 Summary: ${successCount} created, ${errorCount} errors`);
+}
+
+// ============================================================================
+// MAIN
+// ============================================================================
+
+async function main() {
+  console.log('🚀 ETL: Reservas.xlsx → PostgreSQL\n');
+  console.log(`Reading: ${EXCEL_PATH}`);
+  
+  const workbook = XLSX.readFile(EXCEL_PATH);
+  console.log(`Sheets: ${workbook.SheetNames.length}`);
+  
+  const allSales: ExtractedSale[] = [];
+  
+  // Extract from each project sheet
+  for (const [sheetName, projectName] of Object.entries(PROJECT_MAPPING)) {
+    if (workbook.SheetNames.includes(sheetName)) {
+      const sales = await extractFromSheet(workbook, sheetName, projectName);
+      allSales.push(...sales);
+    } else {
+      console.warn(`⚠️  Sheet not found: ${sheetName}`);
+    }
+  }
+  
+  console.log(`\n📦 Total extracted: ${allSales.length} sales`);
+  
+  // Load to database
+  await loadToDatabase(allSales);
+  
+  console.log('\n✅ ETL Complete');
+}
+
+main().catch(console.error);
+</file>
+
+<file path="public/metadata/commission-rules.json">
+{
+  "base_commission_rate": 0.05,
+  "phase_allocation": {
+    "1": {
+      "name": "Promise Signed",
+      "percentage": 0.3,
+      "trigger": "promise_signed_date"
+    },
+    "2": {
+      "name": "Down Payment Installment",
+      "percentage": 0.3,
+      "trigger": "payment_type = 'down_payment'"
+    },
+    "3": {
+      "name": "Deed Signed",
+      "percentage": 0.4,
+      "trigger": "deed_signed_date AND down_payment_complete"
+    }
+  },
+  "recipients": {
+    "management": [
+      {
+        "id": "otto_herrera",
+        "name": "Otto Herrera",
+        "rate": 0.006,
+        "always_paid": true
+      },
+      {
+        "id": "alek_hernandez",
+        "name": "Alek Hernández",
+        "rate": 0.003,
+        "always_paid": true
+      },
+      {
+        "id": "ahorro_comercial",
+        "name": "Ahorro G. Comercial",
+        "rate": 0.002,
+        "always_paid": true
+      },
+      {
+        "id": "antonio_rada",
+        "name": "Supervisor / Antonio R.",
+        "rate": 0.0025,
+        "always_paid": true
+      }
+    ],
+    "sales_reps": [
+      {
+        "id": "05",
+        "name": "Sales Rep 05",
+        "rate": 0.009
+      },
+      {
+        "id": "06",
+        "name": "Sales Rep 06",
+        "rate": 0.019
+      },
+      {
+        "id": "35",
+        "name": "Sales Rep 35",
+        "rate": 0.01
+      },
+      {
+        "id": "GV1",
+        "name": "Sales Rep GV1",
+        "rate": 0.01
+      }
+    ],
+    "special": {
+      "referral": {
+        "name": "Referral Bonus",
+        "rate": 0.01,
+        "condition": "referral_applies = true"
+      },
+      "ahorro": {
+        "id": "ahorro",
+        "name": "Ahorro",
+        "rate": 0.0035,
+        "always_paid": true
+      },
+      "walk_in": {
+        "name": "Puerta Abierta",
+        "rate": 0.025,
+        "condition": "sales_rep_id IS NULL OR sales_rep_id = 'walk_in'"
+      }
+    }
+  },
+  "total_rate": 0.055
+}
+</file>
+
+<file path="src/app/api/admin/invite/route.ts">
+import { z } from "zod";
+import { NextResponse } from "next/server";
+import { supabaseAdmin, getSupabaseConfigError } from "@/lib/supabase";
+import { requireSuperuser } from "@/lib/auth";
+
+const inviteSchema = z.object({
+  email: z.string().email()
+});
+
+export async function POST(request: Request) {
+  const configError = getSupabaseConfigError();
+  if (configError) {
+    return NextResponse.json({ error: configError }, { status: 500 });
+  }
+
+  const auth = await requireSuperuser();
+  if (auth.response) {
+    return auth.response;
+  }
+
+  if (!supabaseAdmin) {
+    return NextResponse.json(
+      { error: "SUPABASE_SERVICE_ROLE_KEY requerido para invitaciones" },
+      { status: 500 }
+    );
+  }
+
+  const payload = await request.json().catch(() => null);
+  const parsed = inviteSchema.safeParse(payload);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Entrada inválida", details: parsed.error.flatten() },
+      { status: 400 }
+    );
+  }
+
+  const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(
+    parsed.data.email
+  );
+
+  if (error) {
+    return NextResponse.json({ error: "Error al enviar invitación", details: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({
+    data: {
+      user_id: data.user?.id ?? null,
+      email: data.user?.email ?? parsed.data.email
+    }
+  });
+}
+</file>
+
+<file path="src/app/api/me/route.ts">
+import { NextResponse } from "next/server";
+import { requireAuth, isSuperuser, getUserRole } from "@/lib/auth";
+
+export async function GET() {
+  const auth = await requireAuth();
+  if (auth.response) {
+    return auth.response;
+  }
+
+  return NextResponse.json({
+    data: {
+      email: auth.user?.email ?? null,
+      is_superuser: isSuperuser(auth.user?.email ?? null),
+      role: getUserRole(auth.user ?? null)
+    }
+  });
+}
+</file>
+
+<file path="src/app/login/login-form.tsx">
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabaseBrowser } from "@/lib/supabase-browser";
+
+export default function LoginForm() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError(null);
+    setIsLoading(true);
+
+    const { error: authError } = await supabaseBrowser.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (authError) {
+      setError("Credenciales inválidas. Inténtalo de nuevo.");
+      setIsLoading(false);
+      return;
+    }
+
+    router.replace("/");
+    router.refresh();
+  }
+
+  return (
+    <form onSubmit={handleSubmit} style={{ display: "grid", gap: 12, marginTop: 12 }}>
+      <input
+        className="input"
+        type="email"
+        placeholder="Correo"
+        value={email}
+        onChange={(event) => setEmail(event.target.value)}
+        required
+      />
+      <input
+        className="input"
+        type="password"
+        placeholder="Contraseña"
+        value={password}
+        onChange={(event) => setPassword(event.target.value)}
+        required
+      />
+      {error ? <div className="banner">{error}</div> : null}
+      <button className="button" type="submit" disabled={isLoading}>
+        {isLoading ? "Ingresando..." : "Entrar"}
+      </button>
+    </form>
+  );
+}
+</file>
+
+<file path="src/components/.gitkeep">
+
+</file>
+
+<file path="src/components/kpi-card.tsx">
+type KpiCardProps = {
+  label: string;
+  value: string;
+  hint?: string;
+  positive?: boolean;
+};
+
+export default function KpiCard({ label, value, hint, positive }: KpiCardProps) {
+  return (
+    <div className="card">
+      <h3>{label}</h3>
+      <strong>{value}</strong>
+      {hint ? <span className={positive ? "positive" : ""}>{hint}</span> : null}
+    </div>
+  );
+}
+</file>
+
+<file path="src/components/tabs.tsx">
+type TabOption = {
+  id: string;
+  label: string;
+};
+
+type TabsProps = {
+  tabs: TabOption[];
+  value: string;
+  onChange: (value: string) => void;
+};
+
+export default function Tabs({ tabs, value, onChange }: TabsProps) {
+  return (
+    <div className="tabs" role="tablist">
+      {tabs.map((tab) => (
+        <button
+          key={tab.id}
+          className="tab"
+          role="tab"
+          aria-selected={value === tab.id}
+          onClick={() => onChange(tab.id)}
+        >
+          {tab.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+</file>
+
+<file path="src/lib/supabase-browser.ts">
+import { createBrowserClient } from "@supabase/ssr";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+
+export const supabaseBrowser = createBrowserClient(supabaseUrl, supabaseAnonKey);
+</file>
+
+<file path=".gitignore">
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+.next/
+out/
+coverage/
+dist/
+build/
+
+.env
+.env.*.local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.vercel/
+
+*.pem
+*.key
+
+.idea/
+.vscode/
+.cursor/
+
+*.swp
+*.swo
+
+origin/
+</file>
+
+<file path="etl-reservas.ts">
+#!/usr/bin/env node
+/**
+ * ETL Script: Reservas.xlsx → PostgreSQL (FIXED)
+ * 
+ * Extracts sales and payment data from Excel and loads into clean schema.
+ * Run: npx tsx etl-reservas-fixed.ts
+ */
+
+import XLSX from 'xlsx';
+import { createClient } from '@supabase/supabase-js';
+
+// ============================================================================
+// CONFIGURATION
+// ============================================================================
+
+const SUPABASE_URL = process.env.SUPABASE_URL!;
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const EXCEL_PATH = process.env.EXCEL_PATH || '/mnt/user-data/uploads/Reservas.xlsx';
+
+if (!SUPABASE_URL || !SUPABASE_KEY) {
+  console.error('Missing env vars: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY');
+  process.exit(1);
+}
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Project name mapping: Excel sheet → DB project name
+const PROJECT_MAPPING: Record<string, string> = {
+  'BENESTARE ': 'benestare',
+  'BOULEVARD 5': 'boulevard_5',
+  'BL-TAPIAS': 'bl_tapias',
+  'SANTA ELISA': 'santa_elisa',
+};
+
+// ============================================================================
+// UTILITY FUNCTIONS
+// ============================================================================
+
+/**
+ * Convert Excel serial date to YYYY-MM-DD
+ */
+function excelDateToISO(serial: number): string {
+  const epoch = new Date(1900, 0, 1);
+  const days = serial - 2; // Excel bug: treats 1900 as leap year
+  const date = new Date(epoch.getTime() + days * 86400000);
+  return date.toISOString().split('T')[0];
+}
+
+/**
+ * Normalize client name (trim, title case)
+ */
+function normalizeClientName(name: string): string {
+  return name
+    .trim()
+    .split(/\s+/)
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ');
+}
+
+/**
+ * Parse currency string or number to decimal
+ */
+function parseCurrency(value: any): number {
+  if (typeof value === 'number') return value;
+  if (typeof value === 'string') {
+    return parseFloat(value.replace(/[^0-9.-]/g, '')) || 0;
+  }
+  return 0;
+}
+
+/**
+ * Safe get cell value
+ */
+function getCellValue(row: any[], index: number): any {
+  return row && row[index] !== undefined && row[index] !== null ? row[index] : null;
+}
+
+// ============================================================================
+// ETL PIPELINE
+// ============================================================================
+
+interface ExtractedSale {
+  project: string;
+  unitNumber: string;
+  clientName: string;
+  salesRep: string | null;
+  reservationDate: string | null;
+  status: string;
+  priceWithTax: number;
+  priceWithoutTax: number;
+  downPayment: number;
+  referralName: string | null;
+  referralApplies: boolean;
+  promiseSignedDate: string | null;
+  deedSignedDate: string | null;
+  payments: Array<{
+    date: string;
+    amount: number;
+    type: 'reservation' | 'down_payment' | 'financed_payment';
+  }>;
+}
+
+async function extractFromSheet(
+  workbook: XLSX.WorkBook,
+  sheetName: string,
+  projectName: string
+): Promise<ExtractedSale[]> {
+  console.log(`\n📊 Processing: ${sheetName} → ${projectName}`);
+  
+  const sheet = workbook.Sheets[sheetName];
+  const data = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: null }) as any[][];
+  
+  // Find header row (search first 15 rows, look for "Apto")
+  let headerRowIndex = -1;
+  let aptoColIndex = -1;
+  
+  for (let i = 0; i < Math.min(15, data.length); i++) {
+    const row = data[i];
+    if (!row) continue;
+    
+    for (let j = 0; j < row.length; j++) {
+      const cell = row[j];
+      if (cell && typeof cell === 'string') {
+        const normalized = cell.trim().toLowerCase().replace(/\./g, '');
+        if (normalized === 'apto' || normalized === 'apto' || normalized === 'appto') {
+          headerRowIndex = i;
+          aptoColIndex = j;
+          break;
+        }
+      }
+    }
+    if (headerRowIndex >= 0) break;
+  }
+  
+  if (headerRowIndex === -1) {
+    console.warn(`⚠️  No header row found in ${sheetName}`);
+    return [];
+  }
+  
+  const headers = data[headerRowIndex];
+  console.log(`   Found ${headers.length} columns, header at row ${headerRowIndex}, "Apto" at col ${aptoColIndex}`);
+  
+  // FIXED: Map column indices with priority to exact/simple matches
+  const colMap: Record<string, number> = { unitNumber: aptoColIndex };
+  
+  headers.forEach((h: any, i: number) => {
+    if (!h) return;
+    const header = String(h).trim().toLowerCase();
+    const headerClean = header.replace(/\s+/g, ' ');
+    
+    // FIXED: Use FIRST match and prioritize exact/simple headers
+    // Cliente: prefer exact "cliente" over "estatus cliente"
+    if (!colMap.client && headerClean === 'cliente') {
+      colMap.client = i;
+    } else if (!colMap.client && header.includes('cliente') && headerClean.split(' ').length <= 2) {
+      colMap.client = i;
+    }
+    
+    // Vendedor
+    if (!colMap.salesRep && (headerClean === 'vendedor' || headerClean.includes('vended'))) {
+      colMap.salesRep = i;
+    }
+    
+    // Reservation date
+    if (!colMap.reservationDate && 
+        (header.includes('reserv') || header.includes('fecha')) && 
+        !header.includes('total') && 
+        !header.includes('monto')) {
+      colMap.reservationDate = i;
+    }
+    
+    // Status: prefer "estatus cliente" over "status inmueble"
+    if (!colMap.status && header.includes('estatus') && header.includes('cliente')) {
+      colMap.status = i;
+    } else if (!colMap.status && (header.includes('estatus') || header.includes('status'))) {
+      colMap.status = i;
+    }
+    
+    // Price: exact match for "precio de venta"
+    if (!colMap.price && header.includes('precio') && header.includes('venta')) {
+      colMap.price = i;
+    }
+    
+    // FIXED: Down payment - prefer exact "enganche" not compound phrases
+    if (!colMap.downPayment && headerClean === 'enganche') {
+      colMap.downPayment = i;
+    } else if (!colMap.downPayment && 
+               header.includes('enganche') && 
+               !header.includes('saldo') && 
+               !header.includes('cuota') && 
+               !header.includes('+') &&
+               headerClean.split(' ').length <= 2) {
+      colMap.downPayment = i;
+    }
+  });
+  
+  // Validate critical columns found
+  const criticalCols = ['unitNumber', 'client', 'status', 'price', 'downPayment'];
+  const missingCols = criticalCols.filter(col => colMap[col] === undefined);
+  if (missingCols.length > 0) {
+    console.warn(`   ⚠️  Missing columns: ${missingCols.join(', ')}`);
+  }
+  
+  console.log(`   Column mapping:`, {
+    unitNumber: colMap.unitNumber,
+    client: colMap.client,
+    salesRep: colMap.salesRep,
+    status: colMap.status,
+    price: colMap.price,
+    downPayment: colMap.downPayment,
+  });
+  
+  // Find date columns (Excel serial numbers >= 44000)
+  const dateColumns: Array<{ index: number; date: string }> = [];
+  headers.forEach((h: any, i: number) => {
+    if (typeof h === 'number' && h >= 44000 && h <= 50000) {
+      dateColumns.push({ index: i, date: excelDateToISO(h) });
+    }
+  });
+  
+  console.log(`   Found ${dateColumns.length} date columns`);
+  
+  // Extract sales
+  const sales: ExtractedSale[] = [];
+  
+  // Keywords that indicate summary/aggregate sections (stop processing)
+  const STOP_KEYWORDS = ['TOTAL', 'FLUJO', 'DESISTIMIENTO', 'PORCENTAJE', 'DIFERENCIA', 'PPTO', 'ESTIMADO'];
+  
+  for (let rowIdx = headerRowIndex + 1; rowIdx < data.length; rowIdx++) {
+    const row = data[rowIdx];
+    if (!row || row.length === 0) continue;
+    
+    // Check if this is a summary/aggregate row (stop processing)
+    const firstFewCells = row.slice(0, 10).filter(c => c !== null && c !== undefined);
+    const hasSummaryKeyword = firstFewCells.some((cell: any) => {
+      if (typeof cell === 'string') {
+        const normalized = cell.trim().toUpperCase();
+        return STOP_KEYWORDS.some(kw => normalized.includes(kw));
+      }
+      return false;
+    });
+    
+    if (hasSummaryKeyword) {
+      console.log(`   Stopped at row ${rowIdx} (summary section detected)`);
+      break;
+    }
+    
+    const unitNumber = getCellValue(row, colMap.unitNumber);
+    const clientName = getCellValue(row, colMap.client);
+    const status = getCellValue(row, colMap.status);
+    
+    // Skip if no unit or status
+    if (!unitNumber || !status) continue;
+    
+    // Skip reserved/cancelled/special rows (no actual client)
+    const clientStr = String(clientName || '').trim().toUpperCase();
+    const statusStr = String(status).toLowerCase();
+    
+    if (!clientName || clientStr === '' || clientStr === 'RESERVADO' || clientStr === 'DESISTIDO') {
+      continue;
+    }
+    
+    // FIXED: Skip non-name values (numbers, formulas, status text)
+    if (/^\d+$/.test(clientStr) || clientStr.includes('ENGANCHE') || clientStr.includes('CLIENTE')) {
+      continue;
+    }
+    
+    // Skip available units
+    if (statusStr.includes('disponible')) continue;
+    
+    // Skip if status indicates cancellation
+    if (statusStr.includes('cancel') || statusStr.includes('desisti')) continue;
+    
+    const price = parseCurrency(getCellValue(row, colMap.price));
+    const downPayment = parseCurrency(getCellValue(row, colMap.downPayment));
+    
+    // Skip if no price (critical field)
+    if (price <= 0) {
+      console.warn(`   ⚠️  Row ${rowIdx}: Unit ${unitNumber} has no valid price, skipping`);
+      continue;
+    }
+    
+    // Default down payment to 10% if missing
+    const finalDownPayment = downPayment > 0 ? downPayment : price * 0.10;
+    
+    const salesRep = getCellValue(row, colMap.salesRep);
+    const reservationDateRaw = getCellValue(row, colMap.reservationDate);
+    
+    // Extract payments from date columns
+    const payments: ExtractedSale['payments'] = [];
+    dateColumns.forEach(({ index, date }) => {
+      const amount = parseCurrency(getCellValue(row, index));
+      if (amount > 0) {
+        payments.push({
+          date,
+          amount,
+          type: 'down_payment', // Will refine based on first payment
+        });
+      }
+    });
+    
+    // First payment is likely reservation
+    if (payments.length > 0) {
+      payments[0].type = 'reservation';
+    }
+    
+    sales.push({
+      project: projectName,
+      unitNumber: String(unitNumber),
+      clientName: normalizeClientName(String(clientName)),
+      salesRep: salesRep ? String(salesRep).trim() : null,
+      reservationDate: typeof reservationDateRaw === 'number' 
+        ? excelDateToISO(reservationDateRaw) 
+        : null,
+      status: String(status),
+      priceWithTax: price,
+      priceWithoutTax: price / 1.12, // Guatemala IVA 12%
+      downPayment: finalDownPayment,
+      referralName: null, // Not in current data
+      referralApplies: false,
+      promiseSignedDate: null, // Not easily extractable
+      deedSignedDate: null,
+      payments,
+    });
+  }
+  
+  console.log(`   ✅ Extracted ${sales.length} sales with ${sales.reduce((sum, s) => sum + s.payments.length, 0)} payments`);
+  return sales;
+}
+
+async function loadToDatabase(sales: ExtractedSale[]) {
+  console.log(`\n💾 Loading ${sales.length} sales to database...`);
+  
+  let successCount = 0;
+  let errorCount = 0;
+  
+  for (const sale of sales) {
+    try {
+      // 1. Get or create project
+      const { data: project } = await supabase
+        .from('projects')
+        .select('id')
+        .eq('name', sale.project)
+        .single();
+      
+      if (!project) {
+        console.error(`Project not found: ${sale.project}`);
+        errorCount++;
+        continue;
+      }
+      
+      // 2. Get or create client
+      let clientId: string;
+      const { data: existingClient } = await supabase
+        .from('clients')
+        .select('id')
+        .eq('full_name', sale.clientName)
+        .maybeSingle();
+      
+      if (existingClient) {
+        clientId = existingClient.id;
+      } else {
+        const { data: newClient, error } = await supabase
+          .from('clients')
+          .insert({ full_name: sale.clientName })
+          .select('id')
+          .single();
+        
+        if (error || !newClient) {
+          console.error(`Failed to create client: ${sale.clientName}`, error);
+          errorCount++;
+          continue;
+        }
+        clientId = newClient.id;
+      }
+      
+      // 3. Get or create unit
+      let unitId: string;
+      const { data: existingUnit } = await supabase
+        .from('units')
+        .select('id')
+        .eq('project_id', project.id)
+        .eq('unit_number', sale.unitNumber)
+        .maybeSingle();
+      
+      if (existingUnit) {
+        unitId = existingUnit.id;
+      } else {
+        const { data: newUnit, error } = await supabase
+          .from('units')
+          .insert({
+            project_id: project.id,
+            unit_number: sale.unitNumber,
+            price_with_tax: sale.priceWithTax,
+            price_without_tax: sale.priceWithoutTax,
+            down_payment_amount: sale.downPayment,
+            status: 'sold',
+          })
+          .select('id')
+          .single();
+        
+        if (error || !newUnit) {
+          console.error(`Failed to create unit: ${sale.unitNumber}`, error);
+          errorCount++;
+          continue;
+        }
+        unitId = newUnit.id;
+      }
+      
+      // 4. Check if sale already exists
+      const { data: existingSale } = await supabase
+        .from('sales')
+        .select('id')
+        .eq('unit_id', unitId)
+        .eq('client_id', clientId)
+        .eq('status', 'active')
+        .maybeSingle();
+      
+      let saleId: string;
+      
+      if (existingSale) {
+        saleId = existingSale.id;
+        console.log(`   ⏭️  Sale exists: ${sale.project} - ${sale.unitNumber}`);
+      } else {
+        // Create sale
+        const { data: newSale, error } = await supabase
+          .from('sales')
+          .insert({
+            project_id: project.id,
+            unit_id: unitId,
+            client_id: clientId,
+            sales_rep_id: sale.salesRep || 'unknown',
+            sale_date: sale.reservationDate || new Date().toISOString().split('T')[0],
+            price_with_tax: sale.priceWithTax,
+            price_without_tax: sale.priceWithoutTax,
+            down_payment_amount: sale.downPayment,
+            financed_amount: sale.priceWithTax - sale.downPayment,
+            referral_name: sale.referralName,
+            referral_applies: sale.referralApplies,
+            status: 'active',
+            promise_signed_date: sale.promiseSignedDate,
+            deed_signed_date: sale.deedSignedDate,
+          })
+          .select('id')
+          .single();
+        
+        if (error || !newSale) {
+          console.error(`Failed to create sale: ${sale.project} - ${sale.unitNumber}`, error);
+          errorCount++;
+          continue;
+        }
+        saleId = newSale.id;
+        
+        // 5. Create payments (will auto-trigger commission calculation)
+        for (const payment of sale.payments) {
+          const { error: paymentError } = await supabase
+            .from('payments')
+            .insert({
+              sale_id: saleId,
+              payment_date: payment.date,
+              amount: payment.amount,
+              payment_type: payment.type,
+              payment_method: 'cash', // Default
+            });
+          
+          if (paymentError) {
+            console.error(`Failed to create payment: ${payment.date}`, paymentError);
+          }
+        }
+        
+        console.log(`   ✅ Created: ${sale.project} - ${sale.unitNumber} (${sale.payments.length} payments)`);
+        successCount++;
+      }
+    } catch (error) {
+      console.error(`Error processing sale: ${sale.project} - ${sale.unitNumber}`, error);
+      errorCount++;
+    }
+  }
+  
+  console.log(`\n📊 Summary: ${successCount} created, ${errorCount} errors`);
+}
+
+// ============================================================================
+// MAIN
+// ============================================================================
+
+async function main() {
+  console.log('🚀 ETL: Reservas.xlsx → PostgreSQL 🚀\n');
+  console.log(`Reading: ${EXCEL_PATH}`);
+  
+  const workbook = XLSX.readFile(EXCEL_PATH);
+  console.log(`Sheets: ${workbook.SheetNames.length}`);
+  
+  const allSales: ExtractedSale[] = [];
+  
+  // Extract from each project sheet
+  for (const [sheetName, projectName] of Object.entries(PROJECT_MAPPING)) {
+    if (workbook.SheetNames.includes(sheetName)) {
+      const sales = await extractFromSheet(workbook, sheetName, projectName);
+      allSales.push(...sales);
+    } else {
+      console.warn(`⚠️  Sheet not found: ${sheetName}`);
+    }
+  }
+  
+  console.log(`\n📦 Total extracted: ${allSales.length} sales`);
+  
+  // Load to database
+  await loadToDatabase(allSales);
+  
+  console.log('\n✅ ETL Complete');
+}
+
+main().catch(console.error);
+</file>
+
+<file path="Filas con Error.txt">
+Filas con Error
+
+Filas que fueron rechazadas por la base de datos al importar los libros de trabajo originales: 
+
+Hoja BENESTARE - 10 Unidades Duplicadas (37 filas duplicadas en total)
+
+Cada unidad aparece múltiples veces. 
+La primera ocurrencia tuvo éxito.
+Filas duplicadas fallaron:
+
+Unidad 		Filas que fallaron 		Total de Ocurrencias
+305 		37, 77 					3
+104 		73, 194 				3
+209 		76, 136, 193, 200, 231 	6
+308 		78, 144, 212, 233 		5
+409 		81 						2 
+501 		84, 192, 237 			4 
+508 		85, 119 				3 
+601 		86, 102, 196, 238 		5
+604 		87, 199, 239 			4
+606 		88, 168 				3
+
+Hoja BL-TAPIAS - 1 Error de Red
+
+Fila 72 (Unidad 803)
+Conexión del socket cerrada durante la carga
+Acción Requerida: 
+Re-ejecutar el ETL para la fila 72 de BL-TAPIAS (timeout de red)
+</file>
+
+<file path="next.config.js">
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true
+};
+
+module.exports = nextConfig;
+</file>
+
+<file path="tsconfig.json">
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+</file>
+
+<file path="src/app/login/page.tsx">
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import LoginForm from "./login-form";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+
+async function getUser() {
+  const cookieStore = await cookies();
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return null;
+  }
+
+  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+    cookies: {
+      get: (name: string) => cookieStore.get(name)?.value,
+      set: (_name: string, _value: string, _options: CookieOptions) => {},
+      remove: (_name: string, _options: CookieOptions) => {}
+    }
+  });
+
+  const { data } = await supabase.auth.getUser();
+  return data.user ?? null;
+}
+
+export default async function LoginPage() {
+  const user = await getUser();
+  if (user) {
+    redirect("/");
+  }
+
+  return (
+    <section className="page">
+      <div className="card" style={{ maxWidth: 420, margin: "0 auto" }}>
+        <h2 style={{ margin: 0 }}>Ingresar</h2>
+        <p style={{ margin: 0, color: "var(--muted)" }}>
+          Accede con tu correo y contraseña.
+        </p>
+        <LoginForm />
+      </div>
+    </section>
+  );
+}
+</file>
+
+<file path="src/app/globals.css">
+:root {
+  color-scheme: light;
+  --bg: #f6f8fb;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --primary: #2563eb;
+  --primary-600: #1d4ed8;
+  --success: #16a34a;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  min-height: 100%;
+  font-family: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.page {
+  padding: clamp(16px, 4vw, 32px);
+  display: grid;
+  gap: clamp(16px, 3vw, 28px);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  justify-content: space-between;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: clamp(20px, 3vw, 28px);
+}
+
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.button {
+  border: none;
+  background: var(--primary);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.button:hover {
+  background: var(--primary-600);
+}
+
+.button.secondary {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.button.secondary:hover {
+  background: rgba(37, 99, 235, 0.08);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.button.small {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.select,
+.input,
+.date-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 14px;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  container-type: inline-size;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 8px;
+}
+
+.card h3 {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.card strong {
+  font-size: clamp(20px, 4cqi, 28px);
+  color: var(--text);
+}
+
+.card .positive {
+  color: var(--success);
+  font-size: 13px;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tab {
+  border: 1px solid var(--border);
+  background: var(--card);
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.tab[aria-selected="true"] {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.table-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 8px;
+  box-shadow: var(--shadow);
+  overflow-x: auto;
+}
+
+.table-card:has(.empty-state) {
+  border: 1px dashed var(--border);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 12px 14px;
+  font-size: 14px;
+}
+
+th {
+  color: var(--muted);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+}
+
+tbody tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+tbody tr:hover {
+  background: rgba(37, 99, 235, 0.05);
+}
+
+.row-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.link-button {
+  border: none;
+  background: none;
+  color: var(--primary);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.pill.success {
+  background: rgba(22, 163, 74, 0.15);
+  color: var(--success);
+}
+
+.pill.warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--warning);
+}
+
+.pill.danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--danger);
+}
+
+.skeleton {
+  display: grid;
+  gap: 10px;
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #eef2f7, #f8fafc, #eef2f7);
+  background-size: 200% 200%;
+  animation: pulse 1.6s ease infinite;
+}
+
+@keyframes pulse {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.banner {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.banner.danger {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  font-weight: 700;
+}
+
+dialog {
+  border: none;
+  border-radius: 16px;
+  padding: 0;
+  max-width: min(640px, 95vw);
+  width: 100%;
+  box-shadow: var(--shadow);
+}
+
+dialog::backdrop {
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.modal-content {
+  padding: 24px;
+  display: grid;
+  gap: 16px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+}
+
+.modal-close {
+  border: none;
+  background: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--muted);
+  padding: 24px;
+}
+
+@container (max-width: 480px) {
+  .header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  table {
+    min-width: 640px;
+  }
+}
+</file>
+
+<file path="src/components/data-table.tsx">
+import type { ReactNode } from "react";
+
+type DataTableProps = {
+  columns: string[];
+  children: ReactNode;
+  emptyState?: string;
+};
+
+export default function DataTable({ columns, children, emptyState }: DataTableProps) {
+  const hasRows = Array.isArray(children) ? children.length > 0 : Boolean(children);
+
+  return (
+    <table>
+      <thead>
+        <tr>
+          {columns.map((column) => (
+            <th key={column}>{column}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {hasRows ? (
+          children
+        ) : (
+          <tr>
+            <td colSpan={columns.length}>
+              <div className="empty-state">{emptyState ?? "No hay datos disponibles."}</div>
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  );
+}
+</file>
+
+<file path="src/components/filters.tsx">
+type FiltersProps = {
+  projects: { id: string; name: string }[];
+  projectId: string;
+  startDate: string;
+  endDate: string;
+  onChange: (next: { project_id?: string; start_date?: string; end_date?: string }) => void;
+};
+
+export default function Filters({
+  projects,
+  projectId,
+  startDate,
+  endDate,
+  onChange
+}: FiltersProps) {
+  return (
+    <div className="filters">
+      <select
+        className="select"
+        value={projectId}
+        onChange={(event) => onChange({ project_id: event.target.value })}
+      >
+        <option value="">Todos los proyectos</option>
+        {projects.map((project) => (
+          <option key={project.id} value={project.id}>
+            {project.name}
+          </option>
+        ))}
+      </select>
+      <input
+        className="date-input"
+        type="date"
+        value={startDate}
+        onChange={(event) => onChange({ start_date: event.target.value })}
+      />
+      <input
+        className="date-input"
+        type="date"
+        value={endDate}
+        onChange={(event) => onChange({ end_date: event.target.value })}
+      />
+    </div>
+  );
+}
+</file>
+
+<file path="src/lib/auth.ts">
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
+import type { User } from "@supabase/supabase-js";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+const superuserEmails = (process.env.SUPERUSER_EMAILS ?? "")
+  .split(",")
+  .map((email) => email.trim().toLowerCase())
+  .filter(Boolean);
+
+async function getSupabaseAuthClient() {
+  const cookieStore = await cookies();
+  return createServerClient(supabaseUrl, supabaseAnonKey, {
+    cookies: {
+      get: (name: string) => cookieStore.get(name)?.value,
+      set: (_name: string, _value: string, _options: CookieOptions) => {},
+      remove: (_name: string, _options: CookieOptions) => {}
+    }
+  });
+}
+
+export async function requireAuth() {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return {
+      response: NextResponse.json(
+        { error: "Faltan variables de entorno de Supabase" },
+        { status: 500 }
+      )
+    };
+  }
+
+  const supabase = await getSupabaseAuthClient();
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data.user) {
+    return { response: NextResponse.json({ error: "No autorizado" }, { status: 401 }) };
+  }
+
+  return { user: data.user };
+}
+
+export type Role =
+  | "master"
+  | "gerencia"
+  | "financiero"
+  | "contabilidad"
+  | "ventas"
+  | "inventario";
+
+export function getUserRole(user: User | null) {
+  const role =
+    (user?.app_metadata?.role as string | undefined) ??
+    (user?.user_metadata?.role as string | undefined);
+  return role ?? null;
+}
+
+export function isSuperuser(email?: string | null) {
+  if (!email) {
+    return false;
+  }
+  return superuserEmails.includes(email.toLowerCase());
+}
+
+export function hasRole(user: User | null, roles: Role[]) {
+  const role = getUserRole(user);
+  if (!role) {
+    return false;
+  }
+  return roles.includes(role as Role);
+}
+
+export async function requireSuperuser() {
+  const auth = await requireAuth();
+  if (auth.response) {
+    return auth;
+  }
+  const allowed =
+    isSuperuser(auth.user?.email ?? null) ||
+    hasRole(auth.user ?? null, ["master"]);
+  if (!allowed) {
+    return { response: NextResponse.json({ error: "No autorizado" }, { status: 403 }) };
+  }
+  return auth;
+}
+</file>
+
+<file path="src/lib/supabase.ts">
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+export const supabaseAdmin =
+  supabaseUrl && supabaseServiceKey
+    ? createClient(supabaseUrl, supabaseServiceKey, {
+        auth: { persistSession: false, autoRefreshToken: false }
+      })
+    : null;
+
+export function getSupabaseServerClient() {
+  return supabaseAdmin ?? supabase;
+}
+
+export function getSupabaseConfigError() {
+  if (!supabaseUrl) {
+    return "Missing NEXT_PUBLIC_SUPABASE_URL";
+  }
+  if (!supabaseAnonKey && !supabaseServiceKey) {
+    return "Missing SUPABASE_SERVICE_ROLE_KEY or NEXT_PUBLIC_SUPABASE_ANON_KEY";
+  }
+  return null;
+}
+</file>
+
+<file path="src/lib/types.ts">
+export type UnitStatus = "available" | "reserved" | "sold" | "cancelled";
+export type SaleStatus = "active" | "cancelled" | "completed";
+export type PaymentType = "reservation" | "down_payment" | "financed_payment";
+
+export type Project = {
+  id: string;
+  name: string;
+  created_at: string;
+};
+
+export type Unit = {
+  id: string;
+  project_id: string;
+  unit_number: string;
+  price_with_tax: number;
+  price_without_tax: number;
+  down_payment_amount: number;
+  status: UnitStatus;
+  created_at: string;
+};
+
+export type Client = {
+  id: string;
+  full_name: string;
+  email: string | null;
+  phone: string | null;
+  created_at: string;
+};
+
+export type Sale = {
+  id: string;
+  project_id: string;
+  unit_id: string;
+  client_id: string;
+  sales_rep_id: string;
+  status: SaleStatus;
+  sale_date: string;
+  price_with_tax: number;
+  price_without_tax: number;
+  down_payment_amount: number;
+  financed_amount: number;
+  referral_name: string | null;
+  referral_applies: boolean;
+  promise_signed_date: string | null;
+  deed_signed_date: string | null;
+  created_at: string;
+};
+
+export type Payment = {
+  id: string;
+  sale_id: string;
+  payment_date: string;
+  amount: number;
+  payment_type: PaymentType;
+  payment_method: string | null;
+  notes: string | null;
+  created_at: string;
+};
+
+export type Commission = {
+  id: string;
+  sale_id: string;
+  payment_id: string;
+  recipient_id: string;
+  recipient_name: string;
+  phase: number;
+  rate: number;
+  base_amount: number;
+  commission_amount: number;
+  paid: boolean;
+  paid_date: string | null;
+  created_at: string;
+};
+
+export type CommissionRate = {
+  id: string;
+  recipient_id: string;
+  recipient_name: string;
+  rate: number;
+  recipient_type: string;
+  description: string;
+  always_paid: boolean;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CommissionPhase = {
+  phase: number;
+  name: string;
+  percentage: number;
+  description: string;
+};
+</file>
+
+<file path="middleware.ts">
+import { NextResponse, type NextRequest } from "next/server";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+
+export async function middleware(request: NextRequest) {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return NextResponse.next();
+  }
+
+  const response = NextResponse.next();
+
+  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+    cookies: {
+      get: (name: string) => request.cookies.get(name)?.value,
+      set: (name: string, value: string, options: CookieOptions) => {
+        response.cookies.set({ name, value, ...options });
+      },
+      remove: (name: string, options: CookieOptions) => {
+        response.cookies.set({ name, value: "", ...options });
+      }
+    }
+  });
+
+  const { data } = await supabase.auth.getUser();
+  const isLoginRoute = request.nextUrl.pathname.startsWith("/login");
+
+  if (!data.user && !isLoginRoute) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/login";
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  if (data.user && isLoginRoute) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/";
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  return response;
+}
+
+export const config = {
+  matcher: [
+    "/((?!_next|api|favicon.ico|favicon.png|og-image.png|og-image.jpg|.*\\.(?:svg|png|jpg|jpeg|gif|webp)).*)"
+  ]
+};
+</file>
+
+<file path="next-env.d.ts">
+/// <reference types="next" />
+/// <reference types="next/image-types/global" />
+/// <reference path="./.next/types/routes.d.ts" />
+
+// NOTE: This file should not be edited
+// see https://nextjs.org/docs/app/api-reference/config/typescript for more information.
+</file>
+
+<file path="package.json">
+{
+  "name": "orion",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.5.2",
+    "@supabase/supabase-js": "^2.49.1",
+    "next": "^15.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "xlsx": "^0.18.5",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "typescript": "^5.7.2"
+  }
+}
+</file>
+
+<file path="src/app/api/commission-phases/route.ts">
+import { getSupabaseConfigError, getSupabaseServerClient } from "@/lib/supabase";
+import { jsonError, jsonOk } from "@/lib/api";
+import { requireAuth } from "@/lib/auth";
+import type { CommissionPhase } from "@/lib/types";
+
+export async function GET() {
+  try {
+    const configError = getSupabaseConfigError();
+    if (configError) {
+      return jsonError(500, configError);
+    }
+    const auth = await requireAuth();
+    if (auth.response) {
+      return auth.response;
+    }
+    const supabase = getSupabaseServerClient();
+    const { data, error } = await supabase
+      .from("commission_phases")
+      .select("*")
+      .order("phase", { ascending: true });
+
+    if (error) {
+      return jsonError(500, "Database error", error.message);
+    }
+
+    return jsonOk({ data: (data ?? []) as CommissionPhase[] });
+  } catch (err) {
+    return jsonError(500, "Database error", err);
+  }
+}
+</file>
+
+<file path="src/app/api/commission-rates/route.ts">
+import { z } from "zod";
+import { getSupabaseConfigError, getSupabaseServerClient } from "@/lib/supabase";
+import { jsonError, jsonOk, parseQuery } from "@/lib/api";
+import { requireAuth } from "@/lib/auth";
+import type { CommissionRate } from "@/lib/types";
+
+const commissionRatesQuerySchema = z.object({
+  recipient_type: z.string().optional(),
+  active: z.string().optional()
+});
+
+export async function GET(request: Request) {
+  const configError = getSupabaseConfigError();
+  if (configError) {
+    return jsonError(500, configError);
+  }
+  const auth = await requireAuth();
+  if (auth.response) {
+    return auth.response;
+  }
+  const supabase = getSupabaseServerClient();
+  const { data: query, error } = parseQuery(request, commissionRatesQuerySchema);
+  if (error) {
+    return jsonError(400, error.error, error.details);
+  }
+
+  try {
+    let builder = supabase.from("commission_rates").select("*");
+
+    if (query?.recipient_type) {
+      builder = builder.eq("recipient_type", query.recipient_type);
+    }
+    if (query?.active) {
+      builder = builder.eq("active", query.active === "true");
+    }
+
+    const { data, error: dbError } = await builder.order("created_at", { ascending: false });
+
+    if (dbError) {
+      return jsonError(500, "Database error", dbError.message);
+    }
+
+    return jsonOk({ data: (data ?? []) as CommissionRate[] });
+  } catch (error) {
+    return jsonError(500, "Database error", error);
+  }
+}
+</file>
+
+<file path="src/app/page.tsx">
+import { Suspense } from "react";
+import { headers } from "next/headers";
+import DashboardClient from "./dashboard-client";
+import type { Commission, Payment, Sale } from "@/lib/types";
+
+type DashboardData = {
+  payments: Payment[];
+  commissions: Commission[];
+  sales: Sale[];
+};
+
+async function getBaseUrl() {
+  const headerList = await headers();
+  const host = headerList.get("host");
+  const protocol = host?.includes("localhost") ? "http" : "https";
+  return host ? `${protocol}://${host}` : "";
+}
+
+async function fetchJson<T>(path: string) {
+  const baseUrl = await getBaseUrl();
+  if (!baseUrl) {
+    return { data: [] as T };
+  }
+  const res = await fetch(`${baseUrl}${path}`, { cache: "no-store" });
+  if (!res.ok) {
+    throw new Error(`No se pudo cargar ${path}`);
+  }
+  return (await res.json()) as { data: T };
+}
+
+export default async function DashboardPage() {
+  let initialData: DashboardData = { payments: [], commissions: [], sales: [] };
+
+  try {
+    const [payments, commissions, sales] = await Promise.all([
+      fetchJson<Payment[]>("/api/payments"),
+      fetchJson<Commission[]>("/api/commissions"),
+      fetchJson<Sale[]>("/api/sales")
+    ]);
+
+    initialData = {
+      payments: payments.data,
+      commissions: commissions.data,
+      sales: sales.data
+    };
+  } catch {
+    initialData = { payments: [], commissions: [], sales: [] };
+  }
+
+  return (
+    <Suspense
+      fallback={
+        <section className="card skeleton">
+          <div className="skeleton-line" style={{ width: "40%" }} />
+          <div className="skeleton-line" style={{ width: "90%" }} />
+          <div className="skeleton-line" style={{ width: "85%" }} />
+          <div className="skeleton-line" style={{ width: "80%" }} />
+        </section>
+      }
+    >
+      <DashboardClient initialData={initialData} />
+    </Suspense>
+  );
+}
+</file>
+
+<file path="src/lib/api.ts">
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { getSupabaseServerClient } from "./supabase";
+
+export const paymentTypeValues = [
+  "reservation",
+  "down_payment",
+  "financed_payment"
+] as const;
+
+export const unitStatusValues = [
+  "available",
+  "reserved",
+  "sold",
+  "cancelled"
+] as const;
+
+export const saleStatusValues = [
+  "active",
+  "cancelled",
+  "completed"
+] as const;
+
+export type ApiError = {
+  error: string;
+  details?: unknown;
+};
+
+export function jsonError(status: number, message: string, details?: unknown) {
+  return NextResponse.json({ error: message, details }, { status });
+}
+
+export function jsonOk<T>(payload: T, init?: ResponseInit) {
+  return NextResponse.json(payload, init);
+}
+
+export async function parseJson<T>(
+  request: Request,
+  schema: z.ZodSchema<T>
+): Promise<{ data?: T; error?: ApiError }> {
+  try {
+    const body = await request.json();
+    const parsed = schema.safeParse(body);
+    if (!parsed.success) {
+      return { error: { error: "Invalid input", details: parsed.error.flatten() } };
+    }
+    return { data: parsed.data };
+  } catch (error) {
+    return { error: { error: "Invalid input", details: error } };
+  }
+}
+
+export function parseQuery<T>(
+  request: Request,
+  schema: z.ZodSchema<T>
+): { data?: T; error?: ApiError } {
+  const params = Object.fromEntries(new URL(request.url).searchParams.entries());
+  const parsed = schema.safeParse(params);
+  if (!parsed.success) {
+    return { error: { error: "Invalid input", details: parsed.error.flatten() } };
+  }
+  return { data: parsed.data };
+}
+
+export async function assertExists(
+  table: string,
+  id: string,
+  notFoundMessage: string
+): Promise<{ error?: ApiError }> {
+  const supabase = getSupabaseServerClient();
+  const { data, error } = await supabase
+    .from(table)
+    .select("id")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) {
+    return { error: { error: "Database error", details: error.message } };
+  }
+
+  if (!data) {
+    return { error: { error: notFoundMessage } };
+  }
+
+  return {};
+}
+</file>
+
+<file path="src/app/api/commissions/route.ts">
+import { z } from "zod";
+import { getSupabaseConfigError, getSupabaseServerClient } from "@/lib/supabase";
+import { jsonError, jsonOk, parseQuery } from "@/lib/api";
+import { requireAuth } from "@/lib/auth";
+import type { Commission } from "@/lib/types";
+
+const commissionsQuerySchema = z.object({
+  sale_id: z.string().uuid().optional(),
+  recipient_id: z.string().optional(),
+  paid: z.string().optional(),
+  start_date: z.string().optional(),
+  end_date: z.string().optional()
+});
+
+type CommissionWithContext = Commission & {
+  payment_amount: number | null;
+  payment_date: string | null;
+  sale_date: string | null;
+  unit_id: string | null;
+  client_id: string | null;
+};
+
+export async function GET(request: Request) {
+  const configError = getSupabaseConfigError();
+  if (configError) {
+    return jsonError(500, configError);
+  }
+  const auth = await requireAuth();
+  if (auth.response) {
+    return auth.response;
+  }
+  const supabase = getSupabaseServerClient();
+  const { data: query, error } = parseQuery(request, commissionsQuerySchema);
+  if (error) {
+    return jsonError(400, error.error, error.details);
+  }
+
+  try {
+    let builder = supabase
+      .from("commissions")
+      .select(
+        "*, payments ( amount, payment_date ), sales ( sale_date, unit_id, client_id )",
+        { count: "exact" }
+      );
+
+    if (query?.sale_id) {
+      builder = builder.eq("sale_id", query.sale_id);
+    }
+    if (query?.recipient_id) {
+      builder = builder.eq("recipient_id", query.recipient_id);
+    }
+    if (query?.paid) {
+      builder = builder.eq("paid", query.paid === "true");
+    }
+    if (query?.start_date) {
+      builder = builder.gte("created_at", query.start_date);
+    }
+    if (query?.end_date) {
+      builder = builder.lte("created_at", query.end_date);
+    }
+
+    const { data, error: dbError, count } = await builder.order("created_at", {
+      ascending: false
+    });
+
+    if (dbError) {
+      return jsonError(500, "Database error", dbError.message);
+    }
+
+    const mapped = (data ?? []).map((commission) => {
+      const payment = commission.payments;
+      const sale = commission.sales;
+
+      const typed = commission as Commission;
+      return {
+        ...typed,
+        payment_amount: payment?.amount ?? null,
+        payment_date: payment?.payment_date ?? null,
+        sale_date: sale?.sale_date ?? null,
+        unit_id: sale?.unit_id ?? null,
+        client_id: sale?.client_id ?? null
+      } satisfies CommissionWithContext;
+    });
+
+    const totalAmount = mapped.reduce(
+      (sum, item) => sum + (item.commission_amount ?? 0),
+      0
+    );
+
+    return jsonOk({ data: mapped, total_amount: totalAmount, count: count ?? 0 });
+  } catch (error) {
+    return jsonError(500, "Database error", error);
+  }
+}
+</file>
+
+<file path="src/app/api/payments/route.ts">
+import { z } from "zod";
+import { getSupabaseConfigError, getSupabaseServerClient } from "@/lib/supabase";
+import { jsonError, jsonOk, parseJson, parseQuery, paymentTypeValues, assertExists } from "@/lib/api";
+import { requireAuth } from "@/lib/auth";
+import type { Commission, Payment, PaymentType } from "@/lib/types";
+
+const paymentQuerySchema = z.object({
+  sale_id: z.string().uuid().optional(),
+  project_id: z.string().uuid().optional(),
+  payment_type: z.enum(paymentTypeValues).optional(),
+  start_date: z.string().optional(),
+  end_date: z.string().optional()
+});
+
+const createPaymentSchema = z.object({
+  sale_id: z.string().uuid(),
+  payment_date: z.string(),
+  amount: z.number().positive(),
+  payment_type: z.enum(paymentTypeValues),
+  payment_method: z.string().optional(),
+  notes: z.string().optional()
+});
+
+type PaymentWithContext = Payment & {
+  unit_number: string | null;
+  client_name: string | null;
+};
+
+export async function GET(request: Request) {
+  const configError = getSupabaseConfigError();
+  if (configError) {
+    return jsonError(500, configError);
+  }
+  const auth = await requireAuth();
+  if (auth.response) {
+    return auth.response;
+  }
+  const supabase = getSupabaseServerClient();
+  const { data: query, error } = parseQuery(request, paymentQuerySchema);
+  if (error) {
+    return jsonError(400, error.error, error.details);
+  }
+
+  try {
+    let builder = supabase
+      .from("payments")
+      .select(
+        "*, sales ( id, unit_id, client_id, project_id, units ( unit_number ), clients ( full_name ) )",
+        { count: "exact" }
+      );
+
+    if (query?.sale_id) {
+      builder = builder.eq("sale_id", query.sale_id);
+    }
+    if (query?.project_id) {
+      builder = builder.eq("sales.project_id", query.project_id);
+    }
+    if (query?.payment_type) {
+      builder = builder.eq("payment_type", query.payment_type);
+    }
+    if (query?.start_date) {
+      builder = builder.gte("payment_date", query.start_date);
+    }
+    if (query?.end_date) {
+      builder = builder.lte("payment_date", query.end_date);
+    }
+
+    const { data, error: dbError, count } = await builder.order("payment_date", {
+      ascending: false
+    });
+
+    if (dbError) {
+      return jsonError(500, "Database error", dbError.message);
+    }
+
+    const mapped = (data ?? []).map((payment) => {
+      const sale = payment.sales;
+      const unitRel = sale?.units;
+      const clientRel = sale?.clients;
+      const unitNumber = Array.isArray(unitRel)
+        ? unitRel[0]?.unit_number ?? null
+        : unitRel?.unit_number ?? null;
+      const clientName = Array.isArray(clientRel)
+        ? clientRel[0]?.full_name ?? null
+        : clientRel?.full_name ?? null;
+
+      const typedPayment = payment as Payment;
+      return {
+        ...typedPayment,
+        unit_number: unitNumber,
+        client_name: clientName
+      } satisfies PaymentWithContext;
+    });
+
+    return jsonOk({ data: mapped, count: count ?? 0 });
+  } catch (error) {
+    return jsonError(500, "Database error", error);
+  }
+}
+
+export async function POST(request: Request) {
+  const configError = getSupabaseConfigError();
+  if (configError) {
+    return jsonError(500, configError);
+  }
+  const auth = await requireAuth();
+  if (auth.response) {
+    return auth.response;
+  }
+  const supabase = getSupabaseServerClient();
+  const { data: payload, error } = await parseJson(request, createPaymentSchema);
+  if (error || !payload) {
+    return jsonError(400, error?.error ?? "Invalid input", error?.details);
+  }
+
+  const { error: saleError } = await assertExists(
+    "sales",
+    payload.sale_id,
+    "Sale not found"
+  );
+  if (saleError) {
+    return jsonError(saleError.error === "Sale not found" ? 404 : 500, saleError.error, saleError.details);
+  }
+
+  try {
+    const { data: inserted, error: insertError } = await supabase
+      .from("payments")
+      .insert({
+        sale_id: payload.sale_id,
+        payment_date: payload.payment_date,
+        amount: payload.amount,
+        payment_type: payload.payment_type as PaymentType,
+        payment_method: payload.payment_method ?? null,
+        notes: payload.notes ?? null
+      })
+      .select("*")
+      .single();
+
+    if (insertError || !inserted) {
+      return jsonError(500, "Database error", insertError?.message);
+    }
+
+    const { data: commissions, error: commissionError } = await supabase
+      .from("commissions")
+      .select("*")
+      .eq("payment_id", inserted.id);
+
+    if (commissionError) {
+      return jsonError(500, "Database error", commissionError.message);
+    }
+
+    return jsonOk({ data: inserted as Payment, commissions: (commissions ?? []) as Commission[] }, { status: 201 });
+  } catch (err) {
+    return jsonError(500, "Database error", err);
+  }
+}
+</file>
+
+<file path="src/app/api/sales/route.ts">
+import { z } from "zod";
+import { getSupabaseConfigError, getSupabaseServerClient } from "@/lib/supabase";
+import { assertExists, jsonError, jsonOk, parseJson, parseQuery, saleStatusValues } from "@/lib/api";
+import { requireAuth } from "@/lib/auth";
+import type { Sale } from "@/lib/types";
+
+const salesQuerySchema = z.object({
+  project_id: z.string().uuid().optional(),
+  client_id: z.string().uuid().optional(),
+  status: z.enum(saleStatusValues).optional(),
+  sales_rep_id: z.string().optional(),
+  distinct: z.string().optional()
+});
+
+const createSaleSchema = z.object({
+  project_id: z.string().uuid(),
+  unit_id: z.string().uuid(),
+  client_id: z.string().uuid(),
+  sales_rep_id: z.string().min(1),
+  sale_date: z.string(),
+  price_with_tax: z.number().positive(),
+  price_without_tax: z.number().positive(),
+  down_payment_amount: z.number().nonnegative(),
+  financed_amount: z.number().nonnegative(),
+  referral_name: z.string().optional(),
+  referral_applies: z.boolean(),
+  promise_signed_date: z.string().optional(),
+  deed_signed_date: z.string().optional()
+});
+
+type SaleWithContext = Sale & {
+  project_name: string | null;
+  unit_number: string | null;
+  client_name: string | null;
+};
+
+export async function GET(request: Request) {
+  const configError = getSupabaseConfigError();
+  if (configError) {
+    return jsonError(500, configError);
+  }
+  const auth = await requireAuth();
+  if (auth.response) {
+    return auth.response;
+  }
+  const supabase = getSupabaseServerClient();
+  const { data: query, error } = parseQuery(request, salesQuerySchema);
+  if (error) {
+    return jsonError(400, error.error, error.details);
+  }
+
+  try {
+    if (query?.distinct === "project") {
+      const { data, error: dbError, count } = await supabase
+        .from("projects")
+        .select("id, name", { count: "exact" })
+        .order("name", { ascending: true });
+
+      if (dbError) {
+        return jsonError(500, "Database error", dbError.message);
+      }
+
+      return jsonOk({ data: data ?? [], count: count ?? 0 });
+    }
+
+    let builder = supabase
+      .from("sales")
+      .select(
+        "*, projects ( name ), units ( unit_number ), clients ( full_name )",
+        { count: "exact" }
+      );
+
+    if (query?.project_id) {
+      builder = builder.eq("project_id", query.project_id);
+    }
+    if (query?.client_id) {
+      builder = builder.eq("client_id", query.client_id);
+    }
+    if (query?.status) {
+      builder = builder.eq("status", query.status);
+    }
+    if (query?.sales_rep_id) {
+      builder = builder.eq("sales_rep_id", query.sales_rep_id);
+    }
+
+    const { data, error: dbError, count } = await builder.order("sale_date", {
+      ascending: false
+    });
+
+    if (dbError) {
+      return jsonError(500, "Database error", dbError.message);
+    }
+
+    const mapped = (data ?? []).map((sale) => {
+      const projectName = sale.projects?.name ?? null;
+      const unitRel = sale.units;
+      const clientRel = sale.clients;
+      const unitNumber = Array.isArray(unitRel)
+        ? unitRel[0]?.unit_number ?? null
+        : unitRel?.unit_number ?? null;
+      const clientName = Array.isArray(clientRel)
+        ? clientRel[0]?.full_name ?? null
+        : clientRel?.full_name ?? null;
+
+      const typedSale = sale as Sale;
+      return {
+        ...typedSale,
+        project_name: projectName,
+        unit_number: unitNumber,
+        client_name: clientName
+      } satisfies SaleWithContext;
+    });
+
+    return jsonOk({ data: mapped, count: count ?? 0 });
+  } catch (error) {
+    return jsonError(500, "Database error", error);
+  }
+}
+
+export async function POST(request: Request) {
+  const configError = getSupabaseConfigError();
+  if (configError) {
+    return jsonError(500, configError);
+  }
+  const auth = await requireAuth();
+  if (auth.response) {
+    return auth.response;
+  }
+  const supabase = getSupabaseServerClient();
+  const { data: payload, error } = await parseJson(request, createSaleSchema);
+  if (error || !payload) {
+    return jsonError(400, error?.error ?? "Invalid input", error?.details);
+  }
+
+  const { error: projectError } = await assertExists(
+    "projects",
+    payload.project_id,
+    "Project not found"
+  );
+  if (projectError) {
+    return jsonError(projectError.error === "Project not found" ? 404 : 500, projectError.error, projectError.details);
+  }
+
+  const { error: clientError } = await assertExists(
+    "clients",
+    payload.client_id,
+    "Client not found"
+  );
+  if (clientError) {
+    return jsonError(clientError.error === "Client not found" ? 404 : 500, clientError.error, clientError.details);
+  }
+
+  const { error: unitError } = await assertExists(
+    "units",
+    payload.unit_id,
+    "Unit not found"
+  );
+  if (unitError) {
+    return jsonError(unitError.error === "Unit not found" ? 404 : 500, unitError.error, unitError.details);
+  }
+
+  try {
+    const { data: updatedUnit, error: unitUpdateError } = await supabase
+      .from("units")
+      .update({ status: "sold" })
+      .eq("id", payload.unit_id)
+      .eq("status", "available")
+      .select("id")
+      .maybeSingle();
+
+    if (unitUpdateError) {
+      return jsonError(500, "Database error", unitUpdateError.message);
+    }
+
+    if (!updatedUnit) {
+      return jsonError(400, "Unit is not available for sale");
+    }
+
+    const { data: inserted, error: insertError } = await supabase
+      .from("sales")
+      .insert({
+        project_id: payload.project_id,
+        unit_id: payload.unit_id,
+        client_id: payload.client_id,
+        sales_rep_id: payload.sales_rep_id ?? null,
+        sale_date: payload.sale_date,
+        price_with_tax: payload.price_with_tax,
+        price_without_tax: payload.price_without_tax,
+        down_payment_amount: payload.down_payment_amount,
+        financed_amount: payload.financed_amount,
+        referral_name: payload.referral_name ?? null,
+        referral_applies: payload.referral_applies,
+        promise_signed_date: payload.promise_signed_date ?? null,
+        deed_signed_date: payload.deed_signed_date ?? null
+      })
+      .select("*")
+      .single();
+
+    if (insertError || !inserted) {
+      return jsonError(500, "Database error", insertError?.message);
+    }
+
+    return jsonOk({ data: inserted as Sale }, { status: 201 });
+  } catch (err) {
+    return jsonError(500, "Database error", err);
+  }
+}
+</file>
+
+<file path="src/app/layout.tsx">
+import type { ReactNode } from "react";
+import "./globals.css";
+
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined);
+
+export const metadata = {
+  title: "Orion | Reservas, Pagos y Comisiones",
+  description: "Panel de Orion.",
+  metadataBase: siteUrl ? new URL(siteUrl) : undefined,
+  icons: {
+    icon: "/favicon.png"
+  },
+  openGraph: {
+    title: "Orion | Reservas, Pagos y Comisiones",
+    description: "Panel de Orion.",
+    url: siteUrl ?? "https://example.com",
+    siteName: "Orion",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Orion",
+        type: "image/jpeg"
+      }
+    ]
+  }
+};
+
+type RootLayoutProps = {
+  children: ReactNode;
+};
+
+export default function RootLayout({ children }: RootLayoutProps) {
+  return (
+    <html lang="es-419">
+      <body>
+        <main className="page">
+          {children}
+        </main>
+      </body>
+    </html>
+  );
+}
+</file>
+
+<file path="src/app/dashboard-client.tsx">
+"use client";
+
+import { Fragment, useMemo, useState, useEffect, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import type { Commission, Payment, Sale } from "@/lib/types";
+import { supabaseBrowser } from "@/lib/supabase-browser";
+import Filters from "@/components/filters";
+import KpiCard from "@/components/kpi-card";
+import Tabs from "@/components/tabs";
+import DataTable from "@/components/data-table";
+
+type DashboardData = {
+  payments: Payment[];
+  commissions: Commission[];
+  sales: Sale[];
+};
+
+type SessionInfo = {
+  email: string | null;
+  is_superuser: boolean;
+  role: string | null;
+};
+
+type ProjectOption = {
+  id: string;
+  name: string;
+};
+
+type PaymentWithContext = Payment & {
+  unit_number?: string | null;
+  client_name?: string | null;
+};
+
+type SaleWithContext = Sale & {
+  project_name?: string | null;
+  unit_number?: string | null;
+  client_name?: string | null;
+};
+
+type CommissionWithContext = Commission & {
+  payment_amount?: number | null;
+  payment_date?: string | null;
+  sale_date?: string | null;
+  unit_id?: string | null;
+  client_id?: string | null;
+  phase_name?: string | null;
+};
+
+type TabKey = "payments" | "commissions" | "sales";
+
+const currency = new Intl.NumberFormat("es-GT", {
+  style: "currency",
+  currency: "GTQ",
+  maximumFractionDigits: 0
+});
+
+function formatPaymentType(type: string) {
+  const map: Record<string, string> = {
+    down_payment: "Enganche",
+    reservation: "Reserva"
+  };
+  return map[type] ?? type;
+}
+
+export default function DashboardClient({
+  initialData
+}: {
+  initialData: DashboardData;
+}) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [tab, setTab] = useState<TabKey>("payments");
+  const [payments, setPayments] = useState<PaymentWithContext[]>(initialData.payments);
+  const [commissions, setCommissions] = useState<CommissionWithContext[]>(
+    initialData.commissions
+  );
+  const [sales, setSales] = useState<SaleWithContext[]>(initialData.sales);
+  const [projects, setProjects] = useState<ProjectOption[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [expandedPaymentId, setExpandedPaymentId] = useState<string | null>(null);
+  const [selectedPaymentId, setSelectedPaymentId] = useState<string | null>(null);
+  const [selectedSaleId, setSelectedSaleId] = useState<string | null>(null);
+  const [selectedCommissionId, setSelectedCommissionId] = useState<string | null>(null);
+  const [paidOverrides, setPaidOverrides] = useState<Record<string, boolean>>({});
+  const [isSigningOut, setIsSigningOut] = useState(false);
+  const [sessionInfo, setSessionInfo] = useState<SessionInfo | null>(null);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteStatus, setInviteStatus] = useState<string | null>(null);
+  const [isInviting, setIsInviting] = useState(false);
+  const [expandedCommissionPaymentId, setExpandedCommissionPaymentId] = useState<
+    string | null
+  >(null);
+
+  const paymentDialogRef = useRef<HTMLDialogElement>(null);
+  const saleDialogRef = useRef<HTMLDialogElement>(null);
+  const newSaleDialogRef = useRef<HTMLDialogElement>(null);
+  const commissionDialogRef = useRef<HTMLDialogElement>(null);
+  const adminDialogRef = useRef<HTMLDialogElement>(null);
+
+  const projectId = searchParams.get("project_id") ?? "";
+  const startDate = searchParams.get("start_date") ?? "";
+  const endDate = searchParams.get("end_date") ?? "";
+
+  const pendingPayments = useMemo(() => {
+    const downPaymentTotal = sales.reduce(
+      (sum, sale) => sum + (sale.down_payment_amount ?? 0),
+      0
+    );
+    const paidDownPayments = payments
+      .filter((payment) => payment.payment_type === "down_payment")
+      .reduce((sum, payment) => sum + payment.amount, 0);
+    return Math.max(0, downPaymentTotal - paidDownPayments);
+  }, [sales, payments]);
+
+  const totalPayments = useMemo(
+    () => payments.reduce((sum, payment) => sum + payment.amount, 0),
+    [payments]
+  );
+
+  const totalCommissions = useMemo(
+    () => commissions.reduce((sum, commission) => sum + commission.commission_amount, 0),
+    [commissions]
+  );
+
+  useEffect(() => {
+    async function fetchProjects() {
+      try {
+        const response = await fetch("/api/sales?distinct=project", {
+          cache: "no-store"
+        });
+        const payload = await response.json();
+        if (!response.ok) {
+          throw new Error(payload.error ?? "No se pudieron cargar los proyectos.");
+        }
+        setProjects(payload.data ?? []);
+      } catch {
+        setProjects([]);
+      }
+    }
+
+    fetchProjects();
+  }, []);
+
+  useEffect(() => {
+    async function fetchSession() {
+      try {
+        const response = await fetch("/api/me", { cache: "no-store" });
+        const payload = await response.json();
+        if (!response.ok) {
+          return;
+        }
+        setSessionInfo(payload.data ?? null);
+      } catch {
+        setSessionInfo(null);
+      }
+    }
+
+    fetchSession();
+  }, []);
+
+  useEffect(() => {
+    async function fetchData() {
+      setIsLoading(true);
+      setError(null);
+
+      const query = new URLSearchParams();
+      if (projectId) {
+        query.set("project_id", projectId);
+      }
+      if (startDate) {
+        query.set("start_date", startDate);
+      }
+      if (endDate) {
+        query.set("end_date", endDate);
+      }
+
+      try {
+        const [paymentsRes, commissionsRes, salesRes] = await Promise.all([
+          fetch(`/api/payments?${query.toString()}`, { cache: "no-store" }),
+          fetch(`/api/commissions?${query.toString()}`, { cache: "no-store" }),
+          fetch(`/api/sales?${query.toString()}`, { cache: "no-store" })
+        ]);
+
+        const [paymentsPayload, commissionsPayload, salesPayload] = await Promise.all([
+          paymentsRes.json(),
+          commissionsRes.json(),
+          salesRes.json()
+        ]);
+
+        if (!paymentsRes.ok || !commissionsRes.ok || !salesRes.ok) {
+          const message =
+            paymentsPayload?.error ||
+            commissionsPayload?.error ||
+            salesPayload?.error ||
+            "No se pudieron cargar los datos del panel.";
+          throw new Error(message);
+        }
+
+        setPayments(paymentsPayload.data ?? []);
+        setCommissions(commissionsPayload.data ?? []);
+        setSales(salesPayload.data ?? []);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Error inesperado");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [projectId, startDate, endDate]);
+
+  const paymentCommissions = useMemo(() => {
+    return commissions.reduce<Record<string, CommissionWithContext[]>>(
+      (acc, commission) => {
+        const paymentId = commission.payment_id ?? "unassigned";
+        if (!acc[paymentId]) {
+          acc[paymentId] = [];
+        }
+        acc[paymentId].push(commission);
+        return acc;
+      },
+      {}
+    );
+  }, [commissions]);
+
+  const groupedCommissions = useMemo(() => {
+    return Object.entries(paymentCommissions).map(([paymentId, items]) => ({
+      paymentId,
+      items,
+        total: items.reduce((sum, item) => sum + item.commission_amount, 0)
+    }));
+  }, [paymentCommissions]);
+
+  const commissionCeilingBreaches = useMemo(() => {
+    return groupedCommissions
+      .map((group) => {
+        const baseAmount = group.items[0]?.base_amount ?? 0;
+        const effectiveRate = baseAmount > 0 ? group.total / baseAmount : 0;
+        return {
+          paymentId: group.paymentId,
+          effectiveRate
+        };
+      })
+      .filter((item) => item.effectiveRate > 0.05);
+  }, [groupedCommissions]);
+
+  function updateFilters(next: { project_id?: string; start_date?: string; end_date?: string }) {
+    const nextParams = new URLSearchParams(searchParams.toString());
+
+    if (next.project_id !== undefined) {
+      if (next.project_id) {
+        nextParams.set("project_id", next.project_id);
+      } else {
+        nextParams.delete("project_id");
+      }
+    }
+
+    if (next.start_date !== undefined) {
+      if (next.start_date) {
+        nextParams.set("start_date", next.start_date);
+      } else {
+        nextParams.delete("start_date");
+      }
+    }
+
+    if (next.end_date !== undefined) {
+      if (next.end_date) {
+        nextParams.set("end_date", next.end_date);
+      } else {
+        nextParams.delete("end_date");
+      }
+    }
+
+    router.replace(`?${nextParams.toString()}`);
+  }
+
+  function openPaymentModal(id: string) {
+    setSelectedPaymentId(id);
+    paymentDialogRef.current?.showModal();
+  }
+
+  function openSaleModal(id: string) {
+    setSelectedSaleId(id);
+    saleDialogRef.current?.showModal();
+  }
+
+  function openCommissionModal(id: string) {
+    setSelectedCommissionId(id);
+    commissionDialogRef.current?.showModal();
+  }
+
+  async function handleSignOut() {
+    setIsSigningOut(true);
+    await supabaseBrowser.auth.signOut();
+    router.replace("/login");
+    router.refresh();
+  }
+
+  async function handleInvite(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setInviteStatus(null);
+    setIsInviting(true);
+
+    try {
+      const response = await fetch("/api/admin/invite", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: inviteEmail })
+      });
+      const payload = await response.json();
+      if (!response.ok) {
+        throw new Error(payload.error ?? "No se pudo enviar la invitación.");
+      }
+      setInviteStatus(`Invitación enviada a ${payload.data?.email ?? inviteEmail}.`);
+      setInviteEmail("");
+    } catch (err) {
+      setInviteStatus(err instanceof Error ? err.message : "Error al enviar invitación.");
+    } finally {
+      setIsInviting(false);
+    }
+  }
+
+  const selectedPayment = payments.find((payment) => payment.id === selectedPaymentId);
+  const selectedSale = sales.find((sale) => sale.id === selectedSaleId);
+  const selectedCommission = commissions.find((commission) => commission.id === selectedCommissionId);
+
+  const selectedPaymentCommissions = selectedPayment
+    ? commissions.filter((commission) => commission.payment_id === selectedPayment.id)
+    : [];
+
+  const selectedSalePayments = selectedSale
+    ? payments.filter((payment) => payment.sale_id === selectedSale.id)
+    : [];
+
+  return (
+    <section className="page">
+      <header className="header">
+        <h1>Seguimiento de Pagos y Comisiones</h1>
+        <div className="header-actions">
+          <Filters
+            projects={projects}
+            projectId={projectId}
+            startDate={startDate}
+            endDate={endDate}
+            onChange={updateFilters}
+          />
+          <button className="button" onClick={() => newSaleDialogRef.current?.showModal()}>
+            + Nueva venta
+          </button>
+          {sessionInfo?.is_superuser || sessionInfo?.role === "master" ? (
+            <button
+              className="button secondary small"
+              onClick={() => adminDialogRef.current?.showModal()}
+            >
+              Master
+            </button>
+          ) : null}
+          <button className="button" onClick={handleSignOut} disabled={isSigningOut}>
+            {isSigningOut ? "Saliendo..." : "Salir"}
+          </button>
+        </div>
+      </header>
+
+      {error ? <div className="banner">{error}</div> : null}
+      {commissionCeilingBreaches.length ? (
+        <div className="banner danger">
+          Alerta: Se detectaron pagos con comisiones superiores al 5.00%. Revisa la
+          configuración de reglas.
+        </div>
+      ) : null}
+
+      <section className="kpi-grid">
+        <KpiCard label="Pagos totales" value={currency.format(totalPayments)} hint="Histórico" />
+        <KpiCard
+          label="Pagos pendientes"
+          value={currency.format(pendingPayments)}
+          hint="Saldo de enganche"
+        />
+        <KpiCard
+          label="Comisiones totales"
+          value={currency.format(totalCommissions)}
+          hint="Auto-calculado"
+          positive
+        />
+      </section>
+
+      <dialog ref={adminDialogRef}>
+        <div className="modal-content">
+          <div className="modal-header">
+            <h3>Master</h3>
+            <button
+              className="modal-close"
+              onClick={() => adminDialogRef.current?.close()}
+            >
+              ×
+            </button>
+          </div>
+          <p style={{ margin: 0, color: "var(--muted)" }}>
+            Envía un enlace mágico para crear usuarios.
+          </p>
+          <form onSubmit={handleInvite} style={{ display: "grid", gap: 12 }}>
+            <input
+              className="input"
+              type="email"
+              placeholder="Correo del usuario"
+              value={inviteEmail}
+              onChange={(event) => setInviteEmail(event.target.value)}
+              required
+            />
+            <button className="button" type="submit" disabled={isInviting}>
+              {isInviting ? "Enviando..." : "Enviar enlace mágico"}
+            </button>
+            {inviteStatus ? <div className="banner">{inviteStatus}</div> : null}
+          </form>
+        </div>
+      </dialog>
+
+      <Tabs
+        value={tab}
+        onChange={(value) => setTab(value as TabKey)}
+        tabs={[
+          { id: "payments", label: "Pagos" },
+          { id: "commissions", label: "Comisiones" },
+          { id: "sales", label: "Ventas" }
+        ]}
+      />
+
+      {isLoading ? (
+        <div className="card skeleton">
+          <div className="skeleton-line" style={{ width: "40%" }} />
+          <div className="skeleton-line" style={{ width: "90%" }} />
+          <div className="skeleton-line" style={{ width: "85%" }} />
+          <div className="skeleton-line" style={{ width: "80%" }} />
+        </div>
+      ) : (
+        <section className="table-card">
+          {tab === "payments" && (
+            <DataTable
+              columns={[
+                "Unidad #",
+                "Cliente",
+                "Monto",
+                "Fecha",
+                "Tipo",
+                "Acciones"
+              ]}
+              emptyState="Aún no hay pagos."
+            >
+              {payments.map((payment) => (
+                <Fragment key={payment.id}>
+                  <tr
+                    onClick={() =>
+                      setExpandedPaymentId((prev) => (prev === payment.id ? null : payment.id))
+                    }
+                  >
+                    <td>{payment.unit_number ?? "—"}</td>
+                    <td>{payment.client_name ?? "—"}</td>
+                    <td>{currency.format(payment.amount)}</td>
+                    <td>{payment.payment_date}</td>
+                    <td>
+                      <span className="pill">{formatPaymentType(payment.payment_type)}</span>
+                    </td>
+                    <td>
+                      <div className="row-actions">
+                        <button
+                          className="link-button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            openPaymentModal(payment.id);
+                          }}
+                        >
+                          Detalles
+                        </button>
+                        <button
+                          className="link-button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setExpandedPaymentId((prev) =>
+                              prev === payment.id ? null : payment.id
+                            );
+                          }}
+                        >
+                          {expandedPaymentId === payment.id ? "Ocultar" : "Desglose"}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  {expandedPaymentId === payment.id && (
+                    <tr>
+                      <td colSpan={6}>
+                        {paymentCommissions[payment.id]?.length ? (
+                          <div className="card">
+                            <strong>Desglose de comisiones</strong>
+                            {paymentCommissions[payment.id].map((commission) => (
+                              <div key={commission.id}>
+                                {commission.recipient_id ?? "Beneficiario"} ·{" "}
+                                {currency.format(commission.commission_amount)}
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="empty-state">
+                            No hay comisiones para este pago.
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
+              ))}
+            </DataTable>
+          )}
+
+          {tab === "commissions" && (
+            <DataTable
+              columns={[
+                "Beneficiario",
+                "Monto",
+                "Fase",
+                "Fecha de pago",
+                "Pagado",
+                "Acciones"
+              ]}
+              emptyState="Aún no hay comisiones."
+            >
+              {groupedCommissions.map((group) => (
+                <Fragment key={group.paymentId}>
+                  <tr
+                    onClick={() =>
+                      setExpandedCommissionPaymentId((prev) =>
+                        prev === group.paymentId ? null : group.paymentId
+                      )
+                    }
+                  >
+                    <td>
+                      <button
+                        className="link-button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setExpandedCommissionPaymentId((prev) =>
+                            prev === group.paymentId ? null : group.paymentId
+                          );
+                        }}
+                      >
+                        Pago {group.paymentId}
+                      </button>
+                    </td>
+                    <td>{currency.format(group.total)}</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>
+                      <button
+                        className="link-button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setExpandedCommissionPaymentId((prev) =>
+                            prev === group.paymentId ? null : group.paymentId
+                          );
+                        }}
+                      >
+                        {expandedCommissionPaymentId === group.paymentId
+                          ? "Ocultar"
+                          : "Ver"}
+                      </button>
+                    </td>
+                  </tr>
+                  {expandedCommissionPaymentId === group.paymentId
+                    ? group.items.map((commission) => (
+                        <tr key={commission.id}>
+                          <td>{commission.recipient_id ?? "Beneficiario"}</td>
+                          <td>{currency.format(commission.commission_amount)}</td>
+                          <td>{commission.phase_name ?? "—"}</td>
+                          <td>{commission.payment_date ?? "—"}</td>
+                          <td>
+                            <label>
+                              <input
+                                type="checkbox"
+                                checked={
+                                  paidOverrides[commission.id] ??
+                                  Boolean(commission.paid)
+                                }
+                                onChange={(event) =>
+                                  setPaidOverrides((prev) => ({
+                                    ...prev,
+                                    [commission.id]: event.target.checked
+                                  }))
+                                }
+                              />{" "}
+                              Pagado
+                            </label>
+                          </td>
+                          <td>
+                            <button
+                              className="link-button"
+                              onClick={() => openCommissionModal(commission.id)}
+                            >
+                              Detalles
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    : null}
+                </Fragment>
+              ))}
+            </DataTable>
+          )}
+
+          {tab === "sales" && (
+            <DataTable
+              columns={[
+                "Unidad #",
+                "Cliente",
+                "Precio",
+                "Enganche",
+                "Estado",
+                "Asesor",
+                "Acciones"
+              ]}
+              emptyState="Aún no hay ventas."
+            >
+              {sales.map((sale) => (
+                <tr key={sale.id} onClick={() => openSaleModal(sale.id)}>
+                  <td>{sale.unit_number ?? "—"}</td>
+                  <td>{sale.client_name ?? "—"}</td>
+                  <td>{currency.format(sale.price_with_tax)}</td>
+                  <td>{currency.format(sale.down_payment_amount)}</td>
+                  <td>
+                    <span className="pill">{sale.status}</span>
+                  </td>
+                  <td>{sale.sales_rep_id ?? "—"}</td>
+                  <td>
+                    <button
+                      className="link-button"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        openSaleModal(sale.id);
+                      }}
+                    >
+                      Detalles
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </DataTable>
+          )}
+        </section>
+      )}
+
+      <dialog ref={newSaleDialogRef}>
+        <div className="modal-content">
+          <div className="modal-header">
+            <h3>Nueva venta</h3>
+            <button
+              className="modal-close"
+              onClick={() => newSaleDialogRef.current?.close()}
+            >
+              ×
+            </button>
+          </div>
+          <form className="card">
+            <input className="input" placeholder="ID del proyecto" />
+            <input className="input" placeholder="ID de la unidad" />
+            <input className="input" placeholder="ID del cliente" />
+            <input className="input" placeholder="ID del asesor" />
+            <input className="input" type="date" placeholder="Fecha de venta" />
+            <input className="input" placeholder="Precio con impuestos" />
+            <input className="input" placeholder="Monto de enganche" />
+            <button className="button" type="button">
+              Guardar borrador
+            </button>
+          </form>
+        </div>
+      </dialog>
+
+      <dialog ref={paymentDialogRef}>
+        <div className="modal-content">
+          <div className="modal-header">
+            <h3>Detalles del pago</h3>
+            <button className="modal-close" onClick={() => paymentDialogRef.current?.close()}>
+              ×
+            </button>
+          </div>
+          {selectedPayment ? (
+            <>
+              <div>Monto: {currency.format(selectedPayment.amount)}</div>
+              <div>Tipo: {formatPaymentType(selectedPayment.payment_type)}</div>
+              <div>Fecha: {selectedPayment.payment_date}</div>
+              <div>Notas: {selectedPayment.notes ?? "—"}</div>
+              <div>
+                Comisiones:
+                {selectedPaymentCommissions.length ? (
+                  selectedPaymentCommissions.map((commission) => (
+                    <div key={commission.id}>
+                      {commission.recipient_id ?? "Beneficiario"} ·{" "}
+                      {currency.format(commission.commission_amount)}
+                    </div>
+                  ))
+                ) : (
+                  <div className="empty-state">No se generaron comisiones.</div>
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="empty-state">Selecciona un pago para ver detalles.</div>
+          )}
+        </div>
+      </dialog>
+
+      <dialog ref={saleDialogRef}>
+        <div className="modal-content">
+          <div className="modal-header">
+            <h3>Detalles de la venta</h3>
+            <button className="modal-close" onClick={() => saleDialogRef.current?.close()}>
+              ×
+            </button>
+          </div>
+          {selectedSale ? (
+            <>
+              <div>Precio con impuestos: {currency.format(selectedSale.price_with_tax)}</div>
+              <div>Enganche: {currency.format(selectedSale.down_payment_amount)}</div>
+              <div>Estado: {selectedSale.status}</div>
+              <div>Asesor: {selectedSale.sales_rep_id ?? "—"}</div>
+              <div>Pagos:</div>
+              {selectedSalePayments.length ? (
+                selectedSalePayments.map((payment) => (
+                  <div key={payment.id}>
+                    {payment.payment_date} · {currency.format(payment.amount)} ·{" "}
+                    {formatPaymentType(payment.payment_type)}
+                  </div>
+                ))
+              ) : (
+                <div className="empty-state">Aún no hay pagos.</div>
+              )}
+            </>
+          ) : (
+            <div className="empty-state">Selecciona una venta para ver detalles.</div>
+          )}
+        </div>
+      </dialog>
+
+      <dialog ref={commissionDialogRef}>
+        <div className="modal-content">
+          <div className="modal-header">
+            <h3>Detalles de la comisión</h3>
+            <button
+              className="modal-close"
+              onClick={() => commissionDialogRef.current?.close()}
+            >
+              ×
+            </button>
+          </div>
+          {selectedCommission ? (
+            <>
+              <div>Beneficiario: {selectedCommission.recipient_id ?? "—"}</div>
+              <div>Monto: {currency.format(selectedCommission.commission_amount)}</div>
+              <div>Pagado: {selectedCommission.paid ? "Sí" : "No"}</div>
+              <div>Creado: {selectedCommission.created_at}</div>
+            </>
+          ) : (
+            <div className="empty-state">Selecciona una comisión para ver detalles.</div>
+          )}
+        </div>
+      </dialog>
+    </section>
+  );
+}
+</file>
+
+</files>

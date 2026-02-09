@@ -8,6 +8,7 @@
 
 import XLSX from 'xlsx';
 import { createClient } from '@supabase/supabase-js';
+import { v7 as uuidv7 } from 'uuid';
 
 // ============================================================================
 // CONFIGURATION
@@ -321,7 +322,7 @@ async function loadToDatabase(sales: ExtractedSale[]) {
       } else {
         const { data: newClient, error } = await supabase
           .from('clients')
-          .insert({ full_name: sale.clientName })
+          .insert({ id: uuidv7(), full_name: sale.clientName })
           .select('id')
           .single();
         
@@ -348,6 +349,7 @@ async function loadToDatabase(sales: ExtractedSale[]) {
         const { data: newUnit, error } = await supabase
           .from('units')
           .insert({
+            id: uuidv7(),
             project_id: project.id,
             unit_number: sale.unitNumber,
             price_with_tax: sale.priceWithTax,
@@ -385,6 +387,7 @@ async function loadToDatabase(sales: ExtractedSale[]) {
         const { data: newSale, error } = await supabase
           .from('sales')
           .insert({
+            id: uuidv7(),
             project_id: project.id,
             unit_id: unitId,
             client_id: clientId,
@@ -415,6 +418,7 @@ async function loadToDatabase(sales: ExtractedSale[]) {
           const { error: paymentError } = await supabase
             .from('payments')
             .insert({
+              id: uuidv7(),
               sale_id: saleId,
               payment_date: payment.date,
               amount: payment.amount,
