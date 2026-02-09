@@ -165,8 +165,8 @@ export default function DashboardClient() {
     <section className="page dashboard">
       <header className="header">
         <div>
-          <p className="eyebrow">Real Estate Analytics Dashboard</p>
-          <h1>Seguimiento ejecutivo de pagos</h1>
+          <p className="eyebrow">ORION - Business Intelligence Dashboard</p>
+          <h1>Seguimiento de Reservas, Pagos y Comisiones</h1>
         </div>
         <div className="header-actions">
           <Filters

@@ -7,16 +7,16 @@ const siteUrl =
 
 export const metadata = {
   title: "Orion | Reservas, Pagos y Comisiones",
-  description: "Panel de Orion.",
+  description: "ORION - Business Intelligence Dashboard",
   metadataBase: siteUrl ? new URL(siteUrl) : undefined,
   icons: {
     icon: "/favicon.png"
   },
   openGraph: {
     title: "Orion | Reservas, Pagos y Comisiones",
-    description: "Panel de Orion.",
-    url: siteUrl ?? "https://example.com",
-    siteName: "Orion",
+    description: "ORION - Business Intelligence Dashboard",
+    url: siteUrl ?? "https://orion-intelligence.vercel.app/",
+    siteName: "ORION",
     images: [
       {
         url: "/og-image.jpg",
