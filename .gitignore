@@ -33,4 +33,6 @@ build/
 *.swp
 *.swo
 
+supabase/migrations/
+
 origin/
