@@ -16,7 +16,6 @@ type CommissionRow = {
   paid: boolean;
   created_at: string;
   paid_date: string | null;
-  recipient_type?: string | null;
   sales?: { project_id: string | null }[] | { project_id: string | null } | null;
 };
 
@@ -69,7 +68,7 @@ export async function GET(request: Request) {
     let builder = supabase
       .from("commissions")
       .select(
-        "recipient_id, recipient_name, commission_amount, paid, created_at, paid_date, recipient_type, sales ( project_id )"
+        "recipient_id, recipient_name, commission_amount, paid, created_at, paid_date, sales ( project_id )"
       );
 
     if (query?.start_date) {
@@ -105,9 +104,7 @@ export async function GET(request: Request) {
       }
       const recipientId = commission.recipient_id;
       const recipientName = commission.recipient_name ?? "Beneficiario";
-      const recipientType = commission.recipient_type
-        ? normalizeRecipientType(commission.recipient_type)
-        : rateTypeMap.get(recipientId) ?? "special";
+      const recipientType = rateTypeMap.get(recipientId) ?? "special";
 
       const current = grouped.get(recipientId) ?? {
         recipientId,
