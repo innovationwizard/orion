@@ -142,6 +142,11 @@ a {
   font-size: 13px;
 }
 
+.card .negative {
+  color: var(--danger);
+  font-size: 13px;
+}
+
 .tabs {
   display: flex;
   flex-wrap: wrap;
@@ -272,6 +277,13 @@ tbody tr:hover {
   font-weight: 500;
 }
 
+.banner.danger {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  font-weight: 700;
+}
+
 dialog {
   border: none;
   border-radius: 16px;
@@ -315,10 +327,219 @@ dialog::backdrop {
   padding: 24px;
 }
 
+.muted {
+  color: var(--muted);
+  margin: 0;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  margin: 0 0 8px;
+}
+
+.dashboard .header h1 {
+  margin: 0;
+}
+
+.treemap-card {
+  display: grid;
+  gap: 16px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.section-meta {
+  text-align: right;
+  font-weight: 600;
+}
+
+.treemap-wrapper {
+  display: grid;
+  gap: 12px;
+}
+
+.treemap-canvas {
+  position: relative;
+  height: 420px;
+  width: 100%;
+}
+
+.treemap-canvas svg {
+  display: block;
+}
+
+.treemap-rect {
+  transition: opacity 0.2s ease, filter 0.2s ease;
+  cursor: default;
+}
+
+.treemap-rect.unit {
+  cursor: pointer;
+}
+
+.treemap-rect:hover {
+  opacity: 0.9;
+  filter: brightness(1.05);
+}
+
+.treemap-legend {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.legend-gradient {
+  flex: 1;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ef4444, #fbbf24, #22c55e);
+}
+
+.legend-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #f1f5f9;
+}
+
+.legend-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.legend-color.paid {
+  background: #22c55e;
+}
+
+.legend-color.unpaid {
+  background: #9ca3af;
+}
+
+.treemap-tooltip {
+  background: var(--card);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 12px 14px;
+  display: grid;
+  gap: 6px;
+  color: var(--text);
+  font-size: 12px;
+  position: absolute;
+  pointer-events: none;
+  transform: translate(0, 0);
+  z-index: 10;
+}
+
+.treemap-tooltip strong {
+  font-size: 13px;
+}
+
+.tooltip-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+}
+
+.treemap-skeleton {
+  padding: 24px 0;
+}
+
+.modal-table {
+  display: grid;
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  background: #f8fafc;
+}
+
+.modal-table .table-head,
+.modal-table .table-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 1fr;
+  gap: 8px;
+  font-size: 13px;
+  align-items: center;
+}
+
+.modal-table .table-head {
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.modal-table .table-row {
+  border-top: 1px dashed var(--border);
+  padding-top: 8px;
+}
+
+.timeline {
+  display: grid;
+  gap: 12px;
+}
+
+.timeline h4 {
+  margin: 0;
+}
+
+.timeline ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.timeline li {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.timeline-date {
+  font-weight: 600;
+  color: var(--muted);
+}
+
 @container (max-width: 480px) {
   .header-actions {
     width: 100%;
     justify-content: flex-start;
+  }
+
+  .section-meta {
+    text-align: left;
+  }
+}
+
+@media (max-width: 640px) {
+  .modal-table .table-head,
+  .modal-table .table-row {
+    grid-template-columns: 1fr 1fr;
   }
 }
 
