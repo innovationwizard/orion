@@ -465,6 +465,25 @@ dialog::backdrop {
   padding: 24px 0;
 }
 
+.management-card {
+  display: grid;
+  gap: 16px;
+}
+
+.management-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.management-search {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
 .modal-table {
   display: grid;
   gap: 8px;
