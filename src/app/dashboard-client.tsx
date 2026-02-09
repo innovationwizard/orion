@@ -163,6 +163,14 @@ export default function DashboardClient() {
 
   return (
     <section className="page dashboard">
+      <nav className="mini-nav">
+        <a className="mini-nav__link" href="/">
+          Dashboard
+        </a>
+        <a className="mini-nav__link" href="/projects">
+          Projects
+        </a>
+      </nav>
       <header className="header">
         <div>
           <p className="eyebrow">ORION - Business Intelligence Dashboard</p>

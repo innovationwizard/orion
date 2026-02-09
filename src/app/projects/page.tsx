@@ -143,6 +143,14 @@ export default function ProjectsPage() {
 
   return (
     <section className="page management-page">
+      <nav className="mini-nav">
+        <a className="mini-nav__link" href="/">
+          Dashboard
+        </a>
+        <a className="mini-nav__link" href="/projects">
+          Projects
+        </a>
+      </nav>
       <header className="header">
         <div>
           <p className="eyebrow">Orion · Administration</p>
