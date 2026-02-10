@@ -5,13 +5,14 @@ const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ||
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined);
 
-const baseUrl = siteUrl ?? "https://orion-intelligence.vercel.app";
-const ogImageUrl = `${baseUrl.replace(/\/$/, "")}/og-image.png`;
+const metadataBase = new URL(
+  siteUrl ?? "https://orion-intelligence.vercel.app"
+);
 
 export const metadata = {
   title: "Orion | Reservas, Pagos y Comisiones",
   description: "ORION - Business Intelligence Dashboard",
-  metadataBase: siteUrl ? new URL(siteUrl) : undefined,
+  metadataBase,
   icons: {
     icon: "/favicon.png"
   },
@@ -19,12 +20,11 @@ export const metadata = {
     type: "website",
     title: "Orion | Reservas, Pagos y Comisiones",
     description: "ORION - Business Intelligence Dashboard",
-    url: `${baseUrl}/`,
+    url: "/",
     siteName: "ORION",
     images: [
       {
-        url: ogImageUrl,
-        secureUrl: ogImageUrl,
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "Orion",
@@ -38,22 +38,9 @@ type RootLayoutProps = {
   children: ReactNode;
 };
 
-const fbAppId = process.env.NEXT_PUBLIC_FB_APP_ID;
-
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="es-419">
-      <head>
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content="Orion | Reservas, Pagos y Comisiones" />
-        <meta property="og:description" content="ORION - Business Intelligence Dashboard" />
-        <meta property="og:image" content={ogImageUrl} />
-        <meta property="og:url" content={`${baseUrl}/`} />
-        <meta property="og:site_name" content="ORION" />
-        {fbAppId ? (
-          <meta property="fb:app_id" content={fbAppId} />
-        ) : null}
-      </head>
       <body>
         <main className="page">
           {children}
