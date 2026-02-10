@@ -5,6 +5,9 @@ const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ||
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined);
 
+const baseUrl = siteUrl ?? "https://orion-intelligence.vercel.app";
+const ogImageUrl = `${baseUrl.replace(/\/$/, "")}/og-image.png`;
+
 export const metadata = {
   title: "Orion | Reservas, Pagos y Comisiones",
   description: "ORION - Business Intelligence Dashboard",
@@ -16,11 +19,12 @@ export const metadata = {
     type: "website",
     title: "Orion | Reservas, Pagos y Comisiones",
     description: "ORION - Business Intelligence Dashboard",
-    url: siteUrl ?? "https://orion-intelligence.vercel.app/",
+    url: `${baseUrl}/`,
     siteName: "ORION",
     images: [
       {
-        url: "/og-image.png",
+        url: ogImageUrl,
+        secureUrl: ogImageUrl,
         width: 1200,
         height: 630,
         alt: "Orion",

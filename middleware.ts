@@ -18,8 +18,8 @@ const CRAWLER_USER_AGENTS = [
 ];
 
 function isCrawler(request: NextRequest): boolean {
-  const ua = request.headers.get("user-agent") ?? "";
-  return CRAWLER_USER_AGENTS.some((bot) => ua.includes(bot));
+  const ua = (request.headers.get("user-agent") ?? "").toLowerCase();
+  return CRAWLER_USER_AGENTS.some((bot) => ua.includes(bot.toLowerCase()));
 }
 
 export async function middleware(request: NextRequest) {
