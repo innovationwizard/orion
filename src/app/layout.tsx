@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { Metadata } from "next";
 import "./globals.css";
 
 const siteUrl =
@@ -9,7 +10,9 @@ const metadataBase = new URL(
   siteUrl ?? "https://orion-intelligence.vercel.app"
 );
 
-export const metadata = {
+const fbAppId = process.env.NEXT_PUBLIC_FB_APP_ID;
+
+export const metadata: Metadata = {
   title: "Orion | Reservas, Pagos y Comisiones",
   description: "ORION - Business Intelligence Dashboard",
   metadataBase,
@@ -31,6 +34,11 @@ export const metadata = {
         type: "image/png"
       }
     ]
+  },
+  // Force physical tag injection for crawlers (Next.js 15 omits og:type when it's the default)
+  other: {
+    "og:type": "website",
+    ...(fbAppId && { "fb:app_id": fbAppId })
   }
 };
 
