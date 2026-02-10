@@ -483,6 +483,41 @@ dialog::backdrop {
   font-size: 18px;
 }
 
+.section-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.sort-by-apto {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sort-by-apto__label {
+  font-size: 13px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.sort-by-apto__select {
+  font-size: 13px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--fg);
+  cursor: pointer;
+  min-width: 180px;
+}
+
+.sort-by-apto__select:focus {
+  outline: 2px solid var(--accent, #3b82f6);
+  outline-offset: 2px;
+}
+
 .section-meta {
   text-align: right;
   font-weight: 600;

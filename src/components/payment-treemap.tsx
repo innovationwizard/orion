@@ -188,8 +188,13 @@ export default function PaymentTreemap({ data, onUnitSelect }: PaymentTreemapPro
               const height = (node.y1 ?? 0) - y;
               const isProject = node.depth === 1;
               const payload = node.data as TreemapNode;
-              const labelVisible = width > 90 && height > 55;
+              const hasRoomForPercent = width > 90 && height > 55;
               const fill = isProject ? "#f1f5f9" : getPaymentColor(payload.percentPaid ?? 0);
+              // Always show apto/project name; scale font down for small blocks (min 6px)
+              const fontSize = Math.max(6, Math.min(13, Math.min(width, height) / 4));
+              const isTiny = width < 50 || height < 36;
+              const textX = isTiny ? x + width / 2 : x + 12;
+              const textY = isTiny ? y + height / 2 : y + 22;
 
               return (
                 <g key={`${payload.name}-${index}`}>
@@ -224,12 +229,17 @@ export default function PaymentTreemap({ data, onUnitSelect }: PaymentTreemapPro
                     }}
                     onMouseLeave={() => setTooltip(null)}
                   />
-                  {labelVisible ? (
-                    <text x={x + 12} y={y + 22} fontSize={13} fill="#0f172a">
-                      {payload.name}
-                    </text>
-                  ) : null}
-                  {labelVisible && !isProject ? (
+                  <text
+                    x={textX}
+                    y={textY}
+                    fontSize={fontSize}
+                    fill="#0f172a"
+                    textAnchor={isTiny ? "middle" : "start"}
+                    dominantBaseline={isTiny ? "middle" : "auto"}
+                  >
+                    {payload.name}
+                  </text>
+                  {hasRoomForPercent && !isProject ? (
                     <text x={x + 12} y={y + 40} fontSize={12} fill="#0f172a">
                       {payload.percentPaid ?? 0}% pagado
                     </text>

@@ -51,6 +51,7 @@ export default function DashboardClient() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedUnit, setSelectedUnit] = useState<PaymentAnalyticsUnit | null>(null);
+  const [unitOrder, setUnitOrder] = useState<"apto-asc" | "apto-desc">("apto-asc");
 
   const projectId = searchParams.get("project_id") ?? "";
   const rawStart = searchParams.get("start_date") ?? "";
@@ -163,7 +164,16 @@ export default function DashboardClient() {
     totalPaid: 0,
     percentPaid: 0
   };
-  const paymentProjects = paymentData?.byProject ?? [];
+  const paymentProjectsRaw = paymentData?.byProject ?? [];
+  const paymentProjects = paymentProjectsRaw.map((project) => ({
+    ...project,
+    units: [...project.units].sort((a, b) => {
+      const cmp = (a.unitNumber ?? "").localeCompare(b.unitNumber ?? "", undefined, {
+        numeric: true
+      });
+      return unitOrder === "apto-desc" ? -cmp : cmp;
+    })
+  }));
   const commissionRecipients = commissionData?.byRecipient ?? [];
   const commissionSummary = commissionData?.summary ?? { total: 0, paid: 0, unpaid: 0 };
   const hasPaymentData = paymentProjects.length > 0;
@@ -219,9 +229,26 @@ export default function DashboardClient() {
             <h2>Seguimiento de Pagos</h2>
             <p className="muted">Proyectos → Unidades · Color por porcentaje pagado.</p>
           </div>
-          <div className="section-meta">
-            <span>{currency.format(paymentSummary.totalPaid)}</span>
-            <span className="muted">de {currency.format(paymentSummary.totalExpected)}</span>
+          <div className="section-header-actions">
+            <label className="sort-by-apto" htmlFor="unit-order">
+              <span className="sort-by-apto__label">Ordenar por apto</span>
+              <select
+                id="unit-order"
+                className="sort-by-apto__select"
+                value={unitOrder}
+                onChange={(e) =>
+                  setUnitOrder(e.target.value === "apto-desc" ? "apto-desc" : "apto-asc")
+                }
+                aria-label="Ordenar bloques por número de apto"
+              >
+                <option value="apto-asc">Ascendente (1, 2, 3…)</option>
+                <option value="apto-desc">Descendente (…3, 2, 1)</option>
+              </select>
+            </label>
+            <div className="section-meta">
+              <span>{currency.format(paymentSummary.totalPaid)}</span>
+              <span className="muted">de {currency.format(paymentSummary.totalExpected)}</span>
+            </div>
           </div>
         </div>
         {isLoading ? (
