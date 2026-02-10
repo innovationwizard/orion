@@ -202,8 +202,8 @@ export default function DashboardClient() {
       <section className="card treemap-card">
         <div className="section-header">
           <div>
-            <h2>Payment Tracking</h2>
-            <p className="muted">Proyectos → unidades · Color por porcentaje pagado.</p>
+            <h2>Seguimiento de Pagos</h2>
+            <p className="muted">Proyectos → Unidades · Color por porcentaje pagado.</p>
           </div>
           <div className="section-meta">
             <span>{currency.format(paymentSummary.totalPaid)}</span>
@@ -226,7 +226,7 @@ export default function DashboardClient() {
       <section className="card treemap-card">
         <div className="section-header">
           <div>
-            <h2>Commission Distribution</h2>
+            <h2>Distribución de Comisiones</h2>
             <p className="muted">Management · Sales · Special · Color por pagado.</p>
           </div>
           <div className="section-meta">
