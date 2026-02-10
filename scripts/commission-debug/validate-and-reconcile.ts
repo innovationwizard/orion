@@ -185,12 +185,14 @@ async function main() {
   // Prefer mix: reservation vs down_payment, with and without deed_signed_date
   const reservation = payments.filter((p) => p.payment_type === "reservation");
   const downPayment = payments.filter((p) => p.payment_type === "down_payment");
-  const withDeed = payments.filter(
-    (p) => p.sales?.deed_signed_date && p.payment_date >= (p.sales.deed_signed_date ?? "")
-  );
-  const withoutDeed = payments.filter(
-    (p) => !p.sales?.deed_signed_date || p.payment_date < (p.sales.deed_signed_date ?? "")
-  );
+  const withDeed = payments.filter((p) => {
+    const sale = getSale(p);
+    return sale?.deed_signed_date != null && p.payment_date >= sale.deed_signed_date;
+  });
+  const withoutDeed = payments.filter((p) => {
+    const sale = getSale(p);
+    return sale?.deed_signed_date == null || p.payment_date < sale.deed_signed_date;
+  });
 
   const sampleIds = new Set<string>();
   const picks = [
