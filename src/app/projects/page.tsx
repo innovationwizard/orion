@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import ErrorBanner from "@/components/error-banner";
 import type { Project } from "@/lib/types";
 
 type ProjectPayload = {
@@ -166,7 +167,7 @@ export default function ProjectsPage() {
         </div>
       </header>
 
-      {error ? <div className="banner danger">{error}</div> : null}
+      <ErrorBanner error={error} />
 
       <section className="card management-card">
         <div className="section-header">

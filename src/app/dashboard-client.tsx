@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import ErrorBanner from "@/components/error-banner";
 import Filters from "@/components/filters";
 import KpiCard from "@/components/kpi-card";
 import PaymentTreemap, {
@@ -200,7 +201,7 @@ export default function DashboardClient() {
         </div>
       </header>
 
-      {error ? <div className="banner danger">{error}</div> : null}
+      <ErrorBanner error={error} />
 
       <section className="kpi-grid">
         <KpiCard

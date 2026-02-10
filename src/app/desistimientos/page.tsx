@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import ErrorBanner from "@/components/error-banner";
 
 type ProjectOption = { id: string; name: string };
 type SaleRow = {
@@ -111,7 +112,7 @@ export default function DesistimientosPage() {
         </div>
       </header>
 
-      {error ? <div className="banner danger">{error}</div> : null}
+      <ErrorBanner error={error} />
 
       <section className="card management-card">
         <div className="section-header">

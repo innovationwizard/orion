@@ -34,8 +34,19 @@ export async function POST(request: Request) {
     );
   }
 
+  // Always redirect to production app after email confirm (never localhost)
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim()?.replace(/\/$/, "");
+  if (!siteUrl) {
+    return NextResponse.json(
+      { error: "NEXT_PUBLIC_SITE_URL debe estar definido para enviar invitaciones" },
+      { status: 500 }
+    );
+  }
+  const redirectTo = `${siteUrl}/auth/callback`;
+
   const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(
-    parsed.data.email
+    parsed.data.email,
+    { redirectTo }
   );
 
   if (error) {
