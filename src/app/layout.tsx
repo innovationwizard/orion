@@ -10,6 +10,9 @@ const metadataBase = new URL(
   siteUrl ?? "https://orion-intelligence.vercel.app"
 );
 
+const baseUrl = metadataBase.origin;
+const ogImageUrl = `${baseUrl}/og-image.jpg`;
+
 const fbAppId = process.env.NEXT_PUBLIC_FB_APP_ID;
 
 export const metadata: Metadata = {
@@ -23,19 +26,22 @@ export const metadata: Metadata = {
     type: "website",
     title: "Orion | Reservas, Pagos y Comisiones",
     description: "ORION - Business Intelligence Dashboard",
-    url: "/",
+    url: `${baseUrl}/`,
     siteName: "ORION",
     images: [
       {
-        url: "/og-image.png",
+        url: ogImageUrl,
         width: 1200,
         height: 630,
         alt: "Orion",
-        type: "image/png"
+        type: "image/jpeg"
       }
     ]
   },
-
+  other: {
+    "og:type": "website",
+    ...(fbAppId && { "fb:app_id": fbAppId })
+  }
 };
 
 type RootLayoutProps = {
