@@ -91,6 +91,126 @@ a {
   font-size: 13px;
 }
 
+/* Dashboard header: clear hierarchy for exec scanning */
+.dashboard-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px 24px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.dashboard-header__title {
+  min-width: 0;
+}
+
+.dashboard-header__title h1 {
+  margin: 0;
+  font-size: clamp(20px, 3vw, 28px);
+}
+
+.dashboard-header__filters {
+  flex: 1;
+  min-width: min(100%, 720px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dashboard-header__scope {
+  font-size: 12px;
+  margin: 0;
+}
+
+/* Filter bar: presets first, then custom range + project (exec UX) */
+.filters-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px 20px;
+}
+
+.filters-bar__presets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+}
+
+.filters-bar__presets-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.filters-bar__presets-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+}
+
+.filters-bar__presets-buttons .button.active {
+  background: var(--primary-600);
+  color: white;
+  border-color: var(--primary-600);
+}
+
+.filters-bar__custom,
+.filters-bar__project {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.filters-bar__label {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filters-bar__label-text {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.filters-bar__label .date-input,
+.filters-bar__label .select {
+  min-width: 140px;
+}
+
+.filters-bar__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin-left: auto;
+}
+
+.filters-bar__range {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.filters-bar__chip {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.12);
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.filters-bar__clear {
+  flex-shrink: 0;
+}
+
 .filters {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -341,7 +461,7 @@ dialog::backdrop {
   margin: 0 0 8px;
 }
 
-.dashboard .header h1 {
+.dashboard .dashboard-header__title h1 {
   margin: 0;
 }
 
@@ -574,6 +694,17 @@ dialog::backdrop {
 
   .section-meta {
     text-align: left;
+  }
+}
+
+@media (max-width: 720px) {
+  .dashboard-header__filters {
+    min-width: 100%;
+  }
+
+  .filters-bar__meta {
+    margin-left: 0;
+    width: 100%;
   }
 }
 

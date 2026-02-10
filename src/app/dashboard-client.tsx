@@ -10,6 +10,7 @@ import PaymentTreemap, {
 } from "@/components/payment-treemap";
 import CommissionTreemap, { type CommissionRecipient } from "@/components/commission-treemap";
 import PaymentDetailModal from "@/components/payment-detail-modal";
+import { DATE_PRESETS } from "@/lib/date-presets";
 
 type ProjectOption = {
   id: string;
@@ -51,8 +52,20 @@ export default function DashboardClient() {
   const [selectedUnit, setSelectedUnit] = useState<PaymentAnalyticsUnit | null>(null);
 
   const projectId = searchParams.get("project_id") ?? "";
-  const startDate = searchParams.get("start_date") ?? "";
-  const endDate = searchParams.get("end_date") ?? "";
+  const rawStart = searchParams.get("start_date") ?? "";
+  const rawEnd = searchParams.get("end_date") ?? "";
+  const defaultRange = DATE_PRESETS.this_month.getRange();
+  const startDate = rawStart;
+  const endDate = rawEnd;
+
+  // Sensible default: on first load with no date params, set "this month" (exec UX best practice)
+  useEffect(() => {
+    if (searchParams.get("start_date") != null || searchParams.get("end_date") != null) return;
+    const next = new URLSearchParams(searchParams.toString());
+    next.set("start_date", defaultRange.start);
+    next.set("end_date", defaultRange.end);
+    router.replace(`?${next.toString()}`);
+  }, []);
 
   useEffect(() => {
     async function fetchProjects() {
@@ -79,15 +92,9 @@ export default function DashboardClient() {
       setError(null);
 
       const query = new URLSearchParams();
-      if (projectId) {
-        query.set("project_id", projectId);
-      }
-      if (startDate) {
-        query.set("start_date", startDate);
-      }
-      if (endDate) {
-        query.set("end_date", endDate);
-      }
+      if (projectId) query.set("project_id", projectId);
+      if (startDate) query.set("start_date", startDate);
+      if (endDate) query.set("end_date", endDate);
 
       try {
         const [paymentsRes, commissionsRes] = await Promise.all([
@@ -171,12 +178,12 @@ export default function DashboardClient() {
           Projects
         </a>
       </nav>
-      <header className="header">
-        <div>
-          <p className="eyebrow">ORION - Business Intelligence Dashboard</p>
+      <header className="dashboard-header">
+        <div className="dashboard-header__title">
+          <p className="eyebrow">ORION — Business Intelligence</p>
           <h1>Seguimiento de Reservas, Pagos y Comisiones</h1>
         </div>
-        <div className="header-actions">
+        <div className="dashboard-header__filters">
           <Filters
             projects={projects}
             projectId={projectId}
@@ -184,6 +191,9 @@ export default function DashboardClient() {
             endDate={endDate}
             onChange={updateFilters}
           />
+          <p className="dashboard-header__scope muted" aria-live="polite">
+            Los filtros aplican a <strong>Seguimiento de Pagos</strong> y <strong>Distribución de Comisiones</strong>.
+          </p>
         </div>
       </header>
 
