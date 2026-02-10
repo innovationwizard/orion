@@ -19,11 +19,11 @@ export const metadata = {
     siteName: "ORION",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "Orion",
-        type: "image/jpeg"
+        type: "image/png"
       }
     ]
   }

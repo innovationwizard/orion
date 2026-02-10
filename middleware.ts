@@ -4,8 +4,31 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
 
+const CRAWLER_USER_AGENTS = [
+  "WhatsApp",
+  "facebookexternalhit",
+  "Facebot",
+  "Twitterbot",
+  "LinkedInBot",
+  "Slackbot",
+  "TelegramBot",
+  "Discordbot",
+  "Googlebot",
+  "bingbot"
+];
+
+function isCrawler(request: NextRequest): boolean {
+  const ua = request.headers.get("user-agent") ?? "";
+  return CRAWLER_USER_AGENTS.some((bot) => ua.includes(bot));
+}
+
 export async function middleware(request: NextRequest) {
   if (!supabaseUrl || !supabaseAnonKey) {
+    return NextResponse.next();
+  }
+
+  // Let crawlers (e.g. WhatsApp link preview) receive the page with OG meta
+  if (isCrawler(request)) {
     return NextResponse.next();
   }
 
