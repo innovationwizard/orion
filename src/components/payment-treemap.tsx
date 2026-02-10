@@ -15,6 +15,7 @@ export type PaymentAnalyticsUnit = {
   totalExpected: number;
   totalPaid: number;
   percentPaid: number;
+  engancheTotal: { expected: number; paid: number };
   reserve: { expected: number; paid: number };
   downPayment: { expected: number; paid: number };
   installments: { expected: number; paid: number };
@@ -96,11 +97,15 @@ function PaymentTooltip({ tooltip }: { tooltip: TooltipState }) {
       <strong>{node.unitNumber}</strong>
       <span className="muted">{node.clientName}</span>
       <div className="tooltip-grid">
+        <div>Enganche total</div>
+        <div>
+          {currency.format(node.engancheTotal.expected)} · {currency.format(node.engancheTotal.paid)}
+        </div>
         <div>Reserva</div>
         <div>
           {currency.format(node.reserve.expected)} · {currency.format(node.reserve.paid)}
         </div>
-        <div>Enganche</div>
+        <div>Enganche fraccionado</div>
         <div>
           {currency.format(node.downPayment.expected)} · {currency.format(node.downPayment.paid)}
         </div>

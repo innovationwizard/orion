@@ -37,7 +37,10 @@ type AnalyticsUnit = {
   totalExpected: number;
   totalPaid: number;
   percentPaid: number;
+  /** Total down payment (Reserva + Enganche fraccionado) */
+  engancheTotal: { expected: number; paid: number };
   reserve: { expected: number; paid: number };
+  /** Remaining down payment after reserve; paid in monthly installments */
   downPayment: { expected: number; paid: number };
   installments: { expected: number; paid: number };
   paymentHistory: Array<{
@@ -165,14 +168,18 @@ export async function GET(request: Request) {
         );
       }
 
-      const downPaymentExpected = typedSale.down_payment_amount ?? 0;
+      // Down payment (Enganche) = total down payment minus reserve (reserva is part of down payment)
+      const totalDownPaymentAmount = typedSale.down_payment_amount ?? 0;
+      const downPaymentExpected = Math.max(0, totalDownPaymentAmount - reserveExpected);
       const totalExpected =
-        reserveExpected + downPaymentExpected + (financedPayments.length ? installmentsExpected : 0);
+        totalDownPaymentAmount + (financedPayments.length ? installmentsExpected : 0);
       const totalPaid = reservationPaid + downPaymentPaid + installmentsPaid;
       const percentPaid = totalExpected > 0 ? Math.round((totalPaid / totalExpected) * 100) : 0;
 
       summaryExpected += totalExpected;
       summaryPaid += totalPaid;
+
+      const engancheTotalPaid = reservationPaid + downPaymentPaid;
 
       const unit: AnalyticsUnit = {
         unitId: typedSale.unit_id,
@@ -181,6 +188,7 @@ export async function GET(request: Request) {
         totalExpected,
         totalPaid,
         percentPaid,
+        engancheTotal: { expected: totalDownPaymentAmount, paid: engancheTotalPaid },
         reserve: { expected: reserveExpected, paid: reservationPaid },
         downPayment: { expected: downPaymentExpected, paid: downPaymentPaid },
         installments: { expected: installmentsExpected, paid: installmentsPaid },

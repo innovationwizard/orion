@@ -42,12 +42,17 @@ export default function PaymentDetailModal({ open, unit, onClose }: PaymentDetai
 
   const rows = [
     {
+      label: "Enganche total",
+      expected: unit.engancheTotal.expected,
+      paid: unit.engancheTotal.paid
+    },
+    {
       label: "Reserva",
       expected: unit.reserve.expected,
       paid: unit.reserve.paid
     },
     {
-      label: "Enganche",
+      label: "Enganche fraccionado",
       expected: unit.downPayment.expected,
       paid: unit.downPayment.paid
     },
@@ -80,6 +85,9 @@ export default function PaymentDetailModal({ open, unit, onClose }: PaymentDetai
           </button>
         </div>
 
+        <p className="modal-tiers-hint">
+          Enganche total = Reserva + Enganche fraccionado (este último se paga en mensualidades).
+        </p>
         <div className="modal-table">
           <div className="table-head">
             <span>Concepto</span>
