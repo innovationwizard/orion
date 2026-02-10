@@ -35,11 +35,7 @@ export const metadata: Metadata = {
       }
     ]
   },
-  // Force physical tag injection for crawlers (Next.js 15 omits og:type when it's the default)
-  other: {
-    "og:type": "website",
-    ...(fbAppId && { "fb:app_id": fbAppId })
-  }
+
 };
 
 type RootLayoutProps = {
