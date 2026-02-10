@@ -13,6 +13,7 @@ export const metadata = {
     icon: "/favicon.png"
   },
   openGraph: {
+    type: "website",
     title: "Orion | Reservas, Pagos y Comisiones",
     description: "ORION - Business Intelligence Dashboard",
     url: siteUrl ?? "https://orion-intelligence.vercel.app/",
@@ -33,9 +34,16 @@ type RootLayoutProps = {
   children: ReactNode;
 };
 
+const fbAppId = process.env.NEXT_PUBLIC_FB_APP_ID;
+
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="es-419">
+      <head>
+        {fbAppId ? (
+          <meta property="fb:app_id" content={fbAppId} />
+        ) : null}
+      </head>
       <body>
         <main className="page">
           {children}
