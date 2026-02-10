@@ -72,11 +72,15 @@ export async function GET(request: Request) {
     const allRows: CommissionRow[] = [];
 
     while (true) {
+      // Use sales!inner(project_id) when filtering by project so PostgREST allows eq("sales.project_id", ...)
+      const selectWithSales =
+        query?.project_id
+          ? "recipient_id, recipient_name, commission_amount, paid, created_at, paid_date, sales!inner( project_id )"
+          : "recipient_id, recipient_name, commission_amount, paid, created_at, paid_date, sales ( project_id )";
+
       let builder = supabase
         .from("commissions")
-        .select(
-          "recipient_id, recipient_name, commission_amount, paid, created_at, paid_date, sales ( project_id )"
-        )
+        .select(selectWithSales)
         .range(offset, offset + pageSize - 1);
 
       if (query?.start_date) {
