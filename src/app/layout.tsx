@@ -44,6 +44,12 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="es-419">
       <head>
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Orion | Reservas, Pagos y Comisiones" />
+        <meta property="og:description" content="ORION - Business Intelligence Dashboard" />
+        <meta property="og:image" content={ogImageUrl} />
+        <meta property="og:url" content={`${baseUrl}/`} />
+        <meta property="og:site_name" content="ORION" />
         {fbAppId ? (
           <meta property="fb:app_id" content={fbAppId} />
         ) : null}
