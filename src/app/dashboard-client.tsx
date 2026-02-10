@@ -177,6 +177,9 @@ export default function DashboardClient() {
         <a className="mini-nav__link" href="/projects">
           Projects
         </a>
+        <a className="mini-nav__link" href="/desistimientos">
+          Desistimientos
+        </a>
       </nav>
       <header className="dashboard-header">
         <div className="dashboard-header__title">

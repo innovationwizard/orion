@@ -207,3 +207,87 @@ export async function POST(request: Request) {
     return jsonError(500, "Database error", err);
   }
 }
+
+const patchSaleSchema = z.object({
+  id: z.string().uuid(),
+  status: z.enum(saleStatusValues)
+});
+
+export async function PATCH(request: Request) {
+  const configError = getSupabaseConfigError();
+  if (configError) {
+    return jsonError(500, configError);
+  }
+  const auth = await requireAuth();
+  if (auth.response) {
+    return auth.response;
+  }
+  const supabase = getSupabaseServerClient();
+  const { data: payload, error } = await parseJson(request, patchSaleSchema);
+  if (error || !payload) {
+    return jsonError(400, error?.error ?? "Invalid input", error?.details);
+  }
+
+  if (payload.status !== "cancelled") {
+    return jsonError(400, "Only status 'cancelled' can be set via PATCH (desistimiento).");
+  }
+
+  try {
+    const { data: sale, error: fetchError } = await supabase
+      .from("sales")
+      .select("id, unit_id, status")
+      .eq("id", payload.id)
+      .single();
+
+    if (fetchError || !sale) {
+      return jsonError(404, "Venta no encontrada.");
+    }
+    if ((sale as { status: string }).status !== "active") {
+      return jsonError(400, "Solo se puede registrar desistimiento en ventas activas.");
+    }
+
+    const unitId = (sale as { unit_id: string }).unit_id;
+
+    const { error: saleUpdateError } = await supabase
+      .from("sales")
+      .update({ status: "cancelled" })
+      .eq("id", payload.id);
+
+    if (saleUpdateError) {
+      return jsonError(500, "Database error", saleUpdateError.message);
+    }
+
+    const { error: unitUpdateError } = await supabase
+      .from("units")
+      .update({ status: "available" })
+      .eq("id", unitId);
+
+    if (unitUpdateError) {
+      return jsonError(500, "Database error", unitUpdateError.message);
+    }
+
+    const { data: updated, error: selectError } = await supabase
+      .from("sales")
+      .select("*, projects ( name ), units ( unit_number ), clients ( full_name )")
+      .eq("id", payload.id)
+      .single();
+
+    if (selectError || !updated) {
+      return jsonOk({ data: { id: payload.id, status: "cancelled" } });
+    }
+
+    const mapped = (() => {
+      const s = updated as Sale & { projects?: { name: string }; units?: { unit_number: string }; clients?: { full_name: string } };
+      return {
+        ...s,
+        project_name: s.projects?.name ?? null,
+        unit_number: s.units?.unit_number ?? null,
+        client_name: s.clients?.full_name ?? null
+      };
+    })();
+
+    return jsonOk({ data: mapped });
+  } catch (err) {
+    return jsonError(500, "Database error", err);
+  }
+}

@@ -150,6 +150,9 @@ export default function ProjectsPage() {
         <a className="mini-nav__link" href="/projects">
           Projects
         </a>
+        <a className="mini-nav__link" href="/desistimientos">
+          Desistimientos
+        </a>
       </nav>
       <header className="header">
         <div>
