@@ -65,26 +65,40 @@ export async function GET(request: Request) {
       }
     });
 
-    let builder = supabase
-      .from("commissions")
-      .select(
-        "recipient_id, recipient_name, commission_amount, paid, created_at, paid_date, sales ( project_id )"
-      );
+    // All commission rows included unless date/project filters applied. No status or paid-only filter.
+    // Fetch in pages to avoid PostgREST default limit (~1000 rows); we may have 30k+ commission rows.
+    const pageSize = 1000;
+    let offset = 0;
+    const allRows: CommissionRow[] = [];
 
-    if (query?.start_date) {
-      builder = builder.gte("created_at", query.start_date);
-    }
-    if (query?.end_date) {
-      builder = builder.lte("created_at", query.end_date);
-    }
-    if (query?.project_id) {
-      builder = builder.eq("sales.project_id", query.project_id);
-    }
+    while (true) {
+      let builder = supabase
+        .from("commissions")
+        .select(
+          "recipient_id, recipient_name, commission_amount, paid, created_at, paid_date, sales ( project_id )"
+        )
+        .range(offset, offset + pageSize - 1);
 
-    const { data, error: dbError } = await builder;
-    if (dbError) {
-      return jsonError(500, "Database error", dbError.message);
+      if (query?.start_date) {
+        builder = builder.gte("created_at", query.start_date);
+      }
+      if (query?.end_date) {
+        builder = builder.lte("created_at", query.end_date);
+      }
+      if (query?.project_id) {
+        builder = builder.eq("sales.project_id", query.project_id);
+      }
+
+      const { data: page, error: dbError } = await builder;
+      if (dbError) {
+        return jsonError(500, "Database error", dbError.message);
+      }
+      const list = (page ?? []) as CommissionRow[];
+      allRows.push(...list);
+      if (list.length < pageSize) break;
+      offset += pageSize;
     }
+    const data = allRows;
 
     const grouped = new Map<
       string,
@@ -99,11 +113,9 @@ export async function GET(request: Request) {
 
     (data ?? []).forEach((row) => {
       const commission = row as CommissionRow;
-      if (!commission.recipient_id) {
-        return;
-      }
-      const recipientId = commission.recipient_id;
-      const recipientName = commission.recipient_name ?? "Beneficiario";
+      const rawRecipientId = commission.recipient_id?.trim();
+      const recipientId = rawRecipientId && rawRecipientId.length ? rawRecipientId : "unassigned";
+      const recipientName = commission.recipient_name?.trim() || "Beneficiario";
       const recipientType = rateTypeMap.get(recipientId) ?? "special";
 
       const current = grouped.get(recipientId) ?? {

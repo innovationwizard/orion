@@ -95,6 +95,7 @@ interface ExtractedSale {
   referralApplies: boolean;
   promiseSignedDate: string | null;
   deedSignedDate: string | null;
+  excelRow: number; // 1-indexed row number in Excel
   payments: Array<{
     date: string;
     amount: number;
@@ -115,6 +116,7 @@ async function extractFromSheet(
   // Find header row (search first 15 rows, look for "Apto")
   let headerRowIndex = -1;
   let aptoColIndex = -1;
+  let unitCodeColIndex = 0; // Column A by default for unit codes
   
   for (let i = 0; i < Math.min(15, data.length); i++) {
     const row = data[i];
@@ -143,7 +145,10 @@ async function extractFromSheet(
   console.log(`   Found ${headers.length} columns, header at row ${headerRowIndex + 1}, "Apto" at col ${aptoColIndex + 1}`);
   
   // Map column indices with priority to exact/simple matches
-  const colMap: Record<string, number> = { unitNumber: aptoColIndex };
+  // CRITICAL: Use column A (index 0) for unit_number as it contains unique codes like "101-B", "102-C"
+  const colMap: Record<string, number> = { 
+    unitNumber: unitCodeColIndex  // Column A has unique unit codes
+  };
   
   headers.forEach((h: any, i: number) => {
     if (!h) return;
@@ -242,11 +247,26 @@ async function extractFromSheet(
     }
     
     const unitNumber = getCellValue(row, colMap.unitNumber);
+    const unitNumberFallback = getCellValue(row, aptoColIndex); // Column F/B as fallback
     const clientName = getCellValue(row, colMap.client);
     const status = getCellValue(row, colMap.status);
     
+    // Determine final unit number with smart fallback logic
+    // Column A (index 0) should only be used if it looks like a valid unit code (e.g., "101-B", "302-TC-MC")
+    // Valid unit codes: contain digits and may include letters, hyphens, but not just text like "F&F"
+    let finalUnitNumber = unitNumberFallback; // Default to Apto column
+    
+    if (unitNumber && String(unitNumber).trim() !== '') {
+      const unitStr = String(unitNumber).trim();
+      // Check if column A contains a valid unit code pattern (must have digits)
+      if (/\d/.test(unitStr)) {
+        finalUnitNumber = unitStr;
+      }
+      // Otherwise, stick with the fallback (Apto column)
+    }
+    
     // Skip if no unit or status
-    if (!unitNumber || !status) continue;
+    if (!finalUnitNumber || !status) continue;
     
     // Skip reserved/cancelled/special rows (no actual client)
     const clientStr = String(clientName || '').trim().toUpperCase();
@@ -299,7 +319,7 @@ async function extractFromSheet(
     
     sales.push({
       project: projectName,
-      unitNumber: String(unitNumber),
+      unitNumber: String(finalUnitNumber).trim(),
       clientName: normalizeClientName(String(clientName)),
       salesRep: salesRep ? String(salesRep).trim() : null,
       reservationDate: typeof reservationDateRaw === 'number' 
@@ -313,11 +333,45 @@ async function extractFromSheet(
       referralApplies: false,
       promiseSignedDate: null,
       deedSignedDate: null,
+      excelRow: rowIdx + 1, // Convert to 1-indexed for Excel row number
       payments,
     });
   }
   
   console.log(`   ✅ Extracted ${sales.length} sales with ${sales.reduce((sum, s) => sum + s.payments.length, 0)} payments`);
+  
+  // Normalize unit numbers: if there are duplicates and one has no tower code, assign it code "A"
+  // Logic: 
+  // - Unit 101 without code + Unit 101-B exists → rename to 101-A
+  // - Unit 101 without code + no other 101-X → keep as 101
+  const unitNumberCounts = new Map<string, Array<{ index: number; hasCode: boolean }>>();
+  
+  sales.forEach((sale, index) => {
+    const unitNum = sale.unitNumber;
+    // Extract base number (everything before first hyphen, or entire string if no hyphen)
+    const baseUnit = unitNum.split('-')[0].trim();
+    const hasCode = unitNum.includes('-');
+    
+    if (!unitNumberCounts.has(baseUnit)) {
+      unitNumberCounts.set(baseUnit, []);
+    }
+    unitNumberCounts.get(baseUnit)!.push({ index, hasCode });
+  });
+  
+  // Process duplicates: if base unit appears multiple times and one has no code, assign it "-A"
+  unitNumberCounts.forEach((entries, baseUnit) => {
+    if (entries.length > 1) {
+      // There are duplicates for this base unit number
+      entries.forEach(({ index, hasCode }) => {
+        if (!hasCode) {
+          // This unit has no tower code, assign it "-A"
+          sales[index].unitNumber = `${baseUnit}-A`;
+          console.log(`   🏢 Normalized: ${baseUnit} → ${baseUnit}-A (duplicate without code)`);
+        }
+      });
+    }
+  });
+  
   return sales;
 }
 
@@ -364,6 +418,7 @@ async function loadToDatabase(sales: ExtractedSale[]) {
   
   let successCount = 0;
   let errorCount = 0;
+  const duplicates: Array<{ project: string; unitNumber: string; client: string; excelRow: number }> = [];
   
   for (const sale of sales) {
     try {
@@ -397,7 +452,7 @@ async function loadToDatabase(sales: ExtractedSale[]) {
           .single();
         
         if (clientError || !newClient) {
-          console.error(`❌ Failed to create client: ${sale.clientName}`, clientError?.message);
+          console.error(`❌ Failed to create client: ${sale.clientName} (Excel row ${sale.excelRow})`, clientError?.message);
           errorCount++;
           continue;
         }
@@ -433,7 +488,7 @@ async function loadToDatabase(sales: ExtractedSale[]) {
           .single();
         
         if (unitError || !newUnit) {
-          console.error(`❌ Failed to create unit: ${sale.unitNumber}`, unitError?.message);
+          console.error(`❌ Failed to create unit: ${sale.unitNumber} (Excel row ${sale.excelRow})`, unitError?.message);
           errorCount++;
           continue;
         }
@@ -458,7 +513,7 @@ async function loadToDatabase(sales: ExtractedSale[]) {
       
       if (existingSale) {
         saleId = existingSale.id;
-        console.log(`   ⏭️  Sale exists: ${sale.project} - ${sale.unitNumber}`);
+        console.log(`   ⏭️  Sale exists: ${sale.project} - ${sale.unitNumber} (Excel row ${sale.excelRow})`);
       } else {
         // Create sale
         const { data: newSale, error: saleError } = await supabase
@@ -484,7 +539,26 @@ async function loadToDatabase(sales: ExtractedSale[]) {
           .single();
         
         if (saleError || !newSale) {
-          console.error(`❌ Failed to create sale: ${sale.project} - ${sale.unitNumber}`, saleError?.message);
+          // Check if it's a duplicate key error
+          const isDuplicateKey = saleError?.message?.includes('duplicate key') || 
+                                  saleError?.message?.includes('unique constraint');
+          
+          if (isDuplicateKey) {
+            console.error(`   ❌ DUPLICATE: ${sale.project} - ${sale.unitNumber} (Excel row ${sale.excelRow})`);
+            console.error(`      Client: ${sale.clientName}`);
+            console.error(`      Error: ${saleError?.message || 'Unknown duplicate key error'}`);
+            
+            // Track duplicate for summary
+            duplicates.push({
+              project: sale.project,
+              unitNumber: sale.unitNumber,
+              client: sale.clientName,
+              excelRow: sale.excelRow
+            });
+          } else {
+            console.error(`   ❌ Failed to create sale: ${sale.project} - ${sale.unitNumber} (Excel row ${sale.excelRow})`);
+            console.error(`      Error: ${saleError?.message || 'Unknown error'}`);
+          }
           errorCount++;
           continue;
         }
@@ -512,16 +586,49 @@ async function loadToDatabase(sales: ExtractedSale[]) {
           }
         }
         
-        console.log(`   ✅ Created: ${sale.project} - ${sale.unitNumber} (${sale.payments.length} payments)`);
+        console.log(`   ✅ Created: ${sale.project} - ${sale.unitNumber} (${sale.payments.length} payments, Excel row ${sale.excelRow})`);
         successCount++;
       }
     } catch (error: any) {
-      console.error(`❌ Error processing sale: ${sale.project} - ${sale.unitNumber}`, error?.message || error);
+      console.error(`❌ Error processing sale: ${sale.project} - ${sale.unitNumber} (Excel row ${sale.excelRow})`, error?.message || error);
       errorCount++;
     }
   }
   
   console.log(`\n📊 Summary: ${successCount} created, ${errorCount} errors`);
+  
+  // Show duplicate summary if any found
+  if (duplicates.length > 0) {
+    console.log(`\n⚠️  DUPLICATE UNITS FOUND - Manual Review Required`);
+    console.log(`${'='.repeat(80)}`);
+    console.log(`Found ${duplicates.length} duplicate unit(s) in Excel:\n`);
+    
+    // Group by project
+    const byProject = new Map<string, typeof duplicates>();
+    duplicates.forEach(dup => {
+      if (!byProject.has(dup.project)) {
+        byProject.set(dup.project, []);
+      }
+      byProject.get(dup.project)!.push(dup);
+    });
+    
+    byProject.forEach((dups, project) => {
+      console.log(`📁 ${project.toUpperCase()}:`);
+      dups.forEach(dup => {
+        console.log(`   • Unit ${dup.unitNumber} - Excel Row ${dup.excelRow}`);
+        console.log(`     Client: ${dup.client}`);
+      });
+      console.log();
+    });
+    
+    console.log(`📝 Action Required:`);
+    console.log(`   1. Open Excel file: Reservas.xlsx`);
+    console.log(`   2. Go to sheet: ${Array.from(byProject.keys()).join(', ')}`);
+    console.log(`   3. Check the rows listed above`);
+    console.log(`   4. Decide which duplicate to keep or assign different tower codes`);
+    console.log(`   5. Re-run ETL after fixing`);
+    console.log(`${'='.repeat(80)}\n`);
+  }
 }
 
 // ============================================================================
