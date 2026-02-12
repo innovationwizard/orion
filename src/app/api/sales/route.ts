@@ -33,6 +33,7 @@ type SaleWithContext = Sale & {
   project_name: string | null;
   unit_number: string | null;
   client_name: string | null;
+  sales_rep_name: string | null;
 };
 
 export async function GET(request: Request) {
@@ -67,7 +68,7 @@ export async function GET(request: Request) {
     let builder = supabase
       .from("sales")
       .select(
-        "*, projects ( name ), units ( unit_number ), clients ( full_name )",
+        "*, projects ( name ), units ( unit_number ), clients ( full_name ), sales_reps ( name )",
         { count: "exact" }
       );
 
@@ -96,19 +97,24 @@ export async function GET(request: Request) {
       const projectName = sale.projects?.name ?? null;
       const unitRel = sale.units;
       const clientRel = sale.clients;
+      const salesRepRel = sale.sales_reps;
       const unitNumber = Array.isArray(unitRel)
         ? unitRel[0]?.unit_number ?? null
         : unitRel?.unit_number ?? null;
       const clientName = Array.isArray(clientRel)
         ? clientRel[0]?.full_name ?? null
         : clientRel?.full_name ?? null;
+      const salesRepName = Array.isArray(salesRepRel)
+        ? salesRepRel[0]?.name ?? null
+        : salesRepRel?.name ?? null;
 
       const typedSale = sale as Sale;
       return {
         ...typedSale,
         project_name: projectName,
         unit_number: unitNumber,
-        client_name: clientName
+        client_name: clientName,
+        sales_rep_name: salesRepName
       } satisfies SaleWithContext;
     });
 
@@ -268,7 +274,7 @@ export async function PATCH(request: Request) {
 
     const { data: updated, error: selectError } = await supabase
       .from("sales")
-      .select("*, projects ( name ), units ( unit_number ), clients ( full_name )")
+      .select("*, projects ( name ), units ( unit_number ), clients ( full_name ), sales_reps ( name )")
       .eq("id", payload.id)
       .single();
 
@@ -277,12 +283,18 @@ export async function PATCH(request: Request) {
     }
 
     const mapped = (() => {
-      const s = updated as Sale & { projects?: { name: string }; units?: { unit_number: string }; clients?: { full_name: string } };
+      const s = updated as Sale & {
+        projects?: { name: string };
+        units?: { unit_number: string };
+        clients?: { full_name: string };
+        sales_reps?: { name: string };
+      };
       return {
         ...s,
         project_name: s.projects?.name ?? null,
         unit_number: s.units?.unit_number ?? null,
-        client_name: s.clients?.full_name ?? null
+        client_name: s.clients?.full_name ?? null,
+        sales_rep_name: s.sales_reps?.name ?? null
       };
     })();
 

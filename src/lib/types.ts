@@ -27,6 +27,13 @@ export type Client = {
   created_at: string;
 };
 
+export type SalesRep = {
+  id: string;
+  name: string;
+  contract_start_date: string | null;
+  contract_end_date: string | null;
+};
+
 export type Sale = {
   id: string;
   project_id: string;

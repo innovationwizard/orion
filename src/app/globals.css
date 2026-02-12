@@ -490,37 +490,85 @@ dialog::backdrop {
   flex-wrap: wrap;
 }
 
-.sort-by-apto {
+.apto-filter {
   display: inline-flex;
   align-items: center;
   gap: 8px;
 }
 
-.sort-by-apto__label {
+.apto-filter__label {
   font-size: 13px;
   color: var(--muted);
   white-space: nowrap;
 }
 
-.sort-by-apto__select {
-  font-size: 13px;
-  padding: 6px 10px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--bg);
-  color: var(--fg);
-  cursor: pointer;
-  min-width: 180px;
+.apto-filter__input-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
 }
 
-.sort-by-apto__select:focus {
-  outline: 2px solid var(--accent, #3b82f6);
+.apto-filter__input {
+  font-size: 13px;
+  padding: 6px 28px 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--text);
+  min-width: 140px;
+  max-width: 200px;
+}
+
+.apto-filter__input::placeholder {
+  color: var(--muted);
+}
+
+.apto-filter__input:focus {
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
+.apto-filter__clear {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background: var(--border);
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.apto-filter__clear:hover {
+  background: var(--muted);
+  color: white;
+}
+
 .section-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
   text-align: right;
   font-weight: 600;
+}
+
+.apto-filter-chip {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--primary);
+  background: rgba(37, 99, 235, 0.1);
+  padding: 2px 8px;
+  border-radius: 6px;
 }
 
 .treemap-wrapper {

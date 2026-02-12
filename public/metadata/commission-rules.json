@@ -78,6 +78,13 @@
         "rate": 0.0035,
         "always_paid": true
       },
+      "ahorro_por_retiro": {
+        "id": "ahorro_por_retiro",
+        "name": "Ahorro por Retiro",
+        "rate": 0,
+        "always_paid": false,
+        "condition": "commission paid to sales rep AFTER sales_rep.contract_end_date → redirect here"
+      },
       "walk_in": {
         "name": "Puerta Abierta",
         "rate": 0.025,

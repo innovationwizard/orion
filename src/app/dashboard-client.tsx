@@ -51,7 +51,7 @@ export default function DashboardClient() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedUnit, setSelectedUnit] = useState<PaymentAnalyticsUnit | null>(null);
-  const [unitOrder, setUnitOrder] = useState<"apto-asc" | "apto-desc">("apto-asc");
+  const [aptoFilter, setAptoFilter] = useState<string>("");
 
   const projectId = searchParams.get("project_id") ?? "";
   const rawStart = searchParams.get("start_date") ?? "";
@@ -159,21 +159,46 @@ export default function DashboardClient() {
     router.replace(`?${nextParams.toString()}`);
   }
 
-  const paymentSummary = paymentData?.summary ?? {
+  const paymentSummaryBase = paymentData?.summary ?? {
     totalExpected: 0,
     totalPaid: 0,
     percentPaid: 0
   };
   const paymentProjectsRaw = paymentData?.byProject ?? [];
-  const paymentProjects = paymentProjectsRaw.map((project) => ({
+
+  // Unique apto numbers for autocomplete (sorted naturally)
+  const aptoOptions = [...new Set(paymentProjectsRaw.flatMap((p) => p.units.map((u) => u.unitNumber ?? "")))].filter(
+    Boolean
+  ).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+
+  // Filter by apto when set; exclude projects with no matching units
+  const paymentProjectsFiltered = aptoFilter.trim()
+    ? paymentProjectsRaw
+        .map((project) => ({
+          ...project,
+          units: project.units.filter((u) => (u.unitNumber ?? "").trim() === aptoFilter.trim())
+        }))
+        .filter((project) => project.units.length > 0)
+    : paymentProjectsRaw;
+
+  // Recompute summary when apto filter is active
+  const paymentSummary = aptoFilter.trim()
+    ? (() => {
+        const units = paymentProjectsFiltered.flatMap((p) => p.units);
+        const totalExpected = units.reduce((s, u) => s + (u.totalExpected ?? 0), 0);
+        const totalPaid = units.reduce((s, u) => s + (u.totalPaid ?? 0), 0);
+        const percentPaid = totalExpected > 0 ? Math.round((totalPaid / totalExpected) * 100) : 0;
+        return { totalExpected, totalPaid, percentPaid };
+      })()
+    : paymentSummaryBase;
+
+  const paymentProjects = paymentProjectsFiltered.map((project) => ({
     ...project,
-    units: [...project.units].sort((a, b) => {
-      const cmp = (a.unitNumber ?? "").localeCompare(b.unitNumber ?? "", undefined, {
-        numeric: true
-      });
-      return unitOrder === "apto-desc" ? -cmp : cmp;
-    })
+    units: [...project.units].sort((a, b) =>
+      (a.unitNumber ?? "").localeCompare(b.unitNumber ?? "", undefined, { numeric: true })
+    )
   }));
+
   const commissionRecipients = commissionData?.byRecipient ?? [];
   const commissionSummary = commissionData?.summary ?? { total: 0, paid: 0, unpaid: 0 };
   const hasPaymentData = paymentProjects.length > 0;
@@ -230,22 +255,45 @@ export default function DashboardClient() {
             <p className="muted">Proyectos → Unidades · Color por porcentaje pagado.</p>
           </div>
           <div className="section-header-actions">
-            <label className="sort-by-apto" htmlFor="unit-order">
-              <span className="sort-by-apto__label">Ordenar por apto</span>
-              <select
-                id="unit-order"
-                className="sort-by-apto__select"
-                value={unitOrder}
-                onChange={(e) =>
-                  setUnitOrder(e.target.value === "apto-desc" ? "apto-desc" : "apto-asc")
-                }
-                aria-label="Ordenar bloques por número de apto"
-              >
-                <option value="apto-asc">Ascendente (1, 2, 3…)</option>
-                <option value="apto-desc">Descendente (…3, 2, 1)</option>
-              </select>
+            <label className="apto-filter" htmlFor="apto-filter-input">
+              <span className="apto-filter__label">Filtrar por apto</span>
+              <div className="apto-filter__input-wrap">
+                <input
+                  id="apto-filter-input"
+                  type="text"
+                  className="apto-filter__input"
+                  list="apto-filter-list"
+                  value={aptoFilter}
+                  onChange={(e) => setAptoFilter(e.target.value)}
+                  placeholder="Ej. 101, 2-A…"
+                  autoComplete="off"
+                  aria-label="Filtrar por número de apto"
+                  aria-describedby={aptoFilter.trim() ? "apto-filter-clear-hint" : undefined}
+                />
+                {aptoFilter.trim() ? (
+                  <button
+                    type="button"
+                    className="apto-filter__clear"
+                    onClick={() => setAptoFilter("")}
+                    aria-label="Quitar filtro de apto"
+                    id="apto-filter-clear-hint"
+                  >
+                    ×
+                  </button>
+                ) : null}
+                <datalist id="apto-filter-list">
+                  {aptoOptions.map((opt) => (
+                    <option key={opt} value={opt} />
+                  ))}
+                </datalist>
+              </div>
             </label>
             <div className="section-meta">
+              {aptoFilter.trim() ? (
+                <span className="apto-filter-chip" title="Filtro activo">
+                  Aptos: {aptoFilter.trim()}
+                </span>
+              ) : null}
               <span>{currency.format(paymentSummary.totalPaid)}</span>
               <span className="muted">de {currency.format(paymentSummary.totalExpected)}</span>
             </div>
@@ -259,6 +307,8 @@ export default function DashboardClient() {
           </div>
         ) : hasPaymentData ? (
           <PaymentTreemap data={paymentProjects} onUnitSelect={setSelectedUnit} />
+        ) : aptoFilter.trim() ? (
+          <div className="empty-state">No hay unidades que coincidan con el apto &quot;{aptoFilter.trim()}&quot;.</div>
         ) : (
           <div className="empty-state">Aún no hay datos de pagos.</div>
         )}
