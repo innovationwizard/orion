@@ -7,7 +7,7 @@
 -- Run after: 015
 -- ============================================================================
 
-CREATE OR REPLACE VIEW payment_compliance AS
+CREATE OR REPLACE VIEW payment_compliance WITH (security_invoker = true) AS
 WITH expected_summary AS (
   SELECT
     ep.project_id,
