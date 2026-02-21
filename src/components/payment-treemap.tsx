@@ -95,7 +95,7 @@ type TooltipState = {
 } | null;
 
 function PaymentTooltip({ tooltip }: { tooltip: TooltipState }) {
-  if (!tooltip?.unit?.unitId) {
+  if (!tooltip?.unit || (!tooltip.unit.unitId && !tooltip.unit.unitNumber)) {
     return null;
   }
   const node = tooltip.unit;
@@ -252,12 +252,12 @@ export default function PaymentTreemap({ data, onUnitSelect }: PaymentTreemapPro
                     stroke={isDelinquent ? "#ef4444" : "#ffffff"}
                     strokeWidth={isDelinquent ? 3 : 2}
                     onClick={() => {
-                      if (!isProject && payload.unitId) {
+                      if (!isProject && (payload.unitId || payload.unitNumber)) {
                         onUnitSelect(payload);
                       }
                     }}
                     onMouseMove={(event) => {
-                      if (isProject || !payload.unitId) {
+                      if (isProject || (!payload.unitId && !payload.unitNumber)) {
                         setTooltip(null);
                         return;
                       }
