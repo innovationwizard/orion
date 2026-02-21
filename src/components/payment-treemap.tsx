@@ -15,10 +15,17 @@ export type PaymentAnalyticsUnit = {
   totalExpected: number;
   totalPaid: number;
   percentPaid: number;
-  engancheTotal: { expected: number; paid: number };
-  reserve: { expected: number; paid: number };
-  downPayment: { expected: number; paid: number };
-  installments: { expected: number; paid: number };
+  engancheTotal?: { expected: number; paid: number };
+  reserve?: { expected: number; paid: number };
+  downPayment?: { expected: number; paid: number };
+  installments?: { expected: number; paid: number };
+  /** Compliance mode: schedule-based expected vs actual */
+  expectedToDate?: number;
+  variance?: number;
+  complianceStatus?: string;
+  daysDelinquent?: number | null;
+  firstDueDate?: string;
+  lastDueDate?: string;
   paymentHistory: Array<{
     id: string;
     paymentDate: string;
@@ -92,32 +99,61 @@ function PaymentTooltip({ tooltip }: { tooltip: TooltipState }) {
     return null;
   }
   const node = tooltip.unit;
+  const isCompliance = node.complianceStatus != null;
   return (
     <div className="treemap-tooltip" style={{ left: tooltip.x, top: tooltip.y }}>
       <strong>{node.unitNumber}</strong>
       <span className="muted">{node.clientName}</span>
-      <div className="tooltip-grid">
-        <div>Enganche total</div>
-        <div>
-          {currency.format(node.engancheTotal.expected)} · {currency.format(node.engancheTotal.paid)}
+      {isCompliance ? (
+        <div className="tooltip-grid">
+          <div>Esperado a la fecha</div>
+          <div>{currency.format(node.expectedToDate ?? node.totalExpected)}</div>
+          <div>Cobrado</div>
+          <div>{currency.format(node.totalPaid)}</div>
+          <div>Varianza</div>
+          <div className={(node.variance ?? 0) >= 0 ? "positive" : "negative"}>
+            {currency.format(node.variance ?? 0)}
+          </div>
+          <div>Estado</div>
+          <div>{node.complianceStatus === "ahead" ? "Adelantado" : node.complianceStatus === "on_track" ? "Al día" : "En mora"}</div>
+          {node.daysDelinquent != null && node.daysDelinquent > 0 ? (
+            <>
+              <div>Días en mora</div>
+              <div className="negative">{node.daysDelinquent}</div>
+            </>
+          ) : null}
         </div>
-        <div>Reserva</div>
-        <div>
-          {currency.format(node.reserve.expected)} · {currency.format(node.reserve.paid)}
+      ) : node.engancheTotal ? (
+        <div className="tooltip-grid">
+          <div>Enganche total</div>
+          <div>
+            {currency.format(node.engancheTotal.expected)} · {currency.format(node.engancheTotal.paid)}
+          </div>
+          <div>Reserva</div>
+          <div>
+            {currency.format(node.reserve?.expected ?? 0)} · {currency.format(node.reserve?.paid ?? 0)}
+          </div>
+          <div>Enganche fraccionado</div>
+          <div>
+            {currency.format(node.downPayment?.expected ?? 0)} · {currency.format(node.downPayment?.paid ?? 0)}
+          </div>
+          <div>Cuotas</div>
+          <div>
+            {currency.format(node.installments?.expected ?? 0)} · {currency.format(node.installments?.paid ?? 0)}
+          </div>
+          <div>Total</div>
+          <div>
+            {currency.format(node.totalExpected)} · {currency.format(node.totalPaid)}
+          </div>
         </div>
-        <div>Enganche fraccionado</div>
-        <div>
-          {currency.format(node.downPayment.expected)} · {currency.format(node.downPayment.paid)}
+      ) : (
+        <div className="tooltip-grid">
+          <div>Total</div>
+          <div>
+            {currency.format(node.totalExpected)} · {currency.format(node.totalPaid)}
+          </div>
         </div>
-        <div>Cuotas</div>
-        <div>
-          {currency.format(node.installments.expected)} · {currency.format(node.installments.paid)}
-        </div>
-        <div>Total</div>
-        <div>
-          {currency.format(node.totalExpected)} · {currency.format(node.totalPaid)}
-        </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -190,6 +226,7 @@ export default function PaymentTreemap({ data, onUnitSelect }: PaymentTreemapPro
               const payload = node.data as TreemapNode;
               const hasRoomForPercent = width > 90 && height > 55;
               const fill = isProject ? "#f1f5f9" : getPaymentColor(payload.percentPaid ?? 0);
+              const isDelinquent = !isProject && (payload.daysDelinquent ?? 0) > 0;
               // Always show apto/project name; scale font down for small blocks (min 6px)
               const fontSize = Math.max(6, Math.min(13, Math.min(width, height) / 4));
               const isTiny = width < 50 || height < 36;
@@ -207,8 +244,8 @@ export default function PaymentTreemap({ data, onUnitSelect }: PaymentTreemapPro
                     rx={12}
                     ry={12}
                     fill={fill}
-                    stroke="#ffffff"
-                    strokeWidth={2}
+                    stroke={isDelinquent ? "#ef4444" : "#ffffff"}
+                    strokeWidth={isDelinquent ? 3 : 2}
                     onClick={() => {
                       if (!isProject && payload.unitId) {
                         onUnitSelect(payload);

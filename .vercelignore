@@ -1,4 +1,5 @@
 supabase/
+origin/
 etl-*.ts
 orion-repo-packed.txt
 Filas con Error.txt

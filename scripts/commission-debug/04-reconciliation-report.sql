@@ -1,6 +1,15 @@
 -- ============================================================================
 -- Step 4: Reconciliation report — expected vs actual totals
--- Run in Supabase SQL Editor. Phase logic matches calculate_commissions_for_payment.
+-- Run in Supabase SQL Editor.
+--
+-- NOTE: This report uses simplified commission_rates logic. When commission
+-- policy periods (004–014) are in use, actual commissions may differ due to:
+-- - Project/period-specific rates (commission_role_rates)
+-- - Escalation (1% vs 1.25% by unit count)
+-- - Referral types (portfolio_standard, portfolio_transition, etc.)
+-- - Gerencia assignments (commission_gerencia_assignments)
+-- - Ahorro por retiro (sales_rep_periods)
+-- For full reconciliation, compare against Leonel's Excel.
 -- ============================================================================
 
 -- Helper: phase per payment (1=reservation, 3=on/after deed date, else 2)

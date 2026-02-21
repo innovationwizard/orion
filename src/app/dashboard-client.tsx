@@ -18,12 +18,38 @@ type ProjectOption = {
   name: string;
 };
 
-type PaymentAnalyticsResponse = {
-  byProject: PaymentAnalyticsProject[];
+type ComplianceUnit = {
+  unitId: string;
+  unitNumber: string;
+  clientName: string;
+  expectedToDate: number;
+  actualTotal: number;
+  compliancePct: number | null;
+  variance: number;
+  complianceStatus: string;
+  daysDelinquent: number | null;
+  firstDueDate: string;
+  lastDueDate: string;
+  paymentHistory: Array<{ id: string; paymentDate: string; paymentType: string; amount: number }>;
+};
+
+type PaymentComplianceResponse = {
+  byProject: Array<{ projectId: string; projectName: string; units: ComplianceUnit[] }>;
   summary: {
-    totalExpected: number;
-    totalPaid: number;
-    percentPaid: number;
+    totalUnits: number;
+    compliantUnits: number;
+    delinquentUnits: number;
+    expectedToDate: number;
+    actualTotal: number;
+    compliancePct: number;
+    variance: number;
+    byAgingBucket: {
+      current: number;
+      days1_30: number;
+      days31_60: number;
+      days61_90: number;
+      days90Plus: number;
+    };
   };
 };
 
@@ -46,7 +72,7 @@ export default function DashboardClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [projects, setProjects] = useState<ProjectOption[]>([]);
-  const [paymentData, setPaymentData] = useState<PaymentAnalyticsResponse | null>(null);
+  const [paymentData, setPaymentData] = useState<PaymentComplianceResponse | null>(null);
   const [commissionData, setCommissionData] = useState<CommissionAnalyticsResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -99,25 +125,29 @@ export default function DashboardClient() {
       if (endDate) query.set("end_date", endDate);
 
       try {
-        const [paymentsRes, commissionsRes] = await Promise.all([
-          fetch(`/api/analytics/payments?${query.toString()}`, { cache: "no-store" }),
+        const complianceQuery = new URLSearchParams();
+        if (projectId) complianceQuery.set("project_id", projectId);
+        const [complianceRes, commissionsRes] = await Promise.all([
+          fetch(`/api/analytics/payment-compliance?${complianceQuery.toString()}`, {
+            cache: "no-store"
+          }),
           fetch(`/api/analytics/commissions?${query.toString()}`, { cache: "no-store" })
         ]);
 
-        const [paymentsPayload, commissionsPayload] = await Promise.all([
-          paymentsRes.json(),
+        const [compliancePayload, commissionsPayload] = await Promise.all([
+          complianceRes.json(),
           commissionsRes.json()
         ]);
 
-        if (!paymentsRes.ok || !commissionsRes.ok) {
+        if (!complianceRes.ok || !commissionsRes.ok) {
           const message =
-            paymentsPayload?.error ||
+            compliancePayload?.error ||
             commissionsPayload?.error ||
             "No se pudieron cargar los datos del panel.";
           throw new Error(message);
         }
 
-        setPaymentData(paymentsPayload ?? null);
+        setPaymentData(compliancePayload ?? null);
         setCommissionData(commissionsPayload ?? null);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Error inesperado");
@@ -159,38 +189,77 @@ export default function DashboardClient() {
     router.replace(`?${nextParams.toString()}`);
   }
 
-  const paymentSummaryBase = paymentData?.summary ?? {
-    totalExpected: 0,
-    totalPaid: 0,
-    percentPaid: 0
+  const complianceSummary = paymentData?.summary ?? {
+    totalUnits: 0,
+    compliantUnits: 0,
+    delinquentUnits: 0,
+    expectedToDate: 0,
+    actualTotal: 0,
+    compliancePct: 0,
+    variance: 0,
+    byAgingBucket: {
+      current: 0,
+      days1_30: 0,
+      days31_60: 0,
+      days61_90: 0,
+      days90Plus: 0
+    }
   };
   const paymentProjectsRaw = paymentData?.byProject ?? [];
 
-  // Unique apto numbers for autocomplete (sorted naturally)
-  const aptoOptions = [...new Set(paymentProjectsRaw.flatMap((p) => p.units.map((u) => u.unitNumber ?? "")))].filter(
+  // Map compliance units to treemap format and unique aptos for filter
+  const toTreemapUnit = (u: ComplianceUnit): PaymentAnalyticsUnit => ({
+    unitId: u.unitId,
+    unitNumber: u.unitNumber,
+    clientName: u.clientName,
+    totalExpected: u.expectedToDate,
+    totalPaid: u.actualTotal,
+    percentPaid: u.compliancePct ?? 0,
+    expectedToDate: u.expectedToDate,
+    variance: u.variance,
+    complianceStatus: u.complianceStatus,
+    daysDelinquent: u.daysDelinquent,
+    firstDueDate: u.firstDueDate,
+    lastDueDate: u.lastDueDate,
+    paymentHistory: u.paymentHistory
+  });
+
+  const paymentProjectsRawMapped = paymentProjectsRaw.map((p) => ({
+    ...p,
+    units: p.units.map((u) => toTreemapUnit(u))
+  }));
+
+  const aptoOptions = [...new Set(paymentProjectsRawMapped.flatMap((p) => p.units.map((u) => u.unitNumber ?? "")))].filter(
     Boolean
   ).sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
 
-  // Filter by apto when set; exclude projects with no matching units
   const paymentProjectsFiltered = aptoFilter.trim()
-    ? paymentProjectsRaw
+    ? paymentProjectsRawMapped
         .map((project) => ({
           ...project,
           units: project.units.filter((u) => (u.unitNumber ?? "").trim() === aptoFilter.trim())
         }))
         .filter((project) => project.units.length > 0)
-    : paymentProjectsRaw;
+    : paymentProjectsRawMapped;
 
-  // Recompute summary when apto filter is active
   const paymentSummary = aptoFilter.trim()
     ? (() => {
         const units = paymentProjectsFiltered.flatMap((p) => p.units);
-        const totalExpected = units.reduce((s, u) => s + (u.totalExpected ?? 0), 0);
-        const totalPaid = units.reduce((s, u) => s + (u.totalPaid ?? 0), 0);
-        const percentPaid = totalExpected > 0 ? Math.round((totalPaid / totalExpected) * 100) : 0;
-        return { totalExpected, totalPaid, percentPaid };
+        const expectedToDate = units.reduce((s, u) => s + (u.totalExpected ?? 0), 0);
+        const actualTotal = units.reduce((s, u) => s + (u.totalPaid ?? 0), 0);
+        const compliancePct = expectedToDate > 0 ? Math.round((actualTotal / expectedToDate) * 100) : 0;
+        const delinquentUnits = units.filter((u) => (u.daysDelinquent ?? 0) > 0).length;
+        return {
+          ...complianceSummary,
+          expectedToDate,
+          actualTotal,
+          compliancePct,
+          variance: actualTotal - expectedToDate,
+          delinquentUnits,
+          compliantUnits: units.length - delinquentUnits
+        };
       })()
-    : paymentSummaryBase;
+    : complianceSummary;
 
   const paymentProjects = paymentProjectsFiltered.map((project) => ({
     ...project,
@@ -198,6 +267,10 @@ export default function DashboardClient() {
       (a.unitNumber ?? "").localeCompare(b.unitNumber ?? "", undefined, { numeric: true })
     )
   }));
+
+  const delinquentUnits = paymentProjects.flatMap((p) =>
+    p.units.filter((u) => (u.daysDelinquent ?? 0) > 0).map((u) => ({ ...u, projectName: p.projectName }))
+  ).sort((a, b) => (b.daysDelinquent ?? 0) - (a.daysDelinquent ?? 0));
 
   const commissionRecipients = commissionData?.byRecipient ?? [];
   const commissionSummary = commissionData?.summary ?? { total: 0, paid: 0, unpaid: 0 };
@@ -231,7 +304,8 @@ export default function DashboardClient() {
             onChange={updateFilters}
           />
           <p className="dashboard-header__scope muted" aria-live="polite">
-            Los filtros aplican a <strong>Seguimiento de Pagos</strong> y <strong>Distribución de Comisiones</strong>.
+            <strong>Seguimiento de Pagos</strong> usa cronograma (expected_payments). Fechas aplican a{" "}
+            <strong>Comisiones</strong>.
           </p>
         </div>
       </header>
@@ -240,19 +314,69 @@ export default function DashboardClient() {
 
       <section className="kpi-grid">
         <KpiCard
-          label="Total esperado"
-          value={currency.format(paymentSummary.totalExpected)}
-          hint="Ventas activas"
+          label="Esperado a la fecha"
+          value={currency.format(paymentSummary.expectedToDate)}
+          hint="Cronograma"
         />
-        <KpiCard label="Total pagado" value={currency.format(paymentSummary.totalPaid)} />
-        <KpiCard label="% pagado" value={`${paymentSummary.percentPaid}%`} positive />
+        <KpiCard label="Cobrado" value={currency.format(paymentSummary.actualTotal)} />
+        <KpiCard
+          label="% cumplimiento"
+          value={`${paymentSummary.compliancePct}%`}
+          {...(paymentSummary.compliancePct >= 95
+            ? { positive: true }
+            : paymentSummary.expectedToDate > 0
+              ? { negative: true }
+              : {})}
+        />
+        <KpiCard
+          label="Varianza"
+          value={currency.format(paymentSummary.variance)}
+          hint={paymentSummary.variance >= 0 ? "Adelantado" : "En mora"}
+          {...(paymentSummary.variance >= 0 ? { positive: true } : { negative: true })}
+        />
+        <KpiCard
+          label="Unidades en mora"
+          value={String(paymentSummary.delinquentUnits)}
+          hint={`de ${paymentSummary.totalUnits}`}
+        />
       </section>
+
+      {paymentSummary.expectedToDate > 0 && (
+        <section className="card">
+          <h3>Antigüedad de mora (AR aging)</h3>
+          <div className="aging-bar">
+            {[
+              { key: "current", className: "current", count: paymentSummary.byAgingBucket.current, label: "Al día" },
+              { key: "days1_30", className: "days1-30", count: paymentSummary.byAgingBucket.days1_30, label: "1-30" },
+              { key: "days31_60", className: "days31-60", count: paymentSummary.byAgingBucket.days31_60, label: "31-60" },
+              { key: "days61_90", className: "days61-90", count: paymentSummary.byAgingBucket.days61_90, label: "61-90" },
+              { key: "days90Plus", className: "days90-plus", count: paymentSummary.byAgingBucket.days90Plus, label: "90+" }
+            ].map(({ key, className, count, label }) => (
+              <div
+                key={key}
+                className={`aging-segment ${className}`}
+                style={{ flex: Math.max(1, count) }}
+                title={`${label} días: ${count}`}
+              >
+                {count > 0 ? count : null}
+              </div>
+            ))}
+          </div>
+          <div className="aging-legend">
+            <span>Al día</span>
+            <span>1-30</span>
+            <span>31-60</span>
+            <span>61-90</span>
+            <span>90+</span>
+          </div>
+        </section>
+      )}
 
       <section className="card treemap-card">
         <div className="section-header">
           <div>
             <h2>Seguimiento de Pagos</h2>
-            <p className="muted">Proyectos → Unidades · Color por porcentaje pagado.</p>
+            <p className="muted">Proyectos → Unidades · Color por % cumplimiento. Borde rojo = en mora.</p>
           </div>
           <div className="section-header-actions">
             <label className="apto-filter" htmlFor="apto-filter-input">
@@ -294,8 +418,8 @@ export default function DashboardClient() {
                   Aptos: {aptoFilter.trim()}
                 </span>
               ) : null}
-              <span>{currency.format(paymentSummary.totalPaid)}</span>
-              <span className="muted">de {currency.format(paymentSummary.totalExpected)}</span>
+              <span>{currency.format(paymentSummary.actualTotal)}</span>
+              <span className="muted">de {currency.format(paymentSummary.expectedToDate)}</span>
             </div>
           </div>
         </div>
@@ -313,6 +437,43 @@ export default function DashboardClient() {
           <div className="empty-state">Aún no hay datos de pagos.</div>
         )}
       </section>
+
+      {delinquentUnits.length > 0 && (
+        <section className="card table-card">
+          <div className="section-header">
+            <h2>Cuentas en mora</h2>
+            <span className="muted">{delinquentUnits.length} unidades</span>
+          </div>
+          <div className="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Proyecto</th>
+                  <th>Unidad</th>
+                  <th>Cliente</th>
+                  <th>Esperado</th>
+                  <th>Cobrado</th>
+                  <th>Varianza</th>
+                  <th>Días mora</th>
+                </tr>
+              </thead>
+              <tbody>
+                {delinquentUnits.map((u) => (
+                  <tr key={`${u.projectName}-${u.unitNumber}`}>
+                    <td>{u.projectName}</td>
+                    <td>{u.unitNumber}</td>
+                    <td>{u.clientName}</td>
+                    <td>{currency.format(u.totalExpected)}</td>
+                    <td>{currency.format(u.totalPaid)}</td>
+                    <td className="negative">{currency.format(u.variance ?? 0)}</td>
+                    <td className="negative">{u.daysDelinquent ?? 0}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
 
       <section className="card treemap-card">
         <div className="section-header">

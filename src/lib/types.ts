@@ -34,6 +34,15 @@ export type SalesRep = {
   contract_end_date: string | null;
 };
 
+/** Referral type for commission calculation (business_rules §9) */
+export type ReferralType =
+  | "portfolio_standard"
+  | "portfolio_antonio_rada"
+  | "portfolio_transition"
+  | "inter_project"
+  | "external"
+  | "broker";
+
 export type Sale = {
   id: string;
   project_id: string;
@@ -48,8 +57,10 @@ export type Sale = {
   financed_amount: number;
   referral_name: string | null;
   referral_applies: boolean;
+  referral_type: ReferralType | null;
   promise_signed_date: string | null;
   deed_signed_date: string | null;
+  bank_disbursement_date: string | null;
   created_at: string;
 };
 
@@ -76,6 +87,8 @@ export type Commission = {
   commission_amount: number;
   paid: boolean;
   paid_date: string | null;
+  policy_period_id: string | null;
+  referral_type: string | null;
   created_at: string;
 };
 

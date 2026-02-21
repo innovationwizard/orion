@@ -13,6 +13,15 @@ const salesQuerySchema = z.object({
   distinct: z.string().optional()
 });
 
+const referralTypeValues = [
+  "portfolio_standard",
+  "portfolio_antonio_rada",
+  "portfolio_transition",
+  "inter_project",
+  "external",
+  "broker"
+] as const;
+
 const createSaleSchema = z.object({
   project_id: z.string().uuid(),
   unit_id: z.string().uuid(),
@@ -25,8 +34,10 @@ const createSaleSchema = z.object({
   financed_amount: z.number().nonnegative(),
   referral_name: z.string().optional(),
   referral_applies: z.boolean(),
+  referral_type: z.enum(referralTypeValues).optional(),
   promise_signed_date: z.string().optional(),
-  deed_signed_date: z.string().optional()
+  deed_signed_date: z.string().optional(),
+  bank_disbursement_date: z.string().optional()
 });
 
 type SaleWithContext = Sale & {
@@ -198,8 +209,10 @@ export async function POST(request: Request) {
         financed_amount: payload.financed_amount,
         referral_name: payload.referral_name ?? null,
         referral_applies: payload.referral_applies,
+        referral_type: payload.referral_type ?? null,
         promise_signed_date: payload.promise_signed_date ?? null,
-        deed_signed_date: payload.deed_signed_date ?? null
+        deed_signed_date: payload.deed_signed_date ?? null,
+        bank_disbursement_date: payload.bank_disbursement_date ?? null
       })
       .select("*")
       .single();

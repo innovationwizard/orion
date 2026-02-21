@@ -600,6 +600,50 @@ dialog::backdrop {
   filter: brightness(1.05);
 }
 
+/* AR aging bar */
+.aging-bar {
+  display: flex;
+  height: 36px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 12px 0 8px;
+}
+.aging-segment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0f172a;
+  min-width: 0;
+}
+.aging-segment.current {
+  background: rgba(22, 163, 74, 0.25);
+}
+.aging-segment.days1-30 {
+  background: rgba(245, 158, 11, 0.35);
+}
+.aging-segment.days31-60 {
+  background: rgba(249, 115, 22, 0.4);
+}
+.aging-segment.days61-90 {
+  background: rgba(239, 68, 68, 0.35);
+}
+.aging-segment.days90-plus {
+  background: rgba(185, 28, 28, 0.4);
+}
+.aging-legend {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--muted);
+  gap: 8px;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
 .treemap-legend {
   display: flex;
   align-items: center;
