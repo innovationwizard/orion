@@ -376,7 +376,7 @@ export default function DashboardClient() {
         <div className="section-header">
           <div>
             <h2>Seguimiento de Pagos</h2>
-            <p className="muted">Proyectos → Unidades · Color por % cumplimiento. Borde rojo = en mora.</p>
+            <p className="muted">Proyectos → Unidades · Color por % cumplimiento. Tamaño = brecha de cumplimiento (más grande = más mora).</p>
           </div>
           <div className="section-header-actions">
             <label className="apto-filter" htmlFor="apto-filter-input">

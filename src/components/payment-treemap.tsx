@@ -190,11 +190,16 @@ export default function PaymentTreemap({ data, onUnitSelect }: PaymentTreemapPro
       name: "root",
       children: data.map((project) => ({
         name: project.projectName,
-        children: project.units.map((unit) => ({
-          ...unit,
-          name: unit.unitNumber,
-          size: Math.max(1, unit.totalExpected)
-        }))
+        children: project.units.map((unit) => {
+          const compliance = unit.percentPaid ?? 0;
+          // Size = compliance shortfall (100 - compliance). Larger block = worse compliance.
+          const size = Math.max(1, 100 - Math.min(100, compliance));
+          return {
+            ...unit,
+            name: unit.unitNumber,
+            size
+          };
+        })
       }))
     })
       .sum((node: any) => node.size ?? 0)
