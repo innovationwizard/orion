@@ -49,9 +49,11 @@ export async function middleware(request: NextRequest) {
   const { data } = await supabase.auth.getUser();
   const isLoginRoute = request.nextUrl.pathname.startsWith("/login");
   const isAuthCallback = request.nextUrl.pathname === "/auth/callback";
+  const isAuthConfirm = request.nextUrl.pathname === "/auth/confirm";
+  const isSetPassword = request.nextUrl.pathname === "/auth/set-password";
 
   // Allow /auth/callback so invite/magic-link can land and client can set session from hash
-  if (!data.user && !isLoginRoute && !isAuthCallback) {
+  if (!data.user && !isLoginRoute && !isAuthCallback && !isAuthConfirm && !isSetPassword) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/login";
     return NextResponse.redirect(redirectUrl);
