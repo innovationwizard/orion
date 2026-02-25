@@ -276,17 +276,25 @@ a {
 .tab {
   border: 1px solid var(--border);
   background: var(--card);
-  padding: 8px 14px;
+  padding: 8px 16px;
   border-radius: 999px;
   cursor: pointer;
   font-weight: 500;
+  font-size: 14px;
   color: var(--muted);
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.tab:hover {
+  color: var(--text);
+  border-color: var(--muted);
 }
 
 .tab[aria-selected="true"] {
   border-color: var(--primary);
   color: var(--primary);
   background: rgba(37, 99, 235, 0.08);
+  font-weight: 600;
 }
 
 .table-card {
@@ -855,5 +863,465 @@ dialog::backdrop {
 @media (max-width: 768px) {
   table {
     min-width: 640px;
+  }
+}
+
+/* ================================================================ */
+/*  KPI Card with sparkline                                          */
+/* ================================================================ */
+
+.kpi-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.kpi-grid--3 {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+/* ================================================================ */
+/*  Bullet Chart                                                      */
+/* ================================================================ */
+
+.bullet-chart {
+  display: grid;
+  gap: 16px;
+}
+
+.bullet-row {
+  display: grid;
+  grid-template-columns: 140px 1fr 56px;
+  align-items: center;
+  gap: 12px;
+}
+
+.bullet-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.bullet-label__name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bullet-label__sub {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.bullet-bar {
+  position: relative;
+  height: 24px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #f1f5f9;
+}
+
+.bullet-range {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: 4px 0 0 4px;
+}
+
+.bullet-range--poor {
+  background: rgba(148, 163, 184, 0.22);
+  z-index: 1;
+}
+
+.bullet-range--ok {
+  background: rgba(148, 163, 184, 0.14);
+  z-index: 2;
+}
+
+.bullet-range--good {
+  background: rgba(148, 163, 184, 0.07);
+  z-index: 3;
+}
+
+.bullet-measure {
+  position: absolute;
+  top: 6px;
+  left: 0;
+  height: 12px;
+  border-radius: 3px;
+  z-index: 4;
+  transition: width 0.5s ease;
+}
+
+.bullet-measure--met {
+  background: var(--success);
+}
+
+.bullet-measure--unmet {
+  background: var(--primary);
+}
+
+.bullet-target {
+  position: absolute;
+  top: 2px;
+  width: 2px;
+  height: 20px;
+  background: var(--text);
+  border-radius: 1px;
+  z-index: 5;
+}
+
+.bullet-value {
+  font-size: 13px;
+  font-weight: 700;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ================================================================ */
+/*  Cash Flow Chart                                                   */
+/* ================================================================ */
+
+.cashflow-wrapper {
+  position: relative;
+  display: grid;
+  gap: 12px;
+}
+
+.cashflow-wrapper svg {
+  display: block;
+}
+
+.cashflow-tooltip {
+  position: absolute;
+  top: 8px;
+  background: var(--card);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  padding: 12px 14px;
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text);
+  pointer-events: none;
+  z-index: 10;
+  min-width: 180px;
+}
+
+.cashflow-tooltip strong {
+  font-size: 13px;
+}
+
+.cashflow-tooltip__grid {
+  display: grid;
+  grid-template-columns: 10px 1fr auto;
+  gap: 4px 8px;
+  align-items: center;
+}
+
+.cashflow-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.cashflow-dot--expected {
+  background: #94a3b8;
+}
+
+.cashflow-dot--forecasted {
+  background: #3b82f6;
+}
+
+.cashflow-dot--actual {
+  background: #22c55e;
+}
+
+.cashflow-legend {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.cashflow-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cashflow-legend__line {
+  display: inline-block;
+  width: 20px;
+  height: 2px;
+  border-radius: 1px;
+}
+
+.cashflow-legend__line--expected {
+  background: #94a3b8;
+  background-image: repeating-linear-gradient(
+    90deg,
+    #94a3b8 0px,
+    #94a3b8 3px,
+    transparent 3px,
+    transparent 6px
+  );
+}
+
+.cashflow-legend__line--forecasted {
+  background: #3b82f6;
+  background-image: repeating-linear-gradient(
+    90deg,
+    #3b82f6 0px,
+    #3b82f6 5px,
+    transparent 5px,
+    transparent 8px
+  );
+}
+
+.cashflow-legend__line--actual {
+  background: #22c55e;
+}
+
+/* ================================================================ */
+/*  Commission Bars                                                   */
+/* ================================================================ */
+
+.comm-bars {
+  display: grid;
+  gap: 12px;
+}
+
+.comm-bar-row {
+  display: grid;
+  grid-template-columns: 160px 1fr 100px;
+  align-items: center;
+  gap: 12px;
+}
+
+.comm-bar-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.comm-bar-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.comm-bar-type {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.comm-bar-track {
+  display: flex;
+  height: 20px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #f1f5f9;
+}
+
+.comm-bar-fill {
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+.comm-bar-fill--paid {
+  background: #22c55e;
+  border-radius: 4px 0 0 4px;
+}
+
+.comm-bar-fill--unpaid {
+  background: #cbd5e1;
+}
+
+.comm-bar-amount {
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.comm-bars-legend {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--muted);
+  padding-top: 4px;
+}
+
+.comm-bars-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.comm-bars-legend__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.comm-bars-legend__dot--paid {
+  background: #22c55e;
+}
+
+.comm-bars-legend__dot--unpaid {
+  background: #cbd5e1;
+}
+
+/* ================================================================ */
+/*  Aging Heatmap                                                     */
+/* ================================================================ */
+
+.heatmap {
+  display: grid;
+  gap: 2px;
+}
+
+.heatmap-row {
+  display: grid;
+  grid-template-columns: 140px repeat(5, 1fr) 60px;
+  gap: 2px;
+  align-items: stretch;
+}
+
+.heatmap-row--header {
+  margin-bottom: 4px;
+}
+
+.heatmap-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  padding: 8px 6px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.heatmap-cell {
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  padding: 8px 6px;
+  border-radius: 6px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.heatmap-cell--header {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.heatmap-cell--total {
+  font-weight: 700;
+  background: #f1f5f9;
+}
+
+/* ================================================================ */
+/*  Table Severity Rows                                               */
+/* ================================================================ */
+
+.clickable-row {
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.clickable-row:hover {
+  background: rgba(37, 99, 235, 0.06) !important;
+}
+
+.severity-1 {
+  background: rgba(245, 158, 11, 0.06) !important;
+}
+
+.severity-2 {
+  background: rgba(249, 115, 22, 0.08) !important;
+}
+
+.severity-3 {
+  background: rgba(239, 68, 68, 0.08) !important;
+}
+
+.severity-4 {
+  background: rgba(185, 28, 28, 0.1) !important;
+}
+
+/* ================================================================ */
+/*  Inline Compliance Bar                                             */
+/* ================================================================ */
+
+.compliance-bar-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.compliance-bar {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: #e2e8f0;
+  overflow: hidden;
+  min-width: 48px;
+  max-width: 80px;
+}
+
+.compliance-bar__fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--primary);
+  transition: width 0.4s ease;
+}
+
+.compliance-bar__label {
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  min-width: 32px;
+}
+
+/* ================================================================ */
+/*  Responsive                                                        */
+/* ================================================================ */
+
+@media (max-width: 640px) {
+  .bullet-row {
+    grid-template-columns: 100px 1fr 48px;
+    gap: 8px;
+  }
+
+  .comm-bar-row {
+    grid-template-columns: 120px 1fr 80px;
+    gap: 8px;
+  }
+
+  .heatmap-row {
+    grid-template-columns: 100px repeat(5, 1fr) 48px;
   }
 }
