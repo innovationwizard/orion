@@ -2,11 +2,13 @@ import { z } from "zod";
 import { getSupabaseConfigError, getSupabaseServerClient } from "@/lib/supabase";
 import { jsonError, jsonOk, parseQuery } from "@/lib/api";
 import { requireAuth } from "@/lib/auth";
+import { getFFExclusions } from "@/lib/ff-filter";
 
 const analyticsQuerySchema = z.object({
   project_id: z.string().uuid().optional(),
   start_date: z.string().optional(),
-  end_date: z.string().optional()
+  end_date: z.string().optional(),
+  exclude_ff: z.enum(["1"]).optional()
 });
 
 type CommissionRow = {
@@ -16,6 +18,7 @@ type CommissionRow = {
   paid: boolean;
   created_at: string;
   paid_date: string | null;
+  sale_id?: string | null;
   sales?: { project_id: string | null }[] | { project_id: string | null } | null;
 };
 
@@ -65,6 +68,13 @@ export async function GET(request: Request) {
       }
     });
 
+    // Pre-fetch F&F sale IDs if excluding
+    const excludingFF = query?.exclude_ff === "1";
+    let ffSaleIds = new Set<string>();
+    if (excludingFF) {
+      ({ saleIds: ffSaleIds } = await getFFExclusions(supabase, query?.project_id));
+    }
+
     // All commission rows included unless date/project filters applied. No status or paid-only filter.
     // Fetch in pages to avoid PostgREST default limit (~1000 rows); we may have 30k+ commission rows.
     const pageSize = 1000;
@@ -73,10 +83,12 @@ export async function GET(request: Request) {
 
     while (true) {
       // Use sales!inner(project_id) when filtering by project so PostgREST allows eq("sales.project_id", ...)
+      const baseCols = "recipient_id, recipient_name, commission_amount, paid, created_at, paid_date";
+      const saleIdCol = excludingFF ? ", sale_id" : "";
       const selectWithSales =
         query?.project_id
-          ? "recipient_id, recipient_name, commission_amount, paid, created_at, paid_date, sales!inner( project_id )"
-          : "recipient_id, recipient_name, commission_amount, paid, created_at, paid_date, sales ( project_id )";
+          ? `${baseCols}${saleIdCol}, sales!inner( project_id )`
+          : `${baseCols}${saleIdCol}, sales ( project_id )`;
 
       let builder = supabase
         .from("commissions")
@@ -97,12 +109,15 @@ export async function GET(request: Request) {
       if (dbError) {
         return jsonError(500, "Database error", dbError.message);
       }
-      const list = (page ?? []) as CommissionRow[];
+      const list = (page ?? []) as unknown as CommissionRow[];
       allRows.push(...list);
       if (list.length < pageSize) break;
       offset += pageSize;
     }
-    const data = allRows;
+    // Exclude F&F commissions
+    const data = excludingFF && ffSaleIds.size > 0
+      ? allRows.filter((r) => !r.sale_id || !ffSaleIds.has(r.sale_id))
+      : allRows;
 
     const grouped = new Map<
       string,

@@ -2,10 +2,12 @@ import { z } from "zod";
 import { getSupabaseConfigError, getSupabaseServerClient } from "@/lib/supabase";
 import { jsonError, jsonOk, parseQuery } from "@/lib/api";
 import { requireAuth } from "@/lib/auth";
+import { getFFExclusions } from "@/lib/ff-filter";
 
 const querySchema = z.object({
   project_id: z.string().uuid().optional(),
-  delinquent_only: z.enum(["1", "0", "true", "false"]).optional()
+  delinquent_only: z.enum(["1", "0", "true", "false"]).optional(),
+  exclude_ff: z.enum(["1"]).optional()
 });
 
 type ComplianceRow = {
@@ -88,7 +90,17 @@ export async function GET(request: Request) {
       return jsonError(500, "Database error", dbError.message);
     }
 
-    const complianceRows = (rows ?? []) as ComplianceRow[];
+    let complianceRows = (rows ?? []) as ComplianceRow[];
+
+    // Exclude F&F (caso_especial) sales when requested
+    if (query?.exclude_ff === "1") {
+      const { saleIds: ffSaleIds } = await getFFExclusions(supabase, query?.project_id);
+      if (ffSaleIds.size > 0) {
+        complianceRows = complianceRows.filter(
+          (r) => !r.sale_id || !ffSaleIds.has(r.sale_id)
+        );
+      }
+    }
 
     // Deduplicate by (project_id, unit_number) - take first (active sale)
     const seen = new Set<string>();

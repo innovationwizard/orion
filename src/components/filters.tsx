@@ -12,7 +12,9 @@ type FiltersProps = {
   projectId: string;
   startDate: string;
   endDate: string;
+  excludeFF: boolean;
   onChange: (next: { project_id?: string; start_date?: string; end_date?: string }) => void;
+  onToggleFF: () => void;
 };
 
 export default function Filters({
@@ -20,7 +22,9 @@ export default function Filters({
   projectId,
   startDate,
   endDate,
-  onChange
+  excludeFF,
+  onChange,
+  onToggleFF
 }: FiltersProps) {
   const activePreset = getPresetKeyForRange(startDate, endDate);
   const rangeLabel =
@@ -107,6 +111,16 @@ export default function Filters({
           </select>
         </label>
       </div>
+
+      <button
+        type="button"
+        className={`button small ${excludeFF ? "active" : "secondary"}`}
+        onClick={onToggleFF}
+        aria-pressed={excludeFF}
+        title="Excluir ventas de casos especiales (F&F)"
+      >
+        {excludeFF ? "F&F excluido" : "Incluye F&F"}
+      </button>
 
       <div className="filters-bar__meta">
         {activeCount > 0 ? (

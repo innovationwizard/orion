@@ -143,6 +143,7 @@ export default function DashboardClient() {
   const projectId = searchParams.get("project_id") ?? "";
   const startDate = searchParams.get("start_date") ?? "";
   const endDate = searchParams.get("end_date") ?? "";
+  const excludeFF = searchParams.get("exclude_ff") === "1";
   const activeTab = TABS.find((t) => t.id === searchParams.get("tab"))
     ? searchParams.get("tab")!
     : "overview";
@@ -182,12 +183,15 @@ export default function DashboardClient() {
       if (projectId) commissionsQ.set("project_id", projectId);
       if (startDate) commissionsQ.set("start_date", startDate);
       if (endDate) commissionsQ.set("end_date", endDate);
+      if (excludeFF) commissionsQ.set("exclude_ff", "1");
 
       const complianceQ = new URLSearchParams();
       if (projectId) complianceQ.set("project_id", projectId);
+      if (excludeFF) complianceQ.set("exclude_ff", "1");
 
       const cashFlowQ = new URLSearchParams();
       if (projectId) cashFlowQ.set("project_id", projectId);
+      if (excludeFF) cashFlowQ.set("exclude_ff", "1");
 
       try {
         const [compRes, commRes, cfRes] = await Promise.all([
@@ -219,7 +223,7 @@ export default function DashboardClient() {
     }
 
     fetchAnalytics();
-  }, [projectId, startDate, endDate]);
+  }, [projectId, startDate, endDate, excludeFF]);
 
   /* URL helpers */
   function updateFilters(next: { project_id?: string; start_date?: string; end_date?: string }) {
@@ -228,6 +232,13 @@ export default function DashboardClient() {
       if (v) p.set(k, v);
       else p.delete(k);
     }
+    router.replace(`?${p.toString()}`);
+  }
+
+  function toggleFF() {
+    const p = new URLSearchParams(searchParams.toString());
+    if (excludeFF) p.delete("exclude_ff");
+    else p.set("exclude_ff", "1");
     router.replace(`?${p.toString()}`);
   }
 
@@ -363,7 +374,9 @@ export default function DashboardClient() {
             projectId={projectId}
             startDate={startDate}
             endDate={endDate}
+            excludeFF={excludeFF}
             onChange={updateFilters}
+            onToggleFF={toggleFF}
           />
           <p className="dashboard-header__scope muted" aria-live="polite">
             <strong>Seguimiento de Pagos</strong> usa cronograma (expected_payments). Fechas aplican
