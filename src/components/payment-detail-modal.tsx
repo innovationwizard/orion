@@ -89,22 +89,26 @@ export default function PaymentDetailModal({ open, unit, onClose }: PaymentDetai
           : null;
 
   return (
-    <dialog ref={dialogRef} onClose={onClose}>
-      <div className="modal-content">
-        <div className="modal-header">
+    <dialog
+      ref={dialogRef}
+      onClose={onClose}
+      className="border-none rounded-2xl p-0 max-w-[min(640px,95vw)] w-full shadow-card backdrop:bg-black/40"
+    >
+      <div className="p-6 grid gap-4">
+        <div className="flex justify-between items-center">
           <div>
             <h3>Detalle de pagos</h3>
-            <p className="muted">
+            <p className="text-muted m-0">
               Unidad {unit.unitNumber} · {unit.clientName}
             </p>
           </div>
-          <button className="modal-close" onClick={onClose}>
+          <button className="border-none bg-transparent text-xl cursor-pointer text-muted" onClick={onClose}>
             ×
           </button>
         </div>
 
         {isCompliance && statusLabel != null && (
-          <p className="modal-tiers-hint">
+          <p className="text-sm text-muted m-0">
             Estado: <strong>{statusLabel}</strong>
             {unit.daysDelinquent != null && unit.daysDelinquent > 0 && (
               <> · {unit.daysDelinquent} días en mora</>
@@ -112,12 +116,12 @@ export default function PaymentDetailModal({ open, unit, onClose }: PaymentDetai
           </p>
         )}
         {!isCompliance && (
-          <p className="modal-tiers-hint">
+          <p className="text-sm text-muted m-0">
             Enganche total = Reserva + Enganche fraccionado (este último se paga en mensualidades).
           </p>
         )}
-        <div className="modal-table">
-          <div className="table-head">
+        <div className="grid text-sm">
+          <div className="grid grid-cols-4 gap-2 font-semibold text-muted py-2 border-b border-border">
             <span>Concepto</span>
             <span>Esperado</span>
             <span>Cobrado</span>
@@ -126,11 +130,11 @@ export default function PaymentDetailModal({ open, unit, onClose }: PaymentDetai
           {rows.map((row) => {
             const diff = row.paid - row.expected;
             return (
-              <div className="table-row" key={row.label}>
+              <div className="grid grid-cols-4 gap-2 py-2 border-b border-border/50" key={row.label}>
                 <span>{row.label}</span>
                 <span>{currency.format(row.expected)}</span>
                 <span>{currency.format(row.paid)}</span>
-                <span className={diff >= 0 ? "positive" : "negative"}>
+                <span className={diff >= 0 ? "text-success" : "text-danger"}>
                   {currency.format(diff)}
                 </span>
               </div>
@@ -138,20 +142,20 @@ export default function PaymentDetailModal({ open, unit, onClose }: PaymentDetai
           })}
         </div>
 
-        <div className="timeline">
+        <div className="grid gap-2">
           <h4>Historial de pagos</h4>
           {unit.paymentHistory.length ? (
-            <ul>
+            <ul className="list-none p-0 m-0 grid gap-1.5">
               {unit.paymentHistory.map((payment) => (
-                <li key={payment.id}>
-                  <span className="timeline-date">{payment.paymentDate}</span>
+                <li key={payment.id} className="flex items-center gap-3 text-sm">
+                  <span className="text-muted text-xs font-mono">{payment.paymentDate}</span>
                   <span>{formatPaymentType(payment.paymentType)}</span>
                   <strong>{currency.format(payment.amount)}</strong>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="muted">Aún no hay pagos registrados.</p>
+            <p className="text-muted m-0">Aún no hay pagos registrados.</p>
           )}
         </div>
       </div>

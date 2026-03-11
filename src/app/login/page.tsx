@@ -31,10 +31,10 @@ export default async function LoginPage() {
   }
 
   return (
-    <section className="page">
-      <div className="card" style={{ maxWidth: 420, margin: "0 auto" }}>
+    <section className="p-[clamp(16px,4vw,32px)] grid gap-[clamp(16px,3vw,28px)]">
+      <div className="bg-card rounded-2xl p-4 shadow-card grid gap-2" style={{ maxWidth: 420, margin: "0 auto" }}>
         <h2 style={{ margin: 0 }}>Ingresar</h2>
-        <p style={{ margin: 0, color: "var(--muted)" }}>
+        <p className="text-muted m-0">
           Accede con tu correo y contraseña.
         </p>
         <LoginForm />

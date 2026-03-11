@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { jsonOk, jsonError, parseJson } from "@/lib/api";
 import { desistReservationSchema } from "@/lib/reservas/validations";
 
 export async function PATCH(
@@ -8,34 +9,22 @@ export async function PATCH(
 ) {
   const { id: reservationId } = await params;
 
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Cuerpo inválido" }, { status: 400 });
-  }
-
-  const parsed = desistReservationSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: "Datos inválidos", details: parsed.error.flatten().fieldErrors },
-      { status: 400 },
-    );
-  }
+  const { data: input, error: pErr } = await parseJson(request, desistReservationSchema);
+  if (pErr) return jsonError(400, pErr.error, pErr.details);
 
   const supabase = createAdminClient();
 
   const { error } = await supabase.rpc("desist_reservation", {
     p_reservation_id: reservationId,
-    p_admin_user_id: parsed.data.admin_user_id,
-    p_reason: parsed.data.reason,
-    p_desistimiento_date: parsed.data.desistimiento_date,
+    p_admin_user_id: input.admin_user_id,
+    p_reason: input.reason,
+    p_desistimiento_date: input.desistimiento_date,
   });
 
   if (error) {
     console.error("[PATCH /api/reservas/admin/reservations/desist]", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return jsonError(500, error.message);
   }
 
-  return NextResponse.json({ status: "DESISTED" });
+  return jsonOk({ status: "DESISTED" });
 }

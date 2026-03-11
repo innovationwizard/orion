@@ -143,25 +143,25 @@ export default function ProjectsPage() {
   }
 
   return (
-    <section className="page management-page">
-      <nav className="mini-nav">
-        <a className="mini-nav__link" href="/">
+    <section className="p-[clamp(16px,4vw,32px)] grid gap-[clamp(16px,3vw,28px)]">
+      <nav className="flex gap-3 items-center text-[13px]">
+        <a className="text-muted no-underline px-2.5 py-1.5 rounded-full border border-transparent transition-colors hover:text-text-primary hover:border-border hover:bg-[#f8fafc]" href="/">
           Dashboard
         </a>
-        <a className="mini-nav__link" href="/projects">
+        <a className="text-muted no-underline px-2.5 py-1.5 rounded-full border border-transparent transition-colors hover:text-text-primary hover:border-border hover:bg-[#f8fafc]" href="/projects">
           Projects
         </a>
-        <a className="mini-nav__link" href="/desistimientos">
+        <a className="text-muted no-underline px-2.5 py-1.5 rounded-full border border-transparent transition-colors hover:text-text-primary hover:border-border hover:bg-[#f8fafc]" href="/desistimientos">
           Desistimientos
         </a>
       </nav>
-      <header className="header">
+      <header className="flex flex-wrap items-center gap-x-5 gap-y-3 justify-between">
         <div>
-          <p className="eyebrow">Orion · Administration</p>
-          <h1>Gestión de proyectos</h1>
+          <p className="uppercase tracking-[0.08em] text-[11px] font-semibold text-muted mb-2">Orion · Administration</p>
+          <h1 className="m-0 text-[clamp(20px,3vw,28px)]">Gestión de proyectos</h1>
         </div>
-        <div className="header-actions">
-          <a className="button secondary" href="/">
+        <div className="flex flex-wrap gap-3 items-center">
+          <a className="bg-transparent border border-border text-text-primary hover:bg-primary/[0.08] hover:border-primary hover:text-primary px-4 py-2.5 rounded-full font-semibold cursor-pointer transition-colors no-underline" href="/">
             Volver al dashboard
           </a>
         </div>
@@ -169,53 +169,53 @@ export default function ProjectsPage() {
 
       <ErrorBanner error={error} />
 
-      <section className="card management-card">
-        <div className="section-header">
+      <section className="bg-card rounded-2xl p-4 shadow-card grid gap-4">
+        <div className="flex justify-between items-start gap-4 flex-wrap">
           <div>
             <h2>Nuevo proyecto</h2>
-            <p className="muted">Crea proyectos activos para ventas y pagos.</p>
+            <p className="text-muted m-0">Crea proyectos activos para ventas y pagos.</p>
           </div>
         </div>
-        <form className="management-form" onSubmit={handleCreate}>
+        <form className="grid grid-cols-[1fr_auto] gap-3 items-center" onSubmit={handleCreate}>
           <input
-            className="input"
+            className="w-full px-3 py-2.5 border border-border rounded-[10px] bg-card text-text-primary text-sm"
             placeholder="Nombre del proyecto"
             value={newProject.name}
             onChange={(event) => setNewProject({ name: event.target.value })}
           />
-          <button className="button" type="submit" disabled={isSaving}>
+          <button className="border-none bg-primary text-white px-4 py-2.5 rounded-full font-semibold cursor-pointer transition-colors hover:bg-primary-hover" type="submit" disabled={isSaving}>
             {isSaving ? "Guardando..." : "Crear proyecto"}
           </button>
         </form>
       </section>
 
-      <section className="card management-card">
-        <div className="section-header">
+      <section className="bg-card rounded-2xl p-4 shadow-card grid gap-4">
+        <div className="flex justify-between items-start gap-4 flex-wrap">
           <div>
             <h2>Proyectos registrados</h2>
-            <p className="muted">Administra los proyectos existentes.</p>
+            <p className="text-muted m-0">Administra los proyectos existentes.</p>
           </div>
-          <div className="management-search">
+          <div className="flex gap-2 flex-wrap items-center">
             <input
-              className="input"
+              className="w-full px-3 py-2.5 border border-border rounded-[10px] bg-card text-text-primary text-sm"
               placeholder="Buscar"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
             />
-            <button className="button secondary small" onClick={() => fetchProjects()}>
+            <button className="bg-transparent border border-border text-text-primary hover:bg-primary/[0.08] hover:border-primary hover:text-primary px-3 py-1.5 text-[13px] rounded-full font-semibold cursor-pointer transition-colors" onClick={() => fetchProjects()}>
               Buscar
             </button>
           </div>
         </div>
 
         {isLoading ? (
-          <div className="skeleton">
-            <div className="skeleton-line" style={{ width: "40%" }} />
-            <div className="skeleton-line" style={{ width: "75%" }} />
-            <div className="skeleton-line" style={{ width: "65%" }} />
+          <div className="grid gap-2.5">
+            <div className="h-3.5 rounded-full bg-gradient-to-r from-[#eef2f7] via-[#f8fafc] to-[#eef2f7] bg-[length:200%_200%] animate-pulse" style={{ width: "40%" }} />
+            <div className="h-3.5 rounded-full bg-gradient-to-r from-[#eef2f7] via-[#f8fafc] to-[#eef2f7] bg-[length:200%_200%] animate-pulse" style={{ width: "75%" }} />
+            <div className="h-3.5 rounded-full bg-gradient-to-r from-[#eef2f7] via-[#f8fafc] to-[#eef2f7] bg-[length:200%_200%] animate-pulse" style={{ width: "65%" }} />
           </div>
         ) : (
-          <div className="table-card">
+          <div className="bg-card rounded-2xl p-2 shadow-card overflow-x-auto">
             <table>
               <thead>
                 <tr>
@@ -230,7 +230,7 @@ export default function ProjectsPage() {
                       <td>
                         {editingId === project.id ? (
                           <input
-                            className="input"
+                            className="w-full px-3 py-2.5 border border-border rounded-[10px] bg-card text-text-primary text-sm"
                             value={editingName}
                             onChange={(event) => setEditingName(event.target.value)}
                           />
@@ -239,18 +239,18 @@ export default function ProjectsPage() {
                         )}
                       </td>
                       <td>
-                        <div className="row-actions">
+                        <div className="flex gap-2">
                           {editingId === project.id ? (
                             <>
                               <button
-                                className="button small"
+                                className="border-none bg-primary text-white px-3 py-1.5 text-[13px] rounded-full font-semibold cursor-pointer transition-colors hover:bg-primary-hover"
                                 onClick={() => handleUpdate(project.id)}
                                 disabled={isSaving}
                               >
                                 Guardar
                               </button>
                               <button
-                                className="button secondary small"
+                                className="bg-transparent border border-border text-text-primary hover:bg-primary/[0.08] hover:border-primary hover:text-primary px-3 py-1.5 text-[13px] rounded-full font-semibold cursor-pointer transition-colors"
                                 onClick={cancelEditing}
                                 type="button"
                               >
@@ -260,14 +260,14 @@ export default function ProjectsPage() {
                           ) : (
                             <>
                               <button
-                                className="button secondary small"
+                                className="bg-transparent border border-border text-text-primary hover:bg-primary/[0.08] hover:border-primary hover:text-primary px-3 py-1.5 text-[13px] rounded-full font-semibold cursor-pointer transition-colors"
                                 onClick={() => startEditing(project)}
                                 type="button"
                               >
                                 Editar
                               </button>
                               <button
-                                className="button secondary small"
+                                className="bg-transparent border border-border text-text-primary hover:bg-primary/[0.08] hover:border-primary hover:text-primary px-3 py-1.5 text-[13px] rounded-full font-semibold cursor-pointer transition-colors"
                                 onClick={() => handleDelete(project)}
                                 type="button"
                               >
@@ -282,7 +282,7 @@ export default function ProjectsPage() {
                 ) : (
                   <tr>
                     <td colSpan={2}>
-                      <div className="empty-state">No hay proyectos registrados.</div>
+                      <div className="text-center text-muted py-6">No hay proyectos registrados.</div>
                     </td>
                   </tr>
                 )}

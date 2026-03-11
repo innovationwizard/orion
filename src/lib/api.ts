@@ -34,10 +34,14 @@ export function jsonOk<T>(payload: T, init?: ResponseInit) {
   return NextResponse.json(payload, init);
 }
 
+type ParseResult<T> =
+  | { data: T; error?: undefined }
+  | { data?: undefined; error: ApiError };
+
 export async function parseJson<T>(
   request: Request,
   schema: z.ZodSchema<T>
-): Promise<{ data?: T; error?: ApiError }> {
+): Promise<ParseResult<T>> {
   try {
     const body = await request.json();
     const parsed = schema.safeParse(body);
@@ -53,7 +57,7 @@ export async function parseJson<T>(
 export function parseQuery<T>(
   request: Request,
   schema: z.ZodSchema<T>
-): { data?: T; error?: ApiError } {
+): ParseResult<T> {
   const params = Object.fromEntries(new URL(request.url).searchParams.entries());
   const parsed = schema.safeParse(params);
   if (!parsed.success) {

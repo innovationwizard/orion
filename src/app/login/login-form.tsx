@@ -56,7 +56,7 @@ export default function LoginForm() {
       style={{ display: "grid", gap: 12, marginTop: 12 }}
     >
       <input
-        className="input"
+        className="w-full px-3 py-2.5 border border-border rounded-[10px] bg-card text-text-primary text-sm"
         type="email"
         placeholder="Correo"
         value={email}
@@ -65,7 +65,7 @@ export default function LoginForm() {
       />
       {mode === "login" && (
         <input
-          className="input"
+          className="w-full px-3 py-2.5 border border-border rounded-[10px] bg-card text-text-primary text-sm"
           type="password"
           placeholder="Contraseña"
           value={password}
@@ -73,13 +73,13 @@ export default function LoginForm() {
           required
         />
       )}
-      {error ? <div className="banner">{error}</div> : null}
+      {error ? <div className="bg-danger/10 text-danger px-4 py-3 rounded-xl font-medium">{error}</div> : null}
       {message ? (
-        <div className="banner" style={{ background: "var(--positive-bg, #e8f5e9)", color: "var(--positive, #2e7d32)" }}>
+        <div className="bg-danger/10 text-danger px-4 py-3 rounded-xl font-medium" style={{ background: "var(--positive-bg, #e8f5e9)", color: "var(--positive, #2e7d32)" }}>
           {message}
         </div>
       ) : null}
-      <button className="button" type="submit" disabled={isLoading}>
+      <button className="border-none bg-primary text-white px-4 py-2.5 rounded-full font-semibold cursor-pointer transition-colors hover:bg-primary-hover" type="submit" disabled={isLoading}>
         {isLoading
           ? mode === "reset"
             ? "Enviando..."

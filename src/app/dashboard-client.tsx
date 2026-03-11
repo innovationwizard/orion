@@ -82,19 +82,19 @@ const currency = new Intl.NumberFormat("es-GT", {
 });
 
 const AGING_BUCKETS = [
-  { key: "current", label: "Al día", className: "current" },
-  { key: "days1_30", label: "1–30", className: "days1-30" },
-  { key: "days31_60", label: "31–60", className: "days31-60" },
-  { key: "days61_90", label: "61–90", className: "days61-90" },
-  { key: "days90Plus", label: "90+", className: "days90-plus" }
+  { key: "current", label: "Al día", color: "bg-success/20 text-success" },
+  { key: "days1_30", label: "1–30", color: "bg-warning/20 text-warning" },
+  { key: "days31_60", label: "31–60", color: "bg-orange-500/20 text-orange-600" },
+  { key: "days61_90", label: "61–90", color: "bg-danger/20 text-danger" },
+  { key: "days90Plus", label: "90+", color: "bg-[#b91c1c]/20 text-[#b91c1c]" }
 ] as const;
 
 function severityClass(days: number | null): string {
   if (!days || days <= 0) return "";
-  if (days <= 30) return "severity-1";
-  if (days <= 60) return "severity-2";
-  if (days <= 90) return "severity-3";
-  return "severity-4";
+  if (days <= 30) return "!bg-warning/[0.06]";
+  if (days <= 60) return "!bg-orange-500/[0.08]";
+  if (days <= 90) return "!bg-danger/[0.08]";
+  return "!bg-[#b91c1c]/10";
 }
 
 function heatmapBg(bucket: string, count: number, total: number): string {
@@ -354,21 +354,21 @@ export default function DashboardClient() {
   /* ================================================================ */
 
   return (
-    <section className="page dashboard">
+    <section className="p-[clamp(16px,4vw,32px)] grid gap-[clamp(16px,3vw,28px)]">
       {/* Navigation */}
-      <nav className="mini-nav">
-        <a className="mini-nav__link" href="/">Dashboard</a>
-        <a className="mini-nav__link" href="/projects">Projects</a>
-        <a className="mini-nav__link" href="/desistimientos">Desistimientos</a>
+      <nav className="flex gap-3 items-center text-[13px]">
+        <a className="text-muted no-underline px-2.5 py-1.5 rounded-full border border-transparent transition-colors hover:text-text-primary hover:border-border hover:bg-[#f8fafc]" href="/">Dashboard</a>
+        <a className="text-muted no-underline px-2.5 py-1.5 rounded-full border border-transparent transition-colors hover:text-text-primary hover:border-border hover:bg-[#f8fafc]" href="/projects">Projects</a>
+        <a className="text-muted no-underline px-2.5 py-1.5 rounded-full border border-transparent transition-colors hover:text-text-primary hover:border-border hover:bg-[#f8fafc]" href="/desistimientos">Desistimientos</a>
       </nav>
 
       {/* Header */}
-      <header className="dashboard-header">
-        <div className="dashboard-header__title">
-          <p className="eyebrow">ORION — Business Intelligence</p>
-          <h1>Seguimiento de Reservas, Pagos y Comisiones</h1>
+      <header className="flex flex-wrap gap-x-6 gap-y-5 items-start justify-between">
+        <div className="min-w-0">
+          <p className="uppercase tracking-[0.08em] text-[11px] font-semibold text-muted mb-2">ORION — Business Intelligence</p>
+          <h1 className="m-0 text-[clamp(20px,3vw,28px)]">Seguimiento de Reservas, Pagos y Comisiones</h1>
         </div>
-        <div className="dashboard-header__filters">
+        <div className="flex-1 min-w-[min(100%,720px)] flex flex-col gap-3">
           <Filters
             projects={projects}
             projectId={projectId}
@@ -378,7 +378,7 @@ export default function DashboardClient() {
             onChange={updateFilters}
             onToggleFF={toggleFF}
           />
-          <p className="dashboard-header__scope muted" aria-live="polite">
+          <p className="text-xs m-0 text-muted" aria-live="polite">
             <strong>Seguimiento de Pagos</strong> usa cronograma (expected_payments). Fechas aplican
             a <strong>Comisiones</strong>.
           </p>
@@ -395,7 +395,7 @@ export default function DashboardClient() {
       {/* ============================================================ */}
       {activeTab === "overview" && (
         <>
-          <section className="kpi-grid">
+          <section className="grid grid-cols-[repeat(auto-fit,minmax(180px,1fr))] gap-4">
             <KpiCard
               label="Esperado a la fecha"
               value={currency.format(paymentSummary.expectedToDate)}
@@ -433,16 +433,16 @@ export default function DashboardClient() {
           </section>
 
           {projectBullets.length > 0 && (
-            <section className="card">
-              <div className="section-header">
+            <section className="bg-card rounded-2xl p-4 shadow-card grid gap-2">
+              <div className="flex justify-between items-start gap-4 flex-wrap">
                 <h3>Cumplimiento por Proyecto</h3>
-                <span className="muted">{projectBullets.length} proyectos</span>
+                <span className="text-muted m-0">{projectBullets.length} proyectos</span>
               </div>
               {isLoading ? (
-                <div className="skeleton">
-                  <div className="skeleton-line" style={{ width: "70%" }} />
-                  <div className="skeleton-line" style={{ width: "85%" }} />
-                  <div className="skeleton-line" style={{ width: "60%" }} />
+                <div className="grid gap-2.5">
+                  <div className="h-3.5 rounded-full bg-gradient-to-r from-[#eef2f7] via-[#f8fafc] to-[#eef2f7] bg-[length:200%_200%] animate-pulse" style={{ width: "70%" }} />
+                  <div className="h-3.5 rounded-full bg-gradient-to-r from-[#eef2f7] via-[#f8fafc] to-[#eef2f7] bg-[length:200%_200%] animate-pulse" style={{ width: "85%" }} />
+                  <div className="h-3.5 rounded-full bg-gradient-to-r from-[#eef2f7] via-[#f8fafc] to-[#eef2f7] bg-[length:200%_200%] animate-pulse" style={{ width: "60%" }} />
                 </div>
               ) : (
                 <BulletChart items={projectBullets} />
@@ -451,10 +451,10 @@ export default function DashboardClient() {
           )}
 
           {paymentSummary.expectedToDate > 0 && (
-            <section className="card">
+            <section className="bg-card rounded-2xl p-4 shadow-card grid gap-2">
               <h3>Antigüedad de mora</h3>
-              <div className="aging-bar">
-                {AGING_BUCKETS.map(({ key, className, label }) => {
+              <div className="flex rounded-lg overflow-hidden h-8 text-xs font-semibold">
+                {AGING_BUCKETS.map(({ key, color, label }) => {
                   const count =
                     paymentSummary.byAgingBucket[
                       key as keyof typeof paymentSummary.byAgingBucket
@@ -462,7 +462,7 @@ export default function DashboardClient() {
                   return (
                     <div
                       key={key}
-                      className={`aging-segment ${className}`}
+                      className={`flex items-center justify-center ${color}`}
                       style={{ flex: Math.max(1, count) }}
                       title={`${label}: ${count} unidades`}
                     >
@@ -471,7 +471,7 @@ export default function DashboardClient() {
                   );
                 })}
               </div>
-              <div className="aging-legend">
+              <div className="flex justify-between text-xs text-muted px-1">
                 {AGING_BUCKETS.map(({ key, label }) => (
                   <span key={key}>{label}</span>
                 ))}
@@ -488,33 +488,33 @@ export default function DashboardClient() {
         <>
           {/* Aging Heatmap */}
           {agingByProject.length > 0 && (
-            <section className="card">
+            <section className="bg-card rounded-2xl p-4 shadow-card grid gap-2">
               <h3>Mora por Proyecto</h3>
-              <div className="heatmap">
-                <div className="heatmap-row heatmap-row--header">
-                  <span className="heatmap-label" />
+              <div className="grid gap-1 text-sm">
+                <div className="grid grid-cols-[minmax(120px,1fr)_repeat(6,minmax(48px,80px))] gap-1 font-semibold text-muted">
+                  <span />
                   {AGING_BUCKETS.map(({ key, label }) => (
-                    <span key={key} className="heatmap-cell heatmap-cell--header">
+                    <span key={key} className="text-center py-1.5 px-1">
                       {label}
                     </span>
                   ))}
-                  <span className="heatmap-cell heatmap-cell--header">Total</span>
+                  <span className="text-center py-1.5 px-1">Total</span>
                 </div>
                 {agingByProject.map((p) => (
-                  <div key={p.projectName} className="heatmap-row">
-                    <span className="heatmap-label">{p.projectName}</span>
+                  <div key={p.projectName} className="grid grid-cols-[minmax(120px,1fr)_repeat(6,minmax(48px,80px))] gap-1">
+                    <span className="py-1.5 px-1 font-medium truncate">{p.projectName}</span>
                     {(
                       ["current", "days1_30", "days31_60", "days61_90", "days90Plus"] as const
                     ).map((bucket) => (
                       <span
                         key={bucket}
-                        className="heatmap-cell"
+                        className="text-center py-1.5 px-1 rounded"
                         style={{ background: heatmapBg(bucket, p[bucket], p.total) }}
                       >
                         {p[bucket] || "–"}
                       </span>
                     ))}
-                    <span className="heatmap-cell heatmap-cell--total">{p.total}</span>
+                    <span className="text-center py-1.5 px-1 font-semibold">{p.total}</span>
                   </div>
                 ))}
               </div>
@@ -522,25 +522,25 @@ export default function DashboardClient() {
           )}
 
           {/* Units table */}
-          <section className="card table-card">
-            <div className="section-header">
+          <section className="bg-card rounded-2xl p-4 shadow-card grid gap-2">
+            <div className="flex justify-between items-start gap-4 flex-wrap">
               <div>
                 <h2>{showAllUnits ? "Todas las unidades" : "Cuentas en mora"}</h2>
-                <p className="muted">
+                <p className="text-muted m-0">
                   {displayedUnits.length} unidades
                   {!showAllUnits && delinquentUnits.length > 0
                     ? " · ordenado por días de mora"
                     : ""}
                 </p>
               </div>
-              <div className="section-header-actions">
-                <label className="apto-filter" htmlFor="apto-filter-input">
-                  <span className="apto-filter__label">Filtrar apto</span>
-                  <div className="apto-filter__input-wrap">
+              <div className="flex items-center gap-3 flex-wrap">
+                <label className="flex items-center gap-2 text-sm" htmlFor="apto-filter-input">
+                  <span className="text-muted font-medium">Filtrar apto</span>
+                  <div className="relative">
                     <input
                       id="apto-filter-input"
                       type="text"
-                      className="apto-filter__input"
+                      className="w-full px-3 py-2.5 border border-border rounded-[10px] bg-card text-text-primary text-sm"
                       list="apto-filter-list"
                       value={aptoFilter}
                       onChange={(e) => setAptoFilter(e.target.value)}
@@ -551,7 +551,7 @@ export default function DashboardClient() {
                     {aptoFilter.trim() ? (
                       <button
                         type="button"
-                        className="apto-filter__clear"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 border-none bg-transparent text-muted cursor-pointer text-sm"
                         onClick={() => setAptoFilter("")}
                         aria-label="Quitar filtro"
                       >
@@ -567,7 +567,7 @@ export default function DashboardClient() {
                 </label>
                 <button
                   type="button"
-                  className={`button small ${showAllUnits ? "secondary" : ""}`}
+                  className={`rounded-full font-semibold cursor-pointer transition-colors px-3 py-1.5 text-[13px] ${showAllUnits ? "bg-transparent border border-border text-text-primary hover:bg-primary/[0.08] hover:border-primary hover:text-primary" : "border-none bg-primary text-white hover:bg-primary-hover"}`}
                   onClick={() => setShowAllUnits(!showAllUnits)}
                 >
                   {showAllUnits ? "Solo en mora" : "Todas"}
@@ -576,13 +576,13 @@ export default function DashboardClient() {
             </div>
 
             {isLoading ? (
-              <div className="skeleton" style={{ padding: 24 }}>
-                <div className="skeleton-line" style={{ width: "90%" }} />
-                <div className="skeleton-line" style={{ width: "75%" }} />
-                <div className="skeleton-line" style={{ width: "80%" }} />
+              <div className="grid gap-2.5 p-6">
+                <div className="h-3.5 rounded-full bg-gradient-to-r from-[#eef2f7] via-[#f8fafc] to-[#eef2f7] bg-[length:200%_200%] animate-pulse" style={{ width: "90%" }} />
+                <div className="h-3.5 rounded-full bg-gradient-to-r from-[#eef2f7] via-[#f8fafc] to-[#eef2f7] bg-[length:200%_200%] animate-pulse" style={{ width: "75%" }} />
+                <div className="h-3.5 rounded-full bg-gradient-to-r from-[#eef2f7] via-[#f8fafc] to-[#eef2f7] bg-[length:200%_200%] animate-pulse" style={{ width: "80%" }} />
               </div>
             ) : displayedUnits.length > 0 ? (
-              <div className="table-scroll">
+              <div className="overflow-x-auto">
                 <table>
                   <thead>
                     <tr>
@@ -605,7 +605,7 @@ export default function DashboardClient() {
                       return (
                         <tr
                           key={`${u.projectName}-${u.unitNumber}`}
-                          className={`clickable-row ${severityClass(u.daysDelinquent ?? null)}`}
+                          className={`cursor-pointer transition-colors hover:!bg-primary/[0.06] ${severityClass(u.daysDelinquent ?? null)}`}
                           onClick={() => setSelectedUnit(u)}
                         >
                           <td>{u.projectName}</td>
@@ -616,20 +616,20 @@ export default function DashboardClient() {
                           <td>{currency.format(u.totalExpected)}</td>
                           <td>{currency.format(u.totalPaid)}</td>
                           <td>
-                            <div className="compliance-bar-cell">
-                              <div className="compliance-bar">
+                            <div className="flex items-center gap-2">
+                              <div className="flex-1 h-1.5 rounded-full bg-border overflow-hidden">
                                 <div
-                                  className="compliance-bar__fill"
+                                  className="h-full rounded-full bg-primary"
                                   style={{ width: `${Math.min(100, pct)}%` }}
                                 />
                               </div>
-                              <span className="compliance-bar__label">{pct}%</span>
+                              <span className="text-xs font-semibold whitespace-nowrap">{pct}%</span>
                             </div>
                           </td>
-                          <td className={(u.variance ?? 0) >= 0 ? "positive" : "negative"}>
+                          <td className={(u.variance ?? 0) >= 0 ? "text-success" : "text-danger"}>
                             {currency.format(u.variance ?? 0)}
                           </td>
-                          <td className={(u.daysDelinquent ?? 0) > 0 ? "negative" : ""}>
+                          <td className={(u.daysDelinquent ?? 0) > 0 ? "text-danger" : ""}>
                             {u.daysDelinquent ?? 0}
                           </td>
                         </tr>
@@ -639,7 +639,7 @@ export default function DashboardClient() {
                 </table>
               </div>
             ) : (
-              <div className="empty-state">
+              <div className="text-center text-muted py-6">
                 {aptoFilter.trim()
                   ? `No hay unidades que coincidan con "${aptoFilter.trim()}".`
                   : showAllUnits
@@ -656,7 +656,7 @@ export default function DashboardClient() {
       {/* ============================================================ */}
       {activeTab === "cash-flow" && (
         <>
-          <section className="kpi-grid kpi-grid--3">
+          <section className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
             <KpiCard
               label="Programado total"
               value={currency.format(cfSummary.totalExpected)}
@@ -676,20 +676,20 @@ export default function DashboardClient() {
             />
           </section>
 
-          <section className="card">
-            <div className="section-header">
+          <section className="bg-card rounded-2xl p-4 shadow-card grid gap-2">
+            <div className="flex justify-between items-start gap-4 flex-wrap">
               <h3>Flujo de Caja Mensual</h3>
-              <span className="muted">
+              <span className="text-muted m-0">
                 {monthly.length > 0
                   ? `${monthly[0].month} — ${monthly[monthly.length - 1].month}`
                   : ""}
               </span>
             </div>
             {isLoading ? (
-              <div className="skeleton" style={{ padding: 24 }}>
-                <div className="skeleton-line" style={{ width: "100%" }} />
-                <div className="skeleton-line" style={{ width: "85%" }} />
-                <div className="skeleton-line" style={{ width: "60%" }} />
+              <div className="grid gap-2.5 p-6">
+                <div className="h-3.5 rounded-full bg-gradient-to-r from-[#eef2f7] via-[#f8fafc] to-[#eef2f7] bg-[length:200%_200%] animate-pulse" style={{ width: "100%" }} />
+                <div className="h-3.5 rounded-full bg-gradient-to-r from-[#eef2f7] via-[#f8fafc] to-[#eef2f7] bg-[length:200%_200%] animate-pulse" style={{ width: "85%" }} />
+                <div className="h-3.5 rounded-full bg-gradient-to-r from-[#eef2f7] via-[#f8fafc] to-[#eef2f7] bg-[length:200%_200%] animate-pulse" style={{ width: "60%" }} />
               </div>
             ) : (
               <CashFlowChart data={monthly} />
@@ -703,7 +703,7 @@ export default function DashboardClient() {
       {/* ============================================================ */}
       {activeTab === "commissions" && (
         <>
-          <section className="kpi-grid kpi-grid--3">
+          <section className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
             <KpiCard label="Total comisiones" value={currency.format(commissionSummary.total)} />
             <KpiCard label="Pagado" value={currency.format(commissionSummary.paid)} positive />
             <KpiCard
@@ -713,16 +713,16 @@ export default function DashboardClient() {
             />
           </section>
 
-          <section className="card">
-            <div className="section-header">
+          <section className="bg-card rounded-2xl p-4 shadow-card grid gap-2">
+            <div className="flex justify-between items-start gap-4 flex-wrap">
               <h3>Comisiones por Beneficiario</h3>
-              <span className="muted">{commissionRecipients.length} beneficiarios</span>
+              <span className="text-muted m-0">{commissionRecipients.length} beneficiarios</span>
             </div>
             {isLoading ? (
-              <div className="skeleton" style={{ padding: 24 }}>
-                <div className="skeleton-line" style={{ width: "75%" }} />
-                <div className="skeleton-line" style={{ width: "90%" }} />
-                <div className="skeleton-line" style={{ width: "60%" }} />
+              <div className="grid gap-2.5 p-6">
+                <div className="h-3.5 rounded-full bg-gradient-to-r from-[#eef2f7] via-[#f8fafc] to-[#eef2f7] bg-[length:200%_200%] animate-pulse" style={{ width: "75%" }} />
+                <div className="h-3.5 rounded-full bg-gradient-to-r from-[#eef2f7] via-[#f8fafc] to-[#eef2f7] bg-[length:200%_200%] animate-pulse" style={{ width: "90%" }} />
+                <div className="h-3.5 rounded-full bg-gradient-to-r from-[#eef2f7] via-[#f8fafc] to-[#eef2f7] bg-[length:200%_200%] animate-pulse" style={{ width: "60%" }} />
               </div>
             ) : (
               <CommissionBars data={commissionRecipients} />

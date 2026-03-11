@@ -29,42 +29,42 @@ export default function CommissionBars({ data }: CommissionBarsProps) {
   const maxTotal = Math.max(...sorted.map((d) => d.totalAmount), 1);
 
   if (sorted.length === 0) {
-    return <div className="empty-state">No hay datos de comisiones.</div>;
+    return <div className="text-center text-muted py-6">No hay datos de comisiones.</div>;
   }
 
   return (
-    <div className="comm-bars">
+    <div className="grid gap-3">
       {sorted.map((item) => {
         const paidPct = (item.paidAmount / maxTotal) * 100;
         const unpaidPct = (item.unpaidAmount / maxTotal) * 100;
 
         return (
-          <div key={item.recipientId} className="comm-bar-row">
-            <div className="comm-bar-info">
-              <span className="comm-bar-name">{item.recipientName}</span>
-              <span className="comm-bar-type">{typeLabel(item.recipientType)}</span>
+          <div key={item.recipientId} className="grid grid-cols-[160px_1fr_100px] items-center gap-3">
+            <div className="flex flex-col gap-0.5 min-w-0">
+              <span className="text-[13px] font-semibold text-text-primary whitespace-nowrap overflow-hidden text-ellipsis">{item.recipientName}</span>
+              <span className="text-[11px] text-muted">{typeLabel(item.recipientType)}</span>
             </div>
-            <div className="comm-bar-track" title={`${item.percentPaid}% pagado`}>
+            <div className="flex h-5 rounded overflow-hidden bg-slate-100" title={`${item.percentPaid}% pagado`}>
               <div
-                className="comm-bar-fill comm-bar-fill--paid"
+                className="h-full rounded-l bg-green-500 transition-[width] duration-400 ease-in-out"
                 style={{ width: `${paidPct}%` }}
               />
               <div
-                className="comm-bar-fill comm-bar-fill--unpaid"
+                className="h-full bg-slate-300 transition-[width] duration-400 ease-in-out"
                 style={{ width: `${unpaidPct}%` }}
               />
             </div>
-            <span className="comm-bar-amount">{currency.format(item.totalAmount)}</span>
+            <span className="text-[13px] font-semibold text-right text-text-primary tabular-nums">{currency.format(item.totalAmount)}</span>
           </div>
         );
       })}
-      <div className="comm-bars-legend">
-        <div className="comm-bars-legend__item">
-          <span className="comm-bars-legend__dot comm-bars-legend__dot--paid" />
+      <div className="flex gap-4 text-xs text-muted pt-1">
+        <div className="inline-flex items-center gap-1.5">
+          <span className="inline-block w-2.5 h-2.5 rounded-full bg-green-500" />
           Pagado
         </div>
-        <div className="comm-bars-legend__item">
-          <span className="comm-bars-legend__dot comm-bars-legend__dot--unpaid" />
+        <div className="inline-flex items-center gap-1.5">
+          <span className="inline-block w-2.5 h-2.5 rounded-full bg-slate-300" />
           Pendiente
         </div>
       </div>

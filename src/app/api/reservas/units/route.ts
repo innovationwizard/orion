@@ -1,22 +1,18 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { jsonOk, jsonError, parseQuery } from "@/lib/api";
+import { unitsQuerySchema } from "@/lib/reservas/validations";
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = request.nextUrl;
-  const projectSlug = searchParams.get("project");
-  const towerId = searchParams.get("tower");
+  const { data: filters, error: qErr } = parseQuery(request, unitsQuerySchema);
+  if (qErr) return jsonError(400, qErr.error, qErr.details);
 
   const supabase = createAdminClient();
-
   let query = supabase.from("v_rv_units_full").select("*");
 
-  if (projectSlug) {
-    query = query.eq("project_slug", projectSlug);
-  }
-
-  if (towerId) {
-    query = query.eq("tower_id", towerId);
-  }
+  if (filters.project) query = query.eq("project_slug", filters.project);
+  if (filters.tower) query = query.eq("tower_id", filters.tower);
+  if (filters.status) query = query.eq("status", filters.status);
 
   query = query.order("floor_number", { ascending: false }).order("unit_number");
 
@@ -24,8 +20,8 @@ export async function GET(request: NextRequest) {
 
   if (error) {
     console.error("[GET /api/reservas/units]", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return jsonError(500, error.message);
   }
 
-  return NextResponse.json(data);
+  return jsonOk(data);
 }

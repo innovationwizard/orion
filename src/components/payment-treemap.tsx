@@ -101,17 +101,20 @@ function PaymentTooltip({ tooltip }: { tooltip: TooltipState }) {
   const node = tooltip.unit;
   const isCompliance = node.complianceStatus != null;
   return (
-    <div className="treemap-tooltip" style={{ left: tooltip.x, top: tooltip.y }}>
-      <strong>{node.unitNumber}</strong>
-      <span className="muted">{node.clientName}</span>
+    <div
+      className="absolute bg-card rounded-xl shadow-card px-3.5 py-3 grid gap-1.5 text-text-primary text-xs pointer-events-none z-[10]"
+      style={{ left: tooltip.x, top: tooltip.y }}
+    >
+      <strong className="text-[13px]">{node.unitNumber}</strong>
+      <span className="text-muted">{node.clientName}</span>
       {isCompliance ? (
-        <div className="tooltip-grid">
+        <div className="grid grid-cols-[1fr_auto] gap-1 gap-x-3">
           <div>Esperado a la fecha</div>
           <div>{currency.format(node.expectedToDate ?? node.totalExpected)}</div>
           <div>Cobrado</div>
           <div>{currency.format(node.totalPaid)}</div>
           <div>Varianza</div>
-          <div className={(node.variance ?? 0) >= 0 ? "positive" : "negative"}>
+          <div className={(node.variance ?? 0) >= 0 ? "text-success" : "text-danger"}>
             {currency.format(node.variance ?? 0)}
           </div>
           <div>Estado</div>
@@ -119,12 +122,12 @@ function PaymentTooltip({ tooltip }: { tooltip: TooltipState }) {
           {node.daysDelinquent != null && node.daysDelinquent > 0 ? (
             <>
               <div>Días en mora</div>
-              <div className="negative">{node.daysDelinquent}</div>
+              <div className="text-danger">{node.daysDelinquent}</div>
             </>
           ) : null}
         </div>
       ) : node.engancheTotal ? (
-        <div className="tooltip-grid">
+        <div className="grid grid-cols-[1fr_auto] gap-1 gap-x-3">
           <div>Enganche total</div>
           <div>
             {currency.format(node.engancheTotal.expected)} · {currency.format(node.engancheTotal.paid)}
@@ -147,7 +150,7 @@ function PaymentTooltip({ tooltip }: { tooltip: TooltipState }) {
           </div>
         </div>
       ) : (
-        <div className="tooltip-grid">
+        <div className="grid grid-cols-[1fr_auto] gap-1 gap-x-3">
           <div>Total</div>
           <div>
             {currency.format(node.totalExpected)} · {currency.format(node.totalPaid)}
@@ -216,9 +219,9 @@ export default function PaymentTreemap({ data, onUnitSelect }: PaymentTreemapPro
   }, [data, size.height, size.width]);
 
   return (
-    <div className="treemap-wrapper">
-      <div className="treemap-canvas" ref={ref}>
-        <svg width="100%" height="100%" role="img" aria-label="Payment tracking treemap">
+    <div className="grid gap-3">
+      <div className="relative h-[420px] w-full" ref={ref}>
+        <svg className="block" width="100%" height="100%" role="img" aria-label="Payment tracking treemap">
           {root
             .descendants()
             .filter((node) => node.depth > 0)
@@ -241,7 +244,7 @@ export default function PaymentTreemap({ data, onUnitSelect }: PaymentTreemapPro
               return (
                 <g key={`${payload.name}-${index}`}>
                   <rect
-                    className={isProject ? "treemap-rect project" : "treemap-rect unit"}
+                    className={isProject ? "cursor-default transition-[opacity,filter] duration-200 ease-in-out hover:opacity-90 hover:brightness-105" : "cursor-pointer transition-[opacity,filter] duration-200 ease-in-out hover:opacity-90 hover:brightness-105"}
                     x={x}
                     y={y}
                     width={width}
@@ -292,9 +295,9 @@ export default function PaymentTreemap({ data, onUnitSelect }: PaymentTreemapPro
         </svg>
         <PaymentTooltip tooltip={tooltip} />
       </div>
-      <div className="treemap-legend">
+      <div className="flex items-center gap-3 text-xs text-muted">
         <span>0%</span>
-        <div className="legend-gradient" />
+        <div className="flex-1 h-2 rounded-full bg-gradient-to-r from-[#ef4444] via-[#fbbf24] to-[#22c55e]" />
         <span>100%</span>
       </div>
     </div>

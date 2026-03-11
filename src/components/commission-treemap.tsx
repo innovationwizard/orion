@@ -57,9 +57,12 @@ function CommissionTooltip({ tooltip }: { tooltip: TooltipState }) {
   }
   const node = tooltip.recipient;
   return (
-    <div className="treemap-tooltip" style={{ left: tooltip.x, top: tooltip.y }}>
-      <strong>{node.recipientName}</strong>
-      <div className="tooltip-grid">
+    <div
+      className="absolute bg-card rounded-xl shadow-card px-3.5 py-3 grid gap-1.5 text-text-primary text-xs pointer-events-none z-[10]"
+      style={{ left: tooltip.x, top: tooltip.y }}
+    >
+      <strong className="text-[13px]">{node.recipientName}</strong>
+      <div className="grid grid-cols-[1fr_auto] gap-1 gap-x-3">
         <div>Total</div>
         <div>{currency.format(node.totalAmount)}</div>
         <div>Pagado</div>
@@ -141,9 +144,9 @@ export default function CommissionTreemap({ data }: CommissionTreemapProps) {
   }, [size.height, size.width, treemapData]);
 
   return (
-    <div className="treemap-wrapper">
-      <div className="treemap-canvas" ref={ref} style={{ height: 360 }}>
-        <svg width="100%" height="100%" role="img" aria-label="Commission distribution treemap">
+    <div className="grid gap-3">
+      <div className="relative w-full" ref={ref} style={{ height: 360 }}>
+        <svg className="block" width="100%" height="100%" role="img" aria-label="Commission distribution treemap">
           {root
             .descendants()
             .filter((node) => node.depth > 0)
@@ -164,7 +167,7 @@ export default function CommissionTreemap({ data }: CommissionTreemapProps) {
               return (
                 <g key={`${payload.name}-${index}`}>
                   <rect
-                    className={isGroup ? "treemap-rect project" : "treemap-rect unit"}
+                    className={isGroup ? "cursor-default transition-[opacity,filter] duration-200 ease-in-out hover:opacity-90 hover:brightness-105" : "cursor-pointer transition-[opacity,filter] duration-200 ease-in-out hover:opacity-90 hover:brightness-105"}
                     x={x}
                     y={y}
                     width={width}
@@ -205,13 +208,13 @@ export default function CommissionTreemap({ data }: CommissionTreemapProps) {
         </svg>
         <CommissionTooltip tooltip={tooltip} />
       </div>
-      <div className="treemap-legend">
-        <div className="legend-chip">
-          <span className="legend-color paid" />
+      <div className="flex items-center gap-3 text-xs text-muted">
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100">
+          <span className="inline-block w-2.5 h-2.5 rounded-full bg-green-500" />
           Pagado
         </div>
-        <div className="legend-chip">
-          <span className="legend-color unpaid" />
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100">
+          <span className="inline-block w-2.5 h-2.5 rounded-full bg-gray-400" />
           No pagado
         </div>
       </div>

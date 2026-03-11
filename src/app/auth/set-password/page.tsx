@@ -42,10 +42,10 @@ export default function SetPasswordPage() {
   }
 
   return (
-    <section className="page">
-      <div className="card" style={{ maxWidth: 420, margin: "0 auto" }}>
+    <section className="p-[clamp(16px,4vw,32px)] grid gap-[clamp(16px,3vw,28px)]">
+      <div className="bg-card rounded-2xl p-4 shadow-card grid gap-2" style={{ maxWidth: 420, margin: "0 auto" }}>
         <h2 style={{ margin: 0 }}>Establecer contraseña</h2>
-        <p style={{ margin: 0, color: "var(--muted)" }}>
+        <p className="text-muted m-0">
           Ingresa tu nueva contraseña.
         </p>
         <form
@@ -53,7 +53,7 @@ export default function SetPasswordPage() {
           style={{ display: "grid", gap: 12, marginTop: 12 }}
         >
           <input
-            className="input"
+            className="w-full px-3 py-2.5 border border-border rounded-[10px] bg-card text-text-primary text-sm"
             type="password"
             placeholder="Nueva contraseña"
             value={password}
@@ -63,7 +63,7 @@ export default function SetPasswordPage() {
             autoFocus
           />
           <input
-            className="input"
+            className="w-full px-3 py-2.5 border border-border rounded-[10px] bg-card text-text-primary text-sm"
             type="password"
             placeholder="Confirmar contraseña"
             value={confirm}
@@ -71,8 +71,8 @@ export default function SetPasswordPage() {
             required
             minLength={8}
           />
-          {error ? <div className="banner">{error}</div> : null}
-          <button className="button" type="submit" disabled={isLoading}>
+          {error ? <div className="bg-danger/10 text-danger px-4 py-3 rounded-xl font-medium">{error}</div> : null}
+          <button className="border-none bg-primary text-white px-4 py-2.5 rounded-full font-semibold cursor-pointer transition-colors hover:bg-primary-hover" type="submit" disabled={isLoading}>
             {isLoading ? "Guardando..." : "Guardar contraseña"}
           </button>
         </form>

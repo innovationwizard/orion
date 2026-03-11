@@ -1,27 +1,37 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { submitReservationSchema } from "@/lib/reservas/validations";
+import { jsonOk, jsonError, parseJson, parseQuery } from "@/lib/api";
+import { submitReservationSchema, reservationsQuerySchema } from "@/lib/reservas/validations";
+
+export async function GET(request: NextRequest) {
+  const { data: filters, error: qErr } = parseQuery(request, reservationsQuerySchema);
+  if (qErr) return jsonError(400, qErr.error, qErr.details);
+
+  const supabase = createAdminClient();
+  let query = supabase.from("v_reservations_pending").select("*");
+
+  if (filters.status) query = query.eq("reservation_status", filters.status);
+  if (filters.project) query = query.eq("project_slug", filters.project);
+  if (filters.salesperson) query = query.eq("salesperson_id", filters.salesperson);
+  if (filters.from) query = query.gte("submitted_at", filters.from);
+  if (filters.to) query = query.lte("submitted_at", `${filters.to}T23:59:59`);
+
+  query = query.order("submitted_at", { ascending: false });
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error("[GET /api/reservas/reservations]", error);
+    return jsonError(500, error.message);
+  }
+
+  return jsonOk(data);
+}
 
 export async function POST(request: NextRequest) {
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json(
-      { error: "Cuerpo de solicitud inválido" },
-      { status: 400 },
-    );
-  }
+  const { data: input, error: pErr } = await parseJson(request, submitReservationSchema);
+  if (pErr) return jsonError(400, pErr.error, pErr.details);
 
-  const parsed = submitReservationSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: "Datos inválidos", details: parsed.error.flatten().fieldErrors },
-      { status: 400 },
-    );
-  }
-
-  const input = parsed.data;
   const supabase = createAdminClient();
 
   const { data, error } = await supabase.rpc("submit_reservation", {
@@ -43,20 +53,11 @@ export async function POST(request: NextRequest) {
     console.error("[POST /api/reservas/reservations]", error);
 
     if (error.message.includes("no disponible") || error.message.includes("not available")) {
-      return NextResponse.json(
-        { error: "Esta unidad ya no está disponible. Otro asesor puede haberla reservado." },
-        { status: 409 },
-      );
+      return jsonError(409, "Esta unidad ya no está disponible. Otro asesor puede haberla reservado.");
     }
 
-    return NextResponse.json(
-      { error: error.message },
-      { status: 500 },
-    );
+    return jsonError(500, error.message);
   }
 
-  return NextResponse.json(
-    { reservation_id: data, status: "PENDING_REVIEW" },
-    { status: 201 },
-  );
+  return jsonOk({ reservation_id: data, status: "PENDING_REVIEW" }, { status: 201 });
 }

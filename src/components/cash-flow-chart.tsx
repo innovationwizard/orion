@@ -127,14 +127,15 @@ export default function CashFlowChart({ data }: CashFlowChartProps) {
   }
 
   if (data.length === 0) {
-    return <div className="empty-state">No hay datos de flujo de caja.</div>;
+    return <div className="text-center text-muted py-6">No hay datos de flujo de caja.</div>;
   }
 
   const hovered = tooltip ? data[tooltip.idx] : null;
 
   return (
-    <div className="cashflow-wrapper" ref={ref}>
+    <div className="relative grid gap-3" ref={ref}>
       <svg
+        className="block"
         width="100%"
         viewBox={`0 0 ${W} ${H}`}
         preserveAspectRatio="xMidYMid meet"
@@ -238,7 +239,7 @@ export default function CashFlowChart({ data }: CashFlowChartProps) {
       {/* Tooltip card */}
       {tooltip && hovered && (
         <div
-          className="cashflow-tooltip"
+          className="absolute top-2 bg-card rounded-xl shadow-card border border-border px-3.5 py-3 grid gap-1.5 text-xs text-text-primary pointer-events-none z-[10] min-w-[180px]"
           style={{
             left: tooltip.pixelX > (size.width || 400) * 0.65
               ? tooltip.pixelX - 12
@@ -248,17 +249,17 @@ export default function CashFlowChart({ data }: CashFlowChartProps) {
               : "none"
           }}
         >
-          <strong>
+          <strong className="text-[13px]">
             {monthLabels[tooltip.idx]} {data[tooltip.idx].month.slice(0, 4)}
           </strong>
-          <div className="cashflow-tooltip__grid">
-            <span className="cashflow-dot cashflow-dot--expected" />
+          <div className="grid grid-cols-[10px_1fr_auto] gap-1 gap-x-2 items-center">
+            <span className="inline-block w-2 h-2 rounded-full bg-slate-400" />
             <span>Programado</span>
             <span>{currency.format(hovered.expected)}</span>
-            <span className="cashflow-dot cashflow-dot--forecasted" />
+            <span className="inline-block w-2 h-2 rounded-full bg-blue-500" />
             <span>Proyectado</span>
             <span>{currency.format(hovered.forecasted)}</span>
-            <span className="cashflow-dot cashflow-dot--actual" />
+            <span className="inline-block w-2 h-2 rounded-full bg-green-500" />
             <span>Cobrado</span>
             <span>{currency.format(hovered.actual)}</span>
           </div>
@@ -266,17 +267,27 @@ export default function CashFlowChart({ data }: CashFlowChartProps) {
       )}
 
       {/* Legend */}
-      <div className="cashflow-legend">
-        <div className="cashflow-legend__item">
-          <span className="cashflow-legend__line cashflow-legend__line--expected" />
+      <div className="flex items-center gap-5 text-xs text-muted">
+        <div className="inline-flex items-center gap-1.5">
+          <span
+            className="inline-block w-5 h-0.5 rounded-[1px]"
+            style={{
+              backgroundImage: "repeating-linear-gradient(90deg, #94a3b8 0px, #94a3b8 3px, transparent 3px, transparent 6px)"
+            }}
+          />
           Programado
         </div>
-        <div className="cashflow-legend__item">
-          <span className="cashflow-legend__line cashflow-legend__line--forecasted" />
+        <div className="inline-flex items-center gap-1.5">
+          <span
+            className="inline-block w-5 h-0.5 rounded-[1px]"
+            style={{
+              backgroundImage: "repeating-linear-gradient(90deg, #3b82f6 0px, #3b82f6 5px, transparent 5px, transparent 8px)"
+            }}
+          />
           Proyectado
         </div>
-        <div className="cashflow-legend__item">
-          <span className="cashflow-legend__line cashflow-legend__line--actual" />
+        <div className="inline-flex items-center gap-1.5">
+          <span className="inline-block w-5 h-0.5 rounded-[1px] bg-green-500" />
           Cobrado
         </div>
       </div>

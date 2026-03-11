@@ -29,6 +29,7 @@ build/
 .idea/
 .vscode/
 .cursor/
+.claude/
 
 *.swp
 *.swo

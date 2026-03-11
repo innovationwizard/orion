@@ -48,10 +48,10 @@ export default function Filters({
   }
 
   return (
-    <div className="filters-bar">
-      <div className="filters-bar__presets">
-        <span className="filters-bar__presets-label">Rango:</span>
-        <div className="filters-bar__presets-buttons">
+    <div className="flex flex-wrap items-end gap-4 gap-x-5">
+      <div className="flex flex-wrap items-center gap-2 gap-x-2.5">
+        <span className="text-[13px] font-semibold text-muted">Rango:</span>
+        <div className="flex flex-wrap gap-1.5 gap-x-2">
           {(Object.keys(DATE_PRESETS) as PresetKey[]).map((key) => {
             const preset = DATE_PRESETS[key];
             const isActive = activePreset === key;
@@ -59,7 +59,11 @@ export default function Filters({
               <button
                 key={key}
                 type="button"
-                className={`button small ${isActive ? "active" : "secondary"}`}
+                className={
+                  isActive
+                    ? "border-none bg-primary-hover text-white px-3 py-1.5 rounded-full font-semibold cursor-pointer text-[13px] transition-colors duration-200"
+                    : "bg-transparent border border-border text-text-primary px-3 py-1.5 rounded-full font-semibold cursor-pointer text-[13px] transition-colors duration-200 hover:bg-primary/8 hover:border-primary hover:text-primary"
+                }
                 onClick={() => applyPreset(key)}
                 aria-pressed={isActive}
               >
@@ -70,21 +74,21 @@ export default function Filters({
         </div>
       </div>
 
-      <div className="filters-bar__custom">
-        <label className="filters-bar__label">
-          <span className="filters-bar__label-text">Desde</span>
+      <div className="flex flex-wrap items-center gap-2 gap-x-3">
+        <label className="inline-flex flex-col gap-1">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.04em] text-muted">Desde</span>
           <input
-            className="date-input"
+            className="w-full min-w-[140px] px-3 py-2.5 border border-border rounded-[10px] bg-card text-text-primary text-sm"
             type="date"
             value={startDate}
             onChange={(e) => onChange({ start_date: e.target.value })}
             aria-label="Fecha inicio"
           />
         </label>
-        <label className="filters-bar__label">
-          <span className="filters-bar__label-text">Hasta</span>
+        <label className="inline-flex flex-col gap-1">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.04em] text-muted">Hasta</span>
           <input
-            className="date-input"
+            className="w-full min-w-[140px] px-3 py-2.5 border border-border rounded-[10px] bg-card text-text-primary text-sm"
             type="date"
             value={endDate}
             onChange={(e) => onChange({ end_date: e.target.value })}
@@ -93,11 +97,11 @@ export default function Filters({
         </label>
       </div>
 
-      <div className="filters-bar__project">
-        <label className="filters-bar__label">
-          <span className="filters-bar__label-text">Proyecto</span>
+      <div className="flex flex-wrap items-center gap-2 gap-x-3">
+        <label className="inline-flex flex-col gap-1">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.04em] text-muted">Proyecto</span>
           <select
-            className="select"
+            className="w-full min-w-[140px] px-3 py-2.5 border border-border rounded-[10px] bg-card text-text-primary text-sm"
             value={projectId}
             onChange={(e) => onChange({ project_id: e.target.value })}
             aria-label="Filtrar por proyecto"
@@ -114,7 +118,11 @@ export default function Filters({
 
       <button
         type="button"
-        className={`button small ${excludeFF ? "active" : "secondary"}`}
+        className={
+          excludeFF
+            ? "border-none bg-primary-hover text-white px-3 py-1.5 rounded-full font-semibold cursor-pointer text-[13px] transition-colors duration-200"
+            : "bg-transparent border border-border text-text-primary px-3 py-1.5 rounded-full font-semibold cursor-pointer text-[13px] transition-colors duration-200 hover:bg-primary/8 hover:border-primary hover:text-primary"
+        }
         onClick={onToggleFF}
         aria-pressed={excludeFF}
         title="Excluir ventas de casos especiales (F&F)"
@@ -122,20 +130,20 @@ export default function Filters({
         {excludeFF ? "F&F excluido" : "Incluye F&F"}
       </button>
 
-      <div className="filters-bar__meta">
+      <div className="flex flex-wrap items-center gap-2.5 gap-x-3.5 ml-auto">
         {activeCount > 0 ? (
           <>
-            <span className="filters-bar__range" title="Rango y filtros aplicados">
+            <span className="text-xs font-medium text-text-primary" title="Rango y filtros aplicados">
               {hasDateFilter ? rangeLabel : "—"}
               {hasProjectFilter && (
-                <span className="filters-bar__chip">
+                <span className="inline-block ml-2 px-2 py-0.5 rounded-full bg-primary/12 text-primary text-[11px] font-semibold">
                   {projects.find((p) => p.id === projectId)?.name ?? "Proyecto"}
                 </span>
               )}
             </span>
             <button
               type="button"
-              className="button small secondary filters-bar__clear"
+              className="shrink-0 bg-transparent border border-border text-text-primary px-3 py-1.5 rounded-full font-semibold cursor-pointer text-[13px] transition-colors duration-200 hover:bg-primary/8 hover:border-primary hover:text-primary"
               onClick={clearAll}
               aria-label="Quitar todos los filtros"
             >
@@ -143,7 +151,7 @@ export default function Filters({
             </button>
           </>
         ) : (
-          <span className="filters-bar__range muted">Sin filtros · datos completos</span>
+          <span className="text-xs font-medium text-muted">Sin filtros · datos completos</span>
         )}
       </div>
     </div>

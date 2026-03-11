@@ -19,10 +19,10 @@ export default function KpiCard({
   trend,
   trendColor
 }: KpiCardProps) {
-  const hintClass = positive ? "positive" : negative ? "negative" : "";
+  const hintClass = positive ? "text-success" : negative ? "text-danger" : "";
   return (
-    <div className="card kpi-card">
-      <div className="kpi-card__header">
+    <div className="bg-card rounded-2xl p-4 shadow-card grid gap-2">
+      <div className="flex justify-between items-start gap-2">
         <h3>{label}</h3>
         {trend && trend.length >= 2 ? (
           <Sparkline data={trend} color={trendColor} />

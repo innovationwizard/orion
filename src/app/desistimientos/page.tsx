@@ -84,29 +84,29 @@ export default function DesistimientosPage() {
   }
 
   return (
-    <section className="page management-page">
-      <nav className="mini-nav">
-        <a className="mini-nav__link" href="/">
+    <section className="p-[clamp(16px,4vw,32px)] grid gap-[clamp(16px,3vw,28px)]">
+      <nav className="flex gap-3 items-center text-[13px]">
+        <a className="text-muted no-underline px-2.5 py-1.5 rounded-full border border-transparent transition-colors hover:text-text-primary hover:border-border hover:bg-[#f8fafc]" href="/">
           Dashboard
         </a>
-        <a className="mini-nav__link" href="/projects">
+        <a className="text-muted no-underline px-2.5 py-1.5 rounded-full border border-transparent transition-colors hover:text-text-primary hover:border-border hover:bg-[#f8fafc]" href="/projects">
           Projects
         </a>
-        <a className="mini-nav__link" href="/desistimientos" aria-current="page">
+        <a className="text-muted no-underline px-2.5 py-1.5 rounded-full border border-transparent transition-colors hover:text-text-primary hover:border-border hover:bg-[#f8fafc]" href="/desistimientos" aria-current="page">
           Desistimientos
         </a>
       </nav>
 
-      <header className="header">
+      <header className="flex flex-wrap items-center gap-x-5 gap-y-3 justify-between">
         <div>
-          <p className="eyebrow">Orion · Operaciones</p>
-          <h1>Desistimientos</h1>
-          <p className="muted">
+          <p className="uppercase tracking-[0.08em] text-[11px] font-semibold text-muted mb-2">Orion · Operaciones</p>
+          <h1 className="m-0 text-[clamp(20px,3vw,28px)]">Desistimientos</h1>
+          <p className="text-muted m-0">
             Marca una venta activa como cancelada (desistimiento). La unidad volverá a disponible.
           </p>
         </div>
-        <div className="header-actions">
-          <a className="button secondary" href="/">
+        <div className="flex flex-wrap gap-3 items-center">
+          <a className="bg-transparent border border-border text-text-primary hover:bg-primary/[0.08] hover:border-primary hover:text-primary px-4 py-2.5 rounded-full font-semibold cursor-pointer transition-colors no-underline" href="/">
             Volver al dashboard
           </a>
         </div>
@@ -114,16 +114,16 @@ export default function DesistimientosPage() {
 
       <ErrorBanner error={error} />
 
-      <section className="card management-card">
-        <div className="section-header">
+      <section className="bg-card rounded-2xl p-4 shadow-card grid gap-4">
+        <div className="flex justify-between items-start gap-4 flex-wrap">
           <div>
             <h2>Ventas activas</h2>
-            <p className="muted">Solo ventas activas pueden registrarse como desistimiento.</p>
+            <p className="text-muted m-0">Solo ventas activas pueden registrarse como desistimiento.</p>
           </div>
-          <div className="header-actions">
+          <div className="flex flex-wrap gap-3 items-center">
             <select
               id="desist-project"
-              className="input"
+              className="w-full px-3 py-2.5 border border-border rounded-[10px] bg-card text-text-primary text-sm"
               value={projectId}
               onChange={(e) => setProjectId(e.target.value)}
               style={{ minWidth: "160px" }}
@@ -140,13 +140,13 @@ export default function DesistimientosPage() {
         </div>
 
         {isLoading ? (
-          <div className="skeleton">
-            <div className="skeleton-line" style={{ width: "60%" }} />
-            <div className="skeleton-line" style={{ width: "80%" }} />
-            <div className="skeleton-line" style={{ width: "45%" }} />
+          <div className="grid gap-2.5">
+            <div className="h-3.5 rounded-full bg-gradient-to-r from-[#eef2f7] via-[#f8fafc] to-[#eef2f7] bg-[length:200%_200%] animate-pulse" style={{ width: "60%" }} />
+            <div className="h-3.5 rounded-full bg-gradient-to-r from-[#eef2f7] via-[#f8fafc] to-[#eef2f7] bg-[length:200%_200%] animate-pulse" style={{ width: "80%" }} />
+            <div className="h-3.5 rounded-full bg-gradient-to-r from-[#eef2f7] via-[#f8fafc] to-[#eef2f7] bg-[length:200%_200%] animate-pulse" style={{ width: "45%" }} />
           </div>
         ) : (
-          <div className="table-card">
+          <div className="bg-card rounded-2xl p-2 shadow-card overflow-x-auto">
             <table>
               <thead>
                 <tr>
@@ -168,7 +168,7 @@ export default function DesistimientosPage() {
                       <td>
                         <button
                           type="button"
-                          className="button secondary small"
+                          className="bg-transparent border border-border text-text-primary hover:bg-primary/[0.08] hover:border-primary hover:text-primary px-3 py-1.5 text-[13px] rounded-full font-semibold cursor-pointer transition-colors"
                           onClick={() => handleDesistimiento(sale)}
                           disabled={actionId !== null}
                           aria-busy={actionId === sale.id}
@@ -181,7 +181,7 @@ export default function DesistimientosPage() {
                 ) : (
                   <tr>
                     <td colSpan={5}>
-                      <div className="empty-state">
+                      <div className="text-center text-muted py-6">
                         {projectId
                           ? "No hay ventas activas en este proyecto."
                           : "No hay ventas activas."}

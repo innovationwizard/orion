@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { jsonOk, jsonError } from "@/lib/api";
 
 export async function GET() {
   const supabase = createAdminClient();
@@ -12,8 +12,8 @@ export async function GET() {
 
   if (error) {
     console.error("[GET /api/reservas/salespeople]", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return jsonError(500, error.message);
   }
 
-  return NextResponse.json(data);
+  return jsonOk(data);
 }

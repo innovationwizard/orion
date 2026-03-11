@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { jsonOk, jsonError, parseJson } from "@/lib/api";
 import { releaseFreezeSchema } from "@/lib/reservas/validations";
 
 export async function PATCH(
@@ -8,32 +9,20 @@ export async function PATCH(
 ) {
   const { id: freezeId } = await params;
 
-  let body: unknown;
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Cuerpo inválido" }, { status: 400 });
-  }
-
-  const parsed = releaseFreezeSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: "Datos inválidos", details: parsed.error.flatten().fieldErrors },
-      { status: 400 },
-    );
-  }
+  const { data: input, error: pErr } = await parseJson(request, releaseFreezeSchema);
+  if (pErr) return jsonError(400, pErr.error, pErr.details);
 
   const supabase = createAdminClient();
 
   const { error } = await supabase.rpc("release_freeze", {
     p_freeze_id: freezeId,
-    p_admin_user_id: parsed.data.admin_user_id,
+    p_admin_user_id: input.admin_user_id,
   });
 
   if (error) {
     console.error("[PATCH /api/reservas/admin/freeze-requests/release]", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return jsonError(500, error.message);
   }
 
-  return NextResponse.json({ status: "RELEASED" });
+  return jsonOk({ status: "RELEASED" });
 }

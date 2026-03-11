@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 const siteUrl =
@@ -15,12 +15,26 @@ const ogImageUrl = `${baseUrl}/og-image.jpg`;
 
 const fbAppId = process.env.NEXT_PUBLIC_FB_APP_ID;
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#2563eb",
+};
+
 export const metadata: Metadata = {
   title: "Orion | Reservas, Pagos y Comisiones",
   description: "ORION - Business Intelligence Dashboard",
   metadataBase,
+  manifest: "/manifest.json",
   icons: {
-    icon: "/favicon.png"
+    icon: "/favicon.png",
+    apple: "/icons/icon-192.png",
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Reservar",
   },
   openGraph: {
     type: "website",
@@ -52,7 +66,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="es-419">
       <body>
-        <main className="page">
+        <main className="p-[clamp(16px,4vw,32px)] grid gap-[clamp(16px,3vw,28px)]">
           {children}
         </main>
       </body>

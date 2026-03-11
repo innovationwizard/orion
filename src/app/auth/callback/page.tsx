@@ -68,8 +68,8 @@ export default function AuthCallbackPage() {
 
   if (status === "error") {
     return (
-      <section className="page">
-        <div className="card" style={{ maxWidth: 420, margin: "0 auto" }}>
+      <section className="p-[clamp(16px,4vw,32px)] grid gap-[clamp(16px,3vw,28px)]">
+        <div className="bg-card rounded-2xl p-4 shadow-card grid gap-2" style={{ maxWidth: 420, margin: "0 auto" }}>
           <p>No se pudo completar el acceso. Intenta de nuevo o <a href="/login">inicia sesión</a>.</p>
         </div>
       </section>
@@ -77,9 +77,9 @@ export default function AuthCallbackPage() {
   }
 
   return (
-    <section className="page">
-      <div className="card" style={{ maxWidth: 420, margin: "0 auto", textAlign: "center" }}>
-        <p className="muted">Completando acceso…</p>
+    <section className="p-[clamp(16px,4vw,32px)] grid gap-[clamp(16px,3vw,28px)]">
+      <div className="bg-card rounded-2xl p-4 shadow-card grid gap-2" style={{ maxWidth: 420, margin: "0 auto", textAlign: "center" }}>
+        <p className="text-muted m-0">Completando acceso…</p>
       </div>
     </section>
   );
