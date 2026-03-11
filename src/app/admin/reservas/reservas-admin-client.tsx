@@ -55,6 +55,16 @@ export default function ReservasAdminClient() {
 
   return (
     <div className="p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[1400px] mx-auto">
+      {/* Navigation */}
+      <nav className="flex flex-wrap gap-2 items-center text-[13px]">
+        <a className="text-muted no-underline px-2.5 py-1.5 rounded-full border border-transparent transition-colors hover:text-text-primary hover:border-border hover:bg-[#f8fafc]" href="/">Dashboard</a>
+        <a className="text-muted no-underline px-2.5 py-1.5 rounded-full border border-transparent transition-colors hover:text-text-primary hover:border-border hover:bg-[#f8fafc]" href="/projects">Projects</a>
+        <a className="text-muted no-underline px-2.5 py-1.5 rounded-full border border-transparent transition-colors hover:text-text-primary hover:border-border hover:bg-[#f8fafc]" href="/desistimientos">Desistimientos</a>
+        <span className="text-border select-none">|</span>
+        <a className="text-muted no-underline px-2.5 py-1.5 rounded-full border border-transparent transition-colors hover:text-text-primary hover:border-border hover:bg-[#f8fafc]" href="/disponibilidad">Disponibilidad</a>
+        <a className="text-muted no-underline px-2.5 py-1.5 rounded-full border border-transparent transition-colors hover:text-text-primary hover:border-border hover:bg-[#f8fafc]" href="/admin/reservas">Reservas</a>
+      </nav>
+
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-text-primary">Reservas</h1>

@@ -144,16 +144,13 @@ export default function ProjectsPage() {
 
   return (
     <section className="p-[clamp(16px,4vw,32px)] grid gap-[clamp(16px,3vw,28px)]">
-      <nav className="flex gap-3 items-center text-[13px]">
-        <a className="text-muted no-underline px-2.5 py-1.5 rounded-full border border-transparent transition-colors hover:text-text-primary hover:border-border hover:bg-[#f8fafc]" href="/">
-          Dashboard
-        </a>
-        <a className="text-muted no-underline px-2.5 py-1.5 rounded-full border border-transparent transition-colors hover:text-text-primary hover:border-border hover:bg-[#f8fafc]" href="/projects">
-          Projects
-        </a>
-        <a className="text-muted no-underline px-2.5 py-1.5 rounded-full border border-transparent transition-colors hover:text-text-primary hover:border-border hover:bg-[#f8fafc]" href="/desistimientos">
-          Desistimientos
-        </a>
+      <nav className="flex flex-wrap gap-2 items-center text-[13px]">
+        <a className="text-muted no-underline px-2.5 py-1.5 rounded-full border border-transparent transition-colors hover:text-text-primary hover:border-border hover:bg-[#f8fafc]" href="/">Dashboard</a>
+        <a className="text-muted no-underline px-2.5 py-1.5 rounded-full border border-transparent transition-colors hover:text-text-primary hover:border-border hover:bg-[#f8fafc]" href="/projects">Projects</a>
+        <a className="text-muted no-underline px-2.5 py-1.5 rounded-full border border-transparent transition-colors hover:text-text-primary hover:border-border hover:bg-[#f8fafc]" href="/desistimientos">Desistimientos</a>
+        <span className="text-border select-none">|</span>
+        <a className="text-muted no-underline px-2.5 py-1.5 rounded-full border border-transparent transition-colors hover:text-text-primary hover:border-border hover:bg-[#f8fafc]" href="/disponibilidad">Disponibilidad</a>
+        <a className="text-muted no-underline px-2.5 py-1.5 rounded-full border border-transparent transition-colors hover:text-text-primary hover:border-border hover:bg-[#f8fafc]" href="/admin/reservas">Reservas</a>
       </nav>
       <header className="flex flex-wrap items-center gap-x-5 gap-y-3 justify-between">
         <div>
