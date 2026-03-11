@@ -1,4 +1,4 @@
-supabase/
+/supabase/
 origin/
 etl-*.ts
 orion-repo-packed.txt
