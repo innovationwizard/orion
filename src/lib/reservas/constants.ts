@@ -1,0 +1,206 @@
+/**
+ * Domain constants for the Reservas MVP.
+ *
+ * Single source of truth for all enums, labels, and configuration values
+ * used across the reservation system. Every dropdown, badge color, and
+ * validation list draws from here — nothing is hardcoded in components.
+ */
+
+import type {
+  RvUnitStatus,
+  ReservationStatus,
+  RvReceiptType,
+  ExtractionConfidence,
+} from "./types";
+
+// ---------------------------------------------------------------------------
+// Unit statuses
+// ---------------------------------------------------------------------------
+
+export const UNIT_STATUSES: readonly RvUnitStatus[] = [
+  "AVAILABLE",
+  "SOFT_HOLD",
+  "RESERVED",
+  "FROZEN",
+  "SOLD",
+] as const;
+
+export const UNIT_STATUS_LABELS: Record<RvUnitStatus, string> = {
+  AVAILABLE: "Disponible",
+  SOFT_HOLD: "En revisión",
+  RESERVED: "Reservado",
+  FROZEN: "Congelado",
+  SOLD: "Vendido",
+};
+
+export const UNIT_STATUS_COLORS: Record<RvUnitStatus, string> = {
+  AVAILABLE: "#22c55e",
+  SOFT_HOLD: "#f59e0b",
+  RESERVED: "#3b82f6",
+  FROZEN: "#a855f7",
+  SOLD: "#6b7280",
+};
+
+/** Statuses where the unit can accept a new reservation */
+export const RESERVABLE_STATUSES: readonly RvUnitStatus[] = ["AVAILABLE", "FROZEN"] as const;
+
+// ---------------------------------------------------------------------------
+// Reservation statuses
+// ---------------------------------------------------------------------------
+
+export const RESERVATION_STATUSES: readonly ReservationStatus[] = [
+  "PENDING_REVIEW",
+  "CONFIRMED",
+  "REJECTED",
+  "DESISTED",
+] as const;
+
+export const RESERVATION_STATUS_LABELS: Record<ReservationStatus, string> = {
+  PENDING_REVIEW: "Pendiente de revisión",
+  CONFIRMED: "Confirmada",
+  REJECTED: "Rechazada",
+  DESISTED: "Desistida",
+};
+
+// ---------------------------------------------------------------------------
+// Receipt types
+// ---------------------------------------------------------------------------
+
+export const RECEIPT_TYPES = [
+  "TRANSFER",
+  "DEPOSIT_SLIP",
+  "NEOLINK",
+  "MOBILE_SCREENSHOT",
+  "CHECK",
+  "OTHER",
+] as const satisfies readonly RvReceiptType[];
+
+export const RECEIPT_TYPE_LABELS: Record<RvReceiptType, string> = {
+  TRANSFER: "Transferencia bancaria",
+  DEPOSIT_SLIP: "Boleta de depósito",
+  NEOLINK: "NeoLink / Pasarela de pago",
+  MOBILE_SCREENSHOT: "Captura de banca móvil",
+  CHECK: "Cheque",
+  OTHER: "Otro",
+};
+
+// ---------------------------------------------------------------------------
+// OCR confidence
+// ---------------------------------------------------------------------------
+
+export const CONFIDENCE_LABELS: Record<ExtractionConfidence, string> = {
+  HIGH: "Alta",
+  MEDIUM: "Media",
+  LOW: "Baja",
+};
+
+export const CONFIDENCE_COLORS: Record<ExtractionConfidence, string> = {
+  HIGH: "#22c55e",
+  MEDIUM: "#f59e0b",
+  LOW: "#ef4444",
+};
+
+// ---------------------------------------------------------------------------
+// Lead sources — unified across all 4 projects
+// ---------------------------------------------------------------------------
+
+export const LEAD_SOURCES = [
+  "Facebook",
+  "Meta",
+  "Perfilan",
+  "Referido",
+  "Visita Inédita",
+  "Señalética",
+  "Vallas",
+  "PBX",
+  "Leads",
+  "Web",
+  "Página Web",
+  "Pipedrive",
+  "Inbox",
+  "Expocasa",
+  "Mailing",
+  "Prospección",
+  "F&F",
+  "Wati",
+  "Cartera Antigua",
+  "PD",
+  "Activación",
+  "Evento",
+  "Lead",
+  "Otro",
+] as const;
+
+export type LeadSource = (typeof LEAD_SOURCES)[number];
+
+// ---------------------------------------------------------------------------
+// Guatemalan banks — for OCR validation and receipt display
+// ---------------------------------------------------------------------------
+
+export const GUATEMALAN_BANKS = [
+  "Banrural",
+  "Industrial",
+  "G&T Continental",
+  "BAM",
+  "Bantrab",
+  "Inmobiliario",
+  "CHN",
+  "Agromercantil",
+  "BAC",
+  "Promerica",
+  "Vivibanco",
+  "Ficohsa",
+] as const;
+
+export type GuatemalaBank = (typeof GUATEMALAN_BANKS)[number];
+
+// ---------------------------------------------------------------------------
+// Project slugs — used for URL routing and API filtering
+// ---------------------------------------------------------------------------
+
+export const PROJECT_SLUGS = {
+  BLT: "bosque-las-tapias",
+  CE: "casa-elisa",
+  BEN: "benestare",
+  B5: "boulevard-5",
+} as const;
+
+// ---------------------------------------------------------------------------
+// Receipt image upload constraints
+// ---------------------------------------------------------------------------
+
+export const RECEIPT_UPLOAD = {
+  MAX_SIZE_BYTES: 10 * 1024 * 1024,
+  ACCEPTED_TYPES: [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/heic",
+    "application/pdf",
+  ],
+  ACCEPTED_EXTENSIONS: ".jpg,.jpeg,.png,.webp,.heic,.pdf",
+} as const;
+
+// ---------------------------------------------------------------------------
+// UI configuration
+// ---------------------------------------------------------------------------
+
+export const LOCALE = "es-GT" as const;
+export const CURRENCY = "GTQ" as const;
+export const CURRENCY_SYMBOL = "Q" as const;
+
+/** Format a number as Guatemalan Quetzales */
+export function formatCurrency(amount: number | null | undefined): string {
+  if (amount == null) return "—";
+  return `Q${amount.toLocaleString(LOCALE, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
+}
+
+/** Format a date string (ISO) to localized display */
+export function formatDate(isoDate: string | null | undefined): string {
+  if (!isoDate) return "—";
+  return new Date(isoDate).toLocaleDateString(LOCALE, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}

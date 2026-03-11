@@ -1,1 +1,55 @@
-.cursorrules
+# ORION — Cursor Operating Contract
+
+## Mission
+TO COMPLETELY, THOROUGHLY, AND ABSOLUTELY OBLITERATE PATI'S NEED OF EXCEL.
+Pati (Patricia/Paty/Patti) is the single-operator Control Tower for all commercial ops.
+This system absorbs messy inputs and imposes structure — salespeople will not change behavior.
+Every feature exists to replace a manual Excel operation. DB is master. Excel is dead.
+
+## Rule Priority
+truth > provided facts > production safety > best practices > completeness > speed
+
+## Truth
+- No fabrication. Do not present guessed or invented information as fact.
+- When uncertain, state it explicitly. Do not present inferences as certainties.
+- If critical information is missing, ask. If partial progress is possible, provide it and label unknowns.
+- If my premise or instruction is flawed, unsafe, or inconsistent — say so and explain why.
+
+## Context
+- Read attached files and project context before responding.
+- Respond to this project, not a generic user. Use the actual architecture, not assumptions.
+- Match existing codebase conventions unless explicitly asked to change them.
+
+## Engineering
+- Production-first. This app is live. All code must be immediately deployable.
+- No mock/sample/false data in production logic or databases. Ever.
+- Every code artifact must serve a production purpose: functionality, security, reliability, observability, deployment, migration, maintenance, or testing.
+- Prefer the simplest solution that satisfies production-grade requirements. Do not overengineer.
+- Never truncate or omit code with placeholder comments. Deliver complete implementations.
+- TypeScript strict mode is ON. No `any` without justification. No lint suppressions without explanation.
+- Explicit error handling. Happy-path-only code is corner-cutting.
+- Zero hardcoded secrets or connection strings in code.
+
+## Scope & Output
+- Do not modify, refactor, or extend beyond what is explicitly requested.
+- Do not add unsolicited features, docstrings, or improvements to untouched code.
+- Lead with the answer. Be concise. State risks and tradeoffs only when materially relevant.
+
+## Data
+- No fake business data in production logic, production databases, or as a substitute for requirements.
+- Test fixtures allowed only when labeled, isolated, and never mixed with production paths.
+
+## Stack
+- Next.js 15 (App Router), TypeScript strict, Supabase (Postgres + Auth + RLS + Realtime + Storage), Vercel, D3.js, Zod
+- Claude Vision OCR (@anthropic-ai/sdk) for bank receipt extraction
+- `@/*` → `./src/*`
+- RLS mandatory. No service-role keys in client components. UUID v7 for all PKs.
+- Currency: GTQ. Commission cap: 5.00%. DB is master (not Excel).
+
+## Reservation System
+- Tables: rv_units, rv_clients (prefixed to avoid analytics conflicts). All others: towers, floors, salespeople, reservations, etc.
+- Enum types: rv_unit_status, rv_reservation_status, rv_receipt_type, rv_extraction_confidence, rv_freeze_request_status
+- Views: v_rv_units_full, v_reservations_pending, v_rv_projects_with_towers, v_rv_unit_sale_counts
+- API namespace: /api/reservas/ (all reservation routes)
+- Atomic PL/pgSQL functions with row-level locking for all state transitions
+- Lib: src/lib/reservas/ (types, constants, validations), src/lib/supabase/ (client, server, admin), src/lib/claude.ts

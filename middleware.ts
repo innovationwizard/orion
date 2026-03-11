@@ -47,13 +47,19 @@ export async function middleware(request: NextRequest) {
   });
 
   const { data } = await supabase.auth.getUser();
-  const isLoginRoute = request.nextUrl.pathname.startsWith("/login");
-  const isAuthCallback = request.nextUrl.pathname === "/auth/callback";
-  const isAuthConfirm = request.nextUrl.pathname === "/auth/confirm";
-  const isSetPassword = request.nextUrl.pathname === "/auth/set-password";
+  const pathname = request.nextUrl.pathname;
+  const isLoginRoute = pathname.startsWith("/login");
+  const isAuthCallback = pathname === "/auth/callback";
+  const isAuthConfirm = pathname === "/auth/confirm";
+  const isSetPassword = pathname === "/auth/set-password";
+
+  // Public reservation system pages (no auth required — salesperson form + availability board)
+  const isPublicReservasPage =
+    pathname.startsWith("/reservar") ||
+    pathname.startsWith("/disponibilidad");
 
   // Allow /auth/callback so invite/magic-link can land and client can set session from hash
-  if (!data.user && !isLoginRoute && !isAuthCallback && !isAuthConfirm && !isSetPassword) {
+  if (!data.user && !isLoginRoute && !isAuthCallback && !isAuthConfirm && !isSetPassword && !isPublicReservasPage) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/login";
     return NextResponse.redirect(redirectUrl);
