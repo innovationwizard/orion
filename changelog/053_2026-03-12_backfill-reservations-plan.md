@@ -247,3 +247,40 @@ GROUP BY ru.status;
 
 5 historical salespeople from desistimiento records not in original seed:
 `Francisco Osuna`, `Marielos España`, and 3 others (all with ON CONFLICT DO NOTHING).
+
+---
+
+## Phase 2: Domain Tables Backfill
+
+**Executed**: 2026-03-12
+
+### Scope
+
+Three remaining empty domain tables populated from SSOT xlsx files:
+
+| Table | Source | Rows |
+|-------|--------|------|
+| `rv_referrals` | Referidos sheets (BLT + B5) | **13** |
+| `rv_price_history` | All 3 projects (BEN + B5 + CE) | **30** |
+| `rv_client_profiles` | Buyer Persona sheets (all 4 projects) | **500** |
+
+### Key Decisions
+
+- **Referidos**: Only BLT (1) and B5 (12) had usable data. CE had empty `referido_por` columns. BEN had no referido sheet.
+- **Valorizacion**: BEN had 6 clean aggregate increments. B5 had 7 dated adjustments (per-unit deltas aggregated to project totals). CE had 17 dated adjustments (12 increases + 5 discounts, per-unit deltas aggregated). Summary rows filtered by requiring unit number in column B.
+- **Buyer Persona**: 564 profiles extracted, deduped from 663 raw rows (99 duplicates removed keeping richer records). 500 successfully linked to existing clients via unit→reservation→client chain. 64 profiles had unresolvable units (AVAILABLE/FROZEN units, or excluded units).
+
+### Fixes Applied During Review
+
+1. **Salesperson double-space normalization** — `"Brenda  Búcaro"` (double space + accent) wasn't matching `"Brenda Bucaro"` in canonical map. Fixed by collapsing multiple whitespace with `re.sub(r'\s+', ' ', ...)`.
+2. **Buyer persona deduplication** — Same unit appearing multiple times in xlsx with different data quality. Added scoring: keep record with most non-NULL demographic fields.
+
+### Fixes Applied During Review (Phase 2b — B5+CE Valorizacion)
+
+3. **Summary row contamination** — B5 and CE xlsx sheets have summary/total rows without unit numbers that inflated aggregates by 10-50x. Fixed by pre-building a set of rows with unit numbers in column B and only aggregating those.
+
+### Verification
+
+- All 13 referrals have resolved `salesperson_id` (non-NULL)
+- 30 valorizacion entries: BEN 6 (uniform per-unit), B5 7, CE 17 (12 increases + 5 discounts)
+- 500 buyer profiles: 311 M, 184 F, 5 NULL gender
