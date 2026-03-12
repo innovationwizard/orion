@@ -204,3 +204,68 @@ export function formatDate(isoDate: string | null | undefined): string {
     day: "numeric",
   });
 }
+
+// ---------------------------------------------------------------------------
+// Buyer Persona — dropdown options for demographic form
+// ---------------------------------------------------------------------------
+
+export const BUYER_PERSONA_OPTIONS = {
+  gender: ["M", "F", "Otro"] as const,
+  purchase_type: [
+    { value: "uso_propio", label: "Uso propio" },
+    { value: "inversion", label: "Inversión" },
+  ] as const,
+  marital_status: ["Soltero/a", "Casado/a", "Unido/a", "Divorciado/a", "Viudo/a"] as const,
+  education: [
+    "Diversificado",
+    "Universitario",
+    "Licenciatura",
+    "Maestría",
+    "Doctorado",
+    "Otro",
+  ] as const,
+  occupation: [
+    { value: "formal", label: "Empleado formal" },
+    { value: "informal", label: "Empleado informal" },
+    { value: "independiente", label: "Independiente" },
+    { value: "empresario", label: "Empresario" },
+  ] as const,
+  departments: [
+    "Guatemala",
+    "Sacatepéquez",
+    "Chimaltenango",
+    "Escuintla",
+    "Quetzaltenango",
+    "Alta Verapaz",
+    "Petén",
+    "Izabal",
+    "Jutiapa",
+    "Santa Rosa",
+    "Sololá",
+    "Huehuetenango",
+    "San Marcos",
+    "Totonicapán",
+    "Retalhuleu",
+    "Suchitepéquez",
+    "Zacapa",
+    "Chiquimula",
+    "Jalapa",
+    "Baja Verapaz",
+    "El Progreso",
+    "Quiché",
+  ] as const,
+  channels: [
+    "Facebook",
+    "Meta",
+    "Referido",
+    "Visita Inédita",
+    "Señalética",
+    "Web",
+    "Pipedrive",
+    "Expocasa",
+    "Mailing",
+    "Prospección",
+    "Evento",
+    "Otro",
+  ] as const,
+} as const;

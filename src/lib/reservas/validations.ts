@@ -93,3 +93,58 @@ export const reservationsQuerySchema = z.object({
 export const auditLogQuerySchema = z.object({
   unit: z.string().uuid("ID de unidad inválido"),
 });
+
+export const integracionQuerySchema = z.object({
+  project: z.string().optional(),
+});
+
+export const ventasQuerySchema = z.object({
+  project: z.string().optional(),
+});
+
+export const createReferralSchema = z.object({
+  unit_id: z.string().uuid(),
+  client_name: z.string().min(1, "Nombre de cliente requerido"),
+  precio_lista: z.number().positive().nullable().default(null),
+  precio_referido: z.number().positive().nullable().default(null),
+  referido_por: z.string().min(1, "Nombre de referidor requerido"),
+  fecha_reserva: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().default(null),
+  salesperson_id: z.string().uuid().nullable().default(null),
+  notes: z.string().nullable().default(null),
+});
+
+export const referidosQuerySchema = z.object({
+  project: z.string().optional(),
+});
+
+export const createPriceHistorySchema = z.object({
+  project_id: z.string().uuid(),
+  tower_id: z.string().uuid().nullable().default(null),
+  effective_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  units_remaining: z.number().int().min(0),
+  increment_amount: z.number(),
+  increment_pct: z.number().nullable().default(null),
+  new_price_avg: z.number().positive().nullable().default(null),
+  appreciation_total: z.number().nullable().default(null),
+  notes: z.string().nullable().default(null),
+});
+
+export const valorizacionQuerySchema = z.object({
+  project: z.string().optional(),
+});
+
+export const upsertClientProfileSchema = z.object({
+  gender: z.enum(["M", "F", "Otro"]).nullable().default(null),
+  birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().default(null),
+  education_level: z.string().nullable().default(null),
+  purchase_type: z.enum(["uso_propio", "inversion"]).nullable().default(null),
+  marital_status: z.string().nullable().default(null),
+  children_count: z.number().int().min(0).nullable().default(null),
+  department: z.string().nullable().default(null),
+  zone: z.string().nullable().default(null),
+  occupation_type: z.enum(["formal", "informal", "independiente", "empresario"]).nullable().default(null),
+  industry: z.string().nullable().default(null),
+  monthly_income_individual: z.number().positive().nullable().default(null),
+  monthly_income_family: z.number().positive().nullable().default(null),
+  acquisition_channel: z.string().nullable().default(null),
+});

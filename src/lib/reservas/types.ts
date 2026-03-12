@@ -267,6 +267,153 @@ export interface UnitSaleCount {
 }
 
 // ---------------------------------------------------------------------------
+// Integracion — pipeline summary by tower
+// ---------------------------------------------------------------------------
+
+export interface IntegrationRow {
+  project_name: string;
+  project_slug: string;
+  tower_name: string;
+  tower_id: string;
+  available: number;
+  soft_hold: number;
+  reserved: number;
+  frozen: number;
+  sold: number;
+  total: number;
+  desisted_total: number;
+  confirmed_current_month: number;
+  confirmed_previous: number;
+}
+
+// ---------------------------------------------------------------------------
+// Ventas — sales velocity time series
+// ---------------------------------------------------------------------------
+
+export interface VentasMonthlySeries {
+  month: string;
+  reservations: number;
+  confirmed: number;
+  desisted: number;
+  net: number;
+  cumulative: number;
+  target?: number;
+}
+
+export interface VentasSummary {
+  total_units: number;
+  sold_units: number;
+  available_units: number;
+  absorption_rate: number;
+  avg_monthly_velocity: number;
+  months_to_sellout: number;
+}
+
+// ---------------------------------------------------------------------------
+// Referidos — referral tracking
+// ---------------------------------------------------------------------------
+
+export interface ReferralFull {
+  id: string;
+  client_name: string;
+  unit_number: string;
+  unit_type: string;
+  tower_name: string;
+  project_name: string;
+  project_slug: string;
+  precio_lista: number | null;
+  precio_referido: number | null;
+  referido_por: string;
+  fecha_reserva: string | null;
+  salesperson_name: string | null;
+  notes: string | null;
+  created_at: string;
+}
+
+export interface CreateReferralPayload {
+  unit_id: string;
+  client_name: string;
+  precio_lista: number | null;
+  precio_referido: number | null;
+  referido_por: string;
+  fecha_reserva: string | null;
+  salesperson_id: string | null;
+  notes: string | null;
+}
+
+// ---------------------------------------------------------------------------
+// Valorizacion — price history
+// ---------------------------------------------------------------------------
+
+export interface PriceHistoryEntry {
+  id: string;
+  project_name: string;
+  project_slug: string;
+  tower_name: string | null;
+  effective_date: string;
+  units_remaining: number;
+  increment_amount: number;
+  increment_pct: number | null;
+  new_price_avg: number | null;
+  appreciation_total: number | null;
+  notes: string | null;
+  created_at: string;
+}
+
+export interface CreatePriceHistoryPayload {
+  project_id: string;
+  tower_id: string | null;
+  effective_date: string;
+  units_remaining: number;
+  increment_amount: number;
+  increment_pct: number | null;
+  new_price_avg: number | null;
+  appreciation_total: number | null;
+  notes: string | null;
+}
+
+// ---------------------------------------------------------------------------
+// Buyer Persona — customer demographics
+// ---------------------------------------------------------------------------
+
+export interface ClientProfile {
+  id: string;
+  client_id: string;
+  gender: "M" | "F" | "Otro" | null;
+  birth_date: string | null;
+  education_level: string | null;
+  purchase_type: "uso_propio" | "inversion" | null;
+  marital_status: string | null;
+  children_count: number | null;
+  department: string | null;
+  zone: string | null;
+  occupation_type: "formal" | "informal" | "independiente" | "empresario" | null;
+  industry: string | null;
+  monthly_income_individual: number | null;
+  monthly_income_family: number | null;
+  acquisition_channel: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DistributionItem {
+  label: string;
+  count: number;
+  pct: number;
+}
+
+export interface BuyerPersonaAggregate {
+  total_profiles: number;
+  by_gender: DistributionItem[];
+  by_purchase_type: DistributionItem[];
+  by_education: DistributionItem[];
+  by_department: DistributionItem[];
+  by_occupation: DistributionItem[];
+  by_marital_status: DistributionItem[];
+  by_channel: DistributionItem[];
+}
+
+// ---------------------------------------------------------------------------
 // API payload types — what the client sends to the server
 // ---------------------------------------------------------------------------
 

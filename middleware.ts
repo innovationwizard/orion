@@ -56,7 +56,8 @@ export async function middleware(request: NextRequest) {
   // Public reservation system pages (no auth required — salesperson form + availability board)
   const isPublicReservasPage =
     pathname.startsWith("/reservar") ||
-    pathname.startsWith("/disponibilidad");
+    pathname.startsWith("/disponibilidad") ||
+    pathname.startsWith("/cotizador");
 
   // Allow /auth/callback so invite/magic-link can land and client can set session from hash
   if (!data.user && !isLoginRoute && !isAuthCallback && !isAuthConfirm && !isSetPassword && !isPublicReservasPage) {
