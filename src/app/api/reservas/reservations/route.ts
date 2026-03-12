@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonOk, jsonError, parseJson, parseQuery } from "@/lib/api";
 import { submitReservationSchema, reservationsQuerySchema } from "@/lib/reservas/validations";
+import { requireSalesperson, isSalespersonFailure } from "@/lib/reservas/require-salesperson";
 
 export async function GET(request: NextRequest) {
   const { data: filters, error: qErr } = parseQuery(request, reservationsQuerySchema);
@@ -29,6 +30,10 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  // Authenticate: must be a logged-in salesperson
+  const auth = await requireSalesperson();
+  if (isSalespersonFailure(auth)) return auth.response;
+
   const { data: input, error: pErr } = await parseJson(request, submitReservationSchema);
   if (pErr) return jsonError(400, pErr.error, pErr.details);
 
@@ -47,6 +52,7 @@ export async function POST(request: NextRequest) {
     p_receipt_image_url: input.receipt_image_url,
     p_lead_source: input.lead_source,
     p_notes: input.notes,
+    p_dpi_image_url: input.dpi_image_url,
   });
 
   if (error) {

@@ -1,5 +1,5 @@
 /// Service Worker for /reservar PWA
-const CACHE_NAME = "reservar-v1";
+const CACHE_NAME = "reservar-v2";
 
 const PRECACHE_URLS = ["/reservar"];
 

@@ -53,9 +53,9 @@ export async function middleware(request: NextRequest) {
   const isAuthConfirm = pathname === "/auth/confirm";
   const isSetPassword = pathname === "/auth/set-password";
 
-  // Public reservation system pages (no auth required — salesperson form + availability board)
+  // Public reservation system pages (no auth required — availability board + calculator)
+  // Note: /reservar was removed — now requires auth (salesperson must be logged in)
   const isPublicReservasPage =
-    pathname.startsWith("/reservar") ||
     pathname.startsWith("/disponibilidad") ||
     pathname.startsWith("/cotizador");
 

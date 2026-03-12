@@ -122,6 +122,7 @@ export interface Reservation {
   receipt_type: RvReceiptType | null;
   depositor_name: string | null;
   receipt_image_url: string | null;
+  dpi_image_url: string | null;
   notes: string | null;
   lead_source: string | null;
   is_resale: boolean;
@@ -224,6 +225,7 @@ export interface ReservationPending {
   receipt_type: RvReceiptType | null;
   depositor_name: string | null;
   receipt_image_url: string | null;
+  dpi_image_url: string | null;
   lead_source: string | null;
   notes: string | null;
   is_resale: boolean;
@@ -428,8 +430,21 @@ export interface SubmitReservationPayload {
   receipt_type: RvReceiptType | null;
   depositor_name: string | null;
   receipt_image_url: string | null;
+  dpi_image_url: string | null;
   lead_source: string | null;
   notes: string | null;
+}
+
+/** Receipt data collected from the camera + OCR step */
+export interface ReceiptData {
+  imageUrl: string | null;
+  receiptFile: File | null;
+  extraction: OcrExtractionResult | null;
+  depositAmount: string;
+  depositDate: string;
+  depositBank: string;
+  receiptType: string;
+  depositorName: string;
 }
 
 export interface ConfirmReservationPayload {

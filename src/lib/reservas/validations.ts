@@ -22,6 +22,7 @@ export const submitReservationSchema = z.object({
   receipt_type: z.enum(RECEIPT_TYPES).nullable().default(null),
   depositor_name: z.string().nullable().default(null),
   receipt_image_url: z.string().url("URL de imagen inválida").nullable().default(null),
+  dpi_image_url: z.string().url("URL de imagen DPI inválida").nullable().default(null),
   lead_source: z.enum(LEAD_SOURCES).nullable().default(null),
   notes: z.string().nullable().default(null),
 });
