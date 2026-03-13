@@ -133,6 +133,10 @@ export interface Reservation {
   reviewed_at: string | null;
   reviewed_by: string | null;
   rejection_reason: string | null;
+  // 026: PCV document storage
+  pcv_url: string | null;
+  pcv_generated_at: string | null;
+  pcv_generated_by: string | null;
 }
 
 export interface ReservationClient {
@@ -214,6 +218,16 @@ export interface UnitFull {
   project_id: string;
   project_name: string;
   project_slug: string;
+  // 023: cesion de derechos columns
+  parking_car_area: number | null;
+  parking_tandem_area: number | null;
+  price_suggested: number | null;
+  is_cesion: boolean;
+  pcv_block: number | null;
+  precalificacion_status: string | null;
+  precalificacion_notes: string | null;
+  razon_compra: string | null;
+  tipo_cliente: string | null;
 }
 
 export interface ReservationPending {

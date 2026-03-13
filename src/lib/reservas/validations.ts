@@ -58,6 +58,17 @@ export const updateClientsSchema = z.object({
   reason: z.string().min(1, "Motivo de corrección requerido"),
 });
 
+export const updateClientSchema = z
+  .object({
+    full_name: z.string().min(1, "Nombre requerido").optional(),
+    phone: z.string().nullable().optional(),
+    email: z.string().email("Email inválido").nullable().optional(),
+    dpi: z.string().nullable().optional(),
+  })
+  .refine((d) => Object.values(d).some((v) => v !== undefined), {
+    message: "Al menos un campo requerido",
+  });
+
 // ---------------------------------------------------------------------------
 // Freeze requests
 // ---------------------------------------------------------------------------

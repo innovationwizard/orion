@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonOk, jsonError, parseJson, parseQuery } from "@/lib/api";
 import { submitReservationSchema, reservationsQuerySchema } from "@/lib/reservas/validations";
 import { requireSalesperson, isSalespersonFailure } from "@/lib/reservas/require-salesperson";
+import { requireAuth, isSuperuser, hasRole } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
   const { data: filters, error: qErr } = parseQuery(request, reservationsQuerySchema);
@@ -30,9 +31,16 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  // Authenticate: must be a logged-in salesperson
+  // Authenticate: must be a logged-in salesperson OR admin (master/torredecontrol)
   const auth = await requireSalesperson();
-  if (isSalespersonFailure(auth)) return auth.response;
+  if (isSalespersonFailure(auth)) {
+    // Fall back to admin role check
+    const userAuth = await requireAuth();
+    if (userAuth.response) return userAuth.response;
+    const user = userAuth.user!;
+    const isAdmin = isSuperuser(user.email ?? null) || hasRole(user, ["master", "torredecontrol"]);
+    if (!isAdmin) return auth.response;
+  }
 
   const { data: input, error: pErr } = await parseJson(request, submitReservationSchema);
   if (pErr) return jsonError(400, pErr.error, pErr.details);

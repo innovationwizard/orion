@@ -29,13 +29,18 @@ async function signStorageUrl(
 
 async function generateSignedUrls(
   supabase: SupabaseClient,
-  reservation: { receipt_image_url: string | null; dpi_image_url: string | null },
+  reservation: {
+    receipt_image_url: string | null;
+    dpi_image_url: string | null;
+    pcv_url: string | null;
+  },
 ) {
-  const [receipt, dpi] = await Promise.all([
+  const [receipt, dpi, pcv] = await Promise.all([
     signStorageUrl(supabase, reservation.receipt_image_url, "receipts"),
     signStorageUrl(supabase, reservation.dpi_image_url, "dpi"),
+    signStorageUrl(supabase, reservation.pcv_url, "pcv"),
   ]);
-  return { receipt, dpi };
+  return { receipt, dpi, pcv };
 }
 
 export async function GET(
@@ -100,6 +105,7 @@ export async function GET(
       ...reservation,
       receipt_image_url: signedUrls.receipt ?? reservation.receipt_image_url,
       dpi_image_url: signedUrls.dpi ?? reservation.dpi_image_url,
+      pcv_url: signedUrls.pcv ?? reservation.pcv_url,
     },
     clients: clientsResult.data ?? [],
     extractions: extractionsResult.data ?? [],

@@ -2,17 +2,40 @@ import {
   requireSalesperson,
   isSalespersonFailure,
 } from "@/lib/reservas/require-salesperson";
+import { requireAuth, isSuperuser, hasRole } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonOk, jsonError } from "@/lib/api";
 
+const ADMIN_ROLES = ["master", "torredecontrol"] as const;
+
 export async function GET() {
   const result = await requireSalesperson();
-  if (isSalespersonFailure(result)) return result.response;
 
-  const { salesperson } = result;
+  // Salesperson found — normal path
+  if (!isSalespersonFailure(result)) {
+    return respondWithProjects(result.salesperson);
+  }
+
+  // Not a salesperson — check if user is admin (master/torredecontrol)
+  const auth = await requireAuth();
+  if (auth.response) return auth.response;
+
+  const user = auth.user!;
+  const isAdmin = isSuperuser(user.email ?? null) || hasRole(user, [...ADMIN_ROLES]);
+
+  if (!isAdmin) {
+    // Regular non-salesperson user → return the original 403
+    return result.response;
+  }
+
+  // Admin user without salesperson record → return all projects
+  return respondAdminAllProjects(user);
+}
+
+/** Standard salesperson response: their assigned projects + towers */
+async function respondWithProjects(salesperson: { id: string; full_name: string; display_name: string }) {
   const admin = createAdminClient();
 
-  // Fetch active project assignments (end_date IS NULL = currently assigned)
   const { data: assignments, error } = await admin
     .from("salesperson_project_assignments")
     .select(`
@@ -31,7 +54,6 @@ export async function GET() {
     return jsonError(500, error.message);
   }
 
-  // Get towers for assigned projects
   const projectIds = (assignments ?? []).map(
     (a: { project_id: string }) => a.project_id,
   );
@@ -47,8 +69,6 @@ export async function GET() {
     return jsonError(500, tErr.message);
   }
 
-  // Build response: projects with nested towers
-  // Supabase returns the joined relation as an object (single FK) or array
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const projects = (assignments ?? []).map((a: any) => {
     const proj = a.projects;
@@ -70,5 +90,44 @@ export async function GET() {
       display_name: salesperson.display_name,
     },
     projects,
+  });
+}
+
+/** Admin fallback: return all projects + towers (no salesperson record needed) */
+async function respondAdminAllProjects(user: { id: string; email?: string }) {
+  const admin = createAdminClient();
+
+  const [projResult, towersResult] = await Promise.all([
+    admin.from("projects").select("id, name, slug").order("name"),
+    admin.from("towers").select("id, name, is_default, project_id").order("name"),
+  ]);
+
+  if (projResult.error) {
+    console.error("[GET /api/reservas/me] admin projects", projResult.error);
+    return jsonError(500, projResult.error.message);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const projects = (projResult.data ?? []).map((p: any) => ({
+    id: p.id,
+    name: p.name,
+    slug: p.slug,
+    towers: (towersResult.data ?? []).filter(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (t: any) => t.project_id === p.id,
+    ),
+  }));
+
+  // Return a virtual salesperson identity from the auth user
+  const displayName = user.email?.split("@")[0] ?? "Admin";
+
+  return jsonOk({
+    salesperson: {
+      id: user.id,
+      full_name: displayName,
+      display_name: displayName,
+    },
+    projects,
+    is_admin: true,
   });
 }
