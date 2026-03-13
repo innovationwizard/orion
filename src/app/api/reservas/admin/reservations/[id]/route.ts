@@ -1,7 +1,42 @@
 import { NextRequest } from "next/server";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireRole } from "@/lib/auth";
 import { jsonOk, jsonError } from "@/lib/api";
+
+const SIGNED_URL_EXPIRY = 3600; // 1 hour
+
+/**
+ * Extract the storage path from a Supabase public URL and create a signed URL.
+ * Public URLs look like: .../storage/v1/object/public/{bucket}/{path}
+ */
+async function signStorageUrl(
+  supabase: SupabaseClient,
+  publicUrl: string | null,
+  bucket: string,
+): Promise<string | null> {
+  if (!publicUrl) return null;
+  const marker = `/storage/v1/object/public/${bucket}/`;
+  const idx = publicUrl.indexOf(marker);
+  if (idx === -1) return null;
+  const path = publicUrl.slice(idx + marker.length);
+  const { data, error } = await supabase.storage
+    .from(bucket)
+    .createSignedUrl(path, SIGNED_URL_EXPIRY);
+  if (error || !data?.signedUrl) return null;
+  return data.signedUrl;
+}
+
+async function generateSignedUrls(
+  supabase: SupabaseClient,
+  reservation: { receipt_image_url: string | null; dpi_image_url: string | null },
+) {
+  const [receipt, dpi] = await Promise.all([
+    signStorageUrl(supabase, reservation.receipt_image_url, "receipts"),
+    signStorageUrl(supabase, reservation.dpi_image_url, "dpi"),
+  ]);
+  return { receipt, dpi };
+}
 
 export async function GET(
   _request: NextRequest,
@@ -57,8 +92,15 @@ export async function GET(
         .limit(20),
     ]);
 
+  // Generate signed URLs for private storage images (buckets are auth-only)
+  const signedUrls = await generateSignedUrls(supabase, reservation);
+
   return jsonOk({
-    reservation,
+    reservation: {
+      ...reservation,
+      receipt_image_url: signedUrls.receipt ?? reservation.receipt_image_url,
+      dpi_image_url: signedUrls.dpi ?? reservation.dpi_image_url,
+    },
     clients: clientsResult.data ?? [],
     extractions: extractionsResult.data ?? [],
     unit: unitResult.data,
