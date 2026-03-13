@@ -195,6 +195,17 @@ export function formatCurrency(amount: number | null | undefined): string {
   return `Q${amount.toLocaleString(LOCALE, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
 }
 
+/** Compact currency format for KPI cards (Q1.33M, Q133K) */
+export function fmtQCompact(n: number | null | undefined): string {
+  if (n == null) return "—";
+  if (n === 0) return "Q0";
+  const abs = Math.abs(n);
+  const sign = n < 0 ? "-" : "";
+  if (abs >= 1e6) return `${sign}Q${(abs / 1e6).toFixed(2)}M`;
+  if (abs >= 1e3) return `${sign}Q${(abs / 1e3).toFixed(0)}K`;
+  return `${sign}Q${abs.toFixed(0)}`;
+}
+
 /** Format a date string (ISO) to localized display */
 export function formatDate(isoDate: string | null | undefined): string {
   if (!isoDate) return "—";

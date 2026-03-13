@@ -416,6 +416,45 @@ export interface BuyerPersonaAggregate {
 }
 
 // ---------------------------------------------------------------------------
+// Cesion de Derechos — cross-domain view row (v_cesion_derechos)
+// ---------------------------------------------------------------------------
+
+export interface CesionUnit {
+  unit_id: string;
+  unit_number: string;
+  unit_type: string;
+  unit_status: RvUnitStatus;
+  area_interior: number | null;
+  area_terrace: number | null;
+  area_total: number | null;
+  parking_car: number;
+  parking_tandem: number;
+  parking_car_area: number | null;
+  parking_tandem_area: number | null;
+  bodega_area: number | null;
+  price_list: number | null;
+  price_suggested: number | null;
+  plusvalia: number | null;
+  precio_m2: number | null;
+  pcv_block: number | null;
+  precalificacion_status: string | null;
+  precalificacion_notes: string | null;
+  razon_compra: string | null;
+  tipo_cliente: string | null;
+  project_id: string;
+  project_name: string;
+  project_slug: string;
+  client_name: string | null;
+  enganche_total: number | null;
+  enganche_pactado: number | null;
+  enganche_pagado: number | null;
+  diferencia: number | null;
+  compliance_pct: number | null;
+  compliance_status: string | null;
+  days_delinquent: number | null;
+}
+
+// ---------------------------------------------------------------------------
 // API payload types — what the client sends to the server
 // ---------------------------------------------------------------------------
 

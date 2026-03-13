@@ -46,7 +46,8 @@ export type Role =
   | "financiero"
   | "contabilidad"
   | "ventas"
-  | "inventario";
+  | "inventario"
+  | "torredecontrol";
 
 export function getUserRole(user: User | null) {
   const role =
