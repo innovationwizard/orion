@@ -12,9 +12,9 @@ export async function GET() {
   const { salesperson } = result;
   const admin = createAdminClient();
 
-  // Fetch project assignments with tower info
+  // Fetch active project assignments (end_date IS NULL = currently assigned)
   const { data: assignments, error } = await admin
-    .from("salesperson_projects")
+    .from("salesperson_project_assignments")
     .select(`
       project_id,
       projects:project_id (
@@ -23,7 +23,8 @@ export async function GET() {
         slug
       )
     `)
-    .eq("salesperson_id", salesperson.id);
+    .eq("salesperson_id", salesperson.id)
+    .is("end_date", null);
 
   if (error) {
     console.error("[GET /api/reservas/me]", error);

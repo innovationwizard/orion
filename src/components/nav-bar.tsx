@@ -17,6 +17,7 @@ const LINKS: (NavLink | "divider")[] = [
   { href: "/valorizacion", label: "Valorizacion" },
   "divider",
   { href: "/cesion", label: "Cesion" },
+  { href: "/admin/asesores", label: "Asesores" },
 ];
 
 const linkClass =

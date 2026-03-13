@@ -79,7 +79,7 @@ export async function GET(request: Request) {
     let builder = supabase
       .from("sales")
       .select(
-        "*, projects ( name ), units ( unit_number ), clients ( full_name ), sales_reps ( name )",
+        "*, projects ( name ), units ( unit_number ), clients ( full_name ), salespeople!sales_rep_id ( full_name )",
         { count: "exact" }
       );
 
@@ -108,7 +108,8 @@ export async function GET(request: Request) {
       const projectName = sale.projects?.name ?? null;
       const unitRel = sale.units;
       const clientRel = sale.clients;
-      const salesRepRel = sale.sales_reps;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const salesRepRel = (sale as any).salespeople;
       const unitNumber = Array.isArray(unitRel)
         ? unitRel[0]?.unit_number ?? null
         : unitRel?.unit_number ?? null;
@@ -116,8 +117,8 @@ export async function GET(request: Request) {
         ? clientRel[0]?.full_name ?? null
         : clientRel?.full_name ?? null;
       const salesRepName = Array.isArray(salesRepRel)
-        ? salesRepRel[0]?.name ?? null
-        : salesRepRel?.name ?? null;
+        ? salesRepRel[0]?.full_name ?? null
+        : salesRepRel?.full_name ?? null;
 
       const typedSale = sale as Sale;
       return {
@@ -287,7 +288,7 @@ export async function PATCH(request: Request) {
 
     const { data: updated, error: selectError } = await supabase
       .from("sales")
-      .select("*, projects ( name ), units ( unit_number ), clients ( full_name ), sales_reps ( name )")
+      .select("*, projects ( name ), units ( unit_number ), clients ( full_name ), salespeople!sales_rep_id ( full_name )")
       .eq("id", payload.id)
       .single();
 
@@ -300,14 +301,14 @@ export async function PATCH(request: Request) {
         projects?: { name: string };
         units?: { unit_number: string };
         clients?: { full_name: string };
-        sales_reps?: { name: string };
+        salespeople?: { full_name: string };
       };
       return {
         ...s,
         project_name: s.projects?.name ?? null,
         unit_number: s.units?.unit_number ?? null,
         client_name: s.clients?.full_name ?? null,
-        sales_rep_name: s.sales_reps?.name ?? null
+        sales_rep_name: s.salespeople?.full_name ?? null
       };
     })();
 

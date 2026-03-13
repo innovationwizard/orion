@@ -90,7 +90,7 @@ export default function DesistimientosPage() {
 
       <header className="flex flex-wrap items-center gap-x-5 gap-y-3 justify-between">
         <div>
-          <p className="uppercase tracking-[0.08em] text-[11px] font-semibold text-muted mb-2">Orion · Operaciones</p>
+          <p className="uppercase tracking-[0.08em] text-[11px] font-semibold text-muted mb-2">PAI · Operaciones</p>
           <h1 className="m-0 text-[clamp(20px,3vw,28px)]">Desistimientos</h1>
           <p className="text-muted m-0">
             Marca una venta activa como cancelada (desistimiento). La unidad volverá a disponible.

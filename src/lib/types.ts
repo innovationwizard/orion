@@ -27,11 +27,12 @@ export type Client = {
   created_at: string;
 };
 
+/** Unified salesperson identity — canonical table for all salespeople across
+ *  both the analytics and reservation systems. */
 export type SalesRep = {
   id: string;
   name: string;
-  contract_start_date: string | null;
-  contract_end_date: string | null;
+  display_name: string;
 };
 
 /** Referral type for commission calculation (business_rules §9) */

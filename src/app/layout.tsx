@@ -23,8 +23,8 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Orion | Reservas, Pagos y Comisiones",
-  description: "ORION - Business Intelligence Dashboard",
+  title: "PAI | Reservas, Pagos y Comisiones",
+  description: "Puerta Abierta Inmobiliaria — Business Intelligence Dashboard",
   metadataBase,
   manifest: "/manifest.json",
   icons: {
@@ -38,16 +38,16 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    title: "Orion | Reservas, Pagos y Comisiones",
-    description: "ORION - Business Intelligence Dashboard",
+    title: "PAI | Reservas, Pagos y Comisiones",
+    description: "Puerta Abierta Inmobiliaria — Business Intelligence Dashboard",
     url: `${baseUrl}/`,
-    siteName: "ORION",
+    siteName: "Puerta Abierta Inmobiliaria",
     images: [
       {
         url: ogImageUrl,
         width: 1200,
         height: 630,
-        alt: "Orion",
+        alt: "Puerta Abierta Inmobiliaria",
         type: "image/jpeg"
       }
     ]

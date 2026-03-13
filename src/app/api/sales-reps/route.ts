@@ -16,15 +16,21 @@ export async function GET() {
 
   try {
     const { data, error } = await supabase
-      .from("sales_reps")
-      .select("id, name, contract_start_date, contract_end_date")
-      .order("name", { ascending: true });
+      .from("salespeople")
+      .select("id, full_name, display_name")
+      .order("full_name", { ascending: true });
 
     if (error) {
       return jsonError(500, "Database error", error.message);
     }
 
-    return jsonOk({ data: (data ?? []) as SalesRep[] });
+    const mapped: SalesRep[] = (data ?? []).map((sp) => ({
+      id: sp.id,
+      name: sp.full_name,
+      display_name: sp.display_name,
+    }));
+
+    return jsonOk({ data: mapped });
   } catch (err) {
     return jsonError(500, "Database error", err);
   }

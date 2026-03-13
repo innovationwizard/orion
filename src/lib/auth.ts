@@ -84,3 +84,17 @@ export async function requireSuperuser() {
   }
   return auth;
 }
+
+export async function requireRole(roles: Role[]) {
+  const auth = await requireAuth();
+  if (auth.response) {
+    return auth;
+  }
+  const allowed =
+    isSuperuser(auth.user?.email ?? null) ||
+    hasRole(auth.user ?? null, roles);
+  if (!allowed) {
+    return { response: NextResponse.json({ error: "No autorizado" }, { status: 403 }) };
+  }
+  return auth;
+}

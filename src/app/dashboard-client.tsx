@@ -361,7 +361,7 @@ export default function DashboardClient() {
       {/* Header */}
       <header className="flex flex-wrap gap-x-6 gap-y-5 items-start justify-between">
         <div className="min-w-0">
-          <p className="uppercase tracking-[0.08em] text-[11px] font-semibold text-muted mb-2">ORION — Business Intelligence</p>
+          <p className="uppercase tracking-[0.08em] text-[11px] font-semibold text-muted mb-2">PAI — Business Intelligence</p>
           <h1 className="m-0 text-[clamp(20px,3vw,28px)]">Seguimiento de Reservas, Pagos y Comisiones</h1>
         </div>
         <div className="flex-1 min-w-[min(100%,720px)] flex flex-col gap-3">

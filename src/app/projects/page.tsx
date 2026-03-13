@@ -148,7 +148,7 @@ export default function ProjectsPage() {
       <NavBar />
       <header className="flex flex-wrap items-center gap-x-5 gap-y-3 justify-between">
         <div>
-          <p className="uppercase tracking-[0.08em] text-[11px] font-semibold text-muted mb-2">Orion · Administration</p>
+          <p className="uppercase tracking-[0.08em] text-[11px] font-semibold text-muted mb-2">PAI · Administración</p>
           <h1 className="m-0 text-[clamp(20px,3vw,28px)]">Gestión de proyectos</h1>
         </div>
         <div className="flex flex-wrap gap-3 items-center">
