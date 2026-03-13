@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { formatLegalAmount, diaEnLetras, numeroEnLetras } from "@/lib/reservas/numero-a-letras";
+import { formatLegalAmount, diaEnLetras, numeroEnLetras, formatCuiLegal } from "@/lib/reservas/numero-a-letras";
 import { computeEscrituracion, computeEnganche, COTIZADOR_DEFAULTS } from "@/lib/reservas/cotizador";
 import { formatCurrency } from "@/lib/reservas/constants";
 import { createReservasClient } from "@/lib/supabase/client";
@@ -55,6 +55,7 @@ interface PcvData {
   } | null;
   client_profile: {
     birth_date: string | null;
+    edad: number | null;
     occupation_type: string | null;
     marital_status: string | null;
     gender: string | null;
@@ -272,12 +273,18 @@ export default function PcvClientComponent({ reservationId }: { reservationId: s
   const primaryClientRow = clients.find((c) => c.is_primary) ?? clients[0];
   const client = primaryClientRow?.rv_clients as { full_name: string; phone: string | null; email: string | null; dpi: string | null } | null;
   const clientName = client?.full_name ?? BLANK;
-  const clientDpi = client?.dpi ?? BLANK;
+  const clientDpiRaw = client?.dpi ?? null;
+  const clientDpi = clientDpiRaw ? formatCuiLegal(clientDpiRaw) : BLANK;
   const clientEmail = client?.email ?? BLANK_SHORT;
 
-  // Age
-  const age = client_profile?.birth_date ? computeAge(client_profile.birth_date) : null;
+  // Age — prefer birth_date (exact), fall back to edad (SSOT snapshot)
+  const age = client_profile?.birth_date
+    ? computeAge(client_profile.birth_date)
+    : client_profile?.edad ?? null;
   const ageText = age != null ? `${numeroEnLetras(age)} (${age})` : BLANK_SHORT;
+
+  // Marital status
+  const maritalStatus = client_profile?.marital_status ?? BLANK_SHORT;
 
   // Occupation
   const profession = mapOccupation(client_profile?.occupation_type ?? null);
@@ -407,8 +414,8 @@ export default function PcvClientComponent({ reservationId }: { reservationId: s
         </p>
 
         <p>
-          <V>{clientName}</V>, de <V>{ageText}</V> años de edad, <V>{profession}</V>,
-          guatemalteco, <V>{BLANK_SHORT}</V>, de este domicilio, me identifico con el Documento
+          <V>{clientName}</V>, de <V>{ageText}</V> años de edad, <V>{maritalStatus}</V>,
+          guatemalteco, <V>{profession}</V>, de este domicilio, me identifico con el Documento
           Personal de Identificación, con Código Único de Identificación
           -CUI-<V>{clientDpi}</V> extendido por el Registro Nacional de las Personas de la
           República de Guatemala, y quien actúa en nombre propio.

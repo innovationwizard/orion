@@ -70,6 +70,7 @@ export async function GET(
   const primaryClient = (clientsResult.data ?? []).find((c) => c.is_primary);
   let clientProfile: {
     birth_date: string | null;
+    edad: number | null;
     occupation_type: string | null;
     marital_status: string | null;
     gender: string | null;
@@ -78,7 +79,7 @@ export async function GET(
   if (primaryClient) {
     const { data: profile } = await supabase
       .from("rv_client_profiles")
-      .select("birth_date, occupation_type, marital_status, gender")
+      .select("birth_date, edad, occupation_type, marital_status, gender")
       .eq("client_id", primaryClient.client_id)
       .maybeSingle();
     clientProfile = profile ?? null;

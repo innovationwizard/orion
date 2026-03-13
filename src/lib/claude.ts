@@ -104,6 +104,7 @@ Respondé ÚNICAMENTE con JSON válido, sin markdown, sin explicaciones.
 {
   "cui": string o null,
   "full_name": string o null,
+  "birth_date": "YYYY-MM-DD" o null,
   "confidence": "HIGH" | "MEDIUM" | "LOW"
 }
 
@@ -114,6 +115,10 @@ sin espacios ni guiones.
 
 "full_name" es el nombre completo del titular como aparece en el DPI
 (nombres + apellidos). Conservá mayúsculas y acentos tal como aparecen.
+
+"birth_date" es la fecha de nacimiento que aparece en el DPI.
+Formato: YYYY-MM-DD. Buscá campos como "FECHA DE NACIMIENTO" o "F. NAC."
+en el documento.
 
 Si no podés leer un campo con certeza, poné null.
 "confidence" es HIGH si el CUI es claramente legible,

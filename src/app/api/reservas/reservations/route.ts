@@ -91,6 +91,20 @@ export async function POST(request: NextRequest) {
       if (dpiErr) {
         console.error("[POST /api/reservas/reservations] Failed to set client DPI:", dpiErr);
       }
+
+      // Store birth_date on client profile (upsert — profile may or may not exist)
+      if (input.client_birth_date) {
+        const { error: profileErr } = await supabase
+          .from("rv_client_profiles")
+          .upsert(
+            { client_id: primaryLink.client_id, birth_date: input.client_birth_date },
+            { onConflict: "client_id" },
+          );
+
+        if (profileErr) {
+          console.error("[POST /api/reservas/reservations] Failed to set birth_date:", profileErr);
+        }
+      }
     }
   }
 

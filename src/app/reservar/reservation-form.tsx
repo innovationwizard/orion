@@ -29,6 +29,7 @@ interface FormState {
   dpiFile: File | null;
   dpiPreviewUrl: string | null;
   dpiCui: string | null;
+  dpiBirthDate: string | null;
   dpiOcrLoading: boolean;
   dpiOcrError: string | null;
   receiptFile: File | null;
@@ -50,6 +51,7 @@ const INITIAL_STATE: FormState = {
   dpiFile: null,
   dpiPreviewUrl: null,
   dpiCui: null,
+  dpiBirthDate: null,
   dpiOcrLoading: false,
   dpiOcrError: null,
   receiptFile: null,
@@ -177,6 +179,7 @@ export default function ReservationForm({
         dpiFile: file,
         dpiPreviewUrl: url,
         dpiCui: null,
+        dpiBirthDate: null,
         dpiOcrLoading: true,
         dpiOcrError: null,
       }));
@@ -195,6 +198,7 @@ export default function ReservationForm({
             setForm((prev) => ({
               ...prev,
               dpiCui: extraction.cui,
+              dpiBirthDate: extraction.birth_date ?? null,
               dpiOcrLoading: false,
               dpiOcrError: null,
             }));
@@ -308,6 +312,7 @@ export default function ReservationForm({
         receipt_image_url: receiptUrl,
         dpi_image_url: dpiUrl,
         client_dpi: form.dpiCui,
+        client_birth_date: form.dpiBirthDate,
         lead_source: form.leadSource || null,
         notes: form.notes.trim() || null,
       };
@@ -438,6 +443,7 @@ export default function ReservationForm({
                       dpiFile: null,
                       dpiPreviewUrl: null,
                       dpiCui: null,
+                      dpiBirthDate: null,
                       dpiOcrLoading: false,
                       dpiOcrError: null,
                     }));

@@ -130,3 +130,60 @@ export function formatLegalAmount(amount: number): string {
 export function numeroEnLetras(n: number): string {
   return numberToWords(Math.floor(n)).toLowerCase();
 }
+
+/**
+ * Convert a digit group (possibly with leading zeros) to Spanish words.
+ * Leading zeros are spoken as "cero".
+ *
+ * Examples:
+ *   "2539"  → "dos mil quinientos treinta y nueve"
+ *   "09511" → "cero nueve mil quinientos once"
+ *   "0101"  → "cero ciento uno"
+ */
+function cuiGroupToWords(group: string): string {
+  let leadingZeros = 0;
+  for (const ch of group) {
+    if (ch === "0") leadingZeros++;
+    else break;
+  }
+
+  const parts: string[] = [];
+  for (let i = 0; i < leadingZeros; i++) {
+    parts.push("cero");
+  }
+
+  const remainder = parseInt(group.slice(leadingZeros), 10);
+  if (!isNaN(remainder) && remainder > 0) {
+    parts.push(numberToWords(remainder).toLowerCase());
+  }
+
+  return parts.join(" ");
+}
+
+/**
+ * Format a 13-digit CUI in Guatemalan legal notation.
+ *
+ * The CUI is split into 4-5-4 groups, each spelled out in words,
+ * followed by the grouped digits in parentheses.
+ *
+ * Example:
+ *   "2539095110101" →
+ *   "dos mil quinientos treinta y nueve, cero nueve mil quinientos once,
+ *    cero ciento uno (2539 09511 0101)"
+ *
+ * Returns the raw string unchanged if it's not exactly 13 digits.
+ */
+export function formatCuiLegal(cui: string): string {
+  const digits = cui.replace(/\D/g, "");
+  if (digits.length !== 13) return cui;
+
+  const g1 = digits.slice(0, 4);
+  const g2 = digits.slice(4, 9);
+  const g3 = digits.slice(9, 13);
+
+  const w1 = cuiGroupToWords(g1);
+  const w2 = cuiGroupToWords(g2);
+  const w3 = cuiGroupToWords(g3);
+
+  return `${w1}, ${w2}, ${w3} (${g1} ${g2} ${g3})`;
+}

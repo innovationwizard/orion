@@ -24,6 +24,7 @@ export const submitReservationSchema = z.object({
   receipt_image_url: z.string().url("URL de comprobante requerida"),
   dpi_image_url: z.string().url("URL de DPI requerida"),
   client_dpi: z.string().min(1, "CUI requerido"),
+  client_birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Fecha inválida (YYYY-MM-DD)").nullable().default(null),
   lead_source: z.enum(LEAD_SOURCES).nullable().default(null),
   notes: z.string().nullable().default(null),
 });

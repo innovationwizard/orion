@@ -544,5 +544,6 @@ export interface OcrExtractionResult {
 export interface DpiExtractionResult {
   cui: string | null;
   full_name: string | null;
+  birth_date: string | null;
   confidence: ExtractionConfidence;
 }
