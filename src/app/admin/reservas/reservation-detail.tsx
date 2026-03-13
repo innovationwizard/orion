@@ -17,7 +17,6 @@ import type {
 import ReceiptViewer from "./receipt-viewer";
 import AuditLog from "./audit-log";
 import ActionConfirmDialog from "./action-confirm-dialog";
-import ClientProfileForm from "./client-profile-form";
 
 type DetailData = {
   reservation: Reservation;
@@ -305,13 +304,6 @@ export default function ReservationDetail({
                   )}
                 </div>
               </div>
-
-              {/* Buyer Persona / Client Profile — B5 only */}
-              {data.unit?.project_slug === "boulevard-5" &&
-               primaryClient?.client_id &&
-               (data.reservation.status === "CONFIRMED" || data.reservation.status === "PENDING_REVIEW") && (
-                <ClientProfileForm clientId={primaryClient.client_id} />
-              )}
 
               {/* Salesperson */}
               {data.salesperson && (
