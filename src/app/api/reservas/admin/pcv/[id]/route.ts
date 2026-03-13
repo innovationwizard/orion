@@ -74,12 +74,13 @@ export async function GET(
     occupation_type: string | null;
     marital_status: string | null;
     gender: string | null;
+    profession: string | null;
   } | null = null;
 
   if (primaryClient) {
     const { data: profile } = await supabase
       .from("rv_client_profiles")
-      .select("birth_date, edad, occupation_type, marital_status, gender")
+      .select("birth_date, edad, occupation_type, marital_status, gender, profession")
       .eq("client_id", primaryClient.client_id)
       .maybeSingle();
     clientProfile = profile ?? null;
@@ -127,6 +128,63 @@ export async function POST(
 
   if (error) {
     console.error("[POST /api/reservas/admin/pcv/[id]]", error);
+    return jsonError(500, error.message);
+  }
+
+  return jsonOk({ saved: true });
+}
+
+/**
+ * PATCH /api/reservas/admin/pcv/[id]
+ *
+ * Save missing profile data (edad, profession, marital_status) for the primary
+ * client of a reservation. Used from the PCV page when the admin fills in
+ * fields that were not available at reservation time.
+ */
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const auth = await requireRole(["master", "torredecontrol"]);
+  if ("response" in auth) return auth.response;
+
+  const { id } = await params;
+  const body = await request.json() as {
+    edad?: number | null;
+    birth_date?: string | null;
+    profession?: string | null;
+    marital_status?: string | null;
+  };
+
+  const supabase = createAdminClient();
+
+  // Find primary client
+  const { data: primaryLink } = await supabase
+    .from("reservation_clients")
+    .select("client_id")
+    .eq("reservation_id", id)
+    .eq("is_primary", true)
+    .maybeSingle();
+
+  if (!primaryLink?.client_id) {
+    return jsonError(404, "Cliente primario no encontrado");
+  }
+
+  // Build upsert payload — only include fields that were provided
+  const profileUpdate: Record<string, unknown> = {
+    client_id: primaryLink.client_id,
+  };
+  if (body.edad !== undefined) profileUpdate.edad = body.edad;
+  if (body.birth_date !== undefined) profileUpdate.birth_date = body.birth_date;
+  if (body.profession !== undefined) profileUpdate.profession = body.profession;
+  if (body.marital_status !== undefined) profileUpdate.marital_status = body.marital_status;
+
+  const { error } = await supabase
+    .from("rv_client_profiles")
+    .upsert(profileUpdate, { onConflict: "client_id" });
+
+  if (error) {
+    console.error("[PATCH /api/reservas/admin/pcv/[id]]", error);
     return jsonError(500, error.message);
   }
 

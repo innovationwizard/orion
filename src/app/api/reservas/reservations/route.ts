@@ -92,18 +92,18 @@ export async function POST(request: NextRequest) {
         console.error("[POST /api/reservas/reservations] Failed to set client DPI:", dpiErr);
       }
 
-      // Store birth_date on client profile (upsert — profile may or may not exist)
-      if (input.client_birth_date) {
-        const { error: profileErr } = await supabase
-          .from("rv_client_profiles")
-          .upsert(
-            { client_id: primaryLink.client_id, birth_date: input.client_birth_date },
-            { onConflict: "client_id" },
-          );
+      // Always create/update client profile — store birth_date from DPI OCR
+      const profileData: Record<string, unknown> = {
+        client_id: primaryLink.client_id,
+      };
+      if (input.client_birth_date) profileData.birth_date = input.client_birth_date;
 
-        if (profileErr) {
-          console.error("[POST /api/reservas/reservations] Failed to set birth_date:", profileErr);
-        }
+      const { error: profileErr } = await supabase
+        .from("rv_client_profiles")
+        .upsert(profileData, { onConflict: "client_id" });
+
+      if (profileErr) {
+        console.error("[POST /api/reservas/reservations] Failed to upsert profile:", profileErr);
       }
     }
   }

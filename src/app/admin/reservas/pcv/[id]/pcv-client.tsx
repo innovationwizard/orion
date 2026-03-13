@@ -59,6 +59,7 @@ interface PcvData {
     occupation_type: string | null;
     marital_status: string | null;
     gender: string | null;
+    profession: string | null;
   } | null;
   salesperson: { full_name: string; display_name: string } | null;
 }
@@ -122,6 +123,7 @@ export default function PcvClientComponent({ reservationId }: { reservationId: s
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [profileSaving, setProfileSaving] = useState(false);
   const documentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -286,8 +288,9 @@ export default function PcvClientComponent({ reservationId }: { reservationId: s
   // Marital status
   const maritalStatus = client_profile?.marital_status ?? BLANK_SHORT;
 
-  // Occupation
-  const profession = mapOccupation(client_profile?.occupation_type ?? null);
+  // Occupation — prefer profession text, fall back to occupation_type mapping
+  const profession = client_profile?.profession
+    ?? mapOccupation(client_profile?.occupation_type ?? null);
 
   // Date — use today's date for the contract
   const now = new Date();
@@ -316,6 +319,41 @@ export default function PcvClientComponent({ reservationId }: { reservationId: s
 
   // Parking
   const totalParkingArea = (unit.parking_car_area ?? 0) + (unit.parking_tandem_area ?? 0);
+
+  // Detect missing PCV-critical fields
+  const missingAge = age == null;
+  const missingMarital = !client_profile?.marital_status;
+  const missingProfession = profession === "________";
+  const hasMissing = missingAge || missingMarital || missingProfession;
+
+  const handleProfileSave = useCallback(async (profileData: {
+    edad?: number;
+    profession?: string;
+    marital_status?: string;
+  }) => {
+    setProfileSaving(true);
+    try {
+      const res = await fetch(`/api/reservas/admin/pcv/${reservationId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(profileData),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: "Error" }));
+        throw new Error(err.error ?? `HTTP ${res.status}`);
+      }
+      // Refetch PCV data to reflect saved profile
+      const refreshRes = await fetch(`/api/reservas/admin/pcv/${reservationId}`);
+      if (refreshRes.ok) {
+        const refreshed = await refreshRes.json();
+        setData(refreshed);
+      }
+    } catch (e) {
+      console.error("[PCV profile save]", e);
+    } finally {
+      setProfileSaving(false);
+    }
+  }, [reservationId]);
 
   return (
     <>
@@ -376,6 +414,21 @@ export default function PcvClientComponent({ reservationId }: { reservationId: s
           )}
         </div>
       </div>
+
+      {/* Missing profile fields — inline form for admin to complete before printing */}
+      {hasMissing && (
+        <ProfileForm
+          reservationId={reservationId}
+          currentAge={age}
+          currentMarital={client_profile?.marital_status ?? null}
+          currentProfession={client_profile?.profession ?? null}
+          missingAge={missingAge}
+          missingMarital={missingMarital}
+          missingProfession={missingProfession}
+          saving={profileSaving}
+          onSave={handleProfileSave}
+        />
+      )}
 
       {/* Legal document */}
       <div className="pcv-document" ref={documentRef}>
@@ -1216,6 +1269,133 @@ function V({ children }: { children: React.ReactNode }) {
 }
 
 // ---------------------------------------------------------------------------
+// Inline profile form — shown when PCV-critical fields are missing
+// ---------------------------------------------------------------------------
+
+const MARITAL_OPTIONS = ["Soltero(a)", "Casado(a)", "Unido(a)", "Viudo(a)", "Divorciado(a)"];
+
+function ProfileForm({
+  reservationId,
+  currentAge,
+  currentMarital,
+  currentProfession,
+  missingAge,
+  missingMarital,
+  missingProfession,
+  saving,
+  onSave,
+}: {
+  reservationId: string;
+  currentAge: number | null;
+  currentMarital: string | null;
+  currentProfession: string | null;
+  missingAge: boolean;
+  missingMarital: boolean;
+  missingProfession: boolean;
+  saving: boolean;
+  onSave: (data: { edad?: number; profession?: string; marital_status?: string }) => void;
+}) {
+  const [edad, setEdad] = useState(currentAge?.toString() ?? "");
+  const [marital, setMarital] = useState(currentMarital ?? "");
+  const [profession, setProfession] = useState(currentProfession ?? "");
+
+  // Avoid unused variable warning — reservationId is used by parent's onSave
+  void reservationId;
+
+  const handleSubmit = () => {
+    const payload: { edad?: number; profession?: string; marital_status?: string } = {};
+    if (missingAge && edad.trim()) payload.edad = parseInt(edad, 10);
+    if (missingMarital && marital.trim()) payload.marital_status = marital.trim();
+    if (missingProfession && profession.trim()) payload.profession = profession.trim();
+    if (Object.keys(payload).length > 0) onSave(payload);
+  };
+
+  const inputStyle = {
+    padding: "6px 10px",
+    border: "1px solid #d1d5db",
+    borderRadius: 4,
+    fontSize: 13,
+    width: "100%",
+  };
+
+  return (
+    <div className="pcv-profile-form" style={{
+      maxWidth: 816,
+      margin: "0 auto 16px",
+      padding: "16px 24px",
+      background: "#fef3c7",
+      border: "1px solid #f59e0b",
+      borderRadius: 8,
+      fontFamily: "sans-serif",
+    }}>
+      <p style={{ margin: "0 0 12px", fontSize: 14, fontWeight: 600, color: "#92400e" }}>
+        Datos faltantes para la PCV &mdash; complete antes de imprimir
+      </p>
+      <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "flex-end" }}>
+        {missingAge && (
+          <div style={{ flex: "0 0 100px" }}>
+            <label style={{ fontSize: 12, color: "#78350f", display: "block", marginBottom: 2 }}>Edad</label>
+            <input
+              type="number"
+              min={18}
+              max={100}
+              value={edad}
+              onChange={(e) => setEdad(e.target.value)}
+              style={inputStyle}
+              placeholder="ej: 35"
+            />
+          </div>
+        )}
+        {missingMarital && (
+          <div style={{ flex: "0 0 160px" }}>
+            <label style={{ fontSize: 12, color: "#78350f", display: "block", marginBottom: 2 }}>Estado civil</label>
+            <select
+              value={marital}
+              onChange={(e) => setMarital(e.target.value)}
+              style={{ ...inputStyle, background: "#fff" }}
+            >
+              <option value="">Seleccionar...</option>
+              {MARITAL_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
+            </select>
+          </div>
+        )}
+        {missingProfession && (
+          <div style={{ flex: "1 1 200px" }}>
+            <label style={{ fontSize: 12, color: "#78350f", display: "block", marginBottom: 2 }}>Profesión u oficio</label>
+            <input
+              type="text"
+              value={profession}
+              onChange={(e) => setProfession(e.target.value)}
+              style={inputStyle}
+              placeholder="ej: Ingeniero, Comerciante, Ama de casa"
+            />
+          </div>
+        )}
+        <button
+          type="button"
+          onClick={handleSubmit}
+          disabled={saving}
+          style={{
+            padding: "6px 16px",
+            backgroundColor: "#d97706",
+            color: "#fff",
+            border: "none",
+            borderRadius: 4,
+            fontSize: 13,
+            fontWeight: 600,
+            cursor: saving ? "default" : "pointer",
+            opacity: saving ? 0.7 : 1,
+            whiteSpace: "nowrap",
+          }}
+        >
+          {saving ? "Guardando..." : "Guardar"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Print + screen CSS
 // ---------------------------------------------------------------------------
 
@@ -1223,6 +1403,7 @@ const printStyles = `
   @media print {
     .pcv-toolbar { display: none !important; }
     .pcv-summary { display: none !important; }
+    .pcv-profile-form { display: none !important; }
 
     @page {
       size: letter;
