@@ -218,9 +218,10 @@ export interface UnitFull {
   project_id: string;
   project_name: string;
   project_slug: string;
-  // 023: cesion de derechos columns
+  // 029: parking/bodega area columns (now in view)
   parking_car_area: number | null;
   parking_tandem_area: number | null;
+  bodega_area: number | null;
   price_suggested: number | null;
   is_cesion: boolean;
   pcv_block: number | null;

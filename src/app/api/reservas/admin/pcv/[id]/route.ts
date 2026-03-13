@@ -55,17 +55,6 @@ export async function GET(
 
   const unit = unitViewResult.data;
 
-  // Fetch bodega_area from rv_units directly (not in v_rv_units_full view)
-  let bodega_area: number | null = null;
-  if (unit) {
-    const { data: rawUnit } = await supabase
-      .from("rv_units")
-      .select("bodega_area")
-      .eq("id", reservation.unit_id)
-      .maybeSingle();
-    bodega_area = rawUnit?.bodega_area ?? null;
-  }
-
   // Fetch client profile for primary client (birth_date, occupation_type)
   const primaryClient = (clientsResult.data ?? []).find((c) => c.is_primary);
   let clientProfile: {
@@ -89,7 +78,7 @@ export async function GET(
   return jsonOk({
     reservation,
     clients: clientsResult.data ?? [],
-    unit: unit ? { ...unit, bodega_area } : null,
+    unit: unit ?? null,
     client_profile: clientProfile,
     salesperson: salespersonResult.data,
   });

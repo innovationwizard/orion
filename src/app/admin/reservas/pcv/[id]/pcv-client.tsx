@@ -529,13 +529,17 @@ export default function PcvClientComponent({ reservationId }: { reservationId: s
           Promesa de Compraventa, como Anexo I.
         </p>
 
-        <p>
-          Parqueo que tendrá un área de <V>{formatArea(totalParkingArea > 0 ? totalParkingArea : null)}</V>.
-        </p>
+        {totalParkingArea > 0 && (
+          <p>
+            Parqueo que tendrá un área de <V>{formatArea(totalParkingArea)}</V>.
+          </p>
+        )}
 
-        <p>
-          Bodega que tendrá un área de <V>{formatArea(unit.bodega_area)}</V>.
-        </p>
+        {(unit.bodega_area != null && unit.bodega_area > 0) && (
+          <p>
+            Bodega que tendrá un área de <V>{formatArea(unit.bodega_area)}</V>.
+          </p>
+        )}
 
         <p>
           Las áreas arriba descritas podrán tener una variación del cinco por ciento (5%) sin cargo
