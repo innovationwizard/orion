@@ -1,14 +1,14 @@
 import { NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { requireSuperuser } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 import { jsonOk, jsonError } from "@/lib/api";
 
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const auth = await requireSuperuser();
-  if (auth.response) return auth.response;
+  const auth = await requireRole(["master", "torredecontrol"]);
+  if ("response" in auth) return auth.response;
 
   const { id } = await params;
   const supabase = createAdminClient();
