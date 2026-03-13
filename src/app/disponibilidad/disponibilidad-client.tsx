@@ -1,7 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useProjects } from "@/hooks/use-projects";
 import { useUnits } from "@/hooks/use-units";
 import { useRealtimeUnits } from "@/hooks/use-realtime-units";
@@ -14,13 +13,28 @@ import ConnectionStatus from "./connection-status";
 import AvailabilityGrid from "./availability-grid";
 import NavBar from "@/components/nav-bar";
 
-export default function DisponibilidadClient() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+function getInitialParam(key: string): string {
+  if (typeof window === "undefined") return "";
+  return new URLSearchParams(window.location.search).get(key) ?? "";
+}
 
-  const projectSlug = searchParams.get("project") ?? "";
-  const towerId = searchParams.get("tower") ?? "";
-  const statusFilter = (searchParams.get("status") ?? "") as RvUnitStatus | "";
+export default function DisponibilidadClient() {
+  const [projectSlug, setProjectSlug] = useState(() => getInitialParam("project"));
+  const [towerId, setTowerId] = useState(() => getInitialParam("tower"));
+  const [statusFilter, setStatusFilter] = useState<RvUnitStatus | "">(
+    () => getInitialParam("status") as RvUnitStatus | "",
+  );
+
+  // Sync local state → URL (without triggering Next.js navigation)
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (projectSlug) params.set("project", projectSlug);
+    if (towerId) params.set("tower", towerId);
+    if (statusFilter) params.set("status", statusFilter);
+    const qs = params.toString();
+    const url = qs ? `?${qs}` : window.location.pathname;
+    window.history.replaceState(null, "", url);
+  }, [projectSlug, towerId, statusFilter]);
 
   const { data: projects, loading: projectsLoading } = useProjects();
   const {
@@ -36,17 +50,12 @@ export default function DisponibilidadClient() {
 
   const [search, setSearch] = useState("");
 
-  function updateParam(key: string, value: string) {
-    const params = new URLSearchParams(searchParams.toString());
-    if (value) {
-      params.set(key, value);
-    } else {
-      params.delete(key);
-    }
-    // Clear tower when project changes
-    if (key === "project") params.delete("tower");
-    router.replace(`?${params.toString()}`, { scroll: false });
-  }
+  const updateProject = useCallback((v: string) => {
+    setProjectSlug(v);
+    setTowerId("");
+  }, []);
+  const updateTower = useCallback((v: string) => setTowerId(v), []);
+  const updateStatus = useCallback((v: string) => setStatusFilter(v as RvUnitStatus | ""), []);
 
   // Filter units by search text
   const filtered = useMemo(() => {
@@ -103,14 +112,14 @@ export default function DisponibilidadClient() {
           projects={projects}
           selectedProject={projectSlug}
           selectedTower={towerId}
-          onProjectChange={(v) => updateParam("project", v)}
-          onTowerChange={(v) => updateParam("tower", v)}
+          onProjectChange={updateProject}
+          onTowerChange={updateTower}
         />
 
         <select
           className="px-3 py-2 rounded-lg border border-border bg-card text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
           value={statusFilter}
-          onChange={(e) => updateParam("status", e.target.value)}
+          onChange={(e) => updateStatus(e.target.value)}
         >
           <option value="">Todos los estados</option>
           {(Object.entries(UNIT_STATUS_LABELS) as [RvUnitStatus, string][]).map(([val, label]) => (
