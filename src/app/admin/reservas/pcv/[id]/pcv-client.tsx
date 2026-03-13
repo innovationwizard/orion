@@ -60,6 +60,7 @@ interface PcvData {
     marital_status: string | null;
     gender: string | null;
     profession: string | null;
+    domicilio: string | null;
   } | null;
   salesperson: { full_name: string; display_name: string } | null;
 }
@@ -349,11 +350,15 @@ export default function PcvClientComponent({ reservationId }: { reservationId: s
   // Parking
   const totalParkingArea = (unit.parking_car_area ?? 0) + (unit.parking_tandem_area ?? 0);
 
+  // Buyer domicilio (notification address)
+  const domicilio = client_profile?.domicilio ?? "";
+
   // Detect missing PCV-critical fields
   const missingAge = age == null;
   const missingMarital = !client_profile?.marital_status;
   const missingProfession = profession === "________";
-  const hasMissing = missingAge || missingMarital || missingProfession;
+  const missingDomicilio = !domicilio;
+  const hasMissing = missingAge || missingMarital || missingProfession || missingDomicilio;
 
   return (
     <>
@@ -391,16 +396,17 @@ export default function PcvClientComponent({ reservationId }: { reservationId: s
             <button
               type="button"
               onClick={handleSave}
-              disabled={saving || saved}
+              disabled={saving || saved || hasMissing}
+              title={hasMissing ? "Complete los datos faltantes antes de generar la PCV" : undefined}
               style={{
                 padding: "8px 20px",
-                backgroundColor: saved ? "#16a34a" : "#059669",
+                backgroundColor: saved ? "#16a34a" : hasMissing ? "#9ca3af" : "#059669",
                 color: "#fff",
                 border: "none",
                 borderRadius: 6,
                 fontSize: 14,
                 fontWeight: 600,
-                cursor: saving || saved ? "default" : "pointer",
+                cursor: saving || saved || hasMissing ? "default" : "pointer",
                 opacity: saving ? 0.7 : 1,
               }}
             >
@@ -422,9 +428,11 @@ export default function PcvClientComponent({ reservationId }: { reservationId: s
           currentAge={age}
           currentMarital={client_profile?.marital_status ?? null}
           currentProfession={client_profile?.profession ?? null}
+          currentDomicilio={domicilio}
           missingAge={missingAge}
           missingMarital={missingMarital}
           missingProfession={missingProfession}
+          missingDomicilio={missingDomicilio}
           saving={profileSaving}
           onSave={handleProfileSave}
         />
@@ -1129,12 +1137,12 @@ export default function PcvClientComponent({ reservationId }: { reservationId: s
         <p>
           &bull; La Parte PROMINENTE VENDEDORA: 15 calle 7-77, zona 10, Edificio Óptima Centro de
           Negocios, quinto nivel, Oficina 501, municipio de Guatemala, departamento de Guatemala;
-          correo electrónico: <V>{BLANK_SHORT}</V>.
+          correo electrónico: <V>ventas@puertaabierta.com.gt</V>.
         </p>
 
         <p>
           La Parte PROMITENTE
-          COMPRADORA:<V>{BLANK}</V>; correo
+          COMPRADORA: <V>{domicilio || BLANK}</V>; correo
           electrónico <V>{clientEmail}</V>.
         </p>
 
@@ -1283,9 +1291,11 @@ function ProfileForm({
   currentAge,
   currentMarital,
   currentProfession,
+  currentDomicilio,
   missingAge,
   missingMarital,
   missingProfession,
+  missingDomicilio,
   saving,
   onSave,
 }: {
@@ -1293,24 +1303,28 @@ function ProfileForm({
   currentAge: number | null;
   currentMarital: string | null;
   currentProfession: string | null;
+  currentDomicilio: string;
   missingAge: boolean;
   missingMarital: boolean;
   missingProfession: boolean;
+  missingDomicilio: boolean;
   saving: boolean;
-  onSave: (data: { edad?: number; profession?: string; marital_status?: string }) => void;
+  onSave: (data: { edad?: number; profession?: string; marital_status?: string; domicilio?: string }) => void;
 }) {
   const [edad, setEdad] = useState(currentAge?.toString() ?? "");
   const [marital, setMarital] = useState(currentMarital ?? "");
   const [profession, setProfession] = useState(currentProfession ?? "");
+  const [domicilio, setDomicilio] = useState(currentDomicilio ?? "");
 
   // Avoid unused variable warning — reservationId is used by parent's onSave
   void reservationId;
 
   const handleSubmit = () => {
-    const payload: { edad?: number; profession?: string; marital_status?: string } = {};
+    const payload: { edad?: number; profession?: string; marital_status?: string; domicilio?: string } = {};
     if (missingAge && edad.trim()) payload.edad = parseInt(edad, 10);
     if (missingMarital && marital.trim()) payload.marital_status = marital.trim();
     if (missingProfession && profession.trim()) payload.profession = profession.trim();
+    if (missingDomicilio && domicilio.trim()) payload.domicilio = domicilio.trim();
     if (Object.keys(payload).length > 0) onSave(payload);
   };
 
@@ -1372,6 +1386,20 @@ function ProfileForm({
               onChange={(e) => setProfession(e.target.value)}
               style={inputStyle}
               placeholder="ej: Ingeniero, Comerciante, Ama de casa"
+            />
+          </div>
+        )}
+        {missingDomicilio && (
+          <div style={{ flex: "1 1 100%", marginTop: 4 }}>
+            <label style={{ fontSize: 12, color: "#78350f", display: "block", marginBottom: 2 }}>
+              Domicilio del comprador (dirección para notificaciones legales)
+            </label>
+            <input
+              type="text"
+              value={domicilio}
+              onChange={(e) => setDomicilio(e.target.value)}
+              style={inputStyle}
+              placeholder="ej: 5ta avenida 12-45, zona 14, municipio de Guatemala, departamento de Guatemala"
             />
           </div>
         )}

@@ -64,12 +64,13 @@ export async function GET(
     marital_status: string | null;
     gender: string | null;
     profession: string | null;
+    domicilio: string | null;
   } | null = null;
 
   if (primaryClient) {
     const { data: profile } = await supabase
       .from("rv_client_profiles")
-      .select("birth_date, edad, occupation_type, marital_status, gender, profession")
+      .select("birth_date, edad, occupation_type, marital_status, gender, profession, domicilio")
       .eq("client_id", primaryClient.client_id)
       .maybeSingle();
     clientProfile = profile ?? null;
@@ -143,6 +144,7 @@ export async function PATCH(
     birth_date?: string | null;
     profession?: string | null;
     marital_status?: string | null;
+    domicilio?: string | null;
   };
 
   const supabase = createAdminClient();
@@ -167,6 +169,7 @@ export async function PATCH(
   if (body.birth_date !== undefined) profileUpdate.birth_date = body.birth_date;
   if (body.profession !== undefined) profileUpdate.profession = body.profession;
   if (body.marital_status !== undefined) profileUpdate.marital_status = body.marital_status;
+  if (body.domicilio !== undefined) profileUpdate.domicilio = body.domicilio;
 
   const { error } = await supabase
     .from("rv_client_profiles")
