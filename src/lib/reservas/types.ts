@@ -540,3 +540,9 @@ export interface OcrExtractionResult {
   receipt_type: RvReceiptType;
   confidence: ExtractionConfidence;
 }
+
+export interface DpiExtractionResult {
+  cui: string | null;
+  full_name: string | null;
+  confidence: ExtractionConfidence;
+}

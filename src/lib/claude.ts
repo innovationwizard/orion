@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import type { OcrExtractionResult } from "./reservas/types";
+import type { OcrExtractionResult, DpiExtractionResult } from "./reservas/types";
 
 const OCR_SYSTEM_PROMPT = `Sos un extractor de datos de comprobantes bancarios guatemaltecos.
 Extraé los siguientes campos del comprobante en la imagen.
@@ -93,6 +93,86 @@ export async function extractReceiptData(
     return parsed;
   } catch {
     console.error("[OCR] Failed to parse Claude response as JSON:", cleaned);
+    return null;
+  }
+}
+
+const DPI_SYSTEM_PROMPT = `Sos un extractor de datos de documentos de identidad guatemaltecos (DPI / CUI).
+Extraé los siguientes campos de la imagen del DPI.
+Respondé ÚNICAMENTE con JSON válido, sin markdown, sin explicaciones.
+
+{
+  "cui": string o null,
+  "full_name": string o null,
+  "confidence": "HIGH" | "MEDIUM" | "LOW"
+}
+
+El CUI (Código Único de Identificación) es un número de 13 dígitos que aparece
+en el DPI guatemalteco. Usualmente está en la parte frontal, cerca de la foto.
+Formato típico: XXXX XXXXX XXXX (4-5-4 dígitos). Devolvé SOLO los 13 dígitos
+sin espacios ni guiones.
+
+"full_name" es el nombre completo del titular como aparece en el DPI
+(nombres + apellidos). Conservá mayúsculas y acentos tal como aparecen.
+
+Si no podés leer un campo con certeza, poné null.
+"confidence" es HIGH si el CUI es claramente legible,
+MEDIUM si es parcialmente legible, LOW si la imagen es ilegible.`;
+
+/**
+ * Extract CUI and full name from a Guatemalan DPI photo using Claude Vision.
+ *
+ * @param imageBase64 - Base64-encoded image data (no data URI prefix)
+ * @param mediaType - MIME type of the image
+ * @returns Parsed extraction result, or null if extraction fails completely
+ */
+export async function extractDpiData(
+  imageBase64: string,
+  mediaType: SupportedMediaType,
+): Promise<DpiExtractionResult | null> {
+  const apiKey = process.env.CLAUDE_API_KEY;
+  if (!apiKey) {
+    throw new Error("Missing CLAUDE_API_KEY environment variable.");
+  }
+
+  const anthropic = new Anthropic({ apiKey });
+
+  const response = await anthropic.messages.create({
+    model: "claude-sonnet-4-20250514",
+    max_tokens: 300,
+    messages: [
+      {
+        role: "user",
+        content: [
+          {
+            type: "image",
+            source: {
+              type: "base64",
+              media_type: mediaType,
+              data: imageBase64,
+            },
+          },
+          {
+            type: "text",
+            text: DPI_SYSTEM_PROMPT,
+          },
+        ],
+      },
+    ],
+  });
+
+  const textBlock = response.content.find((block) => block.type === "text");
+  if (!textBlock || textBlock.type !== "text") {
+    return null;
+  }
+
+  const cleaned = textBlock.text.replace(/```json\n?|```\n?/g, "").trim();
+
+  try {
+    const parsed = JSON.parse(cleaned) as DpiExtractionResult;
+    return parsed;
+  } catch {
+    console.error("[DPI-OCR] Failed to parse Claude response as JSON:", cleaned);
     return null;
   }
 }

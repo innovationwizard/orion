@@ -6,7 +6,7 @@ import ReceiptPreview from "./receipt-preview";
 import ConfirmationModal from "./confirmation-modal";
 import { LEAD_SOURCES, GUATEMALAN_BANKS, RECEIPT_TYPE_LABELS, formatCurrency } from "@/lib/reservas/constants";
 import { uploadImage } from "@/lib/reservas/upload-image";
-import type { UnitFull, OcrExtractionResult, ReceiptData, RvReceiptType } from "@/lib/reservas/types";
+import type { UnitFull, OcrExtractionResult, DpiExtractionResult, ReceiptData } from "@/lib/reservas/types";
 
 const TOP_LEAD_SOURCES = ["Facebook", "Referido", "Perfilan", "Visita Inédita", "Señalética", "Web"] as const;
 const DRAFT_KEY_PREFIX = "orion:reservation-draft:";
@@ -28,6 +28,9 @@ interface FormState {
   notes: string;
   dpiFile: File | null;
   dpiPreviewUrl: string | null;
+  dpiCui: string | null;
+  dpiOcrLoading: boolean;
+  dpiOcrError: string | null;
   receiptFile: File | null;
   receiptPreviewUrl: string | null;
   ocrExtraction: OcrExtractionResult | null;
@@ -46,6 +49,9 @@ const INITIAL_STATE: FormState = {
   notes: "",
   dpiFile: null,
   dpiPreviewUrl: null,
+  dpiCui: null,
+  dpiOcrLoading: false,
+  dpiOcrError: null,
   receiptFile: null,
   receiptPreviewUrl: null,
   ocrExtraction: null,
@@ -162,11 +168,60 @@ export default function ReservationForm({
     }));
   }, []);
 
-  // DPI photo
-  const handleDpiFile = useCallback((file: File) => {
-    const url = URL.createObjectURL(file);
-    setForm((prev) => ({ ...prev, dpiFile: file, dpiPreviewUrl: url }));
-  }, []);
+  // DPI photo + OCR extraction
+  const handleDpiFile = useCallback(
+    async (file: File) => {
+      const url = URL.createObjectURL(file);
+      setForm((prev) => ({
+        ...prev,
+        dpiFile: file,
+        dpiPreviewUrl: url,
+        dpiCui: null,
+        dpiOcrLoading: true,
+        dpiOcrError: null,
+      }));
+
+      // Run DPI OCR in background
+      try {
+        const formData = new FormData();
+        formData.append("dpi", file);
+        const res = await fetch("/api/reservas/dpi-ocr", {
+          method: "POST",
+          body: formData,
+        });
+        if (res.ok) {
+          const extraction: DpiExtractionResult = await res.json();
+          if (extraction.cui) {
+            setForm((prev) => ({
+              ...prev,
+              dpiCui: extraction.cui,
+              dpiOcrLoading: false,
+              dpiOcrError: null,
+            }));
+          } else {
+            setForm((prev) => ({
+              ...prev,
+              dpiOcrLoading: false,
+              dpiOcrError: "No se pudo leer el CUI. Tome otra foto más clara.",
+            }));
+          }
+        } else {
+          setForm((prev) => ({
+            ...prev,
+            dpiOcrLoading: false,
+            dpiOcrError: "Error al analizar DPI. Intente de nuevo.",
+          }));
+        }
+      } catch {
+        setForm((prev) => ({
+          ...prev,
+          dpiOcrLoading: false,
+          dpiOcrError: "Error de conexión al analizar DPI.",
+        }));
+      }
+    },
+    [],
+  );
 
   // Receipt photo + OCR
   const handleReceiptFile = useCallback(
@@ -213,7 +268,10 @@ export default function ReservationForm({
   // Validation
   const validClientNames = form.clientNames.filter((n) => n.trim().length > 0);
   const canSubmit =
-    validClientNames.length > 0 && form.dpiFile !== null && form.receiptFile !== null;
+    validClientNames.length > 0 &&
+    form.dpiFile !== null &&
+    form.receiptFile !== null &&
+    !!form.dpiCui;
 
   // Submit
   const handleSubmit = useCallback(async () => {
@@ -233,6 +291,10 @@ export default function ReservationForm({
         receiptUrl = await uploadImage(form.receiptFile, "receipts", salesperson.id);
       }
 
+      if (!dpiUrl || !receiptUrl) {
+        throw new Error("Ambas imágenes (DPI y comprobante) son requeridas.");
+      }
+
       const payload = {
         unit_id: unit.id,
         salesperson_id: salesperson.id,
@@ -245,6 +307,7 @@ export default function ReservationForm({
         depositor_name: form.depositorName.trim() || null,
         receipt_image_url: receiptUrl,
         dpi_image_url: dpiUrl,
+        client_dpi: form.dpiCui,
         lead_source: form.leadSource || null,
         notes: form.notes.trim() || null,
       };
@@ -351,21 +414,49 @@ export default function ReservationForm({
             DPI del cliente <span className="text-red-500">*</span>
           </label>
           {form.dpiPreviewUrl ? (
-            <div className="rounded-xl overflow-hidden border border-border bg-card relative">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={form.dpiPreviewUrl}
-                alt="DPI"
-                className="w-full max-h-40 object-contain"
-              />
-              <button
-                type="button"
-                className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/50 text-white text-xs flex items-center justify-center"
-                onClick={() => { update("dpiFile", null); update("dpiPreviewUrl", null); }}
-                aria-label="Eliminar foto DPI"
-              >
-                &times;
-              </button>
+            <div className="grid gap-1.5">
+              <div className="rounded-xl overflow-hidden border border-border bg-card relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={form.dpiPreviewUrl}
+                  alt="DPI"
+                  className="w-full max-h-40 object-contain"
+                />
+                {form.dpiOcrLoading && (
+                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                    <span className="text-xs text-white font-medium animate-pulse">
+                      Extrayendo CUI...
+                    </span>
+                  </div>
+                )}
+                <button
+                  type="button"
+                  className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/50 text-white text-xs flex items-center justify-center"
+                  onClick={() => {
+                    setForm((prev) => ({
+                      ...prev,
+                      dpiFile: null,
+                      dpiPreviewUrl: null,
+                      dpiCui: null,
+                      dpiOcrLoading: false,
+                      dpiOcrError: null,
+                    }));
+                  }}
+                  aria-label="Eliminar foto DPI"
+                >
+                  &times;
+                </button>
+              </div>
+              {form.dpiCui && (
+                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-green-500/10 text-green-700 text-xs font-medium">
+                  <span>CUI: {form.dpiCui}</span>
+                </div>
+              )}
+              {form.dpiOcrError && (
+                <div className="px-2.5 py-1.5 rounded-lg bg-red-500/10 text-red-500 text-xs font-medium">
+                  {form.dpiOcrError}
+                </div>
+              )}
             </div>
           ) : (
             <CameraInput onFile={handleDpiFile} />

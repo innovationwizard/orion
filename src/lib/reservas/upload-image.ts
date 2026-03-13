@@ -42,7 +42,16 @@ export async function uploadImage(
     throw new Error(`Error al subir imagen: ${error.message}`);
   }
 
-  // 4. Get public URL
+  // 4. Verify file was actually persisted by requesting a signed URL
+  const { error: verifyError } = await supabase.storage
+    .from(bucket)
+    .createSignedUrl(path, 60);
+
+  if (verifyError) {
+    throw new Error(`Imagen subida pero no accesible. Reintente: ${verifyError.message}`);
+  }
+
+  // 5. Get public URL (used as the stored reference)
   const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(path);
   return urlData.publicUrl;
 }

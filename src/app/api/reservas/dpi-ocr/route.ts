@@ -1,0 +1,41 @@
+import { NextRequest } from "next/server";
+import { extractDpiData, toSupportedMediaType } from "@/lib/claude";
+import { RECEIPT_UPLOAD } from "@/lib/reservas/constants";
+import { jsonOk, jsonError } from "@/lib/api";
+
+export async function POST(request: NextRequest) {
+  let formData: FormData;
+  try {
+    formData = await request.formData();
+  } catch {
+    return jsonError(400, "Se esperaba multipart/form-data");
+  }
+
+  const file = formData.get("dpi");
+  if (!file || !(file instanceof File)) {
+    return jsonError(400, "Campo 'dpi' requerido (archivo de imagen)");
+  }
+
+  if (file.size > RECEIPT_UPLOAD.MAX_SIZE_BYTES) {
+    return jsonError(400, `Archivo muy grande. Máximo: ${RECEIPT_UPLOAD.MAX_SIZE_BYTES / 1024 / 1024}MB`);
+  }
+
+  const mediaType = toSupportedMediaType(file.type);
+  if (!mediaType) {
+    if (file.type === "application/pdf" || file.type === "image/heic") {
+      return jsonError(400, "Para archivos PDF o HEIC, suba una foto en formato JPG o PNG.");
+    }
+    return jsonError(400, `Tipo de archivo no soportado: ${file.type}`);
+  }
+
+  const arrayBuffer = await file.arrayBuffer();
+  const base64 = Buffer.from(arrayBuffer).toString("base64");
+
+  const extraction = await extractDpiData(base64, mediaType);
+
+  if (!extraction) {
+    return jsonError(422, "No se pudo extraer datos del DPI. Intente con una imagen más clara.");
+  }
+
+  return jsonOk(extraction);
+}

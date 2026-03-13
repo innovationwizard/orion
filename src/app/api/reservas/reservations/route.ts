@@ -73,5 +73,26 @@ export async function POST(request: NextRequest) {
     return jsonError(500, error.message);
   }
 
+  // Store CUI on the primary client record
+  if (input.client_dpi && data) {
+    const { data: primaryLink } = await supabase
+      .from("reservation_clients")
+      .select("client_id")
+      .eq("reservation_id", data)
+      .eq("is_primary", true)
+      .maybeSingle();
+
+    if (primaryLink?.client_id) {
+      const { error: dpiErr } = await supabase
+        .from("rv_clients")
+        .update({ dpi: input.client_dpi })
+        .eq("id", primaryLink.client_id);
+
+      if (dpiErr) {
+        console.error("[POST /api/reservas/reservations] Failed to set client DPI:", dpiErr);
+      }
+    }
+  }
+
   return jsonOk({ reservation_id: data, status: "PENDING_REVIEW" }, { status: 201 });
 }
