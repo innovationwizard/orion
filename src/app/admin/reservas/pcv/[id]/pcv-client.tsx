@@ -245,6 +245,35 @@ export default function PcvClientComponent({ reservationId }: { reservationId: s
     }
   }, [reservationId, saving]);
 
+  const handleProfileSave = useCallback(async (profileData: {
+    edad?: number;
+    profession?: string;
+    marital_status?: string;
+  }) => {
+    setProfileSaving(true);
+    try {
+      const res = await fetch(`/api/reservas/admin/pcv/${reservationId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(profileData),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: "Error" }));
+        throw new Error(err.error ?? `HTTP ${res.status}`);
+      }
+      // Refetch PCV data to reflect saved profile
+      const refreshRes = await fetch(`/api/reservas/admin/pcv/${reservationId}`);
+      if (refreshRes.ok) {
+        const refreshed = await refreshRes.json();
+        setData(refreshed);
+      }
+    } catch (e) {
+      console.error("[PCV profile save]", e);
+    } finally {
+      setProfileSaving(false);
+    }
+  }, [reservationId]);
+
   if (loading) {
     return (
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", fontFamily: "sans-serif" }}>
@@ -325,35 +354,6 @@ export default function PcvClientComponent({ reservationId }: { reservationId: s
   const missingMarital = !client_profile?.marital_status;
   const missingProfession = profession === "________";
   const hasMissing = missingAge || missingMarital || missingProfession;
-
-  const handleProfileSave = useCallback(async (profileData: {
-    edad?: number;
-    profession?: string;
-    marital_status?: string;
-  }) => {
-    setProfileSaving(true);
-    try {
-      const res = await fetch(`/api/reservas/admin/pcv/${reservationId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(profileData),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: "Error" }));
-        throw new Error(err.error ?? `HTTP ${res.status}`);
-      }
-      // Refetch PCV data to reflect saved profile
-      const refreshRes = await fetch(`/api/reservas/admin/pcv/${reservationId}`);
-      if (refreshRes.ok) {
-        const refreshed = await refreshRes.json();
-        setData(refreshed);
-      }
-    } catch (e) {
-      console.error("[PCV profile save]", e);
-    } finally {
-      setProfileSaving(false);
-    }
-  }, [reservationId]);
 
   return (
     <>
