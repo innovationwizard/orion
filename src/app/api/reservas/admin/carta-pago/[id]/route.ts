@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireRole } from "@/lib/auth";
+import { requireSalesperson, isSalespersonFailure } from "@/lib/reservas/require-salesperson";
 import { jsonOk, jsonError } from "@/lib/api";
 
 /**
@@ -10,20 +11,28 @@ import { jsonOk, jsonError } from "@/lib/api";
  * - reservation (id, created_at, status)
  * - clients (full_name, document_order)
  * - unit (unit_number, price_list, project_slug, project_name)
+ *
+ * Auth: admin (master/torredecontrol) OR salesperson with ownership of the reservation.
  */
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const auth = await requireRole(["master", "torredecontrol"]);
-  if ("response" in auth) return auth.response;
+  // Dual auth: admin OR salesperson (with ownership check below)
+  let salespersonId: string | null = null;
+  const adminAuth = await requireRole(["master", "torredecontrol"]);
+  if (adminAuth.response) {
+    const spAuth = await requireSalesperson();
+    if (isSalespersonFailure(spAuth)) return adminAuth.response;
+    salespersonId = spAuth.salesperson.id;
+  }
 
   const { id } = await params;
   const supabase = createAdminClient();
 
   const { data: reservation, error: rErr } = await supabase
     .from("reservations")
-    .select("id, unit_id, status, created_at")
+    .select("id, unit_id, status, created_at, salesperson_id")
     .eq("id", id)
     .maybeSingle();
 
@@ -33,6 +42,11 @@ export async function GET(
   }
   if (!reservation) {
     return jsonError(404, "Reserva no encontrada");
+  }
+
+  // Ownership check for salesperson
+  if (salespersonId && reservation.salesperson_id !== salespersonId) {
+    return jsonError(403, "No autorizado para esta reserva");
   }
 
   const [clientsResult, unitResult] = await Promise.all([

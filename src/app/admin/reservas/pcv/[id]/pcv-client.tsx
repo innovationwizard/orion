@@ -126,7 +126,7 @@ const BLANK_SHORT = "________________";
 // Component
 // ---------------------------------------------------------------------------
 
-export default function PcvClientComponent({ reservationId }: { reservationId: string }) {
+export default function PcvClientComponent({ reservationId, readOnly }: { reservationId: string; readOnly?: boolean }) {
   const [data, setData] = useState<PcvData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -254,6 +254,77 @@ export default function PcvClientComponent({ reservationId }: { reservationId: s
       setSaving(false);
     }
   }, [reservationId, saving]);
+
+  const handleDownload = useCallback(async () => {
+    if (!documentRef.current || saving) return;
+    setSaving(true);
+    setSaveError(null);
+
+    try {
+      const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
+        import("html2canvas"),
+        import("jspdf"),
+      ]);
+
+      const canvas = await html2canvas(documentRef.current, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: "#ffffff",
+      });
+
+      const pageWidth = 215.9;
+      const pageHeight = 279.4;
+      const imgWidth = pageWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const pdf = new jsPDF("p", "mm", "letter");
+
+      let position = 0;
+      let page = 0;
+
+      while (position < imgHeight) {
+        if (page > 0) pdf.addPage();
+
+        const sliceCanvas = document.createElement("canvas");
+        sliceCanvas.width = canvas.width;
+        const sliceHeight = Math.min(
+          canvas.height - (position / imgHeight) * canvas.height,
+          (pageHeight / imgHeight) * canvas.height,
+        );
+        sliceCanvas.height = sliceHeight;
+
+        const ctx = sliceCanvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(
+            canvas,
+            0,
+            (position / imgHeight) * canvas.height,
+            canvas.width,
+            sliceHeight,
+            0,
+            0,
+            canvas.width,
+            sliceHeight,
+          );
+        }
+
+        const sliceData = sliceCanvas.toDataURL("image/jpeg", 0.95);
+        const sliceImgHeight = (sliceHeight * imgWidth) / canvas.width;
+        pdf.addImage(sliceData, "JPEG", 0, 0, imgWidth, sliceImgHeight);
+
+        position += pageHeight;
+        page++;
+      }
+
+      pdf.save(`PCV_${data?.unit?.unit_number ?? reservationId}.pdf`);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Error desconocido";
+      setSaveError(msg);
+      console.error("[PCV download]", e);
+    } finally {
+      setSaving(false);
+    }
+  }, [reservationId, saving, data?.unit?.unit_number]);
 
   const handleProfileSave = useCallback(async (profileData: {
     client_id?: string;
@@ -415,25 +486,46 @@ export default function PcvClientComponent({ reservationId }: { reservationId: s
             >
               Imprimir
             </button>
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={saving || saved || hasMissing}
-              title={hasMissing ? "Complete los datos faltantes antes de generar la PCV" : undefined}
-              style={{
-                padding: "8px 20px",
-                backgroundColor: saved ? "#16a34a" : hasMissing ? "#9ca3af" : "#059669",
-                color: "#fff",
-                border: "none",
-                borderRadius: 6,
-                fontSize: 14,
-                fontWeight: 600,
-                cursor: saving || saved || hasMissing ? "default" : "pointer",
-                opacity: saving ? 0.7 : 1,
-              }}
-            >
-              {saving ? "Guardando..." : saved ? "Guardado" : "Guardar PCV"}
-            </button>
+            {readOnly ? (
+              <button
+                type="button"
+                onClick={handleDownload}
+                disabled={saving}
+                style={{
+                  padding: "8px 20px",
+                  backgroundColor: "#059669",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: 6,
+                  fontSize: 14,
+                  fontWeight: 600,
+                  cursor: saving ? "default" : "pointer",
+                  opacity: saving ? 0.7 : 1,
+                }}
+              >
+                {saving ? "Generando..." : "Descargar PDF"}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={saving || saved || hasMissing}
+                title={hasMissing ? "Complete los datos faltantes antes de generar la PCV" : undefined}
+                style={{
+                  padding: "8px 20px",
+                  backgroundColor: saved ? "#16a34a" : hasMissing ? "#9ca3af" : "#059669",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: 6,
+                  fontSize: 14,
+                  fontWeight: 600,
+                  cursor: saving || saved || hasMissing ? "default" : "pointer",
+                  opacity: saving ? 0.7 : 1,
+                }}
+              >
+                {saving ? "Guardando..." : saved ? "Guardado" : "Guardar PCV"}
+              </button>
+            )}
           </div>
           {saveError && (
             <div style={{ fontSize: 12, color: "#dc2626", marginTop: 4, textAlign: "right" }}>
@@ -443,8 +535,8 @@ export default function PcvClientComponent({ reservationId }: { reservationId: s
         </div>
       </div>
 
-      {/* Missing profile fields — inline form for admin to complete before printing */}
-      {hasMissing && missingByClient.map((m) => {
+      {/* Missing profile fields — inline form for admin to complete before printing (hidden in readOnly) */}
+      {!readOnly && hasMissing && missingByClient.map((m) => {
         const prof = profileMap[m.clientId] ?? null;
         return (
           <ProfileForm

@@ -108,5 +108,26 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  // Auto-approval: if enabled, confirm immediately (graceful degradation on failure)
+  if (data) {
+    const { data: setting } = await supabase
+      .from("system_settings")
+      .select("value")
+      .eq("key", "auto_approval_enabled")
+      .maybeSingle();
+
+    if (setting?.value === true) {
+      const { error: autoErr } = await supabase.rpc("auto_confirm_reservation", {
+        p_reservation_id: data,
+      });
+
+      if (autoErr) {
+        console.error("[POST /api/reservas/reservations] auto-confirm failed, falling back to PENDING_REVIEW:", autoErr);
+      } else {
+        return jsonOk({ reservation_id: data, status: "CONFIRMED" }, { status: 201 });
+      }
+    }
+  }
+
   return jsonOk({ reservation_id: data, status: "PENDING_REVIEW" }, { status: 201 });
 }

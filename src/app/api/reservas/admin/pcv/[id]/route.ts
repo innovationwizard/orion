@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireRole } from "@/lib/auth";
+import { requireSalesperson, isSalespersonFailure } from "@/lib/reservas/require-salesperson";
 import { jsonOk, jsonError } from "@/lib/api";
 
 type ClientProfile = {
@@ -20,13 +21,22 @@ type ClientProfile = {
  * Returns all data needed to render a PCV (Promesa de Compraventa) document
  * for a given reservation. Includes unit details, client info, client profiles
  * for all signing clients, and salesperson.
+ *
+ * Auth: admin (master/torredecontrol) OR salesperson with ownership of the reservation.
  */
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const auth = await requireRole(["master", "torredecontrol"]);
-  if ("response" in auth) return auth.response;
+  // Dual auth: admin OR salesperson (with ownership check below)
+  let salespersonId: string | null = null;
+  const adminAuth = await requireRole(["master", "torredecontrol"]);
+  if (adminAuth.response) {
+    // Not admin — try salesperson auth
+    const spAuth = await requireSalesperson();
+    if (isSalespersonFailure(spAuth)) return adminAuth.response;
+    salespersonId = spAuth.salesperson.id;
+  }
 
   const { id } = await params;
   const supabase = createAdminClient();
@@ -44,6 +54,11 @@ export async function GET(
   }
   if (!reservation) {
     return jsonError(404, "Reserva no encontrada");
+  }
+
+  // Ownership check for salesperson
+  if (salespersonId && reservation.salesperson_id !== salespersonId) {
+    return jsonError(403, "No autorizado para esta reserva");
   }
 
   // Parallel queries for related data
@@ -108,6 +123,7 @@ export async function GET(
  *
  * Records the PCV document URL and generation metadata on the reservation.
  * Called after the client uploads the PDF to Storage.
+ * Admin-only (master/torredecontrol).
  */
 export async function POST(
   request: NextRequest,
@@ -145,9 +161,8 @@ export async function POST(
 /**
  * PATCH /api/reservas/admin/pcv/[id]
  *
- * Save missing profile data for a client of a reservation. Accepts optional
- * client_id to target any client (not just primary). Falls back to primary
- * if client_id is not provided (backward compat).
+ * Save missing profile data for a client of a reservation.
+ * Admin-only (master/torredecontrol).
  */
 export async function PATCH(
   request: NextRequest,

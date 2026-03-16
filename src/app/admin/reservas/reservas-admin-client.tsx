@@ -8,6 +8,7 @@ import AdminStats from "./admin-stats";
 import ReservationFilters from "./reservation-filters";
 import ReservationTable from "./reservation-table";
 import ReservationDetail from "./reservation-detail";
+import ActionConfirmDialog from "./action-confirm-dialog";
 import NavBar from "@/components/nav-bar";
 
 export default function ReservasAdminClient() {
@@ -25,6 +26,11 @@ export default function ReservasAdminClient() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [adminUserId, setAdminUserId] = useState<string>("");
 
+  // Auto-approval toggle state
+  const [autoApproval, setAutoApproval] = useState<boolean | null>(null);
+  const [toggling, setToggling] = useState(false);
+  const [showActivateDialog, setShowActivateDialog] = useState(false);
+
   // Get admin user ID from auth
   useEffect(() => {
     fetch("/api/auth/session")
@@ -33,6 +39,36 @@ export default function ReservasAdminClient() {
         if (d?.user?.id) setAdminUserId(d.user.id);
       })
       .catch(() => {});
+  }, []);
+
+  // Fetch auto-approval setting
+  useEffect(() => {
+    fetch("/api/reservas/admin/settings")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d != null) setAutoApproval(d.auto_approval_enabled);
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleToggle = useCallback(async (enable: boolean) => {
+    setToggling(true);
+    try {
+      const res = await fetch("/api/reservas/admin/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ auto_approval_enabled: enable }),
+      });
+      if (res.ok) {
+        const result = await res.json();
+        setAutoApproval(result.auto_approval_enabled);
+      }
+    } catch {
+      // Silently fail — toggle stays in previous state
+    } finally {
+      setToggling(false);
+      setShowActivateDialog(false);
+    }
   }, []);
 
   // Unique project names for filter dropdown
@@ -59,9 +95,47 @@ export default function ReservasAdminClient() {
       <NavBar />
 
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-text-primary">Reservas</h1>
-        <p className="text-sm text-muted mt-1">Panel de administración</p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-text-primary">Reservas</h1>
+          <p className="text-sm text-muted mt-1">Panel de administración</p>
+        </div>
+
+        {/* Auto-approval toggle */}
+        {autoApproval !== null && (
+          <div className="flex items-center gap-2.5 shrink-0 mt-1">
+            <button
+              type="button"
+              role="switch"
+              aria-checked={autoApproval}
+              disabled={toggling}
+              className={`relative inline-flex h-5 w-10 items-center rounded-full transition-colors disabled:opacity-40 ${
+                autoApproval ? "bg-success" : "bg-border"
+              }`}
+              onClick={() => {
+                if (autoApproval) {
+                  // Turning OFF — apply immediately (safer default)
+                  handleToggle(false);
+                } else {
+                  // Turning ON — show confirmation dialog
+                  setShowActivateDialog(true);
+                }
+              }}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+                  autoApproval ? "translate-x-5" : "translate-x-0.5"
+                }`}
+              />
+            </button>
+            <span className="text-xs text-muted whitespace-nowrap">
+              Autorización automática
+              <span className={`ml-1 font-medium ${autoApproval ? "text-success" : ""}`}>
+                {autoApproval ? "activa" : "inactiva"}
+              </span>
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Stats */}
@@ -117,6 +191,19 @@ export default function ReservasAdminClient() {
             setSelectedId(null);
             refetch();
           }}
+        />
+      )}
+
+      {/* Activation confirmation dialog */}
+      {showActivateDialog && (
+        <ActionConfirmDialog
+          title="Activar autorización automática"
+          description="Todas las reservas nuevas se confirmarán inmediatamente sin revisión manual. Esta función es un experimento y se puede desactivar en cualquier momento."
+          confirmLabel="Activar"
+          onConfirm={async () => {
+            await handleToggle(true);
+          }}
+          onCancel={() => setShowActivateDialog(false)}
         />
       )}
     </div>

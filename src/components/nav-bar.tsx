@@ -18,6 +18,7 @@ const LINKS: (NavLink | "divider")[] = [
   "divider",
   { href: "/cesion", label: "Cesion" },
   { href: "/admin/asesores", label: "Asesores" },
+  { href: "/ventas/dashboard", label: "Mi Panel" },
 ];
 
 const linkClass =

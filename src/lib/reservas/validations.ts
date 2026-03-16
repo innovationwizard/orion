@@ -147,6 +147,14 @@ export const valorizacionQuerySchema = z.object({
   project: z.string().optional(),
 });
 
+// ---------------------------------------------------------------------------
+// System settings
+// ---------------------------------------------------------------------------
+
+export const updateSettingsSchema = z.object({
+  auto_approval_enabled: z.boolean(),
+});
+
 export const upsertClientProfileSchema = z.object({
   gender: z.enum(["M", "F", "Otro"]).nullable().default(null),
   birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().default(null),

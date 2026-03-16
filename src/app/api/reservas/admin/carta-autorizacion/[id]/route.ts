@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireRole } from "@/lib/auth";
+import { requireSalesperson, isSalespersonFailure } from "@/lib/reservas/require-salesperson";
 import { jsonOk, jsonError } from "@/lib/api";
 
 /**
@@ -8,13 +9,21 @@ import { jsonOk, jsonError } from "@/lib/api";
  *
  * Returns all clients for a reservation (name + DPI) so the Carta de
  * Autorización document can be rendered — one letter per client.
+ *
+ * Auth: admin (master/torredecontrol) OR salesperson with ownership of the reservation.
  */
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const auth = await requireRole(["master", "torredecontrol"]);
-  if ("response" in auth) return auth.response;
+  // Dual auth: admin OR salesperson (with ownership check below)
+  let salespersonId: string | null = null;
+  const adminAuth = await requireRole(["master", "torredecontrol"]);
+  if (adminAuth.response) {
+    const spAuth = await requireSalesperson();
+    if (isSalespersonFailure(spAuth)) return adminAuth.response;
+    salespersonId = spAuth.salesperson.id;
+  }
 
   const { id } = await params;
   const supabase = createAdminClient();
@@ -22,7 +31,7 @@ export async function GET(
   // Fetch reservation (just to validate it exists + get project info)
   const { data: reservation, error: rErr } = await supabase
     .from("reservations")
-    .select("id, unit_id, status")
+    .select("id, unit_id, status, salesperson_id")
     .eq("id", id)
     .maybeSingle();
 
@@ -32,6 +41,11 @@ export async function GET(
   }
   if (!reservation) {
     return jsonError(404, "Reserva no encontrada");
+  }
+
+  // Ownership check for salesperson
+  if (salespersonId && reservation.salesperson_id !== salespersonId) {
+    return jsonError(403, "No autorizado para esta reserva");
   }
 
   // Parallel: clients + unit (for project slug validation)
