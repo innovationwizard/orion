@@ -20,7 +20,7 @@
 ## C. Legal Documents Pati Generates Per Sale (Discovery §10)
 
 8. **Carta de Pago** — payment schedule letter (currently Excel template filled manually)
-9. **Carta de Buró** — credit bureau authorization letter (carries DPI + client name)
+9. ~~**Carta de Buró / Carta de Autorización**~~ — ✅ DONE (changelog 062). PDF generation from `/admin/reservas/carta-autorizacion/[id]`, multi-buyer support, Boulevard 5 only.
 10. **Carta de Reserva** — reservation confirmation letter
 
 ## D. Estado de Cuenta (Discovery §11)
@@ -72,7 +72,7 @@
 | **P1** | #14 (enganche payment tracking) | Largest remaining manual workload (350+ clients monthly) |
 | **P1** | #12 (auto-create sales record) | Eliminates dual-entry between systems |
 | **P1** | #5 (CSV export) | Pati needs this for bank reconciliation |
-| **P2** | #8–10 (legal document generation) | High-frequency manual work per sale |
+| **P2** | #8, #10 (remaining legal documents: Carta de Pago, Carta de Reserva) | High-frequency manual work per sale (#9 Carta de Autorización ✅ done) |
 | **P2** | #11 (estado de cuenta) | Ad-hoc but time-consuming per request |
 | **P2** | #28 (PCV status tracking) | Daily workflow with no system support |
 | **P3** | #18 (payment matching) | Depends on Odoo integration |
@@ -104,3 +104,4 @@
 - Cesión de derechos dashboard → `/cesion`
 - Salesperson management → `/admin/asesores`
 - DPI photo capture and OCR
+- Carta de Autorización PDF generation (Boulevard 5, multi-buyer)

@@ -359,6 +359,13 @@ export default function ReservationDetail({
                     >
                       Carta de Autorización
                     </button>
+                    <button
+                      type="button"
+                      className="w-full py-2 rounded-lg border border-primary text-primary font-medium text-sm hover:bg-primary/5 transition-colors"
+                      onClick={() => window.open(`/admin/reservas/carta-pago/${reservationId}`, "_blank")}
+                    >
+                      Carta de Pago
+                    </button>
                     {data.reservation.pcv_url && (
                       <a
                         href={data.reservation.pcv_url}
