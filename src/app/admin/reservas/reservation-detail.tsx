@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import {
   RESERVATION_STATUS_LABELS,
   UNIT_STATUS_LABELS,
+  BUYER_ROLE_LABELS_SHORT,
   formatCurrency,
   formatDate,
 } from "@/lib/reservas/constants";
@@ -13,19 +14,26 @@ import type {
   Salesperson,
   ReceiptExtraction,
   UnitStatusLog,
+  RvBuyerRole,
 } from "@/lib/reservas/types";
 import ReceiptViewer from "./receipt-viewer";
 import AuditLog from "./audit-log";
 import ActionConfirmDialog from "./action-confirm-dialog";
 
+type ClientLink = {
+  id: string;
+  client_id: string;
+  is_primary: boolean;
+  role: RvBuyerRole;
+  ownership_pct: number | null;
+  document_order: number;
+  signs_pcv: boolean;
+  rv_clients: { id: string; full_name: string; phone: string | null; email: string | null; dpi: string | null } | null;
+};
+
 type DetailData = {
   reservation: Reservation;
-  clients: Array<{
-    id: string;
-    client_id: string;
-    is_primary: boolean;
-    rv_clients: { id: string; full_name: string; phone: string | null; email: string | null; dpi: string | null } | null;
-  }>;
+  clients: ClientLink[];
   extractions: ReceiptExtraction[];
   unit: UnitFull | null;
   salesperson: Pick<Salesperson, "id" | "full_name" | "display_name" | "phone" | "email"> | null;
@@ -51,16 +59,17 @@ export default function ReservationDetail({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [action, setAction] = useState<ActionType>(null);
-  const [editingClient, setEditingClient] = useState(false);
+  const [editingClientId, setEditingClientId] = useState<string | null>(null);
   const [clientForm, setClientForm] = useState({ full_name: "", phone: "", email: "", dpi: "" });
   const [clientSaving, setClientSaving] = useState(false);
   const [clientMsg, setClientMsg] = useState<string | null>(null);
 
-  const primaryClient = data?.clients.find((c) => c.is_primary);
+  const sortedClients = data?.clients.slice().sort((a, b) => a.document_order - b.document_order) ?? [];
+  const editingClientLink = sortedClients.find((c) => c.client_id === editingClientId);
 
-  const startEditClient = useCallback(() => {
-    if (!primaryClient?.rv_clients) return;
-    const c = primaryClient.rv_clients;
+  const startEditClient = useCallback((cl: ClientLink) => {
+    if (!cl.rv_clients) return;
+    const c = cl.rv_clients;
     setClientForm({
       full_name: c.full_name ?? "",
       phone: c.phone ?? "",
@@ -68,27 +77,27 @@ export default function ReservationDetail({
       dpi: c.dpi ?? "",
     });
     setClientMsg(null);
-    setEditingClient(true);
-  }, [primaryClient]);
+    setEditingClientId(cl.client_id);
+  }, []);
 
   const saveClient = useCallback(async () => {
-    if (!primaryClient?.rv_clients) return;
+    if (!editingClientLink?.rv_clients) return;
     setClientSaving(true);
     setClientMsg(null);
     try {
       const payload: Record<string, string | null> = {};
-      const orig = primaryClient.rv_clients;
+      const orig = editingClientLink.rv_clients;
       if (clientForm.full_name && clientForm.full_name !== orig.full_name) payload.full_name = clientForm.full_name;
       if (clientForm.phone !== (orig.phone ?? "")) payload.phone = clientForm.phone || null;
       if (clientForm.email !== (orig.email ?? "")) payload.email = clientForm.email || null;
       if (clientForm.dpi !== (orig.dpi ?? "")) payload.dpi = clientForm.dpi || null;
 
       if (Object.keys(payload).length === 0) {
-        setEditingClient(false);
+        setEditingClientId(null);
         return;
       }
 
-      const res = await fetch(`/api/reservas/admin/clients/${primaryClient.rv_clients.id}`, {
+      const res = await fetch(`/api/reservas/admin/clients/${editingClientLink.rv_clients.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -97,21 +106,21 @@ export default function ReservationDetail({
       if (!res.ok) throw new Error(result.error ?? `HTTP ${res.status}`);
 
       // Update local state
-      if (data && primaryClient.rv_clients) {
-        primaryClient.rv_clients.full_name = result.full_name;
-        primaryClient.rv_clients.phone = result.phone;
-        primaryClient.rv_clients.email = result.email;
-        primaryClient.rv_clients.dpi = result.dpi;
+      if (data && editingClientLink.rv_clients) {
+        editingClientLink.rv_clients.full_name = result.full_name;
+        editingClientLink.rv_clients.phone = result.phone;
+        editingClientLink.rv_clients.email = result.email;
+        editingClientLink.rv_clients.dpi = result.dpi;
         setData({ ...data });
       }
       setClientMsg("Guardado");
-      setEditingClient(false);
+      setEditingClientId(null);
     } catch (e) {
       setClientMsg(e instanceof Error ? e.message : "Error");
     } finally {
       setClientSaving(false);
     }
-  }, [primaryClient, clientForm, data]);
+  }, [editingClientLink, clientForm, data]);
 
   useEffect(() => {
     setLoading(true);
@@ -207,102 +216,106 @@ export default function ReservationDetail({
 
               {/* Clients */}
               <div className="grid gap-2">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted">Cliente(s)</h4>
-                  {primaryClient?.rv_clients && !editingClient && (
-                    <button
-                      type="button"
-                      className="text-xs text-primary hover:underline font-medium"
-                      onClick={startEditClient}
-                    >
-                      Editar
-                    </button>
-                  )}
-                </div>
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-muted">Cliente(s)</h4>
                 {clientMsg && (
                   <span className={`text-xs ${clientMsg === "Guardado" ? "text-success" : "text-danger"}`}>
                     {clientMsg}
                   </span>
                 )}
-                <div className="grid grid-cols-2 gap-1.5 text-sm">
-                  {editingClient && primaryClient?.rv_clients ? (
-                    <>
-                      <label className="grid gap-0.5 col-span-2">
-                        <span className="text-xs text-muted">Nombre</span>
-                        <input
-                          className="px-2 py-1.5 rounded-lg border border-border bg-card text-text-primary text-xs w-full"
-                          value={clientForm.full_name}
-                          onChange={(e) => setClientForm((f) => ({ ...f, full_name: e.target.value }))}
-                        />
-                      </label>
-                      <label className="grid gap-0.5">
-                        <span className="text-xs text-muted">DPI</span>
-                        <input
-                          className="px-2 py-1.5 rounded-lg border border-border bg-card text-text-primary text-xs w-full"
-                          value={clientForm.dpi}
-                          onChange={(e) => setClientForm((f) => ({ ...f, dpi: e.target.value }))}
-                          placeholder="Número de DPI"
-                        />
-                      </label>
-                      <label className="grid gap-0.5">
-                        <span className="text-xs text-muted">Teléfono</span>
-                        <input
-                          className="px-2 py-1.5 rounded-lg border border-border bg-card text-text-primary text-xs w-full"
-                          value={clientForm.phone}
-                          onChange={(e) => setClientForm((f) => ({ ...f, phone: e.target.value }))}
-                        />
-                      </label>
-                      <label className="grid gap-0.5 col-span-2">
-                        <span className="text-xs text-muted">Email</span>
-                        <input
-                          type="email"
-                          className="px-2 py-1.5 rounded-lg border border-border bg-card text-text-primary text-xs w-full"
-                          value={clientForm.email}
-                          onChange={(e) => setClientForm((f) => ({ ...f, email: e.target.value }))}
-                        />
-                      </label>
-                      <div className="col-span-2 flex gap-2 mt-1">
-                        <button
-                          type="button"
-                          className="flex-1 py-1.5 rounded-lg bg-primary text-white text-xs font-medium hover:bg-primary/90 transition-colors"
-                          onClick={saveClient}
-                          disabled={clientSaving}
-                        >
-                          {clientSaving ? "Guardando..." : "Guardar"}
-                        </button>
-                        <button
-                          type="button"
-                          className="flex-1 py-1.5 rounded-lg border border-border text-muted text-xs font-medium hover:bg-bg transition-colors"
-                          onClick={() => setEditingClient(false)}
-                        >
-                          Cancelar
-                        </button>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      {data.clients.map((c) => (
-                        <Row
-                          key={c.id}
-                          label={c.is_primary ? "Principal" : "Adicional"}
-                          value={c.rv_clients?.full_name ?? "—"}
-                        />
-                      ))}
-                      {primaryClient?.rv_clients?.dpi && (
-                        <Row label="DPI" value={primaryClient.rv_clients.dpi} />
-                      )}
-                      {primaryClient?.rv_clients?.phone && (
-                        <Row label="Tel." value={primaryClient.rv_clients.phone} />
-                      )}
-                      {primaryClient?.rv_clients?.email && (
-                        <Row label="Email" value={primaryClient.rv_clients.email} />
-                      )}
-                      {data.reservation.lead_source && (
-                        <Row label="Fuente" value={data.reservation.lead_source} />
-                      )}
-                    </>
-                  )}
-                </div>
+                {sortedClients.map((c) => (
+                  <div key={c.id} className="border border-border rounded-lg px-3 py-2 grid gap-1.5 text-sm">
+                    {editingClientId === c.client_id && c.rv_clients ? (
+                      <>
+                        <label className="grid gap-0.5">
+                          <span className="text-xs text-muted">Nombre</span>
+                          <input
+                            className="px-2 py-1.5 rounded-lg border border-border bg-card text-text-primary text-xs w-full"
+                            value={clientForm.full_name}
+                            onChange={(e) => setClientForm((f) => ({ ...f, full_name: e.target.value }))}
+                          />
+                        </label>
+                        <div className="grid grid-cols-2 gap-1.5">
+                          <label className="grid gap-0.5">
+                            <span className="text-xs text-muted">DPI</span>
+                            <input
+                              className="px-2 py-1.5 rounded-lg border border-border bg-card text-text-primary text-xs w-full"
+                              value={clientForm.dpi}
+                              onChange={(e) => setClientForm((f) => ({ ...f, dpi: e.target.value }))}
+                              placeholder="Número de DPI"
+                            />
+                          </label>
+                          <label className="grid gap-0.5">
+                            <span className="text-xs text-muted">Teléfono</span>
+                            <input
+                              className="px-2 py-1.5 rounded-lg border border-border bg-card text-text-primary text-xs w-full"
+                              value={clientForm.phone}
+                              onChange={(e) => setClientForm((f) => ({ ...f, phone: e.target.value }))}
+                            />
+                          </label>
+                        </div>
+                        <label className="grid gap-0.5">
+                          <span className="text-xs text-muted">Email</span>
+                          <input
+                            type="email"
+                            className="px-2 py-1.5 rounded-lg border border-border bg-card text-text-primary text-xs w-full"
+                            value={clientForm.email}
+                            onChange={(e) => setClientForm((f) => ({ ...f, email: e.target.value }))}
+                          />
+                        </label>
+                        <div className="flex gap-2 mt-1">
+                          <button
+                            type="button"
+                            className="flex-1 py-1.5 rounded-lg bg-primary text-white text-xs font-medium hover:bg-primary/90 transition-colors"
+                            onClick={saveClient}
+                            disabled={clientSaving}
+                          >
+                            {clientSaving ? "Guardando..." : "Guardar"}
+                          </button>
+                          <button
+                            type="button"
+                            className="flex-1 py-1.5 rounded-lg border border-border text-muted text-xs font-medium hover:bg-bg transition-colors"
+                            onClick={() => setEditingClientId(null)}
+                          >
+                            Cancelar
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-text-primary">{c.rv_clients?.full_name ?? "—"}</span>
+                            <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary">
+                              {BUYER_ROLE_LABELS_SHORT[c.role] ?? (c.is_primary ? "Principal" : "Adicional")}
+                            </span>
+                            {c.ownership_pct != null && c.ownership_pct < 100 && (
+                              <span className="text-[10px] text-muted">{c.ownership_pct}%</span>
+                            )}
+                          </div>
+                          {c.rv_clients && (
+                            <button
+                              type="button"
+                              className="text-xs text-primary hover:underline font-medium"
+                              onClick={() => startEditClient(c)}
+                            >
+                              Editar
+                            </button>
+                          )}
+                        </div>
+                        <div className="grid grid-cols-2 gap-1 text-xs">
+                          {c.rv_clients?.dpi && <Row label="DPI" value={c.rv_clients.dpi} />}
+                          {c.rv_clients?.phone && <Row label="Tel." value={c.rv_clients.phone} />}
+                          {c.rv_clients?.email && <Row label="Email" value={c.rv_clients.email} />}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ))}
+                {data.reservation.lead_source && (
+                  <div className="grid grid-cols-2 gap-1.5 text-sm">
+                    <Row label="Fuente" value={data.reservation.lead_source} />
+                  </div>
+                )}
               </div>
 
               {/* Salesperson */}
@@ -338,6 +351,13 @@ export default function ReservationDetail({
                       onClick={() => window.open(`/admin/reservas/pcv/${reservationId}`, "_blank")}
                     >
                       {data.reservation.pcv_url ? "Regenerar PCV" : "Generar PCV"}
+                    </button>
+                    <button
+                      type="button"
+                      className="w-full py-2 rounded-lg border border-primary text-primary font-medium text-sm hover:bg-primary/5 transition-colors"
+                      onClick={() => window.open(`/admin/reservas/carta-autorizacion/${reservationId}`, "_blank")}
+                    >
+                      Carta de Autorización
                     </button>
                     {data.reservation.pcv_url && (
                       <a

@@ -10,13 +10,29 @@ import { createReservasClient } from "@/lib/supabase/client";
 // Types — mirrors the API response shape
 // ---------------------------------------------------------------------------
 
+type RvBuyerRole = "PROMITENTE_COMPRADOR" | "CO_COMPRADOR" | "REPRESENTANTE_LEGAL" | "GARANTE";
+
 interface PcvClient {
   id: string;
   client_id: string;
   is_primary: boolean;
+  role: RvBuyerRole;
+  ownership_pct: number | null;
+  document_order: number;
+  signs_pcv: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   rv_clients: { id: string; full_name: string; phone: string | null; email: string | null; dpi: string | null } | any;
 }
+
+type ClientProfileData = {
+  birth_date: string | null;
+  edad: number | null;
+  occupation_type: string | null;
+  marital_status: string | null;
+  gender: string | null;
+  profession: string | null;
+  domicilio: string | null;
+};
 
 interface PcvData {
   reservation: {
@@ -53,15 +69,8 @@ interface PcvData {
     project_name: string;
     project_slug: string;
   } | null;
-  client_profile: {
-    birth_date: string | null;
-    edad: number | null;
-    occupation_type: string | null;
-    marital_status: string | null;
-    gender: string | null;
-    profession: string | null;
-    domicilio: string | null;
-  } | null;
+  client_profiles: Record<string, ClientProfileData>;
+  client_profile: ClientProfileData | null;
   salesperson: { full_name: string; display_name: string } | null;
 }
 
@@ -247,9 +256,11 @@ export default function PcvClientComponent({ reservationId }: { reservationId: s
   }, [reservationId, saving]);
 
   const handleProfileSave = useCallback(async (profileData: {
+    client_id?: string;
     edad?: number;
     profession?: string;
     marital_status?: string;
+    domicilio?: string;
   }) => {
     setProfileSaving(true);
     try {
@@ -301,26 +312,32 @@ export default function PcvClientComponent({ reservationId }: { reservationId: s
     );
   }
 
-  // Primary client
+  // Signing clients — sorted by document_order
+  const signingClients = clients
+    .filter((c) => c.signs_pcv)
+    .sort((a, b) => a.document_order - b.document_order);
+  const profileMap = data.client_profiles ?? {};
+
+  // Primary client (for backward compat and single-buyer rendering)
   const primaryClientRow = clients.find((c) => c.is_primary) ?? clients[0];
   const client = primaryClientRow?.rv_clients as { full_name: string; phone: string | null; email: string | null; dpi: string | null } | null;
   const clientName = client?.full_name ?? BLANK;
-  const clientDpiRaw = client?.dpi ?? null;
-  const clientDpi = clientDpiRaw ? formatCuiLegal(clientDpiRaw) : BLANK;
-  const clientEmail = client?.email ?? BLANK_SHORT;
 
-  // Age — prefer birth_date (exact), fall back to edad (SSOT snapshot)
-  const age = client_profile?.birth_date
-    ? computeAge(client_profile.birth_date)
-    : client_profile?.edad ?? null;
-  const ageText = age != null ? `${numeroEnLetras(age)} (${age})` : BLANK_SHORT;
-
-  // Marital status
-  const maritalStatus = client_profile?.marital_status ?? BLANK_SHORT;
-
-  // Occupation — prefer profession text, fall back to occupation_type mapping
-  const profession = client_profile?.profession
-    ?? mapOccupation(client_profile?.occupation_type ?? null);
+  // Helper: resolve profile data for a signing client
+  function resolveClientData(sc: PcvClient) {
+    const cli = sc.rv_clients as { full_name: string; phone: string | null; email: string | null; dpi: string | null } | null;
+    const prof = profileMap[sc.client_id] ?? null;
+    const name = cli?.full_name ?? BLANK;
+    const dpiRaw = cli?.dpi ?? null;
+    const dpi = dpiRaw ? formatCuiLegal(dpiRaw) : BLANK;
+    const email = cli?.email ?? BLANK_SHORT;
+    const scAge = prof?.birth_date ? computeAge(prof.birth_date) : prof?.edad ?? null;
+    const ageText = scAge != null ? `${numeroEnLetras(scAge)} (${scAge})` : BLANK_SHORT;
+    const marital = prof?.marital_status ?? BLANK_SHORT;
+    const prof_text = prof?.profession ?? mapOccupation(prof?.occupation_type ?? null);
+    const dom = prof?.domicilio ?? "";
+    return { name, dpi, email, ageText, marital, profession: prof_text, domicilio: dom, age: scAge, prof };
+  }
 
   // Date — use today's date for the contract
   const now = new Date();
@@ -350,15 +367,20 @@ export default function PcvClientComponent({ reservationId }: { reservationId: s
   // Parking
   const totalParkingArea = (unit.parking_car_area ?? 0) + (unit.parking_tandem_area ?? 0);
 
-  // Buyer domicilio (notification address)
-  const domicilio = client_profile?.domicilio ?? "";
-
-  // Detect missing PCV-critical fields
-  const missingAge = age == null;
-  const missingMarital = !client_profile?.marital_status;
-  const missingProfession = profession === "________";
-  const missingDomicilio = !domicilio;
-  const hasMissing = missingAge || missingMarital || missingProfession || missingDomicilio;
+  // Detect missing PCV-critical fields — check ALL signing clients
+  type MissingInfo = { clientId: string; clientName: string; missingAge: boolean; missingMarital: boolean; missingProfession: boolean; missingDomicilio: boolean };
+  const missingByClient: MissingInfo[] = signingClients.map((sc) => {
+    const d = resolveClientData(sc);
+    return {
+      clientId: sc.client_id,
+      clientName: d.name,
+      missingAge: d.age == null,
+      missingMarital: d.marital === BLANK_SHORT,
+      missingProfession: d.profession === "________",
+      missingDomicilio: !d.domicilio,
+    };
+  }).filter((m) => m.missingAge || m.missingMarital || m.missingProfession || m.missingDomicilio);
+  const hasMissing = missingByClient.length > 0;
 
   return (
     <>
@@ -422,21 +444,26 @@ export default function PcvClientComponent({ reservationId }: { reservationId: s
       </div>
 
       {/* Missing profile fields — inline form for admin to complete before printing */}
-      {hasMissing && (
-        <ProfileForm
-          reservationId={reservationId}
-          currentAge={age}
-          currentMarital={client_profile?.marital_status ?? null}
-          currentProfession={client_profile?.profession ?? null}
-          currentDomicilio={domicilio}
-          missingAge={missingAge}
-          missingMarital={missingMarital}
-          missingProfession={missingProfession}
-          missingDomicilio={missingDomicilio}
-          saving={profileSaving}
-          onSave={handleProfileSave}
-        />
-      )}
+      {hasMissing && missingByClient.map((m) => {
+        const prof = profileMap[m.clientId] ?? null;
+        return (
+          <ProfileForm
+            key={m.clientId}
+            clientId={m.clientId}
+            clientLabel={missingByClient.length > 1 ? m.clientName : undefined}
+            currentAge={prof?.birth_date ? computeAge(prof.birth_date) : prof?.edad ?? null}
+            currentMarital={prof?.marital_status ?? null}
+            currentProfession={prof?.profession ?? null}
+            currentDomicilio={prof?.domicilio ?? ""}
+            missingAge={m.missingAge}
+            missingMarital={m.missingMarital}
+            missingProfession={m.missingProfession}
+            missingDomicilio={m.missingDomicilio}
+            saving={profileSaving}
+            onSave={handleProfileSave}
+          />
+        );
+      })}
 
       {/* Legal document */}
       <div className="pcv-document" ref={documentRef}>
@@ -474,16 +501,27 @@ export default function PcvClientComponent({ reservationId }: { reservationId: s
           LA PARTE PROMITENTE<br />COMPRADORA
         </p>
 
-        <p>
-          <V>{clientName}</V>, de <V>{ageText}</V> años de edad, <V>{maritalStatus}</V>,
-          guatemalteco, <V>{profession}</V>, de este domicilio, me identifico con el Documento
-          Personal de Identificación, con Código Único de Identificación
-          -CUI-<V>{clientDpi}</V> extendido por el Registro Nacional de las Personas de la
-          República de Guatemala, y quien actúa en nombre propio.
-        </p>
+        {signingClients.map((sc, idx) => {
+          const d = resolveClientData(sc);
+          const isMulti = signingClients.length > 1;
+          const pctText = isMulti && sc.ownership_pct != null
+            ? `, quien adquiere el ${sc.ownership_pct % 1 === 0 ? sc.ownership_pct.toFixed(0) : sc.ownership_pct.toFixed(2)} por ciento (${sc.ownership_pct}%) del bien inmueble`
+            : "";
+          return (
+            <p key={sc.id}>
+              {idx > 0 && "y "}
+              <V>{d.name}</V>, de <V>{d.ageText}</V> años de edad, <V>{d.marital}</V>,
+              guatemalteco(a), <V>{d.profession}</V>, de este domicilio,
+              {idx === 0 ? " me identifico" : " se identifica"} con el Documento
+              Personal de Identificación, con Código Único de Identificación
+              -CUI- <V>{d.dpi}</V> extendido por el Registro Nacional de las Personas de la
+              República de Guatemala{pctText}{idx === 0 && signingClients.length === 1 ? ", y quien actúa en nombre propio." : "."}
+            </p>
+          );
+        })}
 
         <p>
-          En el transcurso del presente contrato se me podrá denominar indistintamente también
+          En el transcurso del presente contrato se {signingClients.length > 1 ? "nos" : "me"} podrá denominar indistintamente también
           como la Parte PROMITENTE COMPRADORA.
         </p>
 
@@ -1140,11 +1178,18 @@ export default function PcvClientComponent({ reservationId }: { reservationId: s
           correo electrónico: <V>ventas@puertaabierta.com.gt</V>.
         </p>
 
-        <p>
-          La Parte PROMITENTE
-          COMPRADORA: <V>{domicilio || BLANK}</V>; correo
-          electrónico <V>{clientEmail}</V>.
-        </p>
+        {signingClients.map((sc, idx) => {
+          const d = resolveClientData(sc);
+          return (
+            <p key={sc.id}>
+              {signingClients.length > 1
+                ? `La Parte PROMITENTE COMPRADORA (${idx + 1}): `
+                : "La Parte PROMITENTE COMPRADORA: "}
+              <V>{d.domicilio || BLANK}</V>; correo
+              electrónico <V>{d.email}</V>.
+            </p>
+          );
+        })}
 
         <p>
           Toda notificación enviada al domicilio o correo electrónico aquí indicado se tendrá por
@@ -1199,17 +1244,22 @@ export default function PcvClientComponent({ reservationId }: { reservationId: s
 
         {/* Signature blocks */}
         <div style={{ marginTop: 48 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 64 }}>
-            <div style={{ textAlign: "center", width: "45%" }}>
-              <div style={{ borderBottom: "1px solid #000", marginBottom: 4 }}>&nbsp;</div>
+          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 64, flexWrap: "wrap", gap: 24 }}>
+            <div style={{ textAlign: "center", width: signingClients.length > 1 ? "100%" : "45%", marginBottom: signingClients.length > 1 ? 24 : 0 }}>
+              <div style={{ borderBottom: "1px solid #000", marginBottom: 4, maxWidth: "60%", margin: "0 auto 4px" }}>&nbsp;</div>
               <p style={{ margin: 0, fontWeight: "bold" }}>LUIS ARIMANY MONZÓN</p>
               <p style={{ margin: 0, fontSize: "10pt" }}>ADMINISTRADOR ÚNICO Y REPRESENTANTE LEGAL</p>
               <p style={{ margin: 0, fontSize: "10pt" }}>INMOBILIARIA EL GRAN JAGUAR, SOCIEDAD ANÓNIMA</p>
             </div>
-            <div style={{ textAlign: "center", width: "45%" }}>
-              <div style={{ borderBottom: "1px solid #000", marginBottom: 4 }}>&nbsp;</div>
-              <p style={{ margin: 0, fontWeight: "bold" }}><V>{clientName.toUpperCase()}</V></p>
-            </div>
+            {signingClients.map((sc) => {
+              const scName = (sc.rv_clients as { full_name: string } | null)?.full_name ?? BLANK;
+              return (
+                <div key={sc.id} style={{ textAlign: "center", width: signingClients.length > 1 ? `${Math.floor(90 / signingClients.length)}%` : "45%" }}>
+                  <div style={{ borderBottom: "1px solid #000", marginBottom: 4 }}>&nbsp;</div>
+                  <p style={{ margin: 0, fontWeight: "bold" }}><V>{scName.toUpperCase()}</V></p>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -1224,25 +1274,39 @@ export default function PcvClientComponent({ reservationId }: { reservationId: s
             Documento Personal de Identificación, con Código Único de Identificación -CUI- dos mil
             quinientos treinta y nueve, cero nueve mil quinientos once, cero ciento uno (2539 09511
             0101) extendido por el Registro Nacional de las Personas de la República de Guatemala;
-            y B) <V>{clientName}</V> quien se identifica con el Documento Personal de
-            Identificación con Código Único de
-            Identificación <V>{clientDpi}</V>, extendido por el Registro Nacional de las Personas
-            de la República de Guatemala. Documentos que tuve a la vista. Leído lo escrito a los
+            {signingClients.map((sc, idx) => {
+              const d = resolveClientData(sc);
+              const letter = String.fromCharCode(66 + idx); // B, C, D...
+              return (
+                <span key={sc.id}>
+                  {" "}y {letter}) <V>{d.name}</V> quien se identifica con el Documento Personal de
+                  Identificación con Código Único de
+                  Identificación <V>{d.dpi}</V>, extendido por el Registro Nacional de las Personas
+                  de la República de Guatemala{idx === signingClients.length - 1 ? "." : ";"}
+                </span>
+              );
+            })}
+            {" "}Documentos que tuve a la vista. Leído lo escrito a los
             comparecientes, en las calidades con que actúan, lo ratifican, aceptan y firman, junto
             a la Infrascrita Notaria que de todo lo expuesto, DOY FE. -
           </p>
 
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 64 }}>
-            <div style={{ textAlign: "center", width: "45%" }}>
-              <div style={{ borderBottom: "1px solid #000", marginBottom: 4 }}>&nbsp;</div>
+          <div style={{ display: "flex", justifyContent: "space-between", marginTop: 64, flexWrap: "wrap", gap: 24 }}>
+            <div style={{ textAlign: "center", width: signingClients.length > 1 ? "100%" : "45%", marginBottom: signingClients.length > 1 ? 24 : 0 }}>
+              <div style={{ borderBottom: "1px solid #000", marginBottom: 4, maxWidth: "60%", margin: "0 auto 4px" }}>&nbsp;</div>
               <p style={{ margin: 0, fontWeight: "bold" }}>LUIS ARIMANY MONZÓN</p>
               <p style={{ margin: 0, fontSize: "10pt" }}>ADMINISTRADOR ÚNICO Y REPRESENTANTE LEGAL</p>
               <p style={{ margin: 0, fontSize: "10pt" }}>INMOBILIARIA EL GRAN JAGUAR, SOCIEDAD ANÓNIMA</p>
             </div>
-            <div style={{ textAlign: "center", width: "45%" }}>
-              <div style={{ borderBottom: "1px solid #000", marginBottom: 4 }}>&nbsp;</div>
-              <p style={{ margin: 0, fontWeight: "bold" }}><V>{clientName.toUpperCase()}</V></p>
-            </div>
+            {signingClients.map((sc) => {
+              const scName = (sc.rv_clients as { full_name: string } | null)?.full_name ?? BLANK;
+              return (
+                <div key={sc.id} style={{ textAlign: "center", width: signingClients.length > 1 ? `${Math.floor(90 / signingClients.length)}%` : "45%" }}>
+                  <div style={{ borderBottom: "1px solid #000", marginBottom: 4 }}>&nbsp;</div>
+                  <p style={{ margin: 0, fontWeight: "bold" }}><V>{scName.toUpperCase()}</V></p>
+                </div>
+              );
+            })}
           </div>
 
           <div style={{ textAlign: "center", marginTop: 48 }}>
@@ -1287,7 +1351,8 @@ function V({ children }: { children: React.ReactNode }) {
 const MARITAL_OPTIONS = ["Soltero(a)", "Casado(a)", "Unido(a)", "Viudo(a)", "Divorciado(a)"];
 
 function ProfileForm({
-  reservationId,
+  clientId,
+  clientLabel,
   currentAge,
   currentMarital,
   currentProfession,
@@ -1299,7 +1364,8 @@ function ProfileForm({
   saving,
   onSave,
 }: {
-  reservationId: string;
+  clientId: string;
+  clientLabel?: string;
   currentAge: number | null;
   currentMarital: string | null;
   currentProfession: string | null;
@@ -1309,23 +1375,22 @@ function ProfileForm({
   missingProfession: boolean;
   missingDomicilio: boolean;
   saving: boolean;
-  onSave: (data: { edad?: number; profession?: string; marital_status?: string; domicilio?: string }) => void;
+  onSave: (data: { client_id?: string; edad?: number; profession?: string; marital_status?: string; domicilio?: string }) => void;
 }) {
   const [edad, setEdad] = useState(currentAge?.toString() ?? "");
   const [marital, setMarital] = useState(currentMarital ?? "");
   const [profession, setProfession] = useState(currentProfession ?? "");
   const [domicilio, setDomicilio] = useState(currentDomicilio ?? "");
 
-  // Avoid unused variable warning — reservationId is used by parent's onSave
-  void reservationId;
-
   const handleSubmit = () => {
-    const payload: { edad?: number; profession?: string; marital_status?: string; domicilio?: string } = {};
+    const payload: { client_id?: string; edad?: number; profession?: string; marital_status?: string; domicilio?: string } = {
+      client_id: clientId,
+    };
     if (missingAge && edad.trim()) payload.edad = parseInt(edad, 10);
     if (missingMarital && marital.trim()) payload.marital_status = marital.trim();
     if (missingProfession && profession.trim()) payload.profession = profession.trim();
     if (missingDomicilio && domicilio.trim()) payload.domicilio = domicilio.trim();
-    if (Object.keys(payload).length > 0) onSave(payload);
+    if (Object.keys(payload).length > 1) onSave(payload);
   };
 
   const inputStyle = {
@@ -1347,7 +1412,7 @@ function ProfileForm({
       fontFamily: "sans-serif",
     }}>
       <p style={{ margin: "0 0 12px", fontSize: 14, fontWeight: 600, color: "#92400e" }}>
-        Datos faltantes para la PCV &mdash; complete antes de imprimir
+        Datos faltantes para la PCV{clientLabel ? ` — ${clientLabel}` : ""} &mdash; complete antes de imprimir
       </p>
       <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "flex-end" }}>
         {missingAge && (

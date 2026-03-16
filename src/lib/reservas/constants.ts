@@ -11,6 +11,7 @@ import type {
   ReservationStatus,
   RvReceiptType,
   ExtractionConfidence,
+  RvBuyerRole,
 } from "./types";
 
 // ---------------------------------------------------------------------------
@@ -98,6 +99,31 @@ export const CONFIDENCE_COLORS: Record<ExtractionConfidence, string> = {
   HIGH: "#22c55e",
   MEDIUM: "#f59e0b",
   LOW: "#ef4444",
+};
+
+// ---------------------------------------------------------------------------
+// Buyer roles (030: M:N buyer support)
+// ---------------------------------------------------------------------------
+
+export const BUYER_ROLES = [
+  "PROMITENTE_COMPRADOR",
+  "CO_COMPRADOR",
+  "REPRESENTANTE_LEGAL",
+  "GARANTE",
+] as const satisfies readonly RvBuyerRole[];
+
+export const BUYER_ROLE_LABELS: Record<RvBuyerRole, string> = {
+  PROMITENTE_COMPRADOR: "Promitente Comprador(a)",
+  CO_COMPRADOR: "Co-Comprador(a)",
+  REPRESENTANTE_LEGAL: "Representante Legal",
+  GARANTE: "Garante",
+};
+
+export const BUYER_ROLE_LABELS_SHORT: Record<RvBuyerRole, string> = {
+  PROMITENTE_COMPRADOR: "Principal",
+  CO_COMPRADOR: "Co-comprador",
+  REPRESENTANTE_LEGAL: "Rep. Legal",
+  GARANTE: "Garante",
 };
 
 // ---------------------------------------------------------------------------

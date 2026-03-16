@@ -31,6 +31,12 @@ export type ExtractionConfidence = "HIGH" | "MEDIUM" | "LOW";
 
 export type FreezeRequestStatus = "ACTIVE" | "RELEASED";
 
+export type RvBuyerRole =
+  | "PROMITENTE_COMPRADOR"
+  | "CO_COMPRADOR"
+  | "REPRESENTANTE_LEGAL"
+  | "GARANTE";
+
 // ---------------------------------------------------------------------------
 // Table row types
 // ---------------------------------------------------------------------------
@@ -144,6 +150,11 @@ export interface ReservationClient {
   reservation_id: string;
   client_id: string;
   is_primary: boolean;
+  role: RvBuyerRole;
+  ownership_pct: number | null;
+  legal_capacity: string | null;
+  document_order: number;
+  signs_pcv: boolean;
   created_at: string;
 }
 
@@ -263,6 +274,8 @@ export interface ReservationPending {
   ocr_confidence: ExtractionConfidence | null;
   client_names: string[];
   client_phone: string | null;
+  // 030: M:N buyer support
+  client_count: number;
 }
 
 export interface ProjectWithTowers {

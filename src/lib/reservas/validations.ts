@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { RECEIPT_TYPES, LEAD_SOURCES } from "./constants";
+import { RECEIPT_TYPES, LEAD_SOURCES, BUYER_ROLES } from "./constants";
 
 // ---------------------------------------------------------------------------
 // Reservation submission — from salesperson mobile form
@@ -162,3 +162,19 @@ export const upsertClientProfileSchema = z.object({
   monthly_income_family: z.number().positive().nullable().default(null),
   acquisition_channel: z.string().nullable().default(null),
 });
+
+// ---------------------------------------------------------------------------
+// Junction metadata — admin updates to reservation_clients (030: M:N)
+// ---------------------------------------------------------------------------
+
+export const updateReservationClientSchema = z
+  .object({
+    role: z.enum(BUYER_ROLES).optional(),
+    ownership_pct: z.number().positive().max(100).nullable().optional(),
+    legal_capacity: z.string().nullable().optional(),
+    document_order: z.number().int().positive().optional(),
+    signs_pcv: z.boolean().optional(),
+  })
+  .refine((d) => Object.values(d).some((v) => v !== undefined), {
+    message: "Al menos un campo requerido",
+  });

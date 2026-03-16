@@ -3,12 +3,23 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { requireRole } from "@/lib/auth";
 import { jsonOk, jsonError } from "@/lib/api";
 
+type ClientProfile = {
+  client_id: string;
+  birth_date: string | null;
+  edad: number | null;
+  occupation_type: string | null;
+  marital_status: string | null;
+  gender: string | null;
+  profession: string | null;
+  domicilio: string | null;
+};
+
 /**
  * GET /api/reservas/admin/pcv/[id]
  *
  * Returns all data needed to render a PCV (Promesa de Compraventa) document
- * for a given reservation. Includes unit details, client info, client profile,
- * and salesperson — no signed URLs, OCR, or audit logs.
+ * for a given reservation. Includes unit details, client info, client profiles
+ * for all signing clients, and salesperson.
  */
 export async function GET(
   _request: NextRequest,
@@ -39,8 +50,9 @@ export async function GET(
   const [clientsResult, unitViewResult, salespersonResult] = await Promise.all([
     supabase
       .from("reservation_clients")
-      .select("id, client_id, is_primary, rv_clients(id, full_name, phone, email, dpi)")
-      .eq("reservation_id", id),
+      .select("id, client_id, is_primary, role, ownership_pct, legal_capacity, document_order, signs_pcv, rv_clients(id, full_name, phone, email, dpi)")
+      .eq("reservation_id", id)
+      .order("document_order", { ascending: true }),
     supabase
       .from("v_rv_units_full")
       .select("*")
@@ -54,33 +66,39 @@ export async function GET(
   ]);
 
   const unit = unitViewResult.data;
+  const clients = clientsResult.data ?? [];
 
-  // Fetch client profile for primary client (birth_date, occupation_type)
-  const primaryClient = (clientsResult.data ?? []).find((c) => c.is_primary);
-  let clientProfile: {
-    birth_date: string | null;
-    edad: number | null;
-    occupation_type: string | null;
-    marital_status: string | null;
-    gender: string | null;
-    profession: string | null;
-    domicilio: string | null;
-  } | null = null;
+  // Fetch profiles for ALL signing clients (not just primary)
+  const signingClientIds = clients
+    .filter((c) => c.signs_pcv)
+    .map((c) => c.client_id);
 
-  if (primaryClient) {
-    const { data: profile } = await supabase
+  let clientProfiles: Record<string, ClientProfile> = {};
+  let primaryProfile: ClientProfile | null = null;
+
+  if (signingClientIds.length > 0) {
+    const { data: profiles } = await supabase
       .from("rv_client_profiles")
-      .select("birth_date, edad, occupation_type, marital_status, gender, profession, domicilio")
-      .eq("client_id", primaryClient.client_id)
-      .maybeSingle();
-    clientProfile = profile ?? null;
+      .select("client_id, birth_date, edad, occupation_type, marital_status, gender, profession, domicilio")
+      .in("client_id", signingClientIds);
+
+    clientProfiles = Object.fromEntries(
+      (profiles ?? []).map((p) => [p.client_id, p]),
+    );
+  }
+
+  // Backward compat: client_profile for primary client
+  const primaryClient = clients.find((c) => c.is_primary);
+  if (primaryClient) {
+    primaryProfile = clientProfiles[primaryClient.client_id] ?? null;
   }
 
   return jsonOk({
     reservation,
-    clients: clientsResult.data ?? [],
+    clients,
     unit: unit ?? null,
-    client_profile: clientProfile,
+    client_profiles: clientProfiles,
+    client_profile: primaryProfile,
     salesperson: salespersonResult.data,
   });
 }
@@ -127,9 +145,9 @@ export async function POST(
 /**
  * PATCH /api/reservas/admin/pcv/[id]
  *
- * Save missing profile data (edad, profession, marital_status) for the primary
- * client of a reservation. Used from the PCV page when the admin fills in
- * fields that were not available at reservation time.
+ * Save missing profile data for a client of a reservation. Accepts optional
+ * client_id to target any client (not just primary). Falls back to primary
+ * if client_id is not provided (backward compat).
  */
 export async function PATCH(
   request: NextRequest,
@@ -140,6 +158,7 @@ export async function PATCH(
 
   const { id } = await params;
   const body = await request.json() as {
+    client_id?: string;
     edad?: number | null;
     birth_date?: string | null;
     profession?: string | null;
@@ -149,21 +168,27 @@ export async function PATCH(
 
   const supabase = createAdminClient();
 
-  // Find primary client
-  const { data: primaryLink } = await supabase
-    .from("reservation_clients")
-    .select("client_id")
-    .eq("reservation_id", id)
-    .eq("is_primary", true)
-    .maybeSingle();
+  // Resolve target client — explicit client_id or fall back to primary
+  let targetClientId = body.client_id;
 
-  if (!primaryLink?.client_id) {
-    return jsonError(404, "Cliente primario no encontrado");
+  if (!targetClientId) {
+    const { data: primaryLink } = await supabase
+      .from("reservation_clients")
+      .select("client_id")
+      .eq("reservation_id", id)
+      .eq("is_primary", true)
+      .maybeSingle();
+
+    targetClientId = primaryLink?.client_id;
+  }
+
+  if (!targetClientId) {
+    return jsonError(404, "Cliente no encontrado");
   }
 
   // Build upsert payload — only include fields that were provided
   const profileUpdate: Record<string, unknown> = {
-    client_id: primaryLink.client_id,
+    client_id: targetClientId,
   };
   if (body.edad !== undefined) profileUpdate.edad = body.edad;
   if (body.birth_date !== undefined) profileUpdate.birth_date = body.birth_date;

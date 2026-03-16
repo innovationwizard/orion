@@ -72,8 +72,9 @@ export async function GET(
     await Promise.all([
       supabase
         .from("reservation_clients")
-        .select("id, client_id, is_primary, rv_clients(id, full_name, phone, email, dpi)")
-        .eq("reservation_id", id),
+        .select("id, client_id, is_primary, role, ownership_pct, legal_capacity, document_order, signs_pcv, rv_clients(id, full_name, phone, email, dpi)")
+        .eq("reservation_id", id)
+        .order("document_order", { ascending: true }),
       supabase
         .from("receipt_extractions")
         .select("*")

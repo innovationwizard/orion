@@ -32,6 +32,9 @@ export default function ReservationRow({ reservation: r, selected, onClick }: Pr
       </td>
       <td className="px-4 py-3 text-sm text-text-primary">
         {r.client_names?.join(", ") ?? "—"}
+        {r.client_count > 1 && (
+          <span className="ml-1 text-xs text-muted">({r.client_count})</span>
+        )}
       </td>
       <td className="px-4 py-3 text-sm text-text-primary">
         {r.salesperson_name}
