@@ -41,6 +41,7 @@ export default function AuthCallbackPage() {
         const params = new URLSearchParams(hash.replace(/^#/, ""));
         const access_token = params.get("access_token");
         const refresh_token = params.get("refresh_token");
+        const type = params.get("type");
         if (access_token && refresh_token) {
           const { error } = await supabaseBrowser.auth.setSession({
             access_token,
@@ -49,6 +50,11 @@ export default function AuthCallbackPage() {
           if (!mounted) return;
           if (error) {
             setStatus("error");
+            return;
+          }
+          // Invite flow: user needs to set a password first
+          if (type === "invite") {
+            router.replace("/auth/set-password");
             return;
           }
           router.replace(next);

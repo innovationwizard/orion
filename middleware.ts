@@ -72,6 +72,31 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
+  // Role-based routing: restrict ventas users to their allowed pages
+  if (data.user) {
+    const role =
+      (data.user.app_metadata?.role as string | undefined) ??
+      (data.user.user_metadata?.role as string | undefined) ??
+      null;
+
+    if (role === "ventas") {
+      const allowedPrefixes = [
+        "/reservar",
+        "/ventas",
+        "/disponibilidad",
+        "/cotizador",
+        "/auth",
+        "/login",
+      ];
+      const isAllowed = allowedPrefixes.some((prefix) => pathname.startsWith(prefix));
+      if (!isAllowed) {
+        const redirectUrl = request.nextUrl.clone();
+        redirectUrl.pathname = "/ventas/dashboard";
+        return NextResponse.redirect(redirectUrl);
+      }
+    }
+  }
+
   return response;
 }
 
