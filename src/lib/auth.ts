@@ -50,10 +50,7 @@ export type Role =
   | "torredecontrol";
 
 export function getUserRole(user: User | null) {
-  const role =
-    (user?.app_metadata?.role as string | undefined) ??
-    (user?.user_metadata?.role as string | undefined);
-  return role ?? null;
+  return (user?.app_metadata?.role as string | undefined) ?? null;
 }
 
 export function isSuperuser(email?: string | null) {

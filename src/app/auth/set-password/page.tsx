@@ -1,18 +1,15 @@
 "use client";
 
-import { Suspense, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase-browser";
 
-function SetPasswordForm() {
+export default function SetPasswordPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-
-  const isInviteFlow = searchParams.get("flow") === "invite";
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -30,15 +27,9 @@ function SetPasswordForm() {
 
     setIsLoading(true);
 
-    // flow=invite: ensure role is set (metadata may not have been applied by Supabase)
-    const userData: { password_set: boolean; role?: string } = { password_set: true };
-    if (isInviteFlow) {
-      userData.role = "ventas";
-    }
-
     const { error: updateError } = await supabaseBrowser.auth.updateUser({
       password,
-      data: userData,
+      data: { password_set: true },
     });
 
     if (updateError) {
@@ -46,6 +37,9 @@ function SetPasswordForm() {
       setIsLoading(false);
       return;
     }
+
+    // Confirm password_set in app_metadata (immutable by client)
+    await fetch("/api/auth/confirm-password-set", { method: "POST" });
 
     router.replace("/");
     router.refresh();
@@ -88,19 +82,5 @@ function SetPasswordForm() {
         </form>
       </div>
     </section>
-  );
-}
-
-export default function SetPasswordPage() {
-  return (
-    <Suspense fallback={
-      <section className="p-[clamp(16px,4vw,32px)] grid gap-[clamp(16px,3vw,28px)]">
-        <div className="bg-card rounded-2xl p-4 shadow-card grid gap-2" style={{ maxWidth: 420, margin: "0 auto", textAlign: "center" }}>
-          <p className="text-muted m-0">Cargando…</p>
-        </div>
-      </section>
-    }>
-      <SetPasswordForm />
-    </Suspense>
   );
 }

@@ -5,69 +5,25 @@ import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase-browser";
 
 /**
- * Auth callback: handles invite / magic link / OAuth return.
- * - Hash (#access_token=...): invite flow, setSession and redirect.
- * - Query (?code=...): PKCE flow, exchangeCodeForSession and redirect.
+ * Auth callback — minimal fallback handler.
+ *
+ * Primary auth flows (invite, password reset) use /auth/confirm (server-side).
+ * This page only handles the edge case where hash-based tokens arrive here
+ * (e.g. via AuthHashRedirect or a Supabase redirect that bypasses /auth/confirm).
+ *
+ * After setting the session, redirects to / — middleware enforces password setup
+ * and page restrictions for ventas users.
  */
-async function needsPasswordSetup(): Promise<boolean> {
-  const { data: { user } } = await supabaseBrowser.auth.getUser();
-  if (!user) return false;
-  const role =
-    (user.app_metadata?.role as string | undefined) ??
-    (user.user_metadata?.role as string | undefined);
-  return role === "ventas" && user.user_metadata?.password_set !== true;
-}
-
 export default function AuthCallbackPage() {
   const router = useRouter();
-  const [status, setStatus] = useState<"loading" | "done" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "error">("loading");
 
   useEffect(() => {
     let mounted = true;
 
     async function handleCallback() {
-      const search = typeof window !== "undefined" ? window.location.search : "";
-      const hash = typeof window !== "undefined" ? window.location.hash : "";
-      const next = typeof window !== "undefined"
-        ? new URLSearchParams(window.location.search).get("next") ?? "/"
-        : "/";
-      const flowInvite = typeof window !== "undefined"
-        ? new URLSearchParams(window.location.search).get("flow") === "invite"
-        : false;
-      const typeParam = typeof window !== "undefined"
-        ? new URLSearchParams(window.location.search).get("type") ?? new URLSearchParams(hash.replace(/^#/, "")).get("type")
-        : null;
+      const hash = window.location.hash;
 
-      const redirectToSetPassword = (withFlow = false) => {
-        router.replace(withFlow ? "/auth/set-password?flow=invite" : "/auth/set-password");
-      };
-
-      // PKCE: ?code=...&type=invite|recovery
-      const code = new URLSearchParams(search).get("code");
-      if (code) {
-        const { error } = await supabaseBrowser.auth.exchangeCodeForSession(code);
-        if (!mounted) return;
-        if (error) {
-          setStatus("error");
-          return;
-        }
-        if (typeParam === "invite" || typeParam === "recovery") {
-          redirectToSetPassword(flowInvite);
-          return;
-        }
-        if (flowInvite) {
-          redirectToSetPassword(true);
-          return;
-        }
-        if (await needsPasswordSetup()) {
-          redirectToSetPassword();
-          return;
-        }
-        router.replace(next);
-        return;
-      }
-
-      // Invite / magic link: #access_token=...&refresh_token=...&type=invite|recovery
       if (hash) {
         const params = new URLSearchParams(hash.replace(/^#/, ""));
         const access_token = params.get("access_token");
@@ -75,48 +31,22 @@ export default function AuthCallbackPage() {
         if (access_token && refresh_token) {
           const { error } = await supabaseBrowser.auth.setSession({
             access_token,
-            refresh_token
+            refresh_token,
           });
           if (!mounted) return;
           if (error) {
             setStatus("error");
             return;
           }
-          // type=invite or type=recovery: Supabase adds to query or hash; always require password
-          if (typeParam === "invite" || typeParam === "recovery") {
-            redirectToSetPassword(flowInvite);
-            return;
-          }
-          // flow=invite: always require password (role metadata may not be set yet)
-          if (flowInvite) {
-            redirectToSetPassword(true);
-            return;
-          }
-          if (await needsPasswordSetup()) {
-            redirectToSetPassword();
-            return;
-          }
-          router.replace(next);
-          return;
         }
       }
 
-      // No code/hash: session may have been set elsewhere (e.g. Supabase auto-consumed hash).
-      // Still enforce set-password for ventas users.
-      const { data: { user } } = await supabaseBrowser.auth.getUser();
-      if (user && (await needsPasswordSetup())) {
-        redirectToSetPassword(flowInvite);
-        return;
-      }
-
-      setStatus("done");
-      router.replace("/");
+      // Middleware enforces /auth/set-password for ventas users without password_set
+      if (mounted) router.replace("/");
     }
 
     handleCallback();
-    return () => {
-      mounted = false;
-    };
+    return () => { mounted = false; };
   }, [router]);
 
   if (status === "error") {

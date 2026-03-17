@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
-import { supabaseAdmin, getSupabaseConfigError } from "@/lib/supabase";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonOk, jsonError } from "@/lib/api";
 
 const inviteSchema = z.object({
@@ -9,15 +9,10 @@ const inviteSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const configError = getSupabaseConfigError();
-  if (configError) return jsonError(500, configError);
-
   const auth = await requireRole(["master", "torredecontrol"]);
   if (auth.response) return auth.response;
 
-  if (!supabaseAdmin) {
-    return jsonError(500, "SUPABASE_SERVICE_ROLE_KEY requerido");
-  }
+  const admin = createAdminClient();
 
   const payload = await request.json().catch(() => null);
   const parsed = inviteSchema.safeParse(payload);
@@ -28,7 +23,7 @@ export async function POST(request: Request) {
   const { salesperson_id, email } = parsed.data;
 
   // Verify salesperson exists
-  const { data: sp, error: spErr } = await supabaseAdmin
+  const { data: sp, error: spErr } = await admin
     .from("salespeople")
     .select("id, full_name, user_id")
     .eq("id", salesperson_id)
@@ -50,25 +45,23 @@ export async function POST(request: Request) {
     const url = new URL(`${siteUrl}/auth/confirm`);
     url.searchParams.set("token_hash", hashedToken);
     url.searchParams.set("type", type);
-    url.searchParams.set("flow", "invite");
     return url.toString();
   }
 
   // If already has a user_id, update email + ensure app_metadata role + generate magic link
   if (sp.user_id) {
-    const { error: updateErr } = await supabaseAdmin.auth.admin.updateUserById(
+    const { error: updateErr } = await admin.auth.admin.updateUserById(
       sp.user_id,
       {
         email,
         app_metadata: { role: "ventas" },
-        user_metadata: { role: "ventas" },
       },
     );
     if (updateErr) {
       return jsonError(500, "Error al actualizar usuario", updateErr.message);
     }
 
-    const { data: linkData, error: linkErr } = await supabaseAdmin.auth.admin.generateLink({
+    const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
       type: "magiclink",
       email,
     });
@@ -76,8 +69,7 @@ export async function POST(request: Request) {
       return jsonError(500, "Error al generar enlace", linkErr.message);
     }
 
-    // Update email on salespeople table
-    await supabaseAdmin
+    await admin
       .from("salespeople")
       .update({ email })
       .eq("id", salesperson_id);
@@ -88,7 +80,7 @@ export async function POST(request: Request) {
   }
 
   // New invite — generateLink creates the auth user without sending email
-  const { data: linkData, error: inviteErr } = await supabaseAdmin.auth.admin.generateLink({
+  const { data: linkData, error: inviteErr } = await admin.auth.admin.generateLink({
     type: "invite",
     email,
     options: {
@@ -98,7 +90,7 @@ export async function POST(request: Request) {
 
   // If invite fails (e.g. email already registered via Supabase GUI), find existing user and generate magic link
   if (inviteErr) {
-    const { data: listData } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
+    const { data: listData } = await admin.auth.admin.listUsers({ perPage: 1000 });
     const existingUser = listData?.users?.find(
       (u) => u.email?.toLowerCase() === email.toLowerCase(),
     );
@@ -107,14 +99,13 @@ export async function POST(request: Request) {
       return jsonError(500, "Error al generar invitación", inviteErr.message);
     }
 
-    // Ensure role metadata is set in BOTH app_metadata (JWT) and user_metadata
-    await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
+    // Role in app_metadata only (immutable by client, embedded in JWT)
+    await admin.auth.admin.updateUserById(existingUser.id, {
       app_metadata: { role: "ventas" },
-      user_metadata: { ...existingUser.user_metadata, role: "ventas" },
     });
 
     // Link existing auth user to salesperson
-    const { error: dbLinkErr } = await supabaseAdmin
+    const { error: dbLinkErr } = await admin
       .from("salespeople")
       .update({ user_id: existingUser.id, email })
       .eq("id", salesperson_id);
@@ -125,7 +116,7 @@ export async function POST(request: Request) {
     }
 
     // Generate magic link for existing user
-    const { data: mlData, error: mlErr } = await supabaseAdmin.auth.admin.generateLink({
+    const { data: mlData, error: mlErr } = await admin.auth.admin.generateLink({
       type: "magiclink",
       email,
     });
@@ -141,13 +132,13 @@ export async function POST(request: Request) {
 
   const userId = linkData?.user?.id ?? null;
 
-  // Link auth user to salesperson + set app_metadata role (generateLink data option only sets user_metadata)
+  // Set app_metadata role (generateLink data option only sets user_metadata)
   if (userId) {
-    await supabaseAdmin.auth.admin.updateUserById(userId, {
+    await admin.auth.admin.updateUserById(userId, {
       app_metadata: { role: "ventas" },
     });
 
-    const { error: dbLinkErr } = await supabaseAdmin
+    const { error: dbLinkErr } = await admin
       .from("salespeople")
       .update({ user_id: userId, email })
       .eq("id", salesperson_id);

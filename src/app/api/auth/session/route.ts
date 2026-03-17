@@ -9,7 +9,7 @@ export async function GET() {
     user: {
       id: auth.user.id,
       email: auth.user.email,
-      role: auth.user.app_metadata?.role ?? auth.user.user_metadata?.role ?? null,
+      role: auth.user.app_metadata?.role ?? null,
     },
   });
 }

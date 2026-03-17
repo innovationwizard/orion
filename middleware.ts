@@ -74,14 +74,14 @@ export async function middleware(request: NextRequest) {
 
   // Role-based routing: restrict ventas users to their allowed pages
   if (data.user) {
-    const role =
-      (data.user.app_metadata?.role as string | undefined) ??
-      (data.user.user_metadata?.role as string | undefined) ??
-      null;
+    const role = (data.user.app_metadata?.role as string | undefined) ?? null;
 
     if (role === "ventas") {
       // Force password setup before any app access
-      const passwordSet = data.user.user_metadata?.password_set === true;
+      // app_metadata is authoritative; user_metadata fallback covers users who set password before this change
+      const passwordSet =
+        data.user.app_metadata?.password_set === true ||
+        data.user.user_metadata?.password_set === true;
       if (!passwordSet && !isSetPassword && !isAuthCallback && !isAuthConfirm) {
         const redirectUrl = request.nextUrl.clone();
         redirectUrl.pathname = "/auth/set-password";
