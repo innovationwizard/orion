@@ -46,11 +46,15 @@ export async function POST(request: Request) {
   // flow=invite ensures callback always redirects to set-password (role metadata may not be set yet)
   const callbackUrl = `${siteUrl}/auth/callback?flow=invite`;
 
-  // If already has a user_id, update email + generate magic link
+  // If already has a user_id, update email + ensure app_metadata role + generate magic link
   if (sp.user_id) {
     const { error: updateErr } = await supabaseAdmin.auth.admin.updateUserById(
       sp.user_id,
-      { email },
+      {
+        email,
+        app_metadata: { role: "ventas" },
+        user_metadata: { role: "ventas" },
+      },
     );
     if (updateErr) {
       return jsonError(500, "Error al actualizar usuario", updateErr.message);
@@ -96,8 +100,9 @@ export async function POST(request: Request) {
       return jsonError(500, "Error al generar invitación", inviteErr.message);
     }
 
-    // Ensure role metadata is set
+    // Ensure role metadata is set in BOTH app_metadata (JWT) and user_metadata
     await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
+      app_metadata: { role: "ventas" },
       user_metadata: { ...existingUser.user_metadata, role: "ventas" },
     });
 
@@ -130,8 +135,12 @@ export async function POST(request: Request) {
   const userId = linkData?.user?.id ?? null;
   const actionLink = linkData?.properties?.action_link ?? null;
 
-  // Link auth user to salesperson
+  // Link auth user to salesperson + set app_metadata role (generateLink data option only sets user_metadata)
   if (userId) {
+    await supabaseAdmin.auth.admin.updateUserById(userId, {
+      app_metadata: { role: "ventas" },
+    });
+
     const { error: dbLinkErr } = await supabaseAdmin
       .from("salespeople")
       .update({ user_id: userId, email })
