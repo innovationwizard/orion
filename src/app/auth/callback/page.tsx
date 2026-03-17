@@ -9,6 +9,15 @@ import { supabaseBrowser } from "@/lib/supabase-browser";
  * - Hash (#access_token=...): invite flow, setSession and redirect.
  * - Query (?code=...): PKCE flow, exchangeCodeForSession and redirect.
  */
+async function needsPasswordSetup(): Promise<boolean> {
+  const { data: { user } } = await supabaseBrowser.auth.getUser();
+  if (!user) return false;
+  const role =
+    (user.app_metadata?.role as string | undefined) ??
+    (user.user_metadata?.role as string | undefined);
+  return role === "ventas" && user.user_metadata?.password_set !== true;
+}
+
 export default function AuthCallbackPage() {
   const router = useRouter();
   const [status, setStatus] = useState<"loading" | "done" | "error">("loading");
@@ -32,6 +41,11 @@ export default function AuthCallbackPage() {
           setStatus("error");
           return;
         }
+        // Check if user needs to set password
+        if (await needsPasswordSetup()) {
+          router.replace("/auth/set-password");
+          return;
+        }
         router.replace(next);
         return;
       }
@@ -41,7 +55,6 @@ export default function AuthCallbackPage() {
         const params = new URLSearchParams(hash.replace(/^#/, ""));
         const access_token = params.get("access_token");
         const refresh_token = params.get("refresh_token");
-        const type = params.get("type");
         if (access_token && refresh_token) {
           const { error } = await supabaseBrowser.auth.setSession({
             access_token,
@@ -52,8 +65,8 @@ export default function AuthCallbackPage() {
             setStatus("error");
             return;
           }
-          // Invite flow: user needs to set a password first
-          if (type === "invite") {
+          // Check if user needs to set password (works for both invite and magiclink)
+          if (await needsPasswordSetup()) {
             router.replace("/auth/set-password");
             return;
           }
