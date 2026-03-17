@@ -63,6 +63,11 @@ export type Sale = {
   deed_signed_date: string | null;
   bank_disbursement_date: string | null;
   created_at: string;
+  // 033: ejecutivo rate stored on the sale (Stripe Ledger pattern)
+  ejecutivo_rate: number | null;
+  ejecutivo_rate_confirmed: boolean;
+  ejecutivo_rate_confirmed_at: string | null;
+  ejecutivo_rate_confirmed_by: string | null;
 };
 
 export type Payment = {

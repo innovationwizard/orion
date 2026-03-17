@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireRole } from "@/lib/auth";
+import { requireSalesperson, isSalespersonFailure } from "@/lib/reservas/require-salesperson";
 import { jsonOk, jsonError } from "@/lib/api";
 
 const SIGNED_URL_EXPIRY = 3600; // 1 hour
@@ -47,8 +48,18 @@ export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  // Dual-auth: admin OR salesperson with ownership check
+  let isAdmin = true;
+  let salespersonId: string | null = null;
+
   const auth = await requireRole(["master", "torredecontrol"]);
-  if ("response" in auth) return auth.response;
+  if ("response" in auth) {
+    // Not admin — try salesperson auth
+    isAdmin = false;
+    const spAuth = await requireSalesperson();
+    if (isSalespersonFailure(spAuth)) return spAuth.response;
+    salespersonId = spAuth.salesperson.id;
+  }
 
   const { id } = await params;
   const supabase = createAdminClient();
@@ -66,6 +77,11 @@ export async function GET(
 
   if (!reservation) {
     return jsonError(404, "Reserva no encontrada");
+  }
+
+  // If salesperson, verify ownership
+  if (!isAdmin && reservation.salesperson_id !== salespersonId) {
+    return jsonError(403, "No tienes acceso a esta reserva");
   }
 
   const [clientsResult, extractionsResult, unitResult, salespersonResult, auditResult] =
@@ -101,6 +117,45 @@ export async function GET(
   // Generate signed URLs for private storage images (buckets are auth-only)
   const signedUrls = await generateSignedUrls(supabase, reservation);
 
+  // 033: Fetch ejecutivo rate data from the analytics sale (rv_units → units → sales)
+  let saleRateData: {
+    sale_id: string;
+    ejecutivo_rate: number | null;
+    ejecutivo_rate_confirmed: boolean;
+    ejecutivo_rate_confirmed_at: string | null;
+    ejecutivo_rate_confirmed_by: string | null;
+  } | null = null;
+
+  const rvUnit = unitResult.data;
+  if (rvUnit?.project_id && rvUnit?.unit_number) {
+    // Find the analytics unit matching this rv_unit by project + unit_number
+    const { data: analyticsUnit } = await supabase
+      .from("units")
+      .select("id")
+      .eq("project_id", rvUnit.project_id)
+      .eq("unit_number", rvUnit.unit_number)
+      .maybeSingle();
+
+    if (analyticsUnit) {
+      const { data: sale } = await supabase
+        .from("sales")
+        .select("id, ejecutivo_rate, ejecutivo_rate_confirmed, ejecutivo_rate_confirmed_at, ejecutivo_rate_confirmed_by")
+        .eq("unit_id", analyticsUnit.id)
+        .eq("status", "active")
+        .maybeSingle();
+
+      if (sale) {
+        saleRateData = {
+          sale_id: sale.id,
+          ejecutivo_rate: sale.ejecutivo_rate,
+          ejecutivo_rate_confirmed: sale.ejecutivo_rate_confirmed,
+          ejecutivo_rate_confirmed_at: sale.ejecutivo_rate_confirmed_at,
+          ejecutivo_rate_confirmed_by: sale.ejecutivo_rate_confirmed_by,
+        };
+      }
+    }
+  }
+
   return jsonOk({
     reservation: {
       ...reservation,
@@ -111,7 +166,8 @@ export async function GET(
     clients: clientsResult.data ?? [],
     extractions: extractionsResult.data ?? [],
     unit: unitResult.data,
-    salesperson: salespersonResult.data,
+    salesperson: isAdmin ? salespersonResult.data : null,
     audit_log: auditResult.data ?? [],
+    sale_rate: isAdmin ? saleRateData : null,
   });
 }

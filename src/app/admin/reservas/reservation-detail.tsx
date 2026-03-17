@@ -31,6 +31,14 @@ type ClientLink = {
   rv_clients: { id: string; full_name: string; phone: string | null; email: string | null; dpi: string | null } | null;
 };
 
+type SaleRateData = {
+  sale_id: string;
+  ejecutivo_rate: number | null;
+  ejecutivo_rate_confirmed: boolean;
+  ejecutivo_rate_confirmed_at: string | null;
+  ejecutivo_rate_confirmed_by: string | null;
+};
+
 type DetailData = {
   reservation: Reservation;
   clients: ClientLink[];
@@ -38,11 +46,13 @@ type DetailData = {
   unit: UnitFull | null;
   salesperson: Pick<Salesperson, "id" | "full_name" | "display_name" | "phone" | "email"> | null;
   audit_log: UnitStatusLog[];
+  sale_rate: SaleRateData | null;
 };
 
 type Props = {
   reservationId: string;
   adminUserId: string;
+  userRole: string | null;
   onClose: () => void;
   onActionComplete: () => void;
 };
@@ -52,6 +62,7 @@ type ActionType = "confirm" | "reject" | "desist" | null;
 export default function ReservationDetail({
   reservationId,
   adminUserId,
+  userRole,
   onClose,
   onActionComplete,
 }: Props) {
@@ -63,6 +74,9 @@ export default function ReservationDetail({
   const [clientForm, setClientForm] = useState({ full_name: "", phone: "", email: "", dpi: "" });
   const [clientSaving, setClientSaving] = useState(false);
   const [clientMsg, setClientMsg] = useState<string | null>(null);
+  const [rateInput, setRateInput] = useState("");
+  const [rateSaving, setRateSaving] = useState(false);
+  const [rateMsg, setRateMsg] = useState<string | null>(null);
 
   const sortedClients = data?.clients.slice().sort((a, b) => a.document_order - b.document_order) ?? [];
   const editingClientLink = sortedClients.find((c) => c.client_id === editingClientId);
@@ -122,6 +136,46 @@ export default function ReservationDetail({
     }
   }, [editingClientLink, clientForm, data]);
 
+  const confirmRate = useCallback(async () => {
+    const saleRate = data?.sale_rate;
+    if (!saleRate) return;
+    const pct = parseFloat(rateInput);
+    if (isNaN(pct) || pct < 0 || pct > 5) {
+      setRateMsg("Tasa inválida (0–5%)");
+      return;
+    }
+    setRateSaving(true);
+    setRateMsg(null);
+    try {
+      const res = await fetch(`/api/reservas/admin/sales/${saleRate.sale_id}/ejecutivo-rate`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ejecutivo_rate: pct / 100 }),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error ?? `HTTP ${res.status}`);
+      // Update local state
+      if (data) {
+        setData({
+          ...data,
+          sale_rate: {
+            ...saleRate,
+            ejecutivo_rate: result.ejecutivo_rate,
+            ejecutivo_rate_confirmed: result.ejecutivo_rate_confirmed,
+            ejecutivo_rate_confirmed_at: new Date().toISOString(),
+            ejecutivo_rate_confirmed_by: adminUserId,
+          },
+        });
+      }
+      setRateMsg("Confirmada");
+      onActionComplete();
+    } catch (e) {
+      setRateMsg(e instanceof Error ? e.message : "Error");
+    } finally {
+      setRateSaving(false);
+    }
+  }, [data, rateInput, adminUserId, onActionComplete]);
+
   useEffect(() => {
     setLoading(true);
     setError(null);
@@ -134,6 +188,14 @@ export default function ReservationDetail({
       .catch((e: Error) => setError(e.message))
       .finally(() => setLoading(false));
   }, [reservationId]);
+
+  // Initialize rate input when data loads
+  useEffect(() => {
+    if (data?.sale_rate?.ejecutivo_rate != null) {
+      setRateInput(String(+(data.sale_rate.ejecutivo_rate * 100).toFixed(4)));
+    }
+    setRateMsg(null);
+  }, [data?.sale_rate?.ejecutivo_rate]);
 
   async function handleAction(endpoint: string, body: Record<string, unknown>) {
     const res = await fetch(
@@ -324,6 +386,56 @@ export default function ReservationDetail({
                   <Row label="Nombre" value={data.salesperson.display_name} />
                   {data.salesperson.phone && <Row label="Tel." value={data.salesperson.phone} />}
                 </Section>
+              )}
+
+              {/* Tasa EV (033) */}
+              {data.sale_rate && data.sale_rate.ejecutivo_rate != null && (
+                <div className="grid gap-2">
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted">Tasa EV</h4>
+                  <div className="grid grid-cols-2 gap-1.5 text-sm">
+                    <Row
+                      label="Tasa"
+                      value={`${+(data.sale_rate.ejecutivo_rate * 100).toFixed(4)}%`}
+                    />
+                    <span className="text-muted">Estado</span>
+                    <span className={`font-medium ${data.sale_rate.ejecutivo_rate_confirmed ? "text-success" : "text-warning"}`}>
+                      {data.sale_rate.ejecutivo_rate_confirmed ? "Confirmada" : "Pendiente"}
+                    </span>
+                    {data.sale_rate.ejecutivo_rate_confirmed && data.sale_rate.ejecutivo_rate_confirmed_at && (
+                      <Row label="Confirmada" value={formatDate(data.sale_rate.ejecutivo_rate_confirmed_at)} />
+                    )}
+                  </div>
+                  {userRole === "master" && (
+                    <div className="grid gap-1.5 mt-1">
+                      <label className="grid gap-0.5">
+                        <span className="text-xs text-muted">Tasa ejecutivo (%)</span>
+                        <input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          max="5"
+                          className="px-2 py-1.5 rounded-lg border border-border bg-card text-text-primary text-xs w-full tabular-nums"
+                          value={rateInput}
+                          onChange={(e) => { setRateInput(e.target.value); setRateMsg(null); }}
+                          placeholder="Ej: 1.25"
+                        />
+                      </label>
+                      <button
+                        type="button"
+                        className="w-full py-1.5 rounded-lg bg-primary text-white text-xs font-medium hover:bg-primary/90 transition-colors disabled:opacity-40"
+                        onClick={confirmRate}
+                        disabled={rateSaving || !rateInput}
+                      >
+                        {rateSaving ? "Confirmando..." : "Confirmar tasa"}
+                      </button>
+                      {rateMsg && (
+                        <span className={`text-xs ${rateMsg === "Confirmada" ? "text-success" : "text-danger"}`}>
+                          {rateMsg}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
               )}
 
               {/* Deposit */}

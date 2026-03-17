@@ -276,6 +276,9 @@ export interface ReservationPending {
   client_phone: string | null;
   // 030: M:N buyer support
   client_count: number;
+  // 033: ejecutivo rate + confirmation status
+  ejecutivo_rate: number | null;
+  ejecutivo_rate_confirmed: boolean;
 }
 
 export interface ProjectWithTowers {
@@ -560,4 +563,22 @@ export interface DpiExtractionResult {
   full_name: string | null;
   birth_date: string | null;
   confidence: ExtractionConfidence;
+}
+
+// ---------------------------------------------------------------------------
+// Management role assignments (commission_gerencia_assignments)
+// ---------------------------------------------------------------------------
+
+export interface ManagementRoleAssignment {
+  id: string;
+  project_id: string;
+  role: string;
+  recipient_id: string;
+  recipient_name: string;
+  rate: number;
+  start_date: string;
+  end_date: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
 }

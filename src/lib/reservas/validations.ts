@@ -155,6 +155,35 @@ export const updateSettingsSchema = z.object({
   auto_approval_enabled: z.boolean(),
 });
 
+// ---------------------------------------------------------------------------
+// Ejecutivo rate — master confirms rate on a sale (033)
+// ---------------------------------------------------------------------------
+
+export const ejecutivoRateSchema = z.object({
+  ejecutivo_rate: z.number().min(0, "Tasa no puede ser negativa").max(0.05, "Tasa máxima: 5%"),
+});
+
+// ---------------------------------------------------------------------------
+// Management role assignments — master manages GC/Supervisor (034)
+// ---------------------------------------------------------------------------
+
+export const createManagementRoleSchema = z.object({
+  project_id: z.string().uuid("ID de proyecto inválido"),
+  role: z.enum(["gerencia_comercial", "supervisor_comercial"], {
+    errorMap: () => ({ message: "Rol debe ser gerencia_comercial o supervisor_comercial" }),
+  }),
+  recipient_id: z.string().min(1, "ID de destinatario requerido"),
+  recipient_name: z.string().min(1, "Nombre de destinatario requerido"),
+  rate: z.number().min(0, "Tasa no puede ser negativa").max(0.05, "Tasa máxima: 5%"),
+  start_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Formato: YYYY-MM-DD"),
+  end_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Formato: YYYY-MM-DD").nullable().default(null),
+  notes: z.string().nullable().default(null),
+});
+
+export const endManagementRoleSchema = z.object({
+  end_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Formato: YYYY-MM-DD"),
+});
+
 export const upsertClientProfileSchema = z.object({
   gender: z.enum(["M", "F", "Otro"]).nullable().default(null),
   birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().default(null),

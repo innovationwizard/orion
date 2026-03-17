@@ -25,6 +25,7 @@ export default function ReservasAdminClient() {
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [adminUserId, setAdminUserId] = useState<string>("");
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   // Auto-approval toggle state
   const [autoApproval, setAutoApproval] = useState<boolean | null>(null);
@@ -36,7 +37,10 @@ export default function ReservasAdminClient() {
     fetch("/api/auth/session")
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
-        if (d?.user?.id) setAdminUserId(d.user.id);
+        if (d?.user?.id) {
+          setAdminUserId(d.user.id);
+          setUserRole(d.user.role ?? null);
+        }
       })
       .catch(() => {});
   }, []);
@@ -186,6 +190,7 @@ export default function ReservasAdminClient() {
         <ReservationDetail
           reservationId={selectedId}
           adminUserId={adminUserId}
+          userRole={userRole}
           onClose={() => setSelectedId(null)}
           onActionComplete={() => {
             setSelectedId(null);

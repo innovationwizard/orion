@@ -18,7 +18,14 @@
     }
   },
   "recipients": {
-    "management": [
+    "management_always_paid": [
+      {
+        "id": "puerta_abierta",
+        "name": "Puerta Abierta",
+        "rate": 0.025,
+        "always_paid": true,
+        "description": "Company utility share — paid on every sale"
+      },
       {
         "id": "otto_herrera",
         "name": "Otto Herrera",
@@ -26,46 +33,42 @@
         "always_paid": true
       },
       {
-        "id": "alek_hernandez",
-        "name": "Alek Hernández",
-        "rate": 0.003,
-        "always_paid": true
-      },
-      {
         "id": "ahorro_comercial",
         "name": "Ahorro G. Comercial",
         "rate": 0.002,
         "always_paid": true
-      },
-      {
-        "id": "antonio_rada",
-        "name": "Supervisor / Antonio R.",
-        "rate": 0.0025,
-        "always_paid": true
       }
     ],
-    "sales_reps": [
-      {
-        "id": "05",
-        "name": "Sales Rep 05",
-        "rate": 0.009
-      },
-      {
-        "id": "06",
-        "name": "Sales Rep 06",
-        "rate": 0.019
-      },
-      {
-        "id": "35",
-        "name": "Sales Rep 35",
-        "rate": 0.01
-      },
-      {
-        "id": "GV1",
-        "name": "Sales Rep GV1",
-        "rate": 0.01
+    "management_conditional": {
+      "description": "GC and Supervisor resolved from commission_gerencia_assignments (temporal, per-project). Uses sale_date to determine which holder was active when the sale was made.",
+      "source": "commission_gerencia_assignments",
+      "managed_via": "/admin/roles",
+      "roles": {
+        "gerencia_comercial": {
+          "description": "Gerencia Comercial — conditional on sale_date",
+          "timeline": [
+            { "holder": "ronaldo_ogaldez", "rate": 0.005, "period": "start → 2025-07-04" },
+            { "holder": "alek_hernandez", "rate": 0.003, "period": "2025-07-07 → 2026-03-16" },
+            { "holder": "antonio_rada", "rate": 0.003, "period": "2026-03-16 → ongoing" }
+          ]
+        },
+        "supervisor_comercial": {
+          "description": "Supervisor Comercial — conditional on sale_date",
+          "timeline": [
+            { "holder": "(none)", "rate": 0, "period": "start → 2025-07-06" },
+            { "holder": "antonio_rada", "rate": 0.0025, "period": "2025-07-07 → 2026-03-16" },
+            { "holder": "job_jimenez", "rate": 0.0025, "period": "2026-03-16 → ongoing" }
+          ]
+        }
       }
-    ],
+    },
+    "ejecutivo": {
+      "description": "Rate stored on sales.ejecutivo_rate (per-unit, confirmed by CFO). Not looked up from commission_rates.",
+      "source": "sales.ejecutivo_rate",
+      "confirmed_by": "master role via /api/reservas/admin/sales/[id]/ejecutivo-rate",
+      "backfill_model": "Policy-period escalation: 1.00% below threshold, 1.25% at/above threshold",
+      "note": "Replaces legacy sales_reps array which was never populated in commission_rates"
+    },
     "special": {
       "referral": {
         "name": "Referral Bonus",
@@ -75,8 +78,10 @@
       "ahorro": {
         "id": "ahorro",
         "name": "Ahorro",
-        "rate": 0.0035,
-        "always_paid": true
+        "formula": "residual: 5.00% - sum(all other rates)",
+        "description": "Absorbs remaining commission pool. Variable per sale. Computed in calculate_commissions() Section 4.",
+        "always_paid": false,
+        "note": "Migration 035: changed from fixed 0.35% to dynamic residual"
       },
       "ahorro_por_retiro": {
         "id": "ahorro_por_retiro",
@@ -84,13 +89,8 @@
         "rate": 0,
         "always_paid": false,
         "condition": "commission paid to sales rep AFTER sales_rep.contract_end_date → redirect here"
-      },
-      "walk_in": {
-        "name": "Puerta Abierta",
-        "rate": 0.025,
-        "condition": "sales_rep_id IS NULL OR sales_rep_id = 'walk_in'"
       }
     }
   },
-  "total_rate": 0.055
+  "total_rate": 0.05
 }

@@ -1,7 +1,7 @@
 /// Service Worker for /reservar PWA
-const CACHE_NAME = "reservar-v2";
+const CACHE_NAME = "reservar-v3";
 
-const PRECACHE_URLS = ["/reservar"];
+const PRECACHE_URLS = ["/reservar", "/ventas/portal"];
 
 // Install: pre-cache the app shell
 self.addEventListener("install", (event) => {
