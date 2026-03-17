@@ -46,7 +46,22 @@ export async function middleware(request: NextRequest) {
     }
   });
 
+  // getUser() may refresh tokens and write new cookies to `response`.
+  // Any redirect we return must carry those cookies forward.
   const { data } = await supabase.auth.getUser();
+
+  /** Create a redirect that preserves any cookies set during getUser() (token refresh). */
+  function redirectTo(pathname: string): NextResponse {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname;
+    const redir = NextResponse.redirect(url);
+    // Copy cookies from the response (may include refreshed auth tokens)
+    for (const cookie of response.cookies.getAll()) {
+      redir.cookies.set(cookie);
+    }
+    return redir;
+  }
+
   const pathname = request.nextUrl.pathname;
   const isLoginRoute = pathname.startsWith("/login");
   const isAuthCallback = pathname === "/auth/callback";
@@ -61,15 +76,11 @@ export async function middleware(request: NextRequest) {
 
   // Allow /auth/callback so invite/magic-link can land and client can set session from hash
   if (!data.user && !isLoginRoute && !isAuthCallback && !isAuthConfirm && !isSetPassword && !isPublicReservasPage) {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = "/login";
-    return NextResponse.redirect(redirectUrl);
+    return redirectTo("/login");
   }
 
   if (data.user && isLoginRoute) {
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = "/";
-    return NextResponse.redirect(redirectUrl);
+    return redirectTo("/");
   }
 
   // Role-based routing: restrict ventas users to their allowed pages
@@ -83,9 +94,7 @@ export async function middleware(request: NextRequest) {
         data.user.app_metadata?.password_set === true ||
         data.user.user_metadata?.password_set === true;
       if (!passwordSet && !isSetPassword && !isAuthCallback && !isAuthConfirm) {
-        const redirectUrl = request.nextUrl.clone();
-        redirectUrl.pathname = "/auth/set-password";
-        return NextResponse.redirect(redirectUrl);
+        return redirectTo("/auth/set-password");
       }
 
       // Restrict to allowed pages
@@ -99,9 +108,7 @@ export async function middleware(request: NextRequest) {
       ];
       const isAllowed = allowedPrefixes.some((prefix) => pathname.startsWith(prefix));
       if (!isAllowed) {
-        const redirectUrl = request.nextUrl.clone();
-        redirectUrl.pathname = "/ventas/dashboard";
-        return NextResponse.redirect(redirectUrl);
+        return redirectTo("/ventas/dashboard");
       }
     }
   }
