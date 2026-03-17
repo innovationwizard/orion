@@ -43,6 +43,9 @@ export async function POST(request: Request) {
     return jsonError(500, "NEXT_PUBLIC_SITE_URL debe estar definido");
   }
 
+  // flow=invite ensures callback always redirects to set-password (role metadata may not be set yet)
+  const callbackUrl = `${siteUrl}/auth/callback?flow=invite`;
+
   // If already has a user_id, update email + generate magic link
   if (sp.user_id) {
     const { error: updateErr } = await supabaseAdmin.auth.admin.updateUserById(
@@ -56,7 +59,7 @@ export async function POST(request: Request) {
     const { data: linkData, error: linkErr } = await supabaseAdmin.auth.admin.generateLink({
       type: "magiclink",
       email,
-      options: { redirectTo: `${siteUrl}/auth/callback` },
+      options: { redirectTo: callbackUrl },
     });
     if (linkErr) {
       return jsonError(500, "Error al generar enlace", linkErr.message);
@@ -77,7 +80,7 @@ export async function POST(request: Request) {
     type: "invite",
     email,
     options: {
-      redirectTo: `${siteUrl}/auth/callback`,
+      redirectTo: callbackUrl,
       data: { role: "ventas" },
     },
   });
@@ -113,7 +116,7 @@ export async function POST(request: Request) {
     const { data: mlData, error: mlErr } = await supabaseAdmin.auth.admin.generateLink({
       type: "magiclink",
       email,
-      options: { redirectTo: `${siteUrl}/auth/callback` },
+      options: { redirectTo: callbackUrl },
     });
 
     if (mlErr) {

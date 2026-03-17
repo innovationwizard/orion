@@ -42,7 +42,7 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-  const redirectTo = `${siteUrl}/auth/callback`;
+  const redirectTo = `${siteUrl}/auth/callback?flow=invite`;
 
   const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(
     parsed.data.email,

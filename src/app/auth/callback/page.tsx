@@ -31,6 +31,13 @@ export default function AuthCallbackPage() {
       const next = typeof window !== "undefined"
         ? new URLSearchParams(window.location.search).get("next") ?? "/"
         : "/";
+      const flowInvite = typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("flow") === "invite"
+        : false;
+
+      const redirectToSetPassword = (withFlow = false) => {
+        router.replace(withFlow ? "/auth/set-password?flow=invite" : "/auth/set-password");
+      };
 
       // PKCE: ?code=...
       const code = new URLSearchParams(search).get("code");
@@ -41,9 +48,13 @@ export default function AuthCallbackPage() {
           setStatus("error");
           return;
         }
-        // Check if user needs to set password
+        // flow=invite: always require password (role metadata may not be set yet)
+        if (flowInvite) {
+          redirectToSetPassword(true);
+          return;
+        }
         if (await needsPasswordSetup()) {
-          router.replace("/auth/set-password");
+          redirectToSetPassword();
           return;
         }
         router.replace(next);
@@ -65,9 +76,13 @@ export default function AuthCallbackPage() {
             setStatus("error");
             return;
           }
-          // Check if user needs to set password (works for both invite and magiclink)
+          // flow=invite: always require password (role metadata may not be set yet)
+          if (flowInvite) {
+            redirectToSetPassword(true);
+            return;
+          }
           if (await needsPasswordSetup()) {
-            router.replace("/auth/set-password");
+            redirectToSetPassword();
             return;
           }
           router.replace(next);

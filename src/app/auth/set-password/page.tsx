@@ -1,15 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase-browser";
 
 export default function SetPasswordPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const isInviteFlow = searchParams.get("flow") === "invite";
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -27,9 +30,15 @@ export default function SetPasswordPage() {
 
     setIsLoading(true);
 
+    // flow=invite: ensure role is set (metadata may not have been applied by Supabase)
+    const userData: { password_set: boolean; role?: string } = { password_set: true };
+    if (isInviteFlow) {
+      userData.role = "ventas";
+    }
+
     const { error: updateError } = await supabaseBrowser.auth.updateUser({
       password,
-      data: { password_set: true },
+      data: userData,
     });
 
     if (updateError) {
