@@ -43,8 +43,16 @@ export async function POST(request: Request) {
     return jsonError(500, "NEXT_PUBLIC_SITE_URL debe estar definido");
   }
 
-  // flow=invite ensures callback always redirects to set-password (role metadata may not be set yet)
-  const callbackUrl = `${siteUrl}/auth/callback?flow=invite`;
+  // Build a URL to our own /auth/confirm route (server-side token verification).
+  // This bypasses Supabase's hosted /auth/v1/verify redirect which causes client-side
+  // race conditions (the Supabase JS client auto-consumes hash tokens before React renders).
+  function buildConfirmUrl(hashedToken: string, type: string): string {
+    const url = new URL(`${siteUrl}/auth/confirm`);
+    url.searchParams.set("token_hash", hashedToken);
+    url.searchParams.set("type", type);
+    url.searchParams.set("flow", "invite");
+    return url.toString();
+  }
 
   // If already has a user_id, update email + ensure app_metadata role + generate magic link
   if (sp.user_id) {
@@ -63,7 +71,6 @@ export async function POST(request: Request) {
     const { data: linkData, error: linkErr } = await supabaseAdmin.auth.admin.generateLink({
       type: "magiclink",
       email,
-      options: { redirectTo: callbackUrl },
     });
     if (linkErr) {
       return jsonError(500, "Error al generar enlace", linkErr.message);
@@ -75,8 +82,9 @@ export async function POST(request: Request) {
       .update({ email })
       .eq("id", salesperson_id);
 
-    const actionLink = linkData?.properties?.action_link ?? null;
-    return jsonOk({ user_id: sp.user_id, email, resent: true, invite_url: actionLink });
+    const hashedToken = linkData?.properties?.hashed_token ?? null;
+    const inviteUrl = hashedToken ? buildConfirmUrl(hashedToken, "magiclink") : null;
+    return jsonOk({ user_id: sp.user_id, email, resent: true, invite_url: inviteUrl });
   }
 
   // New invite — generateLink creates the auth user without sending email
@@ -84,7 +92,6 @@ export async function POST(request: Request) {
     type: "invite",
     email,
     options: {
-      redirectTo: callbackUrl,
       data: { role: "ventas" },
     },
   });
@@ -121,19 +128,18 @@ export async function POST(request: Request) {
     const { data: mlData, error: mlErr } = await supabaseAdmin.auth.admin.generateLink({
       type: "magiclink",
       email,
-      options: { redirectTo: callbackUrl },
     });
 
     if (mlErr) {
       return jsonError(500, "Usuario vinculado pero error al generar enlace", mlErr.message);
     }
 
-    const fallbackLink = mlData?.properties?.action_link ?? null;
-    return jsonOk({ user_id: existingUser.id, email, resent: false, invite_url: fallbackLink });
+    const hashedToken = mlData?.properties?.hashed_token ?? null;
+    const inviteUrl = hashedToken ? buildConfirmUrl(hashedToken, "magiclink") : null;
+    return jsonOk({ user_id: existingUser.id, email, resent: false, invite_url: inviteUrl });
   }
 
   const userId = linkData?.user?.id ?? null;
-  const actionLink = linkData?.properties?.action_link ?? null;
 
   // Link auth user to salesperson + set app_metadata role (generateLink data option only sets user_metadata)
   if (userId) {
@@ -152,5 +158,7 @@ export async function POST(request: Request) {
     }
   }
 
-  return jsonOk({ user_id: userId, email, resent: false, invite_url: actionLink });
+  const hashedToken = linkData?.properties?.hashed_token ?? null;
+  const inviteUrl = hashedToken ? buildConfirmUrl(hashedToken, "invite") : null;
+  return jsonOk({ user_id: userId, email, resent: false, invite_url: inviteUrl });
 }
