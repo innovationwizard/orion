@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { Metadata, Viewport } from "next";
+import { AuthHashRedirect } from "@/components/auth-hash-redirect";
 import "./globals.css";
 
 const siteUrl =
@@ -66,6 +67,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="es-419">
       <body>
+        <AuthHashRedirect />
         <main className="p-[clamp(16px,4vw,32px)] grid gap-[clamp(16px,3vw,28px)]">
           {children}
         </main>

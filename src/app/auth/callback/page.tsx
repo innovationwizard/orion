@@ -90,6 +90,14 @@ export default function AuthCallbackPage() {
         }
       }
 
+      // No code/hash: session may have been set elsewhere (e.g. Supabase auto-consumed hash).
+      // Still enforce set-password for ventas users.
+      const { data: { user } } = await supabaseBrowser.auth.getUser();
+      if (user && (await needsPasswordSetup())) {
+        redirectToSetPassword(flowInvite);
+        return;
+      }
+
       setStatus("done");
       router.replace("/");
     }
