@@ -224,23 +224,35 @@ function DetailPanel({
   const [email, setEmail] = useState(sp.email ?? "");
   const [inviting, setInviting] = useState(false);
   const [inviteMsg, setInviteMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
+  const [inviteUrl, setInviteUrl] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const [selectedProjects, setSelectedProjects] = useState<string[]>(sp.project_ids);
   const [savingProjects, setSavingProjects] = useState(false);
   const [projectMsg, setProjectMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
 
-  // Reset when salesperson changes
+  // Reset everything when switching to a different salesperson
   useEffect(() => {
     setEmail(sp.email ?? "");
     setSelectedProjects(sp.project_ids);
     setInviteMsg(null);
+    setInviteUrl(null);
+    setCopied(false);
     setProjectMsg(null);
-  }, [sp.id, sp.email, sp.project_ids]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sp.id]);
+
+  // Sync form values when data refreshes (but preserve invite state)
+  useEffect(() => {
+    setSelectedProjects(sp.project_ids);
+  }, [sp.project_ids]);
 
   const handleInvite = async () => {
     if (!email.trim()) return;
     setInviting(true);
     setInviteMsg(null);
+    setInviteUrl(null);
+    setCopied(false);
     try {
       const res = await fetch("/api/admin/salespeople/invite", {
         method: "POST",
@@ -253,8 +265,13 @@ function DetailPanel({
       } else {
         setInviteMsg({
           type: "ok",
-          text: body.resent ? "Invitación reenviada" : "Invitación enviada",
+          text: body.resent
+            ? "Enlace de reingreso generado"
+            : "Enlace de invitación generado",
         });
+        if (body.invite_url) {
+          setInviteUrl(body.invite_url);
+        }
         onRefresh();
       }
     } catch (err) {
@@ -337,7 +354,7 @@ function DetailPanel({
           {/* Invite section */}
           <div className="grid gap-3">
             <h3 className="text-sm font-semibold text-text-primary">
-              {sp.auth_status === "none" ? "Invitar por email" : "Reenviar invitación"}
+              {sp.auth_status === "none" ? "Invitar asesor" : "Generar nuevo enlace"}
             </h3>
             <div className="flex gap-2">
               <input
@@ -353,7 +370,7 @@ function DetailPanel({
                 className="shrink-0 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary-hover transition-colors disabled:opacity-40"
                 onClick={handleInvite}
               >
-                {inviting ? "Enviando..." : sp.auth_status === "none" ? "Invitar" : "Reenviar"}
+                {inviting ? "Generando..." : sp.auth_status === "none" ? "Generar enlace" : "Nuevo enlace"}
               </button>
             </div>
             {inviteMsg && (
@@ -364,6 +381,37 @@ function DetailPanel({
               >
                 {inviteMsg.text}
               </p>
+            )}
+            {inviteUrl && (
+              <div className="grid gap-2">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    readOnly
+                    value={inviteUrl}
+                    className="flex-1 px-3 py-2 rounded-lg border border-border bg-gray-50 text-text-primary text-xs font-mono truncate"
+                    onClick={(e) => (e.target as HTMLInputElement).select()}
+                  />
+                  <button
+                    type="button"
+                    className={`shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      copied
+                        ? "bg-green-100 text-green-700"
+                        : "bg-primary text-white hover:bg-primary-hover"
+                    }`}
+                    onClick={async () => {
+                      await navigator.clipboard.writeText(inviteUrl);
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 3000);
+                    }}
+                  >
+                    {copied ? "Copiado" : "Copiar"}
+                  </button>
+                </div>
+                <p className="text-xs text-muted">
+                  Envía este enlace al asesor por WhatsApp para que active su cuenta.
+                </p>
+              </div>
             )}
           </div>
 

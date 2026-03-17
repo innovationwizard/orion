@@ -38,9 +38,13 @@ export async function POST(request: Request) {
     return jsonError(404, "Asesor no encontrado");
   }
 
-  // If already has a user_id, resend invite instead of creating new
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim()?.replace(/\/$/, "");
+  if (!siteUrl) {
+    return jsonError(500, "NEXT_PUBLIC_SITE_URL debe estar definido");
+  }
+
+  // If already has a user_id, update email + generate magic link
   if (sp.user_id) {
-    // Update email if different, then resend
     const { error: updateErr } = await supabaseAdmin.auth.admin.updateUserById(
       sp.user_id,
       { email },
@@ -49,18 +53,13 @@ export async function POST(request: Request) {
       return jsonError(500, "Error al actualizar usuario", updateErr.message);
     }
 
-    // Resend invite
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim()?.replace(/\/$/, "");
-    if (!siteUrl) {
-      return jsonError(500, "NEXT_PUBLIC_SITE_URL debe estar definido");
-    }
-
-    const { error: inviteErr } = await supabaseAdmin.auth.admin.inviteUserByEmail(
+    const { data: linkData, error: linkErr } = await supabaseAdmin.auth.admin.generateLink({
+      type: "magiclink",
       email,
-      { redirectTo: `${siteUrl}/auth/callback` },
-    );
-    if (inviteErr) {
-      return jsonError(500, "Error al reenviar invitación", inviteErr.message);
+      options: { redirectTo: `${siteUrl}/auth/callback` },
+    });
+    if (linkErr) {
+      return jsonError(500, "Error al generar enlace", linkErr.message);
     }
 
     // Update email on salespeople table
@@ -69,41 +68,39 @@ export async function POST(request: Request) {
       .update({ email })
       .eq("id", salesperson_id);
 
-    return jsonOk({ user_id: sp.user_id, email, resent: true });
+    const actionLink = linkData?.properties?.action_link ?? null;
+    return jsonOk({ user_id: sp.user_id, email, resent: true, invite_url: actionLink });
   }
 
-  // New invite
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim()?.replace(/\/$/, "");
-  if (!siteUrl) {
-    return jsonError(500, "NEXT_PUBLIC_SITE_URL debe estar definido");
-  }
-
-  const { data: inviteData, error: inviteErr } = await supabaseAdmin.auth.admin.inviteUserByEmail(
+  // New invite — generateLink creates the auth user without sending email
+  const { data: linkData, error: inviteErr } = await supabaseAdmin.auth.admin.generateLink({
+    type: "invite",
     email,
-    {
+    options: {
       redirectTo: `${siteUrl}/auth/callback`,
       data: { role: "ventas" },
     },
-  );
+  });
 
   if (inviteErr) {
-    return jsonError(500, "Error al enviar invitación", inviteErr.message);
+    return jsonError(500, "Error al generar invitación", inviteErr.message);
   }
 
-  const userId = inviteData.user?.id ?? null;
+  const userId = linkData?.user?.id ?? null;
+  const actionLink = linkData?.properties?.action_link ?? null;
 
   // Link auth user to salesperson
   if (userId) {
-    const { error: linkErr } = await supabaseAdmin
+    const { error: dbLinkErr } = await supabaseAdmin
       .from("salespeople")
       .update({ user_id: userId, email })
       .eq("id", salesperson_id);
 
-    if (linkErr) {
-      console.error("[POST /api/admin/salespeople/invite] link error", linkErr);
-      return jsonError(500, "Invitación enviada pero error al vincular cuenta", linkErr.message);
+    if (dbLinkErr) {
+      console.error("[POST /api/admin/salespeople/invite] link error", dbLinkErr);
+      return jsonError(500, "Enlace generado pero error al vincular cuenta", dbLinkErr.message);
     }
   }
 
-  return jsonOk({ user_id: userId, email, resent: false });
+  return jsonOk({ user_id: userId, email, resent: false, invite_url: actionLink });
 }
