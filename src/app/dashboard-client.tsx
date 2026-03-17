@@ -57,7 +57,7 @@ type PaymentComplianceResponse = {
 
 type CommissionAnalyticsResponse = {
   byRecipient: CommissionBarItem[];
-  summary: { total: number; paid: number; unpaid: number };
+  summary: { total: number; paid: number; unpaid: number; facturar: number; isrRetenido: number; pagar: number };
 };
 
 type CashFlowResponse = {
@@ -342,7 +342,7 @@ export default function DashboardClient() {
   const trendVariance = monthly.map((m) => m.actual - m.expected);
 
   const commissionRecipients = commissionData?.byRecipient ?? [];
-  const commissionSummary = commissionData?.summary ?? { total: 0, paid: 0, unpaid: 0 };
+  const commissionSummary = commissionData?.summary ?? { total: 0, paid: 0, unpaid: 0, facturar: 0, isrRetenido: 0, pagar: 0 };
 
   const cfSummary = cashFlowData?.summary ?? {
     totalExpected: 0,
@@ -707,6 +707,12 @@ export default function DashboardClient() {
               value={currency.format(commissionSummary.unpaid)}
               negative
             />
+          </section>
+
+          <section className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
+            <KpiCard label="Total a facturar" value={currency.format(commissionSummary.facturar)} />
+            <KpiCard label="ISR retenido (5%)" value={currency.format(commissionSummary.isrRetenido)} negative />
+            <KpiCard label="Total a pagar" value={currency.format(commissionSummary.pagar)} />
           </section>
 
           <section className="bg-card rounded-2xl p-4 shadow-card grid gap-2">

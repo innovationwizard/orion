@@ -385,13 +385,14 @@ Sales Reps (ejecutivo): Per-unit rate stored on `sales.ejecutivo_rate` *(migrati
 | **Impact** | **MEDIUM** — If the app marks `ahorro_comercial` commissions as "paid," it misrepresents the accounting reality. |
 | **Resolution** | Verify if `ahorro_comercial` rows exist in the `commissions` table and their `paid` status. Potentially redefine as accumulation-only. |
 
-### DIFF-08: ISR Retention — Not Modeled in App
+### DIFF-08: ISR Retention — Not Modeled in App --- RESOLVED (migration 036)
 
 | Aspect | SSOT | App |
 |--------|------|-----|
 | **Logic** | `Total a pagar = Total a facturar × 107/112` (5% ISR on pre-IVA amount) | No ISR logic whatsoever |
 | **Impact** | **MEDIUM** — The app shows commission amounts but cannot differentiate between "to invoice" and "to pay" amounts. Pati's payment instructions require this distinction. |
 | **Resolution** | Add ISR retention calculation to the commission display/export. This is a presentation-layer concern, not a calculation-layer change. |
+| **Status** | **RESOLVED** — Migration 036 added `isr_exempt` column to `commission_rates`. ISR utility (`src/lib/isr.ts`) computes facturar/isrRetenido/pagar from base commission. API returns ISR fields per recipient. Dashboard shows ISR KPI row + "Neto" amounts on commission bars. Exempt: puerta_abierta, ahorro, ahorro_comercial, ahorro_por_retiro. Configurable. |
 
 ### DIFF-09: Phase 2 Proportional Calculation
 
@@ -546,7 +547,7 @@ Based on audit findings, create a prioritized implementation plan:
 3. ~~**P1 (High):** Implement conditional Alek/Supervisor payment (DIFF-03/04)~~ **DONE** — migration 034
 4. **P1 (High):** Implement residual ahorro calculation (DIFF-05)
 5. ~~**P2 (Medium):** Support per-unit EV rate overrides (DIFF-06)~~ **DONE** — migration 033
-6. **P2 (Medium):** Add ISR retention display (DIFF-08)
+6. ~~**P2 (Medium):** Add ISR retention display (DIFF-08)~~ **DONE** — migration 036
 7. **P3 (Low):** Verify Phase 2 proportional math (DIFF-09)
 8. **P3 (Low):** Validate escalation trigger logic (DIFF-10)
 

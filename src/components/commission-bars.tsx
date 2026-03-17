@@ -12,6 +12,10 @@ export type CommissionBarItem = {
   paidAmount: number;
   unpaidAmount: number;
   percentPaid: number;
+  isrExempt?: boolean;
+  facturar?: number;
+  isrRetenido?: number;
+  pagar?: number;
 };
 
 type CommissionBarsProps = {
@@ -37,6 +41,7 @@ export default function CommissionBars({ data }: CommissionBarsProps) {
       {sorted.map((item) => {
         const paidPct = (item.paidAmount / maxTotal) * 100;
         const unpaidPct = (item.unpaidAmount / maxTotal) * 100;
+        const showNeto = !item.isrExempt && item.pagar != null && item.pagar !== item.totalAmount;
 
         return (
           <div key={item.recipientId} className="grid grid-cols-[160px_1fr_100px] items-center gap-3">
@@ -54,7 +59,12 @@ export default function CommissionBars({ data }: CommissionBarsProps) {
                 style={{ width: `${unpaidPct}%` }}
               />
             </div>
-            <span className="text-[13px] font-semibold text-right text-text-primary tabular-nums">{currency.format(item.totalAmount)}</span>
+            <div className="flex flex-col items-end gap-0">
+              <span className="text-[13px] font-semibold text-text-primary tabular-nums">{currency.format(item.totalAmount)}</span>
+              {showNeto && (
+                <span className="text-[10px] text-muted tabular-nums">Neto {currency.format(item.pagar!)}</span>
+              )}
+            </div>
           </div>
         );
       })}

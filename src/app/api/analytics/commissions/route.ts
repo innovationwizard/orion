@@ -3,6 +3,7 @@ import { getSupabaseConfigError, getSupabaseServerClient } from "@/lib/supabase"
 import { jsonError, jsonOk, parseQuery } from "@/lib/api";
 import { requireAuth } from "@/lib/auth";
 import { getFFExclusions } from "@/lib/ff-filter";
+import { computeISR } from "@/lib/isr";
 
 const analyticsQuerySchema = z.object({
   project_id: z.string().uuid().optional(),
@@ -25,6 +26,7 @@ type CommissionRow = {
 type CommissionRateRow = {
   recipient_id: string;
   recipient_type: string | null;
+  isr_exempt: boolean | null;
 };
 
 type RecipientType = "management" | "sales_rep" | "special";
@@ -54,17 +56,19 @@ export async function GET(request: Request) {
   try {
     const { data: rateRows, error: rateError } = await supabase
       .from("commission_rates")
-      .select("recipient_id, recipient_type");
+      .select("recipient_id, recipient_type, isr_exempt");
 
     if (rateError) {
       return jsonError(500, "Database error", rateError.message);
     }
 
     const rateTypeMap = new Map<string, RecipientType>();
+    const isrExemptMap = new Map<string, boolean>();
     (rateRows ?? []).forEach((row) => {
       const typed = row as CommissionRateRow;
       if (typed.recipient_id) {
         rateTypeMap.set(typed.recipient_id, normalizeRecipientType(typed.recipient_type));
+        isrExemptMap.set(typed.recipient_id, typed.isr_exempt === true);
       }
     });
 
@@ -154,6 +158,8 @@ export async function GET(request: Request) {
     const byRecipient = Array.from(grouped.values()).map((item) => {
       const unpaidAmount = Math.max(0, item.totalAmount - item.paidAmount);
       const percentPaid = item.totalAmount > 0 ? Math.round((item.paidAmount / item.totalAmount) * 100) : 0;
+      const isExempt = isrExemptMap.get(item.recipientId) ?? false;
+      const isr = computeISR(item.totalAmount, isExempt);
       return {
         recipientId: item.recipientId,
         recipientName: item.recipientName,
@@ -161,7 +167,11 @@ export async function GET(request: Request) {
         totalAmount: item.totalAmount,
         paidAmount: item.paidAmount,
         unpaidAmount,
-        percentPaid
+        percentPaid,
+        isrExempt: isExempt,
+        facturar: isr.facturar,
+        isrRetenido: isr.isrRetenido,
+        pagar: isr.pagar,
       };
     });
 
@@ -170,9 +180,12 @@ export async function GET(request: Request) {
         acc.total += item.totalAmount;
         acc.paid += item.paidAmount;
         acc.unpaid += item.unpaidAmount;
+        acc.facturar += item.facturar;
+        acc.isrRetenido += item.isrRetenido;
+        acc.pagar += item.pagar;
         return acc;
       },
-      { total: 0, paid: 0, unpaid: 0 }
+      { total: 0, paid: 0, unpaid: 0, facturar: 0, isrRetenido: 0, pagar: 0 }
     );
 
     return jsonOk({ byRecipient, summary });

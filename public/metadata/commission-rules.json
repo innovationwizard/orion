@@ -92,5 +92,13 @@
       }
     }
   },
-  "total_rate": 0.05
+  "total_rate": 0.05,
+  "isr": {
+    "formula": "Total a pagar = Total a facturar × 107/112",
+    "iva_rate": 0.12,
+    "isr_rate": 0.05,
+    "description": "5% ISR retention on pre-IVA amount. Applied to all recipients except company-internal accounts.",
+    "exempt_recipients_note": "Configurable via commission_rates.isr_exempt column. Defaults: puerta_abierta, ahorro, ahorro_comercial, ahorro_por_retiro.",
+    "migration": "036"
+  }
 }
