@@ -82,8 +82,46 @@ export async function POST(request: Request) {
     },
   });
 
+  // If invite fails (e.g. email already registered via Supabase GUI), find existing user and generate magic link
   if (inviteErr) {
-    return jsonError(500, "Error al generar invitación", inviteErr.message);
+    const { data: listData } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
+    const existingUser = listData?.users?.find(
+      (u) => u.email?.toLowerCase() === email.toLowerCase(),
+    );
+
+    if (!existingUser) {
+      return jsonError(500, "Error al generar invitación", inviteErr.message);
+    }
+
+    // Ensure role metadata is set
+    await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
+      user_metadata: { ...existingUser.user_metadata, role: "ventas" },
+    });
+
+    // Link existing auth user to salesperson
+    const { error: dbLinkErr } = await supabaseAdmin
+      .from("salespeople")
+      .update({ user_id: existingUser.id, email })
+      .eq("id", salesperson_id);
+
+    if (dbLinkErr) {
+      console.error("[POST /api/admin/salespeople/invite] link error", dbLinkErr);
+      return jsonError(500, "Error al vincular cuenta existente", dbLinkErr.message);
+    }
+
+    // Generate magic link for existing user
+    const { data: mlData, error: mlErr } = await supabaseAdmin.auth.admin.generateLink({
+      type: "magiclink",
+      email,
+      options: { redirectTo: `${siteUrl}/auth/callback` },
+    });
+
+    if (mlErr) {
+      return jsonError(500, "Usuario vinculado pero error al generar enlace", mlErr.message);
+    }
+
+    const fallbackLink = mlData?.properties?.action_link ?? null;
+    return jsonOk({ user_id: existingUser.id, email, resent: false, invite_url: fallbackLink });
   }
 
   const userId = linkData?.user?.id ?? null;

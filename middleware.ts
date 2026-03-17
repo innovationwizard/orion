@@ -80,6 +80,15 @@ export async function middleware(request: NextRequest) {
       null;
 
     if (role === "ventas") {
+      // Force password setup before any app access
+      const passwordSet = data.user.user_metadata?.password_set === true;
+      if (!passwordSet && !isSetPassword && !isAuthCallback && !isAuthConfirm) {
+        const redirectUrl = request.nextUrl.clone();
+        redirectUrl.pathname = "/auth/set-password";
+        return NextResponse.redirect(redirectUrl);
+      }
+
+      // Restrict to allowed pages
       const allowedPrefixes = [
         "/reservar",
         "/ventas",
