@@ -34,12 +34,15 @@ export default function AuthCallbackPage() {
       const flowInvite = typeof window !== "undefined"
         ? new URLSearchParams(window.location.search).get("flow") === "invite"
         : false;
+      const typeParam = typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("type") ?? new URLSearchParams(hash.replace(/^#/, "")).get("type")
+        : null;
 
       const redirectToSetPassword = (withFlow = false) => {
         router.replace(withFlow ? "/auth/set-password?flow=invite" : "/auth/set-password");
       };
 
-      // PKCE: ?code=...
+      // PKCE: ?code=...&type=invite|recovery
       const code = new URLSearchParams(search).get("code");
       if (code) {
         const { error } = await supabaseBrowser.auth.exchangeCodeForSession(code);
@@ -48,7 +51,10 @@ export default function AuthCallbackPage() {
           setStatus("error");
           return;
         }
-        // flow=invite: always require password (role metadata may not be set yet)
+        if (typeParam === "invite" || typeParam === "recovery") {
+          redirectToSetPassword(flowInvite);
+          return;
+        }
         if (flowInvite) {
           redirectToSetPassword(true);
           return;
@@ -61,7 +67,7 @@ export default function AuthCallbackPage() {
         return;
       }
 
-      // Invite / magic link: #access_token=...&refresh_token=...
+      // Invite / magic link: #access_token=...&refresh_token=...&type=invite|recovery
       if (hash) {
         const params = new URLSearchParams(hash.replace(/^#/, ""));
         const access_token = params.get("access_token");
@@ -74,6 +80,11 @@ export default function AuthCallbackPage() {
           if (!mounted) return;
           if (error) {
             setStatus("error");
+            return;
+          }
+          // type=invite or type=recovery: Supabase adds to query or hash; always require password
+          if (typeParam === "invite" || typeParam === "recovery") {
+            redirectToSetPassword(flowInvite);
             return;
           }
           // flow=invite: always require password (role metadata may not be set yet)
