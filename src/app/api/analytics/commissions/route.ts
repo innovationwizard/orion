@@ -27,6 +27,7 @@ type CommissionRateRow = {
   recipient_id: string;
   recipient_type: string | null;
   isr_exempt: boolean | null;
+  disbursable: boolean | null;
 };
 
 type RecipientType = "management" | "sales_rep" | "special";
@@ -56,7 +57,7 @@ export async function GET(request: Request) {
   try {
     const { data: rateRows, error: rateError } = await supabase
       .from("commission_rates")
-      .select("recipient_id, recipient_type, isr_exempt");
+      .select("recipient_id, recipient_type, isr_exempt, disbursable");
 
     if (rateError) {
       return jsonError(500, "Database error", rateError.message);
@@ -64,11 +65,13 @@ export async function GET(request: Request) {
 
     const rateTypeMap = new Map<string, RecipientType>();
     const isrExemptMap = new Map<string, boolean>();
+    const disbursableMap = new Map<string, boolean>();
     (rateRows ?? []).forEach((row) => {
       const typed = row as CommissionRateRow;
       if (typed.recipient_id) {
         rateTypeMap.set(typed.recipient_id, normalizeRecipientType(typed.recipient_type));
         isrExemptMap.set(typed.recipient_id, typed.isr_exempt === true);
+        disbursableMap.set(typed.recipient_id, typed.disbursable !== false);
       }
     });
 
@@ -159,6 +162,7 @@ export async function GET(request: Request) {
       const unpaidAmount = Math.max(0, item.totalAmount - item.paidAmount);
       const percentPaid = item.totalAmount > 0 ? Math.round((item.paidAmount / item.totalAmount) * 100) : 0;
       const isExempt = isrExemptMap.get(item.recipientId) ?? false;
+      const isDisbursable = disbursableMap.get(item.recipientId) ?? true;
       const isr = computeISR(item.totalAmount, isExempt);
       return {
         recipientId: item.recipientId,
@@ -169,6 +173,7 @@ export async function GET(request: Request) {
         unpaidAmount,
         percentPaid,
         isrExempt: isExempt,
+        disbursable: isDisbursable,
         facturar: isr.facturar,
         isrRetenido: isr.isrRetenido,
         pagar: isr.pagar,
@@ -183,9 +188,14 @@ export async function GET(request: Request) {
         acc.facturar += item.facturar;
         acc.isrRetenido += item.isrRetenido;
         acc.pagar += item.pagar;
+        if (item.disbursable) {
+          acc.disbursableTotal += item.totalAmount;
+          acc.disbursablePaid += item.paidAmount;
+          acc.disbursableUnpaid += item.unpaidAmount;
+        }
         return acc;
       },
-      { total: 0, paid: 0, unpaid: 0, facturar: 0, isrRetenido: 0, pagar: 0 }
+      { total: 0, paid: 0, unpaid: 0, facturar: 0, isrRetenido: 0, pagar: 0, disbursableTotal: 0, disbursablePaid: 0, disbursableUnpaid: 0 }
     );
 
     return jsonOk({ byRecipient, summary });

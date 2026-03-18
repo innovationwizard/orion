@@ -93,6 +93,13 @@
     }
   },
   "total_rate": 0.05,
+  "disbursability": {
+    "description": "Recipients with disbursable=false are accumulation-only: commission rows generated for tracking but never disbursed.",
+    "column": "commission_rates.disbursable",
+    "default": true,
+    "accumulation_only": ["puerta_abierta", "ahorro", "ahorro_comercial", "ahorro_por_retiro"],
+    "migration": "038"
+  },
   "isr": {
     "formula": "Total a pagar = Total a facturar × 107/112",
     "iva_rate": 0.12,

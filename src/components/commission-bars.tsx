@@ -13,6 +13,7 @@ export type CommissionBarItem = {
   unpaidAmount: number;
   percentPaid: number;
   isrExempt?: boolean;
+  disbursable?: boolean;
   facturar?: number;
   isrRetenido?: number;
   pagar?: number;
@@ -47,7 +48,7 @@ export default function CommissionBars({ data }: CommissionBarsProps) {
           <div key={item.recipientId} className="grid grid-cols-[160px_1fr_100px] items-center gap-3">
             <div className="flex flex-col gap-0.5 min-w-0">
               <span className="text-[13px] font-semibold text-text-primary whitespace-nowrap overflow-hidden text-ellipsis">{item.recipientName}</span>
-              <span className="text-[11px] text-muted">{typeLabel(item.recipientType)}</span>
+              <span className="text-[11px] text-muted">{typeLabel(item.recipientType)}{item.disbursable === false ? " · Acumulado" : ""}</span>
             </div>
             <div className="flex h-5 rounded overflow-hidden bg-slate-100" title={`${item.percentPaid}% pagado`}>
               <div

@@ -57,7 +57,7 @@ type PaymentComplianceResponse = {
 
 type CommissionAnalyticsResponse = {
   byRecipient: CommissionBarItem[];
-  summary: { total: number; paid: number; unpaid: number; facturar: number; isrRetenido: number; pagar: number };
+  summary: { total: number; paid: number; unpaid: number; facturar: number; isrRetenido: number; pagar: number; disbursableTotal: number; disbursablePaid: number; disbursableUnpaid: number };
 };
 
 type CashFlowResponse = {
@@ -342,7 +342,7 @@ export default function DashboardClient() {
   const trendVariance = monthly.map((m) => m.actual - m.expected);
 
   const commissionRecipients = commissionData?.byRecipient ?? [];
-  const commissionSummary = commissionData?.summary ?? { total: 0, paid: 0, unpaid: 0, facturar: 0, isrRetenido: 0, pagar: 0 };
+  const commissionSummary = commissionData?.summary ?? { total: 0, paid: 0, unpaid: 0, facturar: 0, isrRetenido: 0, pagar: 0, disbursableTotal: 0, disbursablePaid: 0, disbursableUnpaid: 0 };
 
   const cfSummary = cashFlowData?.summary ?? {
     totalExpected: 0,
@@ -701,12 +701,8 @@ export default function DashboardClient() {
         <>
           <section className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
             <KpiCard label="Total comisiones" value={currency.format(commissionSummary.total)} />
-            <KpiCard label="Pagado" value={currency.format(commissionSummary.paid)} positive />
-            <KpiCard
-              label="Pendiente"
-              value={currency.format(commissionSummary.unpaid)}
-              negative
-            />
+            <KpiCard label="A desembolsar" value={currency.format(commissionSummary.disbursableTotal)} />
+            <KpiCard label="Acumulado" value={currency.format(commissionSummary.total - commissionSummary.disbursableTotal)} />
           </section>
 
           <section className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">

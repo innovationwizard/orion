@@ -376,7 +376,7 @@ Sales Reps (ejecutivo): Per-unit rate stored on `sales.ejecutivo_rate` *(migrati
 | **Resolution** | Either (a) add a per-sale rate override field, or (b) confirm with CFO which rates are current policy vs legacy. |
 | **Status** | **RESOLVED** — Migration 033 added `sales.ejecutivo_rate` (Stripe Ledger pattern). Per-unit rate stored on the sale, not looked up. Backfilled from policy-period escalation model (1.00%/1.25%). CFO confirmation workflow (`ejecutivo_rate_confirmed`). Master-only PATCH at `/api/reservas/admin/sales/[id]/ejecutivo-rate`. |
 
-### DIFF-07: Ahorro G. Comercial (0.20%) — Different Treatment
+### DIFF-07: Ahorro G. Comercial (0.20%) — Different Treatment --- RESOLVED (migration 038)
 
 | Aspect | SSOT | App |
 |--------|------|-----|
@@ -384,6 +384,7 @@ Sales Reps (ejecutivo): Per-unit rate stored on `sales.ejecutivo_rate` *(migrati
 | **Treatment** | Computed but **accumulated, never disbursed** (separate tracking in Resumen Ahorros) | Treated as a regular `always_paid` recipient — commission rows generated and potentially marked as paid |
 | **Impact** | **MEDIUM** — If the app marks `ahorro_comercial` commissions as "paid," it misrepresents the accounting reality. |
 | **Resolution** | Verify if `ahorro_comercial` rows exist in the `commissions` table and their `paid` status. Potentially redefine as accumulation-only. |
+| **Status** | **RESOLVED** — Migration 038 added `disbursable` boolean to `commission_rates`. Set `false` for 4 accumulation-only accounts (puerta_abierta, ahorro, ahorro_comercial, ahorro_por_retiro). API returns `disbursable` flag per recipient + split summary (disbursableTotal/Paid/Unpaid). Dashboard KPIs show "A desembolsar" vs "Acumulado". Commission bars show "Acumulado" badge on non-disbursable recipients. |
 
 ### DIFF-08: ISR Retention — Not Modeled in App --- RESOLVED (migration 036)
 
@@ -394,23 +395,25 @@ Sales Reps (ejecutivo): Per-unit rate stored on `sales.ejecutivo_rate` *(migrati
 | **Resolution** | Add ISR retention calculation to the commission display/export. This is a presentation-layer concern, not a calculation-layer change. |
 | **Status** | **RESOLVED** — Migration 036 added `isr_exempt` column to `commission_rates`. ISR utility (`src/lib/isr.ts`) computes facturar/isrRetenido/pagar from base commission. API returns ISR fields per recipient. Dashboard shows ISR KPI row + "Neto" amounts on commission bars. Exempt: puerta_abierta, ahorro, ahorro_comercial, ahorro_por_retiro. Configurable. |
 
-### DIFF-09: Phase 2 Proportional Calculation
+### DIFF-09: Phase Commission Pro-Rata (Sale-Price Base) --- RESOLVED (migration 037)
 
 | Aspect | SSOT | App |
 |--------|------|-----|
 | **Phase 2 formula** | `IFERROR(cuota/(enganche-reserva) × (total_commission × 30%) × trigger, 0)` — pro-rata based on payment/enganche ratio | `payment_amount × rate × 0.30` — flat percentage of each payment |
 | **Impact** | **MEDIUM** — The math may produce different results. SSOT divides each cuota by total enganche to proportion the 30% phase. App applies 30% to each payment directly. Over the life of the enganche, both should converge to the same total, but individual payment rows will differ. |
 | **Resolution** | Verify mathematically whether both approaches produce identical totals. If not, quantify the variance. |
+| **Status** | **RESOLVED** — Migration 037 changed commission base from `payment_amount` to `sale_price` (prorated by payment's share within its phase). Phase 1: `base = sale_price` (one-time). Phase 2: `base = (cuota / enganche_neto) × sale_price`. Phase 3: `base = (payment / phase3_denom) × sale_price`. Where `enganche_neto = down_payment - reservation`, `phase3_denom = sale_price - down_payment`. Phase 1 totals: Q39K→Q951K (+24x). Phase 2 totals: Q645K→Q4.5M (+7x). 60% cap compliance: 0 violations. Row counts unchanged (31,688). |
 
-### DIFF-10: Escalation Trigger — Monthly Count vs Per-Unit Assignment
+### DIFF-10: Escalation Trigger — Monthly Count vs Per-Unit Assignment --- RESOLVED (verified, superseded by migration 033)
 
 | Aspect | SSOT | App |
 |--------|------|-----|
 | **1.25% trigger** | Appears assigned per-unit (4 of 24 Feb 2026 sales at 1.25%) | Triggered when rep sells ≥ threshold units in a calendar month |
 | **Impact** | **MEDIUM** — Need to verify whether the 4 units at 1.25% in the Cierre correspond to reps who hit threshold. If they do, the app logic is correct. If not, 1.25% is a per-unit override. |
 | **Resolution** | Cross-reference Feb 2026 sales: count each rep's sales in Feb. Check if reps with 1.25% hit the 5-unit threshold. |
+| **Status** | **RESOLVED** — Verified: zero references to escalation, threshold, policy_period, or fallback in `calculate_commissions()`. `sales.ejecutivo_rate` is the sole source (9 references in function). Escalation trigger code completely removed by migration 033. Rate backfill produced 1.00%/1.25% from threshold model; CFO confirmation workflow exists to adjust individual rates when needed. 30 orphaned sales with NULL rate (all linked to "Unknown" salesperson, zero payments — see `docs/orphaned-sales-investigation.md`). |
 
-### DIFF-11: Casa Elisa — Unique Rate Structure
+### DIFF-11: Casa Elisa — Unique Rate Structure --- RESOLVED (verified, covered by migrations 033+035)
 
 | Aspect | SSOT | App |
 |--------|------|-----|
@@ -418,16 +421,18 @@ Sales Reps (ejecutivo): Per-unit rate stored on `sales.ejecutivo_rate` *(migrati
 | **CE Ahorro base** | 1.40% (when Alek+Sup paid) — different from other projects' 1.35% | Same formula as other projects |
 | **Impact** | **MEDIUM** — CE is the smallest project (~75 units) and has an older version (Aug 2025). But the rate variations indicate project-specific rules. |
 | **Resolution** | Clarify with CFO whether CE has unique contractual rates or if these are legacy. |
+| **Status** | **RESOLVED** — Verified: CE ahorro rates are 0.45% and 0.70% — correct residual values from the dynamic formula (`5% - sum(all rates)`). The "CE-specific ahorro base of 1.40%" is automatically handled by the residual calculation (no special CE logic needed). CE per-unit rates: 18 at 1.00%, 56 at 1.25%, zero NULL. `sales.ejecutivo_rate` supports any rate value — CFO can adjust via confirmation workflow. |
 
-### DIFF-12: Referral Commission Recipient Overrides
+### DIFF-12: Referral Commission Recipient Overrides --- RESOLVED (verified, no data to compare)
 
 | Aspect | SSOT | App |
 |--------|------|-----|
 | **Otto Herrera referrals** | Separate sheet (Hoja5/Hoja6) tracks 5 referrals with 1.00% rate, 3-phase allocation | Generic `referral` recipient at 1.00% |
 | **Impact** | **LOW** — The rate matches. But the SSOT tracks referrals per referring individual. The app uses a generic bucket. |
 | **Resolution** | Verify that referral commission amounts match between SSOT and app for known referral sales. |
+| **Status** | **RESOLVED** — Verified: zero active sales with `referral_applies = true`. Zero referral commission rows. Referral logic exists in `calculate_commissions()` Section 3 at 1.00% rate, names rows "Referral Bonus: [referral_name]" per referring individual. Code is correct and ready; no referral data exists in the current dataset to compare against SSOT. |
 
-### DIFF-13: Fallback Rates for Legacy Sales Reps
+### DIFF-13: Fallback Rates for Legacy Sales Reps --- RESOLVED (verified, superseded by migration 033)
 
 | Aspect | SSOT | App |
 |--------|------|-----|
@@ -435,6 +440,7 @@ Sales Reps (ejecutivo): Per-unit rate stored on `sales.ejecutivo_rate` *(migrati
 | **Rep 05 (Antonio Rada)** | Variable per-unit (0.25%–1.25%) | Fallback rate: 0.90% |
 | **Impact** | **MEDIUM** — Fallback rates (used when no policy period matches) don't align with SSOT per-unit rates. |
 | **Resolution** | Verify when fallback rates are actually used (pre-Period 1 payments only?) and whether they match historical SSOT data. |
+| **Status** | **RESOLVED** — Verified: zero fallback code in `calculate_commissions()`. Function uses only `sales.ejecutivo_rate`; when NULL, it issues `RAISE WARNING` and skips ejecutivo commission (no fallback rate applied). Antonio Rada: 168 active sales (10 at 1.00%, 158 at 1.25%). Jose Franco: not in unified `salespeople` table (legacy rep, no active sales). 4,493 total ejecutivo commission rows, ZERO with non-standard rates. All rates are 1.00% or 1.25% from backfill. |
 
 ---
 
@@ -548,8 +554,8 @@ Based on audit findings, create a prioritized implementation plan:
 4. **P1 (High):** Implement residual ahorro calculation (DIFF-05)
 5. ~~**P2 (Medium):** Support per-unit EV rate overrides (DIFF-06)~~ **DONE** — migration 033
 6. ~~**P2 (Medium):** Add ISR retention display (DIFF-08)~~ **DONE** — migration 036
-7. **P3 (Low):** Verify Phase 2 proportional math (DIFF-09)
-8. **P3 (Low):** Validate escalation trigger logic (DIFF-10)
+7. ~~**P3 (Low):** Verify Phase 2 proportional math (DIFF-09)~~ **DONE** — migration 037
+8. ~~**P3 (Low):** Validate escalation trigger logic (DIFF-10)~~ **VERIFIED** — superseded by migration 033
 
 ---
 

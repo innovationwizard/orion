@@ -40,6 +40,7 @@ export default function AsesoresClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [showInactive, setShowInactive] = useState(false);
 
   const fetchData = useCallback(async () => {
     try {
@@ -64,11 +65,16 @@ export default function AsesoresClient() {
 
   const selected = salespeople.find((sp) => sp.id === selectedId) ?? null;
 
-  // Stats
-  const total = salespeople.length;
-  const withAccess = salespeople.filter((sp) => sp.auth_status === "active").length;
-  const pending = salespeople.filter((sp) => sp.auth_status === "pending").length;
-  const noAccount = salespeople.filter((sp) => sp.auth_status === "none").length;
+  const visibleSalespeople = showInactive
+    ? salespeople
+    : salespeople.filter((sp) => sp.is_active);
+  const inactiveCount = salespeople.filter((sp) => !sp.is_active).length;
+
+  // Stats (based on visible list)
+  const total = visibleSalespeople.length;
+  const withAccess = visibleSalespeople.filter((sp) => sp.auth_status === "active").length;
+  const pending = visibleSalespeople.filter((sp) => sp.auth_status === "pending").length;
+  const noAccount = visibleSalespeople.filter((sp) => sp.auth_status === "none").length;
 
   if (loading) {
     return (
@@ -104,11 +110,26 @@ export default function AsesoresClient() {
       <NavBar />
 
       {/* Header */}
-      <div>
-        <h1 className="text-xl font-bold text-text-primary">Gestión de Asesores</h1>
-        <p className="text-sm text-muted">
-          Invitar asesores y asignar proyectos para acceso a /reservar
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-bold text-text-primary">Gestión de Asesores</h1>
+          <p className="text-sm text-muted">
+            Invitar asesores y asignar proyectos para acceso a /reservar
+          </p>
+        </div>
+        {inactiveCount > 0 && (
+          <button
+            type="button"
+            className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+              showInactive
+                ? "bg-primary/10 text-primary border-primary/30"
+                : "bg-card text-muted border-border hover:text-text-primary"
+            }`}
+            onClick={() => setShowInactive((v) => !v)}
+          >
+            {showInactive ? `Ocultar inactivos (${inactiveCount})` : `Mostrar inactivos (${inactiveCount})`}
+          </button>
+        )}
       </div>
 
       {/* Stats */}
@@ -131,16 +152,23 @@ export default function AsesoresClient() {
             </tr>
           </thead>
           <tbody>
-            {salespeople.map((sp) => (
+            {visibleSalespeople.map((sp) => (
               <tr
                 key={sp.id}
                 className={`border-b border-border last:border-b-0 cursor-pointer transition-colors hover:bg-primary/5 ${
                   selectedId === sp.id ? "bg-primary/10" : ""
-                }`}
+                } ${!sp.is_active ? "opacity-50" : ""}`}
                 onClick={() => setSelectedId(sp.id === selectedId ? null : sp.id)}
               >
                 <td className="px-4 py-3">
-                  <div className="font-medium text-text-primary">{sp.display_name}</div>
+                  <div className="font-medium text-text-primary flex items-center gap-2">
+                    {sp.display_name}
+                    {!sp.is_active && (
+                      <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-gray-200 text-gray-500 uppercase tracking-wide">
+                        Inactivo
+                      </span>
+                    )}
+                  </div>
                   <div className="text-xs text-muted">{sp.full_name}</div>
                 </td>
                 <td className="px-4 py-3 text-muted">{sp.email ?? "—"}</td>
