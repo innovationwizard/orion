@@ -6,6 +6,9 @@ import { requireSalesperson, isSalespersonFailure } from "@/lib/reservas/require
 import { requireAuth, isSuperuser, hasRole } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
+  const auth = await requireAuth();
+  if (auth.response) return auth.response;
+
   const { data: filters, error: qErr } = parseQuery(request, reservationsQuerySchema);
   if (qErr) return jsonError(400, qErr.error, qErr.details);
 

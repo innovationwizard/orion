@@ -1,11 +1,15 @@
 import { NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonOk, jsonError, parseJson } from "@/lib/api";
+import { requireRole, ADMIN_ROLES } from "@/lib/auth";
 import { createPriceHistorySchema } from "@/lib/reservas/validations";
 
 type Ctx = { params: Promise<{ id: string }> };
 
 export async function PATCH(request: NextRequest, ctx: Ctx) {
+  const auth = await requireRole(ADMIN_ROLES);
+  if (auth.response) return auth.response;
+
   const { id } = await ctx.params;
   const { data: body, error: bErr } = await parseJson(
     request,
@@ -26,6 +30,9 @@ export async function PATCH(request: NextRequest, ctx: Ctx) {
 }
 
 export async function DELETE(_request: NextRequest, ctx: Ctx) {
+  const auth = await requireRole(ADMIN_ROLES);
+  if (auth.response) return auth.response;
+
   const { id } = await ctx.params;
   const supabase = createAdminClient();
   const { error } = await supabase.from("rv_price_history").delete().eq("id", id);

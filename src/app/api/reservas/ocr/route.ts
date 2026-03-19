@@ -2,8 +2,18 @@ import { NextRequest } from "next/server";
 import { extractReceiptData, toSupportedMediaType } from "@/lib/claude";
 import { RECEIPT_UPLOAD } from "@/lib/reservas/constants";
 import { jsonOk, jsonError } from "@/lib/api";
+import { requireAuth } from "@/lib/auth";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
+  const auth = await requireAuth();
+  if (auth.response) return auth.response;
+
+  const rl = rateLimit(`ocr:${auth.user!.id}`, 20, 60 * 60 * 1000);
+  if (!rl.allowed) {
+    return jsonError(429, "Demasiadas solicitudes. Intente de nuevo más tarde.");
+  }
+
   let formData: FormData;
   try {
     formData = await request.formData();

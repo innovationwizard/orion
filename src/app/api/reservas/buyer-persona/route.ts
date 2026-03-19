@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonOk, jsonError, parseQuery } from "@/lib/api";
+import { requireRole, ADMIN_ROLES } from "@/lib/auth";
 import { valorizacionQuerySchema } from "@/lib/reservas/validations";
 import type { DistributionItem, BuyerPersonaAggregate } from "@/lib/reservas/types";
 
@@ -8,6 +9,9 @@ import type { DistributionItem, BuyerPersonaAggregate } from "@/lib/reservas/typ
 const querySchema = valorizacionQuerySchema;
 
 export async function GET(request: NextRequest) {
+  const auth = await requireRole(ADMIN_ROLES);
+  if (auth.response) return auth.response;
+
   const { data: filters, error: qErr } = parseQuery(request, querySchema);
   if (qErr) return jsonError(400, qErr.error, qErr.details);
 

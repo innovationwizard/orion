@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { getSupabaseConfigError, getSupabaseServerClient } from "@/lib/supabase";
 import { jsonError, jsonOk, parseJson, parseQuery, paymentTypeValues, assertExists } from "@/lib/api";
-import { requireAuth } from "@/lib/auth";
+import { requireAuth, requireRole, ADMIN_ROLES } from "@/lib/auth";
 import type { Commission, Payment, PaymentType } from "@/lib/types";
 import { generateId } from "@/lib/uuid";
 
@@ -104,7 +104,7 @@ export async function POST(request: Request) {
   if (configError) {
     return jsonError(500, configError);
   }
-  const auth = await requireAuth();
+  const auth = await requireRole(ADMIN_ROLES);
   if (auth.response) {
     return auth.response;
   }

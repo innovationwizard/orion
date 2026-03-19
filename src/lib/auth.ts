@@ -49,6 +49,29 @@ export type Role =
   | "inventario"
   | "torredecontrol";
 
+const ROLE_LEVEL: Record<Role, number> = {
+  ventas: 10,
+  inventario: 20,
+  contabilidad: 30,
+  financiero: 40,
+  gerencia: 50,
+  torredecontrol: 60,
+  master: 70,
+};
+
+/** Admin roles that can manage reservations and operational data. */
+export const ADMIN_ROLES: Role[] = ["master", "torredecontrol"];
+
+/** Roles that can view all analytics/financial data (admin + future finance roles). */
+export const DATA_VIEWER_ROLES: Role[] = ["master", "torredecontrol", "gerencia", "financiero", "contabilidad"];
+
+/** Check if user's role is at or above the required minimum level. */
+export function hasMinimumRole(user: User | null, minimumRole: Role): boolean {
+  const role = getUserRole(user);
+  if (!role) return false;
+  return (ROLE_LEVEL[role as Role] ?? 0) >= ROLE_LEVEL[minimumRole];
+}
+
 export function getUserRole(user: User | null) {
   return (user?.app_metadata?.role as string | undefined) ?? null;
 }

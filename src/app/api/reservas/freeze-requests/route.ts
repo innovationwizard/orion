@@ -1,9 +1,13 @@
 import { NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonOk, jsonError, parseJson } from "@/lib/api";
+import { requireAuth } from "@/lib/auth";
 import { submitFreezeSchema } from "@/lib/reservas/validations";
 
 export async function POST(request: NextRequest) {
+  const auth = await requireAuth();
+  if (auth.response) return auth.response;
+
   const { data: input, error: pErr } = await parseJson(request, submitFreezeSchema);
   if (pErr) return jsonError(400, pErr.error, pErr.details);
 

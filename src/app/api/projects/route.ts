@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { getSupabaseConfigError, getSupabaseServerClient } from "@/lib/supabase";
 import { jsonError, jsonOk, parseJson, parseQuery } from "@/lib/api";
-import { requireAuth } from "@/lib/auth";
+import { requireRole, ADMIN_ROLES, DATA_VIEWER_ROLES } from "@/lib/auth";
 import type { Project } from "@/lib/types";
 import { generateId } from "@/lib/uuid";
 
@@ -27,7 +27,7 @@ export async function GET(request: Request) {
   if (configError) {
     return jsonError(500, configError);
   }
-  const auth = await requireAuth();
+  const auth = await requireRole(DATA_VIEWER_ROLES);
   if (auth.response) {
     return auth.response;
   }
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
   if (configError) {
     return jsonError(500, configError);
   }
-  const auth = await requireAuth();
+  const auth = await requireRole(ADMIN_ROLES);
   if (auth.response) {
     return auth.response;
   }
@@ -89,7 +89,7 @@ export async function PATCH(request: Request) {
   if (configError) {
     return jsonError(500, configError);
   }
-  const auth = await requireAuth();
+  const auth = await requireRole(ADMIN_ROLES);
   if (auth.response) {
     return auth.response;
   }
@@ -122,7 +122,7 @@ export async function DELETE(request: Request) {
   if (configError) {
     return jsonError(500, configError);
   }
-  const auth = await requireAuth();
+  const auth = await requireRole(ADMIN_ROLES);
   if (auth.response) {
     return auth.response;
   }

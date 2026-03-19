@@ -1,10 +1,14 @@
 import { NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonOk, jsonError, parseQuery } from "@/lib/api";
+import { requireAuth } from "@/lib/auth";
 import { ventasQuerySchema } from "@/lib/reservas/validations";
 import type { VentasMonthlySeries, VentasSummary } from "@/lib/reservas/types";
 
 export async function GET(request: NextRequest) {
+  const auth = await requireAuth();
+  if (auth.response) return auth.response;
+
   const { data: filters, error: qErr } = parseQuery(request, ventasQuerySchema);
   if (qErr) return jsonError(400, qErr.error, qErr.details);
 

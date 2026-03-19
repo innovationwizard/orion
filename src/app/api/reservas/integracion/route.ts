@@ -1,10 +1,14 @@
 import { NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonOk, jsonError, parseQuery } from "@/lib/api";
+import { requireRole, ADMIN_ROLES } from "@/lib/auth";
 import { integracionQuerySchema } from "@/lib/reservas/validations";
 import type { IntegrationRow } from "@/lib/reservas/types";
 
 export async function GET(request: NextRequest) {
+  const auth = await requireRole(ADMIN_ROLES);
+  if (auth.response) return auth.response;
+
   const { data: filters, error: qErr } = parseQuery(request, integracionQuerySchema);
   if (qErr) return jsonError(400, qErr.error, qErr.details);
 

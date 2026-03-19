@@ -7,7 +7,7 @@ import { requireRole } from "@/lib/auth";
 /**
  * PATCH /api/reservas/admin/sales/[id]/ejecutivo-rate
  *
- * Master-only: confirms the ejecutivo rate on a sale.
+ * Master or financiero: confirms the ejecutivo rate on a sale.
  * Sets ejecutivo_rate, marks confirmed, then recalculates commissions
  * for all payments of this sale.
  */
@@ -15,7 +15,7 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const auth = await requireRole(["master"]);
+  const auth = await requireRole(["master", "financiero"]);
   if (auth.response) return auth.response;
 
   const { id: saleId } = await params;

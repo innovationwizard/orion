@@ -1,9 +1,13 @@
 import { NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonOk, jsonError, parseQuery } from "@/lib/api";
+import { requireAuth } from "@/lib/auth";
 import { unitsQuerySchema } from "@/lib/reservas/validations";
 
 export async function GET(request: NextRequest) {
+  const auth = await requireAuth();
+  if (auth.response) return auth.response;
+
   const { data: filters, error: qErr } = parseQuery(request, unitsQuerySchema);
   if (qErr) return jsonError(400, qErr.error, qErr.details);
 
