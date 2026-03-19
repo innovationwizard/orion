@@ -53,12 +53,17 @@ export default function ReservationRow({ reservation: r, selected, onClick }: Pr
         >
           {RESERVATION_STATUS_LABELS[r.reservation_status] ?? r.reservation_status}
         </span>
-        {r.ejecutivo_rate != null && (
+        {r.ejecutivo_rate != null ? (
           <span
             className={`inline-block w-1.5 h-1.5 rounded-full ml-2 ${
               r.ejecutivo_rate_confirmed ? "bg-success" : "bg-warning"
             }`}
             title={r.ejecutivo_rate_confirmed ? "Tasa EV confirmada" : "Tasa EV pendiente"}
+          />
+        ) : r.reservation_status === "CONFIRMED" && (
+          <span
+            className="inline-block w-1.5 h-1.5 rounded-full ml-2 bg-danger"
+            title="Sin tasa EV asignada"
           />
         )}
       </td>

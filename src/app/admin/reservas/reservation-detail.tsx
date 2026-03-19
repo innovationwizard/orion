@@ -388,18 +388,32 @@ export default function ReservationDetail({
                 </Section>
               )}
 
-              {/* Tasa EV (033) */}
-              {data.sale_rate && data.sale_rate.ejecutivo_rate != null && (
+              {/* Tasa EV (033) — show for any sale_rate, including NULL rates */}
+              {data.sale_rate && (
                 <div className="grid gap-2">
                   <h4 className="text-xs font-semibold uppercase tracking-wider text-muted">Tasa EV</h4>
                   <div className="grid grid-cols-2 gap-1.5 text-sm">
-                    <Row
-                      label="Tasa"
-                      value={`${+(data.sale_rate.ejecutivo_rate * 100).toFixed(4)}%`}
-                    />
+                    {data.sale_rate.ejecutivo_rate != null ? (
+                      <Row
+                        label="Tasa"
+                        value={`${+(data.sale_rate.ejecutivo_rate * 100).toFixed(4)}%`}
+                      />
+                    ) : (
+                      <Row label="Tasa" value="—" />
+                    )}
                     <span className="text-muted">Estado</span>
-                    <span className={`font-medium ${data.sale_rate.ejecutivo_rate_confirmed ? "text-success" : "text-warning"}`}>
-                      {data.sale_rate.ejecutivo_rate_confirmed ? "Confirmada" : "Pendiente"}
+                    <span className={`font-medium ${
+                      data.sale_rate.ejecutivo_rate_confirmed
+                        ? "text-success"
+                        : data.sale_rate.ejecutivo_rate == null
+                          ? "text-danger"
+                          : "text-warning"
+                    }`}>
+                      {data.sale_rate.ejecutivo_rate_confirmed
+                        ? "Confirmada"
+                        : data.sale_rate.ejecutivo_rate == null
+                          ? "No asignada"
+                          : "Pendiente"}
                     </span>
                     {data.sale_rate.ejecutivo_rate_confirmed && data.sale_rate.ejecutivo_rate_confirmed_at && (
                       <Row label="Confirmada" value={formatDate(data.sale_rate.ejecutivo_rate_confirmed_at)} />
@@ -426,7 +440,7 @@ export default function ReservationDetail({
                         onClick={confirmRate}
                         disabled={rateSaving || !rateInput}
                       >
-                        {rateSaving ? "Confirmando..." : "Confirmar tasa"}
+                        {rateSaving ? "Confirmando..." : data.sale_rate.ejecutivo_rate == null ? "Asignar y confirmar" : "Confirmar tasa"}
                       </button>
                       {rateMsg && (
                         <span className={`text-xs ${rateMsg === "Confirmada" ? "text-success" : "text-danger"}`}>
