@@ -6,9 +6,9 @@
 
 ## 1. Acceso
 
-1. Abrir **orion.vercel.app** e iniciar sesión.
+1. Abrir **orion-intelligence.vercel.app** e iniciar sesión.
 2. En la barra de navegación, ir a **Reservas → Admin**.
-   - URL directa: `orion.vercel.app/admin/reservas`
+   - URL directa: `orion-intelligence.vercel.app/admin/reservas`
 
 ---
 
@@ -19,10 +19,10 @@ En la tabla de reservas, cada fila muestra un **indicador de punto** junto al es
 | Punto | Significado |
 |-------|-------------|
 | ● verde | Tasa ya confirmada |
-| ● ámbar | Tasa asignada, pendiente de confirmación |
-| ● rojo | Sin tasa asignada (requiere asignación manual) |
+| ● ámbar | Tasa pendiente de confirmación |
+| sin punto | Sin venta vinculada en comisiones (no requiere acción) |
 
-> **Filtro recomendado:** Seleccionar estado **"Confirmada"** para ver solo ventas activas. Los puntos ámbar y rojo son los que requieren acción.
+> **Filtro recomendado:** Seleccionar estado **"Confirmada"** para ver solo ventas activas. Los puntos ámbar son los que requieren acción.
 
 ---
 
@@ -42,7 +42,7 @@ Se muestra:
 - Presionar **"Confirmar tasa"**.
 - El botón cambia a "Confirmando..." y luego aparece el mensaje **"Confirmada"** en verde.
 
-### Si no hay tasa asignada (punto rojo en la tabla):
+### Si la tasa está vacía (venta sin tasa pre-poblada):
 
 Se muestra:
 - **Tasa:** —
@@ -52,6 +52,8 @@ Se muestra:
 - Ingresar el porcentaje en el campo **"Tasa ejecutivo (%)"**.
 - Presionar **"Asignar y confirmar"**.
 - El sistema asigna la tasa y la confirma en un solo paso.
+
+> **Nota:** Si al abrir una reserva no aparece la sección "TASA EV", significa que esa reserva aún no tiene venta registrada en el sistema de comisiones. No requiere acción.
 
 ---
 
