@@ -39,6 +39,20 @@ type SaleRateData = {
   ejecutivo_rate_confirmed_by: string | null;
 };
 
+type MonthlySaleContext = {
+  reservation_id: string;
+  submitted_at: string;
+  project_name: string;
+  project_slug: string;
+  tower_name: string;
+  unit_number: string;
+  unit_type: string;
+  deposit_amount: number | null;
+  ejecutivo_rate: number | null;
+  ejecutivo_rate_confirmed: boolean;
+  is_current: boolean;
+};
+
 type DetailData = {
   reservation: Reservation;
   clients: ClientLink[];
@@ -47,6 +61,7 @@ type DetailData = {
   salesperson: Pick<Salesperson, "id" | "full_name" | "display_name" | "phone" | "email"> | null;
   audit_log: UnitStatusLog[];
   sale_rate: SaleRateData | null;
+  monthly_context: MonthlySaleContext[] | null;
 };
 
 type Props = {
@@ -390,8 +405,8 @@ export default function ReservationDetail({
 
               {/* Tasa EV (033) — show for any sale_rate, including NULL rates */}
               {data.sale_rate && (
-                <div className="grid gap-2">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted">Tasa EV</h4>
+                <div className="grid gap-2 bg-success/5 border border-success/15 rounded-lg p-3 -mx-1">
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-success">Tasa EV</h4>
                   <div className="grid grid-cols-2 gap-1.5 text-sm">
                     {data.sale_rate.ejecutivo_rate != null ? (
                       <Row
@@ -419,6 +434,10 @@ export default function ReservationDetail({
                       <Row label="Confirmada" value={formatDate(data.sale_rate.ejecutivo_rate_confirmed_at)} />
                     )}
                   </div>
+                  {/* Monthly sales context for CFO audit */}
+                  {data.monthly_context && data.monthly_context.length > 0 && (
+                    <MonthlyContext entries={data.monthly_context} />
+                  )}
                   {userRole === "master" && (
                     <div className="grid gap-1.5 mt-1">
                       <label className="grid gap-0.5">
@@ -618,5 +637,55 @@ function Row({ label, value }: { label: string; value: string }) {
       <span className="text-muted">{label}</span>
       <span className="font-medium text-text-primary">{value}</span>
     </>
+  );
+}
+
+const PROJECT_INITIALS: Record<string, string> = {
+  "boulevard-5": "B5",
+  "benestare": "BEN",
+  "bosque-las-tapias": "BLT",
+  "casa-elisa": "CE",
+};
+
+function shortDate(iso: string): string {
+  const d = new Date(iso);
+  return d.toLocaleDateString("es-GT", { day: "numeric", month: "short" });
+}
+
+function MonthlyContext({ entries }: { entries: MonthlySaleContext[] }) {
+  const monthLabel = new Date(entries[0].submitted_at).toLocaleDateString("es-GT", { month: "long", year: "numeric" });
+  return (
+    <div className="bg-success/10 rounded-md p-2.5 mt-1">
+      <div className="flex items-center justify-between mb-1.5">
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-success">
+          Ventas del asesor — {monthLabel}
+        </span>
+        <span className="text-[10px] text-success font-medium">{entries.length}</span>
+      </div>
+      <div className="grid gap-px">
+        {entries.map((e) => (
+          <div
+            key={e.reservation_id}
+            className={`grid grid-cols-[3.2rem_2rem_3.5rem_2.8rem_3rem_auto_2.5rem] gap-1 items-center text-[10px] py-0.5 px-1 rounded ${
+              e.is_current ? "bg-success/15 font-semibold" : ""
+            }`}
+          >
+            <span className="text-muted tabular-nums">{shortDate(e.submitted_at)}</span>
+            <span className="font-medium">{PROJECT_INITIALS[e.project_slug] ?? e.project_slug}</span>
+            <span className="text-muted truncate" title={e.tower_name}>{e.tower_name}</span>
+            <span className="tabular-nums">{e.unit_number}</span>
+            <span className="text-muted truncate">{e.unit_type}</span>
+            <span className="tabular-nums text-right">
+              {e.deposit_amount != null ? formatCurrency(e.deposit_amount) : "—"}
+            </span>
+            <span className={`tabular-nums text-right font-medium ${
+              e.ejecutivo_rate_confirmed ? "text-success" : e.ejecutivo_rate != null ? "text-warning" : "text-muted"
+            }`}>
+              {e.ejecutivo_rate != null ? `${+(e.ejecutivo_rate * 100).toFixed(2)}%` : "—"}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

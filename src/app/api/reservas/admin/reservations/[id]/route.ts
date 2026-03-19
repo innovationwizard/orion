@@ -156,6 +156,86 @@ export async function GET(
     }
   }
 
+  // Monthly sales context: all sales by this rep in the same month (for CFO rate audit)
+  let monthlyContext: Array<{
+    reservation_id: string;
+    submitted_at: string;
+    project_name: string;
+    project_slug: string;
+    tower_name: string;
+    unit_number: string;
+    unit_type: string;
+    deposit_amount: number | null;
+    ejecutivo_rate: number | null;
+    ejecutivo_rate_confirmed: boolean;
+    is_current: boolean;
+  }> | null = null;
+
+  if (isAdmin && reservation.salesperson_id && reservation.submitted_at) {
+    const d = new Date(reservation.submitted_at);
+    const monthStart = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1)).toISOString();
+    const monthEnd = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1)).toISOString();
+
+    const { data: monthRes } = await supabase
+      .from("reservations")
+      .select("id, submitted_at, deposit_amount, unit_id")
+      .eq("salesperson_id", reservation.salesperson_id)
+      .in("status", ["CONFIRMED", "PENDING_REVIEW"])
+      .gte("submitted_at", monthStart)
+      .lt("submitted_at", monthEnd)
+      .order("submitted_at");
+
+    if (monthRes?.length) {
+      const unitIds = [...new Set(monthRes.map((r) => r.unit_id))];
+
+      const { data: viewUnits } = await supabase
+        .from("v_rv_units_full")
+        .select("id, unit_number, unit_type, tower_name, project_id, project_name, project_slug")
+        .in("id", unitIds);
+
+      const unitMap = new Map((viewUnits ?? []).map((u) => [u.id, u]));
+
+      // Batch analytics lookup: get all analytics units for relevant projects
+      const projectIds = [...new Set((viewUnits ?? []).map((u) => u.project_id))];
+      const { data: allAU } = projectIds.length
+        ? await supabase.from("units").select("id, project_id, unit_number").in("project_id", projectIds)
+        : { data: [] };
+      const auMap = new Map((allAU ?? []).map((u) => [`${u.project_id}:${u.unit_number}`, u.id]));
+
+      // Batch sales lookup
+      const matchedAuIds = (viewUnits ?? [])
+        .map((vu) => auMap.get(`${vu.project_id}:${vu.unit_number}`))
+        .filter((aid): aid is string => aid != null);
+      const { data: allSales } = matchedAuIds.length
+        ? await supabase
+            .from("sales")
+            .select("unit_id, ejecutivo_rate, ejecutivo_rate_confirmed")
+            .in("unit_id", matchedAuIds)
+            .eq("status", "active")
+        : { data: [] };
+      const saleByAuId = new Map((allSales ?? []).map((s) => [s.unit_id, s]));
+
+      monthlyContext = monthRes.map((r) => {
+        const unit = unitMap.get(r.unit_id);
+        const auId = unit ? auMap.get(`${unit.project_id}:${unit.unit_number}`) : undefined;
+        const sale = auId ? saleByAuId.get(auId) : undefined;
+        return {
+          reservation_id: r.id,
+          submitted_at: r.submitted_at,
+          project_name: unit?.project_name ?? "",
+          project_slug: unit?.project_slug ?? "",
+          tower_name: unit?.tower_name ?? "",
+          unit_number: unit?.unit_number ?? "",
+          unit_type: unit?.unit_type ?? "",
+          deposit_amount: r.deposit_amount,
+          ejecutivo_rate: sale?.ejecutivo_rate ?? null,
+          ejecutivo_rate_confirmed: sale?.ejecutivo_rate_confirmed ?? false,
+          is_current: r.id === id,
+        };
+      });
+    }
+  }
+
   return jsonOk({
     reservation: {
       ...reservation,
@@ -169,5 +249,6 @@ export async function GET(
     salesperson: isAdmin ? salespersonResult.data : null,
     audit_log: auditResult.data ?? [],
     sale_rate: isAdmin ? saleRateData : null,
+    monthly_context: isAdmin ? monthlyContext : null,
   });
 }

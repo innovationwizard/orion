@@ -99,9 +99,21 @@ Para ver el efecto acumulado de las confirmaciones:
 
 ## Referencia rápida de tasas
 
-| Concepto | Rango típico |
-|----------|-------------|
-| Ejecutivo estándar | 1.00% – 1.25% |
+La tasa ejecutivo escala por volumen de ventas del asesor **por proyecto, por mes**:
+
+| Proyecto | Umbral | Tasa inicial | Tasa escalada |
+|----------|--------|-------------|--------------|
+| Boulevard 5 | 5 unidades/mes | 1.00% | 1.25% |
+| Benestare | 5 unidades/mes | 1.00% | 1.25% |
+| Bosque Las Tapias | 5 unidades/mes | 1.00% | 1.25% |
+| Casa Elisa | 2 unidades/mes | 1.00% | 1.25% |
+
+Si un asesor vende **menos** del umbral en el mes → 1.00%. Si alcanza o supera el umbral → 1.25%. Las ventas por referido no cuentan para el umbral.
+
+Las tasas pre-pobladas en el sistema ya reflejan esta escalación según el historial de cada asesor.
+
+| Concepto | Valor |
+|----------|-------|
 | Máximo permitido por el sistema | 5.00% |
 | Tope total de comisión por venta | 5.00% (el sistema calcula el residuo automáticamente) |
 
