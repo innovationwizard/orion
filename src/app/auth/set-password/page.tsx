@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase-browser";
 
 export default function SetPasswordPage() {
-  const router = useRouter();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -41,8 +39,14 @@ export default function SetPasswordPage() {
     // Confirm password_set in app_metadata (immutable by client)
     await fetch("/api/auth/confirm-password-set", { method: "POST" });
 
-    router.replace("/");
-    router.refresh();
+    // Hard navigation (not router.replace) guarantees middleware runs on fresh server request
+    const { data: { user } } = await supabaseBrowser.auth.getUser();
+    const role = user?.app_metadata?.role;
+    if (role === "ventas") {
+      window.location.href = "/ventas/dashboard";
+    } else {
+      window.location.href = "/";
+    }
   }
 
   return (

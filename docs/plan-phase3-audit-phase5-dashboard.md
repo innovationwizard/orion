@@ -698,3 +698,13 @@ Remaining for future phases:
 - Phase 4 (field masking): GAP-03
 - Phase 6 (deferred): GAP-09, GAP-16b
 - Medium-severity: GAP-12/13/14/15/17/19/20/23/24
+
+---
+
+## Post-Completion Note: Post-Auth Redirect Fixes (2026-03-20)
+
+After Phases 3+5 were completed, production testing with ventas users revealed 5 compounding failures in the post-authentication redirect layer. These were **not audit or operations dashboard issues** — they were in the login/confirm/set-password flow and root page auth guard.
+
+The fixes added a new **Layer 2 (Page Auth Guards)** to the defense-in-depth model, bringing the total to 5 layers. The operations dashboard (`/admin/operaciones`) was unaffected — it was already behind the `/admin/*` middleware guard and required no changes.
+
+Full details in `docs/plan-auth-deep-investigation.md`. Updated defense-in-depth model in `docs/roles-current-state.md`.

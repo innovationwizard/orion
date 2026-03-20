@@ -1089,5 +1089,47 @@ Phase 6 (Deferred)
 - Phase 1 completed 2026-03-19 (changelogs 074 + 075)
 - Phase 3 completed 2026-03-19 (migration 041 + audit trail)
 - Phase 5 completed 2026-03-19 (operations dashboard MVP)
+- **Post-auth redirect fixes completed 2026-03-20** (see below)
 
 **Next:** Phase 2 (permission architecture) — must complete before activating gerencia/financiero/contabilidad for real users. Phase 4 depends on Phase 2. Phase 6 deferred until admin team grows.
+
+---
+
+## 11. Post-Deployment Auth Issues (Discovered 2026-03-20)
+
+### Context
+
+After all Phase 1/3/5 security work was deployed, production testing with two ventas users (Erwin Cardona and Antonio Rada) revealed **5 compounding failures in the post-authentication redirect layer** that were not covered by any of the existing phases. These were not gaps in the role system itself, but failures in how authenticated users were routed to the correct page after login.
+
+### Issues Found
+
+| # | Issue | File | Severity |
+|---|-------|------|----------|
+| AUTH-01 | Login page `redirect("/")` ignores role — sends ALL authenticated users to admin dashboard | `src/app/login/page.tsx` | CRITICAL |
+| AUTH-02 | `router.replace("/")` race condition — React renders admin dashboard before middleware redirect arrives | `login-form.tsx`, `set-password/page.tsx` | CRITICAL |
+| AUTH-03 | `/auth/confirm` always forces password re-set even for returning users with existing passwords | `auth/confirm/route.ts` | HIGH |
+| AUTH-04 | Root page `/` has NO server-side auth guard — only defense was middleware | `src/app/page.tsx` | HIGH |
+| AUTH-05 | Pre-March-17 users missing `password_set` trapped in infinite set-password loop | SQL (Supabase) | HIGH |
+
+### Resolution (2026-03-20)
+
+All 5 issues fixed. Full investigation and resolution details in `docs/plan-auth-deep-investigation.md`.
+
+**Key changes:**
+- `src/app/login/page.tsx` — Role-aware server redirect (ventas → `/ventas/dashboard`)
+- `src/app/login/login-form.tsx` — `window.location.href` (hard navigation) replaces `router.replace("/")`
+- `src/app/auth/set-password/page.tsx` — Same hard navigation pattern
+- `src/app/page.tsx` — Async Server Component with full auth guard (no user → login, ventas → ventas dashboard, unknown role → login, only DATA_VIEWER_ROLES renders)
+- `src/app/auth/confirm/route.ts` — Checks `password_set` before routing; existing users skip set-password
+- SQL backfill — `password_set: true` for confirmed ventas users missing it
+
+**Build:** `npx next build` passes with zero errors. Root page changed from static (`○`) to dynamic (`ƒ`).
+
+### Relationship to Existing Phases
+
+These issues were orthogonal to the gap-analysis framework (GAP-01 through GAP-24). They were not role system gaps but rather *auth flow* failures in the login → redirect → landing chain. The existing phases addressed:
+- **Phase 1:** Middleware role routing, NavBar filtering, RLS ownership
+- **Phase 3:** Audit trail
+- **Phase 5:** Operations dashboard
+
+The post-auth redirect fixes address a sixth concern: **what page does an authenticated user actually land on?** The middleware correctly identifies role and enforces routing, but three additional entry points (login page Server Component, login-form client navigation, set-password client navigation) were bypassing middleware's role-aware routing. The root page also lacked a last-resort server-side guard.

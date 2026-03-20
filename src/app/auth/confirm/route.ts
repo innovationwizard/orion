@@ -67,13 +67,32 @@ export async function GET(request: NextRequest) {
     },
   });
 
-  const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
+  const { error, data: otpData } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
 
   if (error) {
     const errorUrl = request.nextUrl.clone();
     errorUrl.pathname = "/login";
     errorUrl.searchParams.set("error", "invalid_link");
     return NextResponse.redirect(errorUrl);
+  }
+
+  // If user already has password_set, skip /auth/set-password and go to role-appropriate home
+  const user = otpData?.user;
+  const hasPassword = user?.app_metadata?.password_set === true ||
+                      user?.user_metadata?.password_set === true;
+
+  if (hasPassword) {
+    const role = user?.app_metadata?.role as string | undefined;
+    const homeUrl = request.nextUrl.clone();
+    homeUrl.pathname = role === "ventas" ? "/ventas/dashboard" : "/";
+    homeUrl.searchParams.delete("token_hash");
+    homeUrl.searchParams.delete("type");
+    const homeResponse = NextResponse.redirect(homeUrl);
+    // Copy cookies from OTP verification
+    for (const cookie of response.cookies.getAll()) {
+      homeResponse.cookies.set(cookie);
+    }
+    return homeResponse;
   }
 
   return response;

@@ -65,9 +65,9 @@ Roles are stored in **Supabase Auth `app_metadata`** — a JSON field on `auth.u
 
 This is a critical security decision. The alternative (`user_metadata`) is **client-editable** — any authenticated user can call `supabase.auth.updateUser({ data: { role: "master" } })`. The system explicitly does NOT use `user_metadata` for authorization.
 
-### 2.2 Four Layers of Enforcement
+### 2.2 Five Layers of Enforcement
 
-Role enforcement operates as a defense-in-depth model with four layers:
+Role enforcement operates as a defense-in-depth model with five layers (updated 2026-03-20 — page-level auth guards added):
 
 #### Layer 1: Middleware (Request-Level)
 **File:** `middleware.ts`
@@ -112,7 +112,24 @@ The sole routing enforcer. Intercepts every HTTP request before it reaches a pag
 
 **Updated:** Middleware now has explicit 5-category role routing. DATA_PAGE_ROLES users are blocked from admin mutation pages but can access analytics, projects, ventas velocity, desistimientos, disponibilidad, and cotizador. Unknown/null roles are redirected to login.
 
-#### Layer 2: API Route Guards (Function-Level)
+#### Layer 2: Page Auth Guards (Server Component-Level) — NEW 2026-03-20
+**Files:** `src/app/page.tsx`, `src/app/login/page.tsx`
+
+Server Components that check the user's role before rendering page content. Added as defense-in-depth after discovering that middleware alone was insufficient — client-side race conditions in `router.replace()` could render a page briefly before middleware's redirect arrived on the next request.
+
+| Page | Guard Behavior |
+|------|---------------|
+| `/` (Analytics Dashboard) | `getUser()` → unauthenticated → `/login`; ventas → `/ventas/dashboard`; unknown role → `/login`; `DATA_VIEWER_ROLES` only → render |
+| `/login` | `getUser()` → ventas → `/ventas/dashboard`; other authenticated → `/` |
+
+**Key design decisions:**
+- Uses `createServerClient` with read-only cookie adapter (get only, set/remove are no-ops) — safe for Server Components that cannot write cookies
+- `window.location.href` replaces `router.replace()` in client components (`login-form.tsx`, `set-password/page.tsx`) — hard navigation forces middleware to run on a fresh server request, eliminating the client-side race condition
+- Role-aware redirects: ventas users go to `/ventas/dashboard`, admin/data users go to `/`
+
+**Context:** These guards were added to fix 5 compounding post-authentication redirect failures discovered during production testing with ventas users on 2026-03-20. Full details in `docs/plan-auth-deep-investigation.md`.
+
+#### Layer 3: API Route Guards (Function-Level)
 **File:** `src/lib/auth.ts`
 
 Each API route handler explicitly calls one of:
@@ -126,7 +143,7 @@ Each API route handler explicitly calls one of:
 
 API routes combine these guards to implement role-specific access. The dual-auth pattern (try admin first, fall back to salesperson with ownership check) is used for document routes (PCV, Carta de Pago, Carta de Autorización).
 
-#### Layer 3: Row-Level Security (Database-Level)
+#### Layer 4: Row-Level Security (Database-Level)
 **Supabase RLS policies on PostgreSQL tables**
 
 RLS policies are the final enforcement boundary. Even if a bug in middleware or API code allows an unauthorized request through, RLS policies prevent data access at the database level.
@@ -154,7 +171,7 @@ Notable role-specific policies:
 - `salesperson_project_assignments`: Salespeople can only SELECT their own assignments
 - `system_settings`: Only `master` and `torredecontrol` can UPDATE
 
-#### Layer 4: Client-Side UI Filtering (UX-Level)
+#### Layer 5: Client-Side UI Filtering (UX-Level)
 **Files:** `src/components/nav-bar.tsx`, various `*-client.tsx` components
 
 The weakest layer (easily bypassed via browser dev tools), but important for user experience:
@@ -336,8 +353,8 @@ The weakest layer (easily bypassed via browser dev tools), but important for use
 
 | Page | Route | Public | master | torredecontrol | ventas | gerencia/financiero/contabilidad |
 |------|-------|--------|--------|----------------|--------|----------------------------------|
-| Analytics Dashboard | `/` | — | Full | Full | Blocked | Full (view-only, API guards limit mutations) |
-| Login | `/login` | Yes | → `/` | → `/` | → `/ventas/dashboard` | → `/` |
+| Analytics Dashboard | `/` | — | Full | Full | Blocked (server-side redirect → `/ventas/dashboard`) | Full (view-only, API guards limit mutations) |
+| Login | `/login` | Yes | → `/` (role-aware) | → `/` (role-aware) | → `/ventas/dashboard` (role-aware) | → `/` (role-aware) |
 | Password Setup | `/auth/set-password` | — | N/A | N/A | Required | N/A |
 | Inventory Grid | `/reservar` | — | Full | Full | Own projects | Blocked (admin-only page) |
 | Admin Reservations | `/admin/reservas` | — | Full | Full | Blocked | Blocked (admin-only page) |
@@ -364,6 +381,8 @@ The weakest layer (easily bypassed via browser dev tools), but important for use
 ‡ Non-ventas users are not redirected — they could access `/ventas/portal/*` pages, but the content depends on `requireSalesperson()` API calls which would fail
 
 **Note:** `inventario` role → redirect to `/login` (not shown in table — no page access)
+
+**Updated 2026-03-20:** The analytics dashboard (`/`) now has a **server-side auth guard** (Layer 2). Previously, if middleware failed to redirect a ventas user, the full admin dashboard would render. Now `src/app/page.tsx` is an async Server Component that checks the user's role before rendering — ventas users are redirected to `/ventas/dashboard`, unauthenticated users to `/login`, and only `DATA_VIEWER_ROLES` see the dashboard. The login page (`/login`) also uses role-aware server-side redirects. Client-side auth flows (`login-form.tsx`, `set-password/page.tsx`) use `window.location.href` instead of `router.replace()` to force middleware evaluation on a fresh server request.
 
 ### 4.2 Ventas Portal Pages (Detail)
 

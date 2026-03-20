@@ -1,7 +1,39 @@
 import { Suspense } from "react";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import DashboardClient from "./dashboard-client";
 
-export default function DashboardPage() {
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+
+const DATA_VIEWER_ROLES = ["master", "torredecontrol", "gerencia", "financiero", "contabilidad"];
+
+async function getUser() {
+  const cookieStore = await cookies();
+  if (!supabaseUrl || !supabaseAnonKey) return null;
+
+  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+    cookies: {
+      get: (name: string) => cookieStore.get(name)?.value,
+      set: (_name: string, _value: string, _options: CookieOptions) => {},
+      remove: (_name: string, _options: CookieOptions) => {},
+    },
+  });
+
+  const { data } = await supabase.auth.getUser();
+  return data.user ?? null;
+}
+
+export default async function DashboardPage() {
+  const user = await getUser();
+
+  if (!user) redirect("/login");
+
+  const role = user.app_metadata?.role as string | undefined;
+  if (role === "ventas") redirect("/ventas/dashboard");
+  if (!role || !DATA_VIEWER_ROLES.includes(role)) redirect("/login");
+
   return (
     <Suspense
       fallback={

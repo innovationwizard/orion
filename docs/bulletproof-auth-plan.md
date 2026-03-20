@@ -145,3 +145,44 @@ export function createReservasClient() { return supabaseBrowser; }
 5. **Console exploit blocked:** From ventas user browser console, `supabaseBrowser.auth.updateUser({ data: { role: "master" } })` should NOT grant admin access (middleware reads `app_metadata` only)
 6. **Password reset:** From login page "Olvidé mi contraseña" → email link → `/auth/confirm` → `/auth/set-password` → works
 7. **Existing users:** Users who already set their password are NOT forced to redo it (fallback to `user_metadata.password_set`)
+
+---
+
+## Post-Deployment Issues Discovered (2026-03-20)
+
+### Context
+
+The bulletproof auth plan (implemented 2026-03-17, changelog 069) successfully fixed the *token verification* layer: server-side OTP, role in `app_metadata`, crawler protection, dead code removal. However, production testing with two ventas users (Erwin Cardona and Antonio Rada) revealed **5 compounding failures in the post-authentication redirect layer** — what happens AFTER the user has a valid session but needs to land on the correct page.
+
+### Issues Found
+
+These were NOT covered by the original bulletproof auth plan:
+
+1. **`src/app/login/page.tsx`** — Server Component's `redirect("/")` ignored role (sent all authenticated users to admin dashboard)
+2. **`src/app/login/login-form.tsx`** + **`src/app/auth/set-password/page.tsx`** — `router.replace("/")` created a client-side race condition (React rendered admin dashboard before middleware redirect arrived)
+3. **`src/app/auth/confirm/route.ts`** — Always redirected to `/auth/set-password` even for magiclink re-invites where user already had `password_set`
+4. **`src/app/page.tsx`** — Root dashboard had NO server-side auth guard (sole defense was middleware)
+5. **Missing `password_set`** — Users created before 2026-03-17 had no `password_set` in `app_metadata`, causing infinite set-password redirect loops
+
+### Resolution
+
+All 5 issues fixed on 2026-03-20. Full details in `docs/plan-auth-deep-investigation.md`.
+
+**Key design decisions:**
+- **`window.location.href` replaced `router.replace()`** — hard navigation forces middleware to run on fresh server request, eliminating client-side race conditions
+- **Server-side auth guard added to `page.tsx`** — defense-in-depth (middleware + page + API + RLS = 4 layers)
+- **`/auth/confirm` now checks `password_set`** before routing — existing users with passwords skip set-password and go directly to role-appropriate home
+- **SQL backfill** executed for pre-March-17 users missing `password_set`
+
+### Relationship
+
+```
+Bulletproof Auth (March 17)          Post-Auth Redirect Fix (March 20)
+─────────────────────────           ────────────────────────────────
+Token verification layer             Post-authentication redirect layer
+ ├─ Server-side OTP                   ├─ Role-aware login redirect
+ ├─ Role in app_metadata              ├─ Hard navigation (no race)
+ ├─ Crawler protection                ├─ Conditional set-password skip
+ └─ Dead code removal                 ├─ Page-level auth guard
+                                      └─ password_set backfill
+```

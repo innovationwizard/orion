@@ -27,7 +27,12 @@ async function getUser() {
 export default async function LoginPage() {
   const user = await getUser();
   if (user) {
-    redirect("/");
+    const role = user.app_metadata?.role as string | undefined;
+    if (role === "ventas") {
+      redirect("/ventas/dashboard");
+    } else {
+      redirect("/");
+    }
   }
 
   return (

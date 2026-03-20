@@ -243,3 +243,35 @@ if (!rl.allowed) {
 - **RLS policies** — no database changes
 - **Inactive roles** — gerencia/financiero/contabilidad/inventario now have correct implicit behavior: they pass `DATA_VIEWER_ROLES` for analytics, fail `ADMIN_ROLES` for mutations
 - **Client-side code** — zero frontend changes
+
+---
+
+## Post-Completion Discovery: Post-Auth Redirect Failures (2026-03-20)
+
+### Context
+
+After this plan was completed (changelog 074), the API layer was fully secured. However, production testing with two ventas users (Erwin Cardona and Antonio Rada) revealed **5 compounding failures in the post-authentication redirect layer** — the code that runs AFTER a user has a valid session but needs to land on the correct page.
+
+These failures were NOT API-level security gaps (those were fixed here). They were **UX/routing failures** in the authentication flow itself:
+
+1. **`src/app/login/page.tsx`** — `redirect("/")` sent all authenticated users to admin dashboard regardless of role
+2. **`src/app/login/login-form.tsx`** + **`src/app/auth/set-password/page.tsx`** — `router.replace("/")` created client-side race conditions (React rendered admin dashboard before middleware redirect arrived)
+3. **`src/app/auth/confirm/route.ts`** — Always redirected to `/auth/set-password` even for magiclink re-invites where user already had `password_set`
+4. **`src/app/page.tsx`** — Root dashboard had NO server-side auth guard (sole defense was middleware)
+5. **Missing `password_set`** — Pre-March-17 users trapped in set-password loops
+
+### Relationship to This Plan
+
+This plan secured the **API layer** (Layer 3). The post-auth redirect fixes secured the **page layer** (Layer 2) and **login flow**. Together, they complete 5-layer defense-in-depth:
+
+```
+Layer 1: Middleware (request-level routing)           ← already existed
+Layer 2: Page auth guards (server-side redirects)     ← added 2026-03-20
+Layer 3: API route guards (requireRole)               ← this plan (2026-03-19)
+Layer 4: RLS (database-level)                         ← migration 040
+Layer 5: Client-side UI filtering                     ← NavBar, readOnly
+```
+
+### Resolution
+
+All 5 issues fixed on 2026-03-20. Full details in `docs/plan-auth-deep-investigation.md`.

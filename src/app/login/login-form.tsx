@@ -1,14 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase-browser";
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "";
 
 export default function LoginForm() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -46,8 +44,14 @@ export default function LoginForm() {
       return;
     }
 
-    router.replace("/");
-    router.refresh();
+    // Hard navigation (not router.replace) guarantees middleware runs on fresh server request
+    const { data: { user } } = await supabaseBrowser.auth.getUser();
+    const role = user?.app_metadata?.role;
+    if (role === "ventas") {
+      window.location.href = "/ventas/dashboard";
+    } else {
+      window.location.href = "/";
+    }
   }
 
   return (

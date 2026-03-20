@@ -119,3 +119,27 @@ Why `window.location.href` not `router.push`: guarantees no stale React state, f
 6. Verify sessionStorage `orion:current-salesperson` is removed after logout
 7. Try accessing protected route after logout → redirected to `/login`
 8. Keyboard: Tab to avatar, Enter to open, Escape to close
+
+---
+
+## Resolution — ✅ IMPLEMENTED (2026-03-20)
+
+### Previous Situation
+
+The NavBar had **no logout button** and **no user identity indicator**. Users could not see who they were logged in as, what role they had, or end their session. This violated OWASP session management requirements (session termination must be explicitly available) and basic enterprise UX standards.
+
+### What Changed
+
+Single-file change to `src/components/nav-bar.tsx`:
+
+- **Initials avatar** — 32×32 circle with role-colored background, always visible in top-right corner
+- **Dropdown panel** — display name, email, role badge (colored pill), "Cerrar sesión" button
+- **Role colors** — purple (master), blue (torredecontrol/ventas), cyan (gerencia), green (financiero), muted (contabilidad), amber (inventario)
+- **Display name resolution** — ventas: sessionStorage cache → email prefix. Others: email prefix.
+- **Logout flow** — clear sessionStorage → `signOut()` → `window.location.href = "/login"`. Button disabled during signout.
+- **Accessibility** — `aria-expanded`, `aria-haspopup`, `aria-label`, `role="menu"`, `role="menuitem"`, Escape key, click-outside
+- **All hooks before early return** — React #310 prevention
+
+### Build Verification
+
+`npx next build` — zero errors. No new dependencies. No new files.

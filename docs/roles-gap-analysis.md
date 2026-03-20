@@ -547,3 +547,41 @@ The Orion role system is **secure for its current 3-role production deployment**
 The remaining gaps are structural (GAP-07/08 permission matrix), field masking (GAP-03), and advanced items (GAP-09 project scoping, GAP-17 desist workflow, GAP-19 notifications). See `docs/plan-fix-high-severity-gaps.md` for the detailed remediation plan and `docs/plan-phase3-audit-phase5-dashboard.md` for the completed audit + operations work.
 
 Total estimated effort for remaining phases: **~72 hours** (roughly 2 developer-weeks).
+
+---
+
+## Addendum: Post-Auth Redirect Fixes (2026-03-20)
+
+### Context
+
+Production testing with two ventas users revealed 5 compounding failures in the auth redirect layer — not covered by GAP-01 through GAP-24 (which focus on the role system). These were *auth flow* failures: the login page, login form, set-password page, auth/confirm route, and root page all had blind `redirect("/")` or `router.replace("/")` calls that ignored the user's role, sending ventas users to the admin dashboard.
+
+### Issues Found and Fixed
+
+| # | Issue | Impact | Fix |
+|---|-------|--------|-----|
+| AUTH-01 | `login/page.tsx` — `redirect("/")` ignores role | Ventas on `/login` → admin dashboard | Role-aware redirect |
+| AUTH-02 | `login-form.tsx` + `set-password/page.tsx` — `router.replace("/")` race | Admin dashboard flashes before middleware redirect | `window.location.href` (hard navigation) |
+| AUTH-03 | `auth/confirm` always forces password re-set | Returning users forced to re-set password | Check `password_set` before routing |
+| AUTH-04 | `page.tsx` has no server-side auth guard | Any user reaching `/` sees admin dashboard | Async Server Component with full guard |
+| AUTH-05 | Pre-March-17 users missing `password_set` | Infinite set-password redirect loop | SQL backfill |
+
+### Why Not in GAP Framework
+
+These issues were not role system gaps but *navigation* failures. The role system correctly identified users and enforced boundaries at middleware/API/RLS layers. The problem was in the login → redirect → landing chain, where three code paths (login page Server Component, login-form client navigation, set-password client navigation) bypassed middleware's role-aware routing entirely.
+
+Full investigation: `docs/plan-auth-deep-investigation.md`
+
+### Updated Defense-in-Depth Model
+
+The system now has **5 layers** of defense (previously 4):
+
+```
+Layer 1: Middleware         — Role-based page routing (5 categories)
+Layer 2: Page auth guards   — Server-side role check on root page (NEW)
+Layer 3: API route guards   — requireRole() on 30+ routes
+Layer 4: RLS policies       — Ownership-scoped SELECT on 4 tables
+Layer 5: Client UI filtering — NavBar role-filtered links + user account menu with logout
+```
+
+Layer 2 is new — `src/app/page.tsx` now validates the user's role server-side before rendering, preventing the admin dashboard from being visible to unauthorized users even if middleware fails to redirect.
