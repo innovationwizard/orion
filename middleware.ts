@@ -79,13 +79,24 @@ export async function middleware(request: NextRequest) {
     return redirectTo("/login");
   }
 
-  if (data.user && isLoginRoute) {
-    return redirectTo("/");
-  }
-
-  // Role-based routing: restrict ventas users to their allowed pages
+  // Role-based routing for authenticated users
   if (data.user) {
     const role = (data.user.app_metadata?.role as string | undefined) ?? null;
+
+    // Admin roles with full page access
+    const ADMIN_PAGE_ROLES = ["master", "torredecontrol"];
+    // Roles that can view analytics/dashboard pages (not admin mutation pages)
+    const DATA_PAGE_ROLES = ["gerencia", "financiero", "contabilidad"];
+
+    // Redirect logged-in users from /login to their home page
+    if (isLoginRoute) {
+      if (role === "ventas") return redirectTo("/ventas/dashboard");
+      if (role && [...ADMIN_PAGE_ROLES, ...DATA_PAGE_ROLES].includes(role)) {
+        return redirectTo("/");
+      }
+      // Unknown/unhandled role: stay on login page
+      return response;
+    }
 
     if (role === "ventas") {
       // Force password setup before any app access
@@ -106,9 +117,29 @@ export async function middleware(request: NextRequest) {
         "/auth",
         "/login",
       ];
-      const isAllowed = allowedPrefixes.some((prefix) => pathname.startsWith(prefix));
-      if (!isAllowed) {
+      if (!allowedPrefixes.some((prefix) => pathname.startsWith(prefix))) {
         return redirectTo("/ventas/dashboard");
+      }
+    } else if (ADMIN_PAGE_ROLES.includes(role ?? "")) {
+      // Full admin access — no page restrictions
+    } else if (DATA_PAGE_ROLES.includes(role ?? "")) {
+      // Data viewer roles: block admin-only pages, allow analytics + public
+      const adminOnlyPrefixes = [
+        "/admin",
+        "/referidos",
+        "/valorizacion",
+        "/cesion",
+        "/buyer-persona",
+        "/integracion",
+      ];
+      if (adminOnlyPrefixes.some((p) => pathname.startsWith(p))) {
+        return redirectTo("/");
+      }
+    } else {
+      // Unknown/unhandled role (inventario, null, or unrecognized):
+      // only allow public pages + auth routes
+      if (!isPublicReservasPage && !isAuthCallback && !isAuthConfirm && !isSetPassword) {
+        return redirectTo("/login");
       }
     }
   }

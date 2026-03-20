@@ -3,25 +3,28 @@
 import { useEffect, useState } from "react";
 import { supabaseBrowser } from "@/lib/supabase-browser";
 
-type NavLink = { href: string; label: string };
+type NavLink = { href: string; label: string; roles?: string[] };
 
-const ADMIN_LINKS: (NavLink | "divider")[] = [
+/** Roles that can manage reservations, salespeople, and operational data. */
+const ADMIN_PAGE_ROLES = ["master", "torredecontrol"];
+
+const NON_VENTAS_LINKS: (NavLink | "divider")[] = [
   { href: "/", label: "Dashboard" },
   { href: "/projects", label: "Projects" },
   { href: "/desistimientos", label: "Desistimientos" },
   "divider",
   { href: "/disponibilidad", label: "Disponibilidad" },
-  { href: "/admin/reservas", label: "Reservas" },
+  { href: "/admin/reservas", label: "Reservas", roles: ADMIN_PAGE_ROLES },
   { href: "/cotizador", label: "Cotizador" },
-  { href: "/integracion", label: "Integracion" },
+  { href: "/integracion", label: "Integracion", roles: ADMIN_PAGE_ROLES },
   { href: "/ventas", label: "Ventas" },
-  { href: "/referidos", label: "Referidos" },
-  { href: "/buyer-persona", label: "Buyer Persona" },
-  { href: "/valorizacion", label: "Valorizacion" },
+  { href: "/referidos", label: "Referidos", roles: ADMIN_PAGE_ROLES },
+  { href: "/buyer-persona", label: "Buyer Persona", roles: ADMIN_PAGE_ROLES },
+  { href: "/valorizacion", label: "Valorizacion", roles: ADMIN_PAGE_ROLES },
   "divider",
-  { href: "/cesion", label: "Cesion" },
-  { href: "/admin/asesores", label: "Asesores" },
-  { href: "/admin/roles", label: "Roles" },
+  { href: "/cesion", label: "Cesion", roles: ADMIN_PAGE_ROLES },
+  { href: "/admin/asesores", label: "Asesores", roles: ADMIN_PAGE_ROLES },
+  { href: "/admin/roles", label: "Roles", roles: ["master"] },
 ];
 
 const VENTAS_LINKS: (NavLink | "divider")[] = [
@@ -49,7 +52,24 @@ export default function NavBar() {
   // Don't render until role is determined (prevents flash of admin links for ventas users)
   if (role === undefined) return null;
 
-  const links = role === "ventas" ? VENTAS_LINKS : ADMIN_LINKS;
+  let links: (NavLink | "divider")[];
+
+  if (role === "ventas") {
+    links = VENTAS_LINKS;
+  } else {
+    // Filter non-ventas links by role
+    const filtered = NON_VENTAS_LINKS.filter(
+      (item) =>
+        item === "divider" || !item.roles || (role != null && item.roles.includes(role)),
+    );
+    // Clean up orphaned dividers (leading, trailing, consecutive)
+    links = filtered.filter((item, i, arr) => {
+      if (item !== "divider") return true;
+      if (i === 0 || i === arr.length - 1) return false;
+      if (arr[i - 1] === "divider") return false;
+      return true;
+    });
+  }
 
   return (
     <nav className="flex flex-wrap gap-2 items-center text-[13px]">

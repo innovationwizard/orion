@@ -72,16 +72,19 @@ Role enforcement operates as a defense-in-depth model with four layers:
 #### Layer 1: Middleware (Request-Level)
 **File:** `middleware.ts`
 
-The sole routing enforcer. Intercepts every HTTP request before it reaches a page or API route.
+The sole routing enforcer. Intercepts every HTTP request before it reaches a page or API route. **Updated 2026-03-19** to use explicit 5-category role routing (previously binary ventas/non-ventas).
 
 | Condition | Behavior |
 |-----------|----------|
 | Unauthenticated user hits protected route | Redirect → `/login` |
-| Authenticated user hits `/login` | Redirect → `/` |
-| `ventas` role user without `password_set = true` | Redirect → `/auth/set-password` |
-| `ventas` role user hits any non-allowed route | Redirect → `/ventas/dashboard` |
-| `ventas` role user hits allowed route | Allow through |
-| Non-ventas role user hits any route | Allow through (no restrictions) |
+| `ventas` role on `/login` | Redirect → `/ventas/dashboard` |
+| Admin/data role on `/login` | Redirect → `/` |
+| `ventas` role without `password_set = true` | Redirect → `/auth/set-password` |
+| `ventas` role hits non-allowed route | Redirect → `/ventas/dashboard` |
+| `ventas` role hits allowed route | Allow through |
+| `ADMIN_PAGE_ROLES` (master, torredecontrol) | Full page access (no restrictions) |
+| `DATA_PAGE_ROLES` (gerencia, financiero, contabilidad) | Analytics pages only; blocked from admin-only pages |
+| Unknown/null/unhandled role | Redirect → `/login` |
 
 **Ventas-allowed routes:**
 - `/reservar`
@@ -91,13 +94,23 @@ The sole routing enforcer. Intercepts every HTTP request before it reaches a pag
 - `/auth/*`
 - `/login`
 
+**Admin-only pages** (blocked for DATA_PAGE_ROLES):
+- `/admin/*`
+- `/referidos`
+- `/valorizacion`
+- `/cesion`
+- `/buyer-persona`
+- `/integracion`
+
 **Public routes (no auth required):**
 - `/disponibilidad`
 - `/cotizador`
 - `/login`
 - `/auth/*`
 
-**Key observation:** Middleware only distinguishes between `ventas` and `not-ventas`. There is no middleware-level distinction between `master`, `torredecontrol`, `gerencia`, `financiero`, `contabilidad`, or `inventario`. All non-ventas roles receive identical routing treatment.
+~~**Key observation:** Middleware only distinguishes between `ventas` and `not-ventas`. There is no middleware-level distinction between `master`, `torredecontrol`, `gerencia`, `financiero`, `contabilidad`, or `inventario`. All non-ventas roles receive identical routing treatment.~~
+
+**Updated:** Middleware now has explicit 5-category role routing. DATA_PAGE_ROLES users are blocked from admin mutation pages but can access analytics, projects, ventas velocity, desistimientos, disponibilidad, and cotizador. Unknown/null roles are redirected to login.
 
 #### Layer 2: API Route Guards (Function-Level)
 **File:** `src/lib/auth.ts`
@@ -118,13 +131,26 @@ API routes combine these guards to implement role-specific access. The dual-auth
 
 RLS policies are the final enforcement boundary. Even if a bug in middleware or API code allows an unauthorized request through, RLS policies prevent data access at the database level.
 
-Most reservation system tables use a simple two-policy model:
-- `SELECT` → all authenticated users (or public for reference tables)
-- `ALL` (INSERT/UPDATE/DELETE) → service_role only
+~~Most reservation system tables use a simple two-policy model:~~
+~~- `SELECT` → all authenticated users (or public for reference tables)~~
 
-This means **the application server always uses the service_role key for write operations**, bypassing RLS. The RLS policies primarily protect against direct Supabase client access from the browser.
+**Updated 2026-03-19 (migration 040):** Ownership-scoped RLS policies now enforce ventas data isolation at the database level. Uses a reusable `jwt_role()` SQL helper function to extract role from JWT `app_metadata`.
 
-Notable exceptions:
+**Ownership-scoped SELECT policies (CASE-based: ventas → own data, non-ventas → all rows):**
+- `reservations` — ventas see only rows where `salesperson_id` matches their `salespeople.user_id`
+- `rv_clients` — ventas see only clients linked through `reservation_clients` → `reservations` ownership chain
+- `reservation_clients` — ventas see only junction rows for their own reservations
+- `receipt_extractions` — ventas see only extractions for their own reservations
+
+**INSERT policies tightened** (from `TO public` to `TO authenticated`):
+- `reservations`
+- `reservation_clients`
+
+**Unchanged policies:**
+- `ALL` (INSERT/UPDATE/DELETE) → service_role only (write operations bypass RLS)
+- Reference tables (`towers`, `floors`, `rv_units`, `salespeople`, `unit_status_log`) → public SELECT
+
+Notable role-specific policies:
 - `salesperson_project_assignments`: Salespeople can only SELECT their own assignments
 - `system_settings`: Only `master` and `torredecontrol` can UPDATE
 
@@ -218,9 +244,9 @@ The weakest layer (easily bypassed via browser dev tools), but important for use
 - CRUD on projects
 - **Cannot:** Confirm ejecutivo rates, manage GC/Supervisor assignments
 
-**NavBar links:** Same as master (no difference in NavBar filtering)
+**NavBar links:** Dashboard, Projects, Desistimientos, Disponibilidad, Reservas, Cotizador, Integracion, Ventas, Referidos, Buyer Persona, Valorizacion, Cesion, Asesores (**no "Roles" link** — master-only, updated 2026-03-19)
 
-**Key observation:** Torre de Control and Master have near-identical access. The only difference is two master-only API endpoints. The NavBar, middleware, and page-level access are identical. There is no dedicated "operations dashboard" optimized for Pati's workflow — she uses the same analytics dashboard as the system owner.
+**Key observation:** Torre de Control and Master have near-identical access. The only differences are: (1) two master-only API endpoints (management-roles, ejecutivo-rate confirm) and (2) the "Roles" NavBar link is hidden for torredecontrol (updated 2026-03-19). There is no dedicated "operations dashboard" optimized for Pati's workflow — she uses the same analytics dashboard as the system owner.
 
 ### 3.3 Ventas (Ejecutivo de Ventas)
 
@@ -284,49 +310,58 @@ The weakest layer (easily bypassed via browser dev tools), but important for use
 
 **Who:** No users currently assigned to these roles.
 
-**Current behavior if assigned:**
-- Middleware would treat them as non-ventas → full page access (same as master/torredecontrol)
-- API routes checking for `master` or `torredecontrol` would return 403
-- API routes with only `requireAuth()` would succeed
-- NavBar would show admin links (role !== 'ventas' branch)
-- Net effect: they could VIEW the analytics dashboard but could NOT manage reservations, confirm rates, or modify settings
+**Current behavior if assigned (updated 2026-03-19):**
 
-**Implications:** These roles are effectively dead code. A user with `role = "financiero"` would see the same NavBar as master but get 403 errors on most admin operations. This would be confusing and potentially expose data they should not see (analytics, commission details) without granting them any operational capability.
+**gerencia / financiero / contabilidad** (DATA_PAGE_ROLES):
+- Middleware: explicit routing — can access analytics pages (/, /projects, /desistimientos, /disponibilidad, /cotizador, /ventas); blocked from admin-only pages (/admin/*, /referidos, /valorizacion, /cesion, /buyer-persona, /integracion)
+- API: passes `requireRole(DATA_VIEWER_ROLES)` → access to analytics, commissions, payments, commission-rates, projects (GET)
+- API: fails `requireRole(ADMIN_ROLES)` → blocked from reservation admin operations, mutations
+- NavBar: shows only links they have access to (Dashboard, Projects, Desistimientos, Disponibilidad, Cotizador, Ventas); admin-only links hidden
+- Net effect: controlled, scoped read access to analytics data without admin capabilities
+
+**inventario:**
+- Middleware: unknown role → redirect to `/login`
+- API: passes `requireAuth()` checks only
+- NavBar: not rendered (redirected before page loads)
+- Net effect: no page access until the role is explicitly implemented
+
+~~**Implications:** These roles are effectively dead code.~~
+**Updated:** gerencia/financiero/contabilidad now have well-defined, scoped behavior at middleware, NavBar, and API levels. inventario remains unimplemented (redirect to login).
 
 ---
 
 ## 4. Page Access Matrix
 
-### 4.1 Current Production Access
+### 4.1 Current Production Access (Updated 2026-03-19)
 
-| Page | Route | Public | master | torredecontrol | ventas | gerencia* | financiero* |
-|------|-------|--------|--------|----------------|--------|-----------|-------------|
-| Analytics Dashboard | `/` | — | Full | Full | Blocked | **Full†** | **Full†** |
-| Login | `/login` | Yes | Redirect | Redirect | Redirect | Redirect | Redirect |
-| Password Setup | `/auth/set-password` | — | N/A | N/A | Required | N/A | N/A |
-| Inventory Grid | `/reservar` | — | Full | Full | Own projects | **Full†** | **Full†** |
-| Admin Reservations | `/admin/reservas` | — | Full | Full | Blocked | **Full†** | **Full†** |
-| PCV Editor | `/admin/reservas/pcv/[id]` | — | RW | RW | Blocked | **RW†** | **RW†** |
-| Carta de Pago | `/admin/reservas/carta-pago/[id]` | — | RW | RW | Blocked | **RW†** | **RW†** |
-| Carta de Autorización | `/admin/reservas/carta-autorizacion/[id]` | — | RW | RW | Blocked | **RW†** | **RW†** |
-| Availability Board | `/disponibilidad` | Yes | Full | Full | Full | Full | Full |
-| Projects | `/projects` | — | RW | RW | Blocked | **RW†** | **RW†** |
-| Desistimientos | `/desistimientos` | — | RW | RW | Blocked | **RW†** | **RW†** |
-| Referidos | `/referidos` | — | RW | RW | Blocked | **RW†** | **RW†** |
-| Valorización | `/valorizacion` | — | RW | RW | Blocked | **RW†** | **RW†** |
-| Buyer Persona | `/buyer-persona` | — | RW | RW | Blocked | **RW†** | **RW†** |
-| Cotizador | `/cotizador` | Yes | Full | Full | Full | Full | Full |
-| Integración | `/integracion` | — | Full | Full | Blocked | **Full†** | **Full†** |
-| Sales Velocity | `/ventas` | — | Full | Full | Blocked | **Full†** | **Full†** |
-| Cesión | `/cesion` | — | RW | RW | Blocked | **RW†** | **RW†** |
-| Salesperson Mgmt | `/admin/asesores` | — | RW | RW | Blocked | **RW†** | **RW†** |
-| HR Roles | `/admin/roles` | — | RW | RW | Blocked | **RW†** | **RW†** |
-| Ventas Portal | `/ventas/portal/*` | — | Redirect‡ | Redirect‡ | Full | Redirect‡ | Redirect‡ |
-| Ventas PCV (RO) | `/ventas/dashboard/pcv/[id]` | — | Full | Full | Own only | **Full†** | **Full†** |
+| Page | Route | Public | master | torredecontrol | ventas | gerencia/financiero/contabilidad |
+|------|-------|--------|--------|----------------|--------|----------------------------------|
+| Analytics Dashboard | `/` | — | Full | Full | Blocked | Full (view-only, API guards limit mutations) |
+| Login | `/login` | Yes | → `/` | → `/` | → `/ventas/dashboard` | → `/` |
+| Password Setup | `/auth/set-password` | — | N/A | N/A | Required | N/A |
+| Inventory Grid | `/reservar` | — | Full | Full | Own projects | Blocked (admin-only page) |
+| Admin Reservations | `/admin/reservas` | — | Full | Full | Blocked | Blocked (admin-only page) |
+| PCV Editor | `/admin/reservas/pcv/[id]` | — | RW | RW | Blocked | Blocked (admin-only page) |
+| Carta de Pago | `/admin/reservas/carta-pago/[id]` | — | RW | RW | Blocked | Blocked (admin-only page) |
+| Carta de Autorización | `/admin/reservas/carta-autorizacion/[id]` | — | RW | RW | Blocked | Blocked (admin-only page) |
+| Availability Board | `/disponibilidad` | Yes | Full | Full | Full | Full |
+| Projects | `/projects` | — | RW | RW | Blocked | Full (view; API limits mutations) |
+| Desistimientos | `/desistimientos` | — | RW | RW | Blocked | Full (view-only) |
+| Referidos | `/referidos` | — | RW | RW | Blocked | Blocked (admin-only page) |
+| Valorización | `/valorizacion` | — | RW | RW | Blocked | Blocked (admin-only page) |
+| Buyer Persona | `/buyer-persona` | — | RW | RW | Blocked | Blocked (admin-only page) |
+| Cotizador | `/cotizador` | Yes | Full | Full | Full | Full |
+| Integración | `/integracion` | — | Full | Full | Blocked | Blocked (admin-only page) |
+| Sales Velocity | `/ventas` | — | Full | Full | Blocked | Full (view-only) |
+| Cesión | `/cesion` | — | RW | RW | Blocked | Blocked (admin-only page) |
+| Salesperson Mgmt | `/admin/asesores` | — | RW | RW | Blocked | Blocked (admin-only page) |
+| HR Roles | `/admin/roles` | — | RW | Blocked (API) | Blocked | Blocked (admin-only page) |
+| Ventas Portal | `/ventas/portal/*` | — | Redirect‡ | Redirect‡ | Full | Redirect‡ |
+| Ventas PCV (RO) | `/ventas/dashboard/pcv/[id]` | — | Full | Full | Own only | Full |
 
-\* Roles defined but not actively enforced
-† Would see the page but API calls would fail with 403 on admin operations
 ‡ Non-ventas users are not redirected — they could access `/ventas/portal/*` pages, but the content depends on `requireSalesperson()` API calls which would fail
+
+**Note:** `inventario` role → redirect to `/login` (not shown in table — no page access)
 
 ### 4.2 Ventas Portal Pages (Detail)
 
@@ -345,41 +380,49 @@ The weakest layer (easily bypassed via browser dev tools), but important for use
 
 ### 5.1 By Guard Type
 
-#### No Auth Required (Public)
-| Route | Method | Purpose |
-|-------|--------|---------|
-| `/api/reservas/dpi-ocr` | POST | Claude Vision OCR for DPI images |
-| `/api/reservas/ocr` | POST | Claude Vision OCR for receipt images |
+#### ~~No Auth Required (Public)~~ OCR Endpoints — Now Secured (changelog 074)
 
-**Security observation:** These OCR endpoints are fully public. Any unauthenticated caller can submit images for processing, consuming Claude API credits. There is no rate limiting visible in the codebase.
+~~**Security observation:** These OCR endpoints are fully public. Any unauthenticated caller can submit images for processing, consuming Claude API credits. There is no rate limiting visible in the codebase.~~
 
-#### Any Authenticated User (`requireAuth()`)
+**Updated 2026-03-19:** Both OCR endpoints now require `requireAuth()` + in-memory rate limiting (20 req/hour/user). Returns HTTP 429 when exceeded.
+
+| Route | Method | Auth | Rate Limit |
+|-------|--------|------|------------|
+| `/api/reservas/dpi-ocr` | POST | `requireAuth()` | 20/hr/user |
+| `/api/reservas/ocr` | POST | `requireAuth()` | 20/hr/user |
+
+#### Any Authenticated User (`requireAuth()`) — Updated 2026-03-19
 | Route | Method | Purpose |
 |-------|--------|---------|
 | `/api/me` | GET | User identity |
 | `/api/auth/session` | GET | Session info |
 | `/api/auth/confirm-password-set` | POST | Mark password as set |
-| `/api/commissions` | GET | Commission data |
-| `/api/payments` | GET/POST | Payment records |
-| `/api/sales` | GET/PATCH | Sales data, cancellation |
-| `/api/commission-rates` | GET | Commission rates |
-| `/api/projects` | GET/POST/PATCH/DELETE | Project CRUD |
+| `/api/sales` | GET | Sales data (read-only) |
+| `/api/payments` | GET | Payment records (read-only) |
+| `/api/reservas/units` | GET | Unit inventory |
+| `/api/reservas/salespeople` | GET | Salespeople list |
+| `/api/reservas/projects` | GET | Project list |
+| `/api/reservas/reservations` | GET | Reservations list |
+| `/api/reservas/freeze-requests` | POST | Freeze requests |
+| `/api/reservas/ventas` | GET | Sales velocity data |
+
+~~**Security observation:** Many operational API routes (commission data, payment data, sales, projects CRUD) only require `requireAuth()`. Any authenticated user — including ventas — could call these endpoints directly.~~
+
+**Updated 2026-03-19 (changelog 074):** Analytics, commission, and mutation routes upgraded to `requireRole()`. Only self-info, read-only reference data, and freeze requests remain at `requireAuth()` level.
+
+#### Data Viewer Roles (`requireRole(DATA_VIEWER_ROLES)`) — New 2026-03-19
+| Route | Method | Purpose |
+|-------|--------|---------|
 | `/api/analytics/commissions` | GET | Commission analytics |
 | `/api/analytics/payments` | GET | Payment analytics |
-| `/api/analytics/cash-flow-forecast` | GET | Cash flow forecast |
 | `/api/analytics/payment-compliance` | GET | Payment compliance |
+| `/api/analytics/cash-flow-forecast` | GET | Cash flow forecast |
+| `/api/commissions` | GET | Commission data |
+| `/api/commission-rates` | GET | Commission rates |
 | `/api/commission-phases` | GET | Commission phases |
-| `/api/reservas/buyer-persona/[client_id]` | GET/POST/PATCH | Client profile |
-| `/api/reservas/referidos` | GET/POST | Referrals |
-| `/api/reservas/referidos/[id]` | GET/PATCH/DELETE | Referral detail |
-| `/api/reservas/valorizacion` | GET/POST | Price history |
-| `/api/reservas/valorizacion/[id]` | GET/PATCH/DELETE | Price history detail |
-| `/api/reservas/freeze-requests` | GET/POST | Freeze requests |
-| `/api/reservas/cesion` | POST | Rights assignment |
+| `/api/projects` | GET | Project list + details |
 
-**Security observation:** Many operational API routes (commission data, payment data, sales, projects CRUD) only require `requireAuth()`. Any authenticated user — including ventas — could call these endpoints directly (bypassing middleware UI restrictions) and receive data. The middleware blocks page access but does not block direct API calls from authenticated ventas users.
-
-#### Master + TorreDeControl (`requireRole(["master", "torredecontrol"])`)
+#### Master + TorreDeControl (`requireRole(ADMIN_ROLES)`) — Updated 2026-03-19
 | Route | Method | Purpose |
 |-------|--------|---------|
 | `/api/admin/salespeople` | GET | List salespeople |
@@ -394,13 +437,28 @@ The weakest layer (easily bypassed via browser dev tools), but important for use
 | `/api/reservas/admin/clients/[id]` | GET/PATCH | Manage clients |
 | `/api/reservas/admin/reservation-clients/[id]` | PATCH | Update buyer role/ownership |
 | `/api/reservas/admin/freeze-requests/[id]/release` | POST | Release frozen unit |
+| `/api/sales` | POST, PATCH | Sales mutations |
+| `/api/payments` | POST | Payment creation |
+| `/api/projects` | POST, PATCH, DELETE | Project mutations |
+| `/api/reservas/referidos` | GET, POST | Referrals |
+| `/api/reservas/referidos/[id]` | PATCH, DELETE | Referral detail |
+| `/api/reservas/valorizacion` | GET, POST | Price history |
+| `/api/reservas/valorizacion/[id]` | PATCH, DELETE | Price history detail |
+| `/api/reservas/cesion` | GET | Rights assignment |
+| `/api/reservas/buyer-persona` | GET | Buyer persona dashboard |
+| `/api/reservas/buyer-persona/[client_id]` | GET, PUT | Client profile |
+| `/api/reservas/integracion` | GET | Integration pipeline |
 
 #### Master Only (`requireRole(["master"])`)
 | Route | Method | Purpose |
 |-------|--------|---------|
 | `/api/admin/management-roles` | GET/POST | GC/Supervisor assignments |
 | `/api/admin/management-roles/[id]` | PATCH | Update assignment |
-| `/api/reservas/admin/sales/[id]/ejecutivo-rate` | PATCH | Confirm ejecutivo rate |
+
+#### Master + Financiero (`requireRole(["master", "financiero"])`) — Updated 2026-03-19
+| Route | Method | Purpose |
+|-------|--------|---------|
+| `/api/reservas/admin/sales/[id]/ejecutivo-rate` | PATCH | Confirm ejecutivo rate (GAP-18 escalation) |
 
 #### Dual-Auth (Admin OR Salesperson with ownership)
 | Route | Method | Admin Access | Salesperson Access |
@@ -437,7 +495,7 @@ The weakest layer (easily bypassed via browser dev tools), but important for use
 
 ## 6. Database-Level Access Control (RLS)
 
-### 6.1 RLS Policy Summary by Table
+### 6.1 RLS Policy Summary by Table (Updated 2026-03-19)
 
 | Table | SELECT Policy | INSERT Policy | UPDATE/DELETE Policy |
 |-------|--------------|---------------|---------------------|
@@ -445,10 +503,10 @@ The weakest layer (easily bypassed via browser dev tools), but important for use
 | `floors` | Anyone (true) | Service role | Service role |
 | `rv_units` | Anyone (true) | Service role | Service role |
 | `salespeople` | Anyone (true) | Service role | Service role |
-| `rv_clients` | Authenticated | Service role | Service role |
-| `reservations` | Authenticated | Anyone (true) | Service role |
-| `reservation_clients` | Authenticated | Anyone (true) | Service role |
-| `receipt_extractions` | Authenticated | Service role | Service role |
+| `rv_clients` | **Ownership-scoped** (ventas=own, others=all) | Service role | Service role |
+| `reservations` | **Ownership-scoped** (ventas=own, others=all) | **Authenticated** | Service role |
+| `reservation_clients` | **Ownership-scoped** (ventas=own, others=all) | **Authenticated** | Service role |
+| `receipt_extractions` | **Ownership-scoped** (ventas=own, others=all) | Service role | Service role |
 | `unit_status_log` | Anyone (true) | Service role | — (append-only) |
 | `freeze_requests` | Authenticated | Anyone (true) | Service role |
 | `rv_referrals` | Authenticated | Service role | Service role |
@@ -458,37 +516,55 @@ The weakest layer (easily bypassed via browser dev tools), but important for use
 | `salesperson_project_assignments` | Own assignments (salespeople) + admin roles | Service role | Admin roles |
 | `salesperson_periods` | Service role | Service role | Service role |
 
-### 6.2 Notable RLS Observations
+### 6.2 Notable RLS Observations (Updated 2026-03-19)
 
-1. **Most INSERT policies are wide open.** `reservations`, `reservation_clients`, and `freeze_requests` allow ANY user (even unauthenticated via PostgREST anon key) to insert. This is by design — the reservation form is submitted by salespeople who may have intermittent connectivity, and the system relies on application-layer validation.
+1. ~~**Most INSERT policies are wide open.**~~ **INSERT policies tightened (migration 040).** `reservations` and `reservation_clients` INSERT changed from `TO public` to `TO authenticated`. `freeze_requests` INSERT remains `TO public` (unchanged).
 
-2. **No role-specific SELECT policies.** Except for `salesperson_project_assignments` and `system_settings`, all SELECT policies are either "anyone" or "any authenticated user." There is no database-level enforcement of "ventas can only see their own reservations" — this is handled entirely at the API layer.
+2. ~~**No role-specific SELECT policies.**~~ **Ownership-scoped SELECT policies added (migration 040).** Four tables (`reservations`, `rv_clients`, `reservation_clients`, `receipt_extractions`) now have CASE-based policies using `jwt_role()`: ventas users see only rows linked to their `salespeople.user_id`, non-ventas roles see all rows. Defense-in-depth alongside API-layer filters.
 
 3. **Service role dominance.** All write operations go through the service_role key, bypassing RLS entirely. The RLS policies primarily protect against direct browser-to-Supabase connections (which the app doesn't use for writes).
 
 4. **Views have no RLS.** PostgreSQL views don't support RLS directly. The views (`v_rv_units_full`, `v_reservations_pending`, etc.) are readable by anyone who can query the view. Access control for view data is at the API layer only.
 
+5. **`jwt_role()` helper function (new, migration 040).** Reusable SQL function: `public.jwt_role()` extracts role from `current_setting('request.jwt.claims', true)::jsonb -> 'app_metadata' ->> 'role'`. Used by all 4 ownership-scoped policies.
+
 ---
 
 ## 7. Navigation & UI Filtering
 
-### 7.1 NavBar (`src/components/nav-bar.tsx`)
+### 7.1 NavBar (`src/components/nav-bar.tsx`) — Updated 2026-03-19
 
-The NavBar fetches the user's role from `app_metadata` on mount and conditionally renders link sets:
+The NavBar fetches the user's role from `app_metadata` on mount and conditionally renders link sets. **Updated to use role-filtered links** — each non-ventas link is tagged with a `roles` array, and links are filtered by the user's actual role at render time. Orphaned dividers (leading, trailing, consecutive) are cleaned up automatically.
 
-**Admin links (role !== 'ventas'):**
+**master links:**
 ```
 Dashboard | Projects | Desistimientos | Disponibilidad | Reservas | Cotizador |
 Integracion | Ventas | Referidos | Buyer Persona | Valorizacion |
 Cesion | Asesores | Roles
 ```
 
+**torredecontrol links:**
+```
+Dashboard | Projects | Desistimientos | Disponibilidad | Reservas | Cotizador |
+Integracion | Ventas | Referidos | Buyer Persona | Valorizacion |
+Cesion | Asesores
+```
+(No "Roles" link — master-only)
+
+**gerencia / financiero / contabilidad links:**
+```
+Dashboard | Projects | Desistimientos | Disponibilidad | Cotizador | Ventas
+```
+(No admin-only links: Reservas, Integracion, Referidos, Buyer Persona, Valorizacion, Cesion, Asesores, Roles are hidden)
+
 **Ventas links (role === 'ventas'):**
 ```
 Mis Reservas | Inventario | Clientes | Rendimiento | Disponibilidad | Cotizador
 ```
 
-**Key observation:** The NavBar has exactly two states — admin and ventas. There is no differentiation between master and torredecontrol, or between any of the inactive roles. A `financiero` user would see the full admin NavBar, including links to pages like Roles and Asesores where the underlying APIs would reject their requests.
+~~**Key observation:** The NavBar has exactly two states — admin and ventas. There is no differentiation between master and torredecontrol, or between any of the inactive roles. A `financiero` user would see the full admin NavBar, including links to pages like Roles and Asesores where the underlying APIs would reject their requests.~~
+
+**Updated:** NavBar now has per-role link filtering. Each link specifies which roles can see it via a `roles` array. Users only see links to pages they can actually access.
 
 ### 7.2 Component-Level Visibility
 
@@ -536,8 +612,10 @@ Visible in admin reservations header. Only functional for master/torredecontrol 
 | **System settings** | Read + write | Read + write | Not exposed |
 | **GC/Supervisor assignments** | CRUD | View | Not exposed |
 
-\* Ventas users cannot access sales data pages, but `GET /api/sales` only requires `requireAuth()` — a direct API call would succeed.
-† These API routes require only `requireAuth()`, so ventas users could access them via direct API calls even though no UI exposes this data to them.
+~~\* Ventas users cannot access sales data pages, but `GET /api/sales` only requires `requireAuth()` — a direct API call would succeed.~~
+~~† These API routes require only `requireAuth()`, so ventas users could access them via direct API calls even though no UI exposes this data to them.~~
+
+**Updated 2026-03-19:** Analytics, commission, and commission-rate routes now require `DATA_VIEWER_ROLES` — ventas users are blocked at the API level. Sales and payments GET remain `requireAuth()` but are filtered by RLS ownership policies for ventas users. Ejecutivo rates are hidden from ventas in dual-auth response + confirmed by master/financiero only.
 
 ### 8.2 Project Scoping
 
@@ -569,15 +647,16 @@ Visible in admin reservations header. Only functional for master/torredecontrol 
 | **Assign project** | Yes | Yes | No |
 | **Generate PCV** | Yes | Yes | No |
 | **Download PCV** | All | All | Own only |
-| **Manage referrals** | Yes | Yes | No (API allows)* |
-| **Manage price history** | Yes | Yes | No (API allows)* |
-| **Manage buyer persona** | Yes | Yes | No (API allows)* |
+| **Manage referrals** | Yes | Yes | No |
+| **Manage price history** | Yes | Yes | No |
+| **Manage buyer persona** | Yes | Yes | No |
 | **Release freeze** | Yes | Yes | No |
 | **Submit freeze** | Yes | Yes | Yes |
 | **Upload receipt** | Yes | Yes | Yes |
 | **Upload DPI** | Yes | Yes | Yes |
 
-\* These APIs use `requireAuth()` only — ventas could technically call them directly.
+~~\* These APIs use `requireAuth()` only — ventas could technically call them directly.~~
+**Updated 2026-03-19:** All admin mutation routes now use `requireRole(ADMIN_ROLES)`. Ventas users are blocked at the API level.
 
 ### 9.2 Approval Workflows
 
