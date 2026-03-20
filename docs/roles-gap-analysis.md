@@ -30,15 +30,15 @@ However, the system has **significant gaps when measured against enterprise SaaS
 |----------|-----------|----------|----------|
 | Security & Data Exposure | 5 | 2 Critical, 3 High | 4 resolved (GAP-01/02/04/05) |
 | Role Architecture | 4 | 1 Critical, 3 High | 1 resolved (GAP-06) |
-| Dashboard & Visualization | 6 | 2 High, 4 Medium | 0 |
-| Authorization & Workflows | 5 | 1 High, 4 Medium | 1 resolved (GAP-18) |
-| Compliance & Audit | 4 | 2 High, 2 Medium | 0 |
+| Dashboard & Visualization | 6 | 2 High, 4 Medium | 2 resolved (GAP-10/11) |
+| Authorization & Workflows | 5 | 1 High, 4 Medium | 2 resolved (GAP-16/18) |
+| Compliance & Audit | 4 | 2 High, 2 Medium | 1 resolved (GAP-22) |
 
-**Total: 24 identified gaps. 6 resolved as of 2026-03-19.**
+**Total: 24 identified gaps. 12 resolved as of 2026-03-19.**
 
 ~~The single most impactful issue: **four defined roles (gerencia, financiero, contabilidad, inventario) are dead code.** A user assigned any of these roles would see the full admin NavBar, access the analytics dashboard, and receive 403 errors on admin operations — a confusing and potentially data-exposing experience.~~
 
-**Update (2026-03-19):** The 3 critical gaps and 3 high-severity gaps have been resolved (changelogs 074 + 075). Middleware now has explicit 5-category role routing, NavBar is role-filtered, 30+ API routes are secured with role guards, OCR endpoints have auth + rate limiting, and ownership-scoped RLS policies enforce ventas data isolation at the database level. The remaining 18 gaps are structural, dashboard, workflow, and compliance items.
+**Update (2026-03-19):** The 3 critical gaps and 9 high-severity gaps have been resolved (changelogs 074 + 075, Phases 3 + 5). Security: middleware has explicit 5-category role routing, NavBar is role-filtered, 30+ API routes secured with role guards, OCR endpoints have auth + rate limiting, ownership-scoped RLS policies enforce ventas data isolation. Audit: centralized `audit_events` table with `logAudit()` utility, 10 admin routes instrumented, `/admin/audit` viewer page. Operations: `/admin/operaciones` dashboard with work queues and activity feed. The remaining 12 gaps are structural (permission architecture), field masking, workflow, and compliance items.
 
 ---
 
@@ -213,10 +213,10 @@ Use this everywhere instead of scattered role checks.
 
 ## 4. Dashboard & Visualization Gaps
 
-### GAP-10: No Role-Specific Dashboard Views
+### GAP-10: No Role-Specific Dashboard Views — ✅ RESOLVED (2026-03-19)
 **Severity: High**
 
-**Current state:** The main dashboard (`/`) is a monolith (`dashboard-client.tsx`, ~28KB) that shows the same content to all admin users. Pati (torredecontrol) sees the same dashboard as the CFO (if the financiero role were active). There is no dashboard tailored to:
+**Current state:** ~~The main dashboard (`/`) is a monolith (`dashboard-client.tsx`, ~28KB) that shows the same content to all admin users.~~ **Resolved.** `/admin/operaciones` provides a dedicated operations dashboard for Pati (Torre de Control). The existing analytics dashboard at `/` remains unchanged. Simpler approach chosen: separate page, no routing change. Pati bookmarks `/admin/operaciones` as her landing page. Pati (torredecontrol) sees the same dashboard as the CFO (if the financiero role were active). There is no dashboard tailored to:
 - CFO (financial KPIs, disbursement tracking, ISR summary)
 - Sales Manager (team performance, pipeline health, coaching indicators)
 - Executive (portfolio-level summary, trend arrows, project health scorecards)
@@ -232,10 +232,10 @@ Use this everywhere instead of scattered role checks.
 - `/dashboard/gerencia` → Sales Manager (team KPIs, agent comparison)
 - `/dashboard/ejecutivo` → C-Suite (portfolio summary, trend arrows)
 
-### GAP-11: No Dedicated Operations Dashboard for Pati
+### GAP-11: No Dedicated Operations Dashboard for Pati — ✅ RESOLVED (2026-03-19)
 **Severity: High**
 
-**Current state:** Pati uses the analytics dashboard (same as everyone else) plus the admin reservations page. Her primary workflow — processing incoming reservations, cross-referencing data, catching errors, managing document flow — has no dedicated interface.
+**Current state:** ~~Pati uses the analytics dashboard (same as everyone else) plus the admin reservations page. Her primary workflow — processing incoming reservations, cross-referencing data, catching errors, managing document flow — has no dedicated interface.~~ **Resolved.** `/admin/operaciones` — action-first operations command center with: 5 KPI cards (urgency-colored), 3-tab work queue (Pendientes sorted oldest-first, Tasas EV unconfirmed rates, Documentos missing DPI), activity feed (last 20 audit events). Selected reservations link through to `/admin/reservas` for full detail.
 
 **Best practice:** The operator dashboard should be **action-first**: work queues with urgency indicators, exception lists (missing data, overdue items), and inline action buttons. The current analytics dashboard is **insight-first** — designed for understanding trends, not for processing a queue of 350+ clients.
 
@@ -311,14 +311,15 @@ Use this everywhere instead of scattered role checks.
 
 ## 5. Authorization & Workflow Gaps
 
-### GAP-16: No Maker-Checker on User Provisioning
+### GAP-16: No Maker-Checker on User Provisioning — ✅ RESOLVED (Option A, 2026-03-19)
 **Severity: High**
 
-**Current state:** A single admin (master or torredecontrol) can create a new user account, assign them to projects, and send them credentials — all without any approval from a second person.
+**Current state:** ~~A single admin can create a new user account, assign them to projects, and send them credentials — all without any approval from a second person.~~ **Resolved (Option A: audit-only).** All user provisioning actions are logged to `audit_events` table via `logAudit()` — `salesperson.invited` events capture who invited whom, when, with full details (email, salesperson name, resend flag). `assignment.created`/`assignment.ended` events capture project assignment changes. The second admin can review the audit log at `/admin/audit` and revoke access if needed.
 
 **Best practice:** User provisioning is a privileged operation (SOC 2 CC6.2). The maker-checker pattern requires a second admin to approve before the account is active.
 
-**Recommendation:** At minimum, log all user provisioning actions with full audit trail. Ideally, require a second admin to approve before the invite link is sent.
+~~**Recommendation:** At minimum, log all user provisioning actions with full audit trail. Ideally, require a second admin to approve before the invite link is sent.~~
+**Implemented:** Option A (audit-only). Full maker-checker (Option B) deferred to Phase 6 — not practical for 2-admin team.
 
 ### GAP-17: No Approval Workflow for Desistimientos
 **Severity: Medium**
@@ -389,29 +390,26 @@ Use this everywhere instead of scattered role checks.
 
 **Recommendation:** The `docs/roles-current-state.md` (this analysis's Doc 1) is a first step. Convert the API authorization matrix into a structured format (spreadsheet or code-level data structure) that can be formally reviewed.
 
-### GAP-22: Incomplete Audit Trail
+### GAP-22: Incomplete Audit Trail — ✅ RESOLVED (2026-03-19)
 **Severity: High**
 
-**Current state:** Audit logging exists for:
-- Unit status changes (`unit_status_log` with `changed_by`)
-- Reservation confirmation/rejection (`reviewed_by`, `reviewed_at`)
-- Ejecutivo rate confirmation (`ejecutivo_rate_confirmed_by`, `_at`)
-- System auto-approval marker (`'system:auto-approval'`)
+**Current state:** ~~Audit logging exists for unit status changes and reservation reviews, but does NOT exist for system settings, user provisioning, commission rate changes, or export actions.~~ **Resolved.** Centralized `audit_events` table (migration 041) with `logAudit()` utility (`src/lib/audit.ts`). Fire-and-forget pattern — never crashes primary operation.
 
-Audit logging does NOT exist for:
-- Who accessed what data (no read audit trail)
-- System settings changes (who toggled auto-approval)
-- User provisioning actions (who invited which salesperson)
-- Commission rate changes (who modified what rate, when)
-- Export/download actions
-- Login/logout events (Supabase Auth logs these internally but not surfaced in app)
+**11 event types instrumented across 10 admin routes:**
+- `reservation.confirmed`, `reservation.rejected`, `reservation.desisted`
+- `freeze.released`
+- `rate.confirmed`
+- `settings.updated`
+- `salesperson.invited` (3 exit points: resend, link existing, new invite)
+- `assignment.created`, `assignment.ended`
+- `mgmt_role.created`, `mgmt_role.ended`
 
-**Best practice:** Every significant action should log who, what, when, where (IP/device), and why (reason if applicable). This is especially important for financial operations.
+**Admin UI:**
+- `/api/admin/audit-log` — GET with filtering (event_type, resource_type, actor_id, date range) + pagination
+- `/admin/audit` — full audit log viewer (filterable table, expandable detail rows, pagination)
+- Activity feed on `/admin/operaciones` (last 20 events)
 
-**Recommendation:**
-1. Add an `audit_events` table for system-wide event logging
-2. Log all admin actions: user provisioning, settings changes, rate modifications
-3. Surface audit log in a dedicated admin page (remaining feature #29)
+**Still not logged (acceptable for current scale):** read access, login/logout (Supabase Auth internal), export/download actions.
 
 ### GAP-23: No Access Review Process
 **Severity: Medium**
@@ -458,19 +456,19 @@ Audit logging does NOT exist for:
 | 07 | No formal access control matrix | Architecture | High | Low | Implicit in scattered code | Central matrix (code + document) |
 | 08 | No `can(action, resource)` utility | Architecture | High | Medium | Scattered role string comparisons | Centralized permission utility |
 | 09 | No project-scoped admin access | Architecture | High | High | All admins see all projects | Per-user project assignments for admins |
-| 10 | No role-specific dashboards | Dashboard | High | High | One monolith dashboard for all admins | Role-optimized landing pages |
-| 11 | No operations dashboard for Pati | Dashboard | High | High | Analytics dashboard + admin reservas | Action-first operator command center |
+| 10 | ✅ No role-specific dashboards | Dashboard | High | High | ~~One monolith~~ `/admin/operaciones` (separate page approach) | Role-optimized landing pages |
+| 11 | ✅ No operations dashboard for Pati | Dashboard | High | High | ~~Analytics dashboard~~ `/admin/operaciones` (3-tab queue + feed) | Action-first operator command center |
 | 12 | No progressive disclosure in ventas portal | Dashboard | Medium | Low | Isolated pages, no interconnection | KPI cards link to detail pages |
 | 13 | No comparison context on KPIs | Dashboard | Medium | Low | Raw values without targets | Trends, quotas, period comparison |
 | 14 | Mobile optimization gaps in ventas portal | Dashboard | Medium | Medium | Standard responsive layouts | Mobile-first cards, large touch targets |
 | 15 | Limited chart type variety | Dashboard | Medium | Medium | Treemaps + bars + cash flow | Add funnels, agent comparison, aging |
-| 16 | No maker-checker on user provisioning | Auth/Workflow | High | Medium | Single admin creates users unilaterally | Two-person approval for account creation |
+| 16 | ✅ No maker-checker on user provisioning | Auth/Workflow | High | Medium | ~~Single admin~~ Audit trail logs all provisioning | Two-person approval for account creation |
 | 17 | No approval workflow for desistimientos | Auth/Workflow | Medium | Medium | Single-step cancellation | Two-step with evidence + approval |
 | 18 | ✅ No escalation path for rate confirmation | Auth/Workflow | Medium | Low | ~~Master-only~~ master + financiero | Expand role or add delegation |
 | 19 | No notification system | Auth/Workflow | Medium | High | Manual polling for state changes | In-app + email notifications |
 | 20 | No temporal permission expiry | Auth/Workflow | Medium | Medium | Permanent role assignments | Inactivity flags, optional expiry |
 | 21 | No formal access control document | Compliance | High | Low | Permissions in code only | SOC 2 / ISO 27001 ready matrix |
-| 22 | Incomplete audit trail | Compliance | High | Medium | Partial logging (unit status, confirmation) | Full event logging (all admin actions) |
+| 22 | ✅ Incomplete audit trail | Compliance | High | Medium | ~~Partial~~ `audit_events` + 11 event types + admin UI | Full event logging (all admin actions) |
 | 23 | No access review process | Compliance | Medium | Low | No user activity visibility | Quarterly review dashboard |
 | 24 | No data classification | Compliance | Medium | Medium | All data accessible by all auth users | Sensitivity classification + enforcement |
 
@@ -500,13 +498,13 @@ Audit logging does NOT exist for:
 
 **Rationale:** GAP-06 resolved. Remaining items must be in place before activating the gerencia, financiero, contabilidad, or inventario roles. Without them, new role activation would create undefined access patterns.
 
-### Phase 3: Pati's Workflow Optimization (Highest ROI for mission)
+### Phase 3: Pati's Workflow Optimization (Highest ROI for mission) — ✅ GAP-10/11 COMPLETED
 
-| Priority | Gap | Action | Effort |
-|----------|-----|--------|--------|
-| P1 | GAP-11 | Build operations command center for Torre de Control | 16-24 hours |
-| P2 | GAP-10 | Create role-specific dashboard routing | 8-16 hours |
-| P2 | GAP-13 | Add comparison context to KPI cards | 4-8 hours |
+| Priority | Gap | Action | Effort | Status |
+|----------|-----|--------|--------|--------|
+| P1 | GAP-11 | Build operations command center for Torre de Control | 16-24 hours | ✅ `/admin/operaciones` |
+| P2 | GAP-10 | Create role-specific dashboard routing | 8-16 hours | ✅ Separate page approach |
+| P2 | GAP-13 | Add comparison context to KPI cards | 4-8 hours | Pending |
 
 **Rationale:** The mission is to obliterate Pati's Excel dependency. A dedicated operations dashboard — not a shared analytics view — is the interface that replaces her Excel workflow.
 
@@ -518,14 +516,14 @@ Audit logging does NOT exist for:
 | P2 | GAP-14 | Mobile-first audit of ventas portal pages | 4-8 hours |
 | P3 | GAP-19 | Implement in-app notification system | 16-24 hours |
 
-### Phase 5: Compliance & Audit (Before external audit or scale)
+### Phase 5: Compliance & Audit (Before external audit or scale) — ✅ GAP-22 COMPLETED
 
-| Priority | Gap | Action | Effort |
-|----------|-----|--------|--------|
-| P2 | GAP-22 | Create `audit_events` table + logging for all admin actions | 8-16 hours |
-| P2 | GAP-21 | Formalize access control matrix as auditable document | 2-4 hours |
-| P3 | GAP-23 | Build access review dashboard (users, roles, last login) | 4-8 hours |
-| P3 | GAP-24 | Classify data by sensitivity, align with access controls | 4-8 hours |
+| Priority | Gap | Action | Effort | Status |
+|----------|-----|--------|--------|--------|
+| P2 | GAP-22 | Create `audit_events` table + logging for all admin actions | 8-16 hours | ✅ Migration 041 + logAudit() |
+| P2 | GAP-21 | Formalize access control matrix as auditable document | 2-4 hours | Pending |
+| P3 | GAP-23 | Build access review dashboard (users, roles, last login) | 4-8 hours | Pending |
+| P3 | GAP-24 | Classify data by sensitivity, align with access controls | 4-8 hours | Pending |
 
 ### Phase 6: Advanced Capabilities (When scale demands it)
 
@@ -533,7 +531,7 @@ Audit logging does NOT exist for:
 |----------|-----|--------|--------|
 | P3 | GAP-09 | Project-scoped admin access (user_project_assignments) | 16-24 hours |
 | P3 | GAP-15 | Add funnel, comparison, aging chart types via Recharts | 8-16 hours |
-| P3 | GAP-16 | Maker-checker on user provisioning | 4-8 hours |
+| ✅ | GAP-16 | ~~Maker-checker on user provisioning~~ Audit-only (Option A) | ✅ Done |
 | P3 | GAP-17 | Two-step desistimiento workflow | 8-16 hours |
 | ✅ | GAP-18 | ~~Rate confirmation escalation/delegation~~ financiero added | ✅ Done (changelog 074) |
 | P3 | GAP-20 | Temporal permission expiry and inactivity flags | 4-8 hours |
@@ -546,6 +544,6 @@ The Orion role system is **secure for its current 3-role production deployment**
 
 ~~The most urgent work is in Phase 1 (security hardening) and Phase 2 (architecture foundation) — both should be completed before the 32-salesperson go-live.~~
 
-The remaining gaps are structural (GAP-07/08 permission matrix), compliance (GAP-22 audit trail), dashboard (GAP-10/11 Pati's operations), and advanced items (GAP-09 project scoping). The highest-ROI work for the mission is Pati's operations dashboard (GAP-11). See `docs/plan-fix-high-severity-gaps.md` for the detailed remediation plan.
+The remaining gaps are structural (GAP-07/08 permission matrix), field masking (GAP-03), and advanced items (GAP-09 project scoping, GAP-17 desist workflow, GAP-19 notifications). See `docs/plan-fix-high-severity-gaps.md` for the detailed remediation plan and `docs/plan-phase3-audit-phase5-dashboard.md` for the completed audit + operations work.
 
-Total estimated effort for remaining phases: **~132 hours** (roughly 3-4 developer-weeks).
+Total estimated effort for remaining phases: **~72 hours** (roughly 2 developer-weeks).

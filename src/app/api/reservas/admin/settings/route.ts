@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonOk, jsonError, parseJson } from "@/lib/api";
 import { requireRole } from "@/lib/auth";
+import { logAudit } from "@/lib/audit";
 import { updateSettingsSchema } from "@/lib/reservas/validations";
 
 export async function GET() {
@@ -44,6 +45,14 @@ export async function PATCH(request: NextRequest) {
     console.error("[PATCH /api/reservas/admin/settings]", error);
     return jsonError(500, error.message);
   }
+
+  await logAudit(auth.user!, {
+    eventType: "settings.updated",
+    resourceType: "system_settings",
+    resourceId: "auto_approval_enabled",
+    details: { value: input.auto_approval_enabled },
+    request,
+  });
 
   return jsonOk({ auto_approval_enabled: input.auto_approval_enabled });
 }

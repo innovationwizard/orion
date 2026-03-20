@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
+import { logAudit } from "@/lib/audit";
 import { supabaseAdmin, getSupabaseConfigError } from "@/lib/supabase";
 import { jsonOk, jsonError } from "@/lib/api";
 
@@ -88,6 +89,16 @@ export async function POST(request: Request) {
       console.error("[POST /api/admin/salespeople/projects] insert", insErr);
       return jsonError(500, "Error al asignar proyectos", insErr.message);
     }
+  }
+
+  if (toRemove.length > 0 || toAdd.length > 0) {
+    await logAudit(auth.user!, {
+      eventType: toAdd.length > 0 ? "assignment.created" : "assignment.ended",
+      resourceType: "project_assignment",
+      resourceId: salesperson_id,
+      details: { added: toAdd, removed: toRemove, resulting: project_ids },
+      request,
+    });
   }
 
   return jsonOk({ salesperson_id, project_ids });

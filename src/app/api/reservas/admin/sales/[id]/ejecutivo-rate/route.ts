@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonOk, jsonError, parseJson } from "@/lib/api";
 import { ejecutivoRateSchema } from "@/lib/reservas/validations";
 import { requireRole } from "@/lib/auth";
+import { logAudit } from "@/lib/audit";
 
 /**
  * PATCH /api/reservas/admin/sales/[id]/ejecutivo-rate
@@ -68,6 +69,17 @@ export async function PATCH(
       recalcErrors.push(payment.id);
     }
   }
+
+  await logAudit(auth.user!, {
+    eventType: "rate.confirmed",
+    resourceType: "sale",
+    resourceId: saleId,
+    details: {
+      ejecutivo_rate: input.ejecutivo_rate,
+      payments_recalculated: (payments?.length ?? 0) - recalcErrors.length,
+    },
+    request,
+  });
 
   return jsonOk({
     sale_id: sale.id,

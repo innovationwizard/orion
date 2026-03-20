@@ -1,7 +1,7 @@
 # Plan: Fix 11 High-Severity Gaps + Discovered Issues
 
 **Date:** 2026-03-19
-**Last updated:** 2026-03-19 (Phase 1 completed)
+**Last updated:** 2026-03-19 (Phases 1, 3, 5 completed)
 **Prerequisite:** All 3 critical gaps (GAP-01, GAP-02, GAP-06) are resolved and deployed (changelog 074).
 **Scope:** 11 high-severity gaps from `docs/roles-gap-analysis.md` + 5 additional issues discovered during codebase exploration.
 
@@ -42,11 +42,11 @@
 | GAP-07 | No formal access control matrix | 2 | P1 — before new roles |
 | GAP-08 | No `can(action, resource)` utility | 2 | P1 — before new roles |
 | GAP-21 | No formal access control document | 2 | P1 — before new roles |
-| GAP-22 | Incomplete audit trail | 3 | P1 — compliance |
-| GAP-16 | No maker-checker on user provisioning | 3 | P1 — compliance |
+| GAP-22 | Incomplete audit trail | 3 | ✅ COMPLETED 2026-03-19 |
+| GAP-16 | No maker-checker on user provisioning | 3 | ✅ COMPLETED 2026-03-19 (audit-only, Option A) |
 | GAP-03 | No server-side field masking on analytics | 4 | P2 — before activating gerencia/financiero dashboards |
-| GAP-10 | No role-specific dashboards | 5 | P2 — highest ROI for mission |
-| GAP-11 | No operations dashboard for Pati | 5 | P2 — highest ROI for mission |
+| GAP-10 | No role-specific dashboards | 5 | ✅ COMPLETED 2026-03-19 |
+| GAP-11 | No operations dashboard for Pati | 5 | ✅ COMPLETED 2026-03-19 (MVP) |
 | GAP-09 | No project-scoped admin access | 6 | P3 — deferred (2 admin users, 4 projects) |
 
 ---
@@ -549,11 +549,12 @@ const navLinks = [
 
 ## 4. Phase 3 — Audit Trail & Compliance
 
+**Status:** ✅ COMPLETED (2026-03-19)
 **Urgency:** Should complete before external audit or compliance review. Practical urgency: before scaling admin team beyond 2 users.
 **Effort:** ~20 hours total.
 **Dependencies:** None (can run in parallel with Phase 2).
 
-### 4.1 GAP-22: Comprehensive Audit Trail
+### 4.1 GAP-22: Comprehensive Audit Trail — ✅ RESOLVED (2026-03-19)
 
 **Problem:** The system logs unit status changes and reservation reviews, but does NOT log:
 - Who changed system settings (column exists, never populated)
@@ -665,9 +666,19 @@ Simple paginated table showing audit events:
 
 **Effort:** ~12 hours (migration, utility, instrumenting 9+ routes, admin page).
 
+#### Implementation Notes (Completed 2026-03-19)
+
+- **Migration 041 deployed** via Management API: `audit_events` table with 4 indexes, RLS (admin read via `jwt_role()`, service_role insert). Uses `jwt_role()` from migration 040.
+- **`src/lib/audit.ts`**: Fire-and-forget `logAudit(user, event)` utility. Accepts `User` object from `requireRole()`. Extracts IP/method/path from optional `request`. Try/catch wraps everything — never crashes primary operation.
+- **10 routes instrumented** (11 event types): `reservation.confirmed`, `reservation.rejected`, `reservation.desisted`, `freeze.released`, `rate.confirmed`, `settings.updated`, `salesperson.invited` (3 exit points), `assignment.created`, `assignment.ended`, `mgmt_role.created`, `mgmt_role.ended`.
+- **`/api/admin/audit-log`**: GET endpoint with filtering (event_type, resource_type, actor_id, date range) + pagination (limit/offset, max 100).
+- **`/admin/audit`**: Full audit log viewer — filterable table (event type + resource type dropdowns), expandable detail rows (JSON), pagination, Spanish labels.
+- DISC-02 resolved via audit trail — `event_type = 'reservation.desisted'` distinguishes desist from confirm/reject. No `desisted_by`/`desisted_at` columns needed.
+- DISC-05 resolved — `assignment.created`/`assignment.ended` events capture who changed project assignments.
+
 ---
 
-### 4.2 GAP-16: Maker-Checker on User Provisioning
+### 4.2 GAP-16: Maker-Checker on User Provisioning — ✅ RESOLVED (Option A, 2026-03-19)
 
 **Problem:** A single admin can create an auth account, assign projects, and send credentials — all without approval from a second person.
 
@@ -697,6 +708,10 @@ If the admin team grows beyond 3 users, implement:
 **Decision:** Implement Option A now. Option B is Phase 6 (deferred).
 
 **Effort:** ~4 hours (migration for `provisioned_by`, audit instrumentation already covered in 4.1).
+
+#### Implementation Notes (Completed 2026-03-19)
+
+Option A implemented: `salesperson.invited` audit events capture who invited whom (actor_id, actor_email, actor_role) with details (email, salesperson name, resend flag). No `provisioned_by` column added — the audit trail is the source of truth. Adding a denormalized column would create a second source of truth that could drift.
 
 ---
 
@@ -794,11 +809,12 @@ if (config?.anonymizeFields) {
 
 ## 6. Phase 5 — Pati's Operations Dashboard
 
+**Status:** ✅ COMPLETED (2026-03-19, MVP)
 **Urgency:** Highest ROI for the mission ("obliterate Excel"). Not a security blocker.
 **Effort:** ~40 hours total.
 **Dependencies:** None (can start independently).
 
-### 6.1 GAP-11: Operations Dashboard for Pati (Torre de Control)
+### 6.1 GAP-11: Operations Dashboard for Pati (Torre de Control) — ✅ RESOLVED (2026-03-19)
 
 **Problem:** Pati uses the analytics dashboard (designed for insight, not action) plus `/admin/reservas` (reservation queue). Her actual workflow — processing incoming reservations, cross-referencing data, catching errors, managing document flow — has no dedicated interface. She still context-switches to Excel for payment tracking.
 
@@ -860,9 +876,20 @@ Bulk operations:
 
 **Effort:** ~24 hours.
 
+#### Implementation Notes (Completed 2026-03-19)
+
+- **`/admin/operaciones`**: Operations command center (MVP) — `operaciones-client.tsx` (~380 lines)
+- **Stats strip**: 5 KPI cards (Pendientes, Tasas sin confirmar, Docs faltantes, Procesadas hoy, Total reservas) with urgency-colored values (red >5, amber >0, green =0)
+- **Work queue (3 tabs)**: Pendientes (sorted oldest-first, urgency dots: red >48h, amber 24-48h, green <24h), Tasas EV (unconfirmed ejecutivo rates), Documentos (missing DPI)
+- **Activity feed**: Last 20 audit events from `/api/admin/audit-log?limit=20` with `timeAgo()` relative timestamps, graceful fallback ("Sin actividad reciente")
+- **Data source**: Reuses existing `useReservations()` hook — no new API routes. Client-side filtering for queue tabs.
+- **Click-through**: Selected reservation links to `/admin/reservas?selected=ID`
+- **NavBar**: "Operaciones" link added after Reservas (ADMIN_PAGE_ROLES)
+- **Panel 4 (quick actions / bulk ops)**: Deferred — not needed for MVP
+
 ---
 
-### 6.2 GAP-10: Role-Specific Dashboard Routing
+### 6.2 GAP-10: Role-Specific Dashboard Routing — ✅ RESOLVED (2026-03-19, simpler approach)
 
 **Problem:** All admin users see the same analytics dashboard at `/`. A CFO needs financial KPIs. Pati needs operational queues. A sales manager needs team performance.
 
@@ -887,6 +914,8 @@ The existing analytics dashboard at `/dashboard` (or served at `/`) remains avai
 **Recommendation:** Start with the simpler approach (separate page, no routing change). Add role-based routing later if user feedback demands it.
 
 **Effort:** ~16 hours (new page + components, reusing existing patterns).
+
+**Implemented:** Simpler approach — `/admin/operaciones` as a separate page. Pati bookmarks it. No middleware routing changes. Role-based `/` routing deferred until user feedback demands it.
 
 ---
 
@@ -934,13 +963,13 @@ During codebase exploration, five additional issues were identified:
 
 **Status:** Upon inspection, the route already populates `updated_by: auth.user!.id` at line 39. This was a false finding — the exploration agent missed the existing code. No changes needed.
 
-### DISC-02: No `desisted_by` Column on Reservations
+### DISC-02: No `desisted_by` Column on Reservations — ✅ RESOLVED (2026-03-19)
 
 When an admin processes a desistimiento, `reviewed_by` captures who initially confirmed the reservation — not who desisted it. The desist action overwrites the status but doesn't record the actor.
 
-**Fix:** Add `desisted_by` and `desisted_at` columns to `reservations` table. Populate in the desist RPC or API route.
+~~**Fix:** Add `desisted_by` and `desisted_at` columns to `reservations` table. Populate in the desist RPC or API route.~~
 
-**Effort:** ~2 hours (migration + route update). Include in Phase 3.
+**Resolution:** Resolved via centralized audit trail — `audit_events` with `event_type = 'reservation.desisted'` captures who desisted and when. No schema change needed. `reviewed_by`/`reviewed_at` already captures the timestamp, and the audit event distinguishes desist from confirm/reject.
 
 ### DISC-03: `hasMinimumRole()` Exists But Is Never Used
 
@@ -954,11 +983,13 @@ The `/admin/roles` page (commission gerencia assignments) uses `requireRole(["ma
 
 **Fix applied:** Tagged the Roles link with `roles: ["master"]` in the NavBar link list. Now only `master` users see the link. Implemented as part of Phase 1 NavBar refactor (section 2.1b).
 
-### DISC-05: Salesperson Project Assignments Not Audit-Logged
+### DISC-05: Salesperson Project Assignments Not Audit-Logged — ✅ RESOLVED (2026-03-19)
 
 When an admin changes a salesperson's project assignments via `/api/admin/salespeople/projects`, the temporal model tracks what changed (end_date set, new row inserted) but not who made the change.
 
-**Fix:** Add `logAuditEvent()` call in the project assignment route. Already planned in Phase 3 (section 4.1c).
+~~**Fix:** Add `logAuditEvent()` call in the project assignment route. Already planned in Phase 3 (section 4.1c).~~
+
+**Resolution:** `logAudit()` call added to project assignment route. Logs `assignment.created` or `assignment.ended` events with `details: { added, removed, resulting }` arrays.
 
 ---
 
@@ -969,33 +1000,35 @@ When an admin changes a salesperson's project assignments via `/api/admin/salesp
 | File | Phase | Purpose |
 |------|-------|---------|
 | `src/lib/permissions.ts` | 2 | Access control matrix + `can()` + `rolesFor()` |
-| `src/lib/audit.ts` | 3 | `logAuditEvent()` utility |
+| `src/lib/audit.ts` | 3 ✅ | `logAudit()` utility |
 | `src/lib/field-masking.ts` | 4 | Role-aware response shaping |
 | `scripts/migrations/040_ventas_ownership_rls.sql` | 1 ✅ | Ownership-scoped RLS policies (deployed) |
-| `scripts/migrations/041_audit_events.sql` | 3 | `audit_events` table + RLS |
-| `scripts/migrations/042_provisioning_audit.sql` | 3 | `salespeople.provisioned_by` + `reservations.desisted_by/at` |
+| `scripts/migrations/041_audit_events.sql` | 3 ✅ | `audit_events` table + RLS (deployed) |
+| ~~`scripts/migrations/042_provisioning_audit.sql`~~ | ~~3~~ | ~~`salespeople.provisioned_by` + `reservations.desisted_by/at`~~ — NOT NEEDED (resolved via audit trail) |
 | `scripts/generate-access-matrix.ts` | 2 | Auto-generate access control doc |
 | `docs/access-control-matrix.md` | 2 | Generated formal access control document |
-| `src/app/admin/operaciones/page.tsx` | 5 | Pati's operations dashboard (page wrapper) |
-| `src/app/admin/operaciones/operaciones-client.tsx` | 5 | Operations dashboard (main component) |
-| `src/app/admin/audit/page.tsx` | 3 | Audit log viewer (page wrapper) |
-| `src/app/admin/audit/audit-client.tsx` | 3 | Audit log viewer (main component) |
+| `src/app/admin/operaciones/page.tsx` | 5 ✅ | Pati's operations dashboard (page wrapper) |
+| `src/app/admin/operaciones/operaciones-client.tsx` | 5 ✅ | Operations dashboard (main component) |
+| `src/app/admin/audit/page.tsx` | 3 ✅ | Audit log viewer (page wrapper) |
+| `src/app/admin/audit/audit-client.tsx` | 3 ✅ | Audit log viewer (main component) |
+| `src/app/api/admin/audit-log/route.ts` | 3 ✅ | Audit log API (GET with filters + pagination) |
 
 ### Modified Files
 
 | File | Phase | Change |
 |------|-------|--------|
 | `middleware.ts` | 1 ✅ | Explicit role routing (replace binary ventas/non-ventas) |
-| `src/components/nav-bar.tsx` | 1 ✅ (+2 for `can()`) | Role-filtered links with `roles` array tagging |
-| `src/app/api/reservas/admin/settings/route.ts` | 3 | Populate `updated_by` |
-| `src/app/api/admin/salespeople/invite/route.ts` | 3 | Add audit logging |
-| `src/app/api/admin/salespeople/projects/route.ts` | 3 | Add audit logging |
-| `src/app/api/reservas/admin/reservations/[id]/confirm/route.ts` | 3 | Add audit logging |
-| `src/app/api/reservas/admin/reservations/[id]/reject/route.ts` | 3 | Add audit logging |
-| `src/app/api/reservas/admin/reservations/[id]/desist/route.ts` | 3 | Add audit logging + desisted_by |
-| `src/app/api/reservas/admin/sales/[id]/ejecutivo-rate/route.ts` | 3 | Add audit logging |
-| `src/app/api/admin/management-roles/route.ts` | 3 | Add audit logging |
-| `src/app/api/admin/management-roles/[id]/route.ts` | 3 | Add audit logging |
+| `src/components/nav-bar.tsx` | 1 ✅ (+3+5 ✅ for Operaciones/Auditoría links) | Role-filtered links with `roles` array tagging |
+| `src/app/api/reservas/admin/settings/route.ts` | 3 ✅ | Add audit logging |
+| `src/app/api/admin/salespeople/invite/route.ts` | 3 ✅ | Add audit logging (3 exit points) |
+| `src/app/api/admin/salespeople/projects/route.ts` | 3 ✅ | Add audit logging |
+| `src/app/api/reservas/admin/reservations/[id]/confirm/route.ts` | 3 ✅ | Add audit logging |
+| `src/app/api/reservas/admin/reservations/[id]/reject/route.ts` | 3 ✅ | Add audit logging |
+| `src/app/api/reservas/admin/reservations/[id]/desist/route.ts` | 3 ✅ | Add audit logging (no desisted_by column — resolved via audit trail) |
+| `src/app/api/reservas/admin/sales/[id]/ejecutivo-rate/route.ts` | 3 ✅ | Add audit logging |
+| `src/app/api/admin/management-roles/route.ts` | 3 ✅ | Add audit logging (POST) |
+| `src/app/api/admin/management-roles/[id]/route.ts` | 3 ✅ | Add audit logging (PATCH) |
+| `src/app/api/reservas/admin/freeze-requests/[id]/release/route.ts` | 3 ✅ | Add audit logging |
 | `src/app/api/analytics/commissions/route.ts` | 4 | Add field masking |
 | `src/app/api/analytics/payments/route.ts` | 4 | Add field masking |
 | `src/app/api/analytics/payment-compliance/route.ts` | 4 | Add field masking |
@@ -1008,35 +1041,34 @@ When an admin changes a salesperson's project assignments via `/api/admin/salesp
 ## 10. Dependency Graph
 
 ```
-Phase 1 (Security) ✅ DONE   Phase 3 (Audit)
-  GAP-04: ✅ Middleware/NavBar   GAP-22: audit_events table
-  GAP-05: ✅ RLS ownership       GAP-16: provisioning audit
-  DISC-01: ✅ already resolved   DISC-02: desisted_by
-  DISC-04: ✅ NavBar Roles link  DISC-05: project assignment audit
-         │                              │
-         ▼                              │
-Phase 2 (Permissions)                   │
-  GAP-07: Permission matrix             │
-  GAP-08: can() utility                 │
-  GAP-21: Access control doc            │
-  DISC-03: hasMinimumRole cleanup       │
-         │                              │
-         ▼                              ▼
-Phase 4 (Field Masking)        Phase 5 (Dashboards)
-  GAP-03: Response shaping       GAP-11: Pati operations
-         │                       GAP-10: Role routing
-         │                              │
-         ▼                              ▼
+Phase 1 (Security) ✅ DONE   Phase 3 (Audit) ✅ DONE
+  GAP-04: ✅ Middleware/NavBar   GAP-22: ✅ audit_events table
+  GAP-05: ✅ RLS ownership       GAP-16: ✅ provisioning audit
+  DISC-01: ✅ already resolved   DISC-02: ✅ via audit trail
+  DISC-04: ✅ NavBar Roles link  DISC-05: ✅ assignment audit
+         │
+         ▼
+Phase 2 (Permissions)          Phase 5 (Dashboards) ✅ DONE
+  GAP-07: Permission matrix      GAP-11: ✅ Pati operations
+  GAP-08: can() utility          GAP-10: ✅ Role routing
+  GAP-21: Access control doc
+  DISC-03: hasMinimumRole cleanup
+         │
+         ▼
+Phase 4 (Field Masking)
+  GAP-03: Response shaping
+         │
+         ▼
 Phase 6 (Deferred)
   GAP-09: Project-scoped access
   GAP-16b: Full maker-checker
 ```
 
 **Key dependencies:**
-- Phase 2 depends on Phase 1 (middleware must handle role groups before NavBar uses `can()`)
+- Phase 2 depends on Phase 1 ✅ (middleware must handle role groups before NavBar uses `can()`)
 - Phase 4 depends on Phase 2 (masking rules reference the permission matrix)
-- Phase 5 is independent (can start anytime, uses existing APIs)
-- Phase 3 is independent (can start anytime)
+- ~~Phase 5 is independent (can start anytime, uses existing APIs)~~ ✅ DONE
+- ~~Phase 3 is independent (can start anytime)~~ ✅ DONE
 - Phase 6 has no timeline pressure
 
 ---
@@ -1047,12 +1079,15 @@ Phase 6 (Deferred)
 |-------|-------|-----------------|
 | Phase 1 | GAP-04 + GAP-05 + DISC-01/04 | ✅ COMPLETED |
 | Phase 2 | GAP-07 + GAP-08 + GAP-21 + DISC-03 | ~16 |
-| Phase 3 | GAP-22 + GAP-16 + DISC-02/05 | ~20 |
+| Phase 3 | GAP-22 + GAP-16 + DISC-02/05 | ✅ COMPLETED |
 | Phase 4 | GAP-03 | ~24 |
-| Phase 5 | GAP-10 + GAP-11 | ~40 |
+| Phase 5 | GAP-10 + GAP-11 | ✅ COMPLETED (MVP) |
 | Phase 6 | GAP-09 + GAP-16b (deferred) | ~32 |
-| **Total** | **11 gaps + 5 discovered issues** | **~144 hours** |
+| **Total remaining** | **Phase 2 + Phase 4 + Phase 6** | **~72 hours** |
 
-**Recommended execution order:** Phase 1 → Phase 3 (parallel with Phase 2) → Phase 2 → Phase 5 → Phase 4 → Phase 6.
+**Execution history:**
+- Phase 1 completed 2026-03-19 (changelogs 074 + 075)
+- Phase 3 completed 2026-03-19 (migration 041 + audit trail)
+- Phase 5 completed 2026-03-19 (operations dashboard MVP)
 
-~~Phase 1 is the go-live blocker.~~ Phase 1 completed 2026-03-19. Phase 5 is the highest ROI for the mission. Phase 4 can be deferred until a non-admin role is actually activated for a real user.
+**Next:** Phase 2 (permission architecture) — must complete before activating gerencia/financiero/contabilidad for real users. Phase 4 depends on Phase 2. Phase 6 deferred until admin team grows.

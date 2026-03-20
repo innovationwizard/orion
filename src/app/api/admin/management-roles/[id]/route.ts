@@ -1,4 +1,5 @@
 import { requireRole } from "@/lib/auth";
+import { logAudit } from "@/lib/audit";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonOk, jsonError, parseJson } from "@/lib/api";
 import { endManagementRoleSchema } from "@/lib/reservas/validations";
@@ -51,6 +52,15 @@ export async function PATCH(
     console.error("[PATCH /api/admin/management-roles]", error);
     return jsonError(500, error.message);
   }
+
+  await logAudit(auth.user!, {
+    eventType: "mgmt_role.ended",
+    resourceType: "management_role",
+    resourceId: id,
+    resourceLabel: `${existing.role} — ${existing.recipient_name}`,
+    details: { end_date: input.end_date, previous_end_date: existing.end_date },
+    request,
+  });
 
   return jsonOk(data);
 }

@@ -41,6 +41,7 @@ supabase/migrations/
 
 origin/
 loans_ssot/
+pacreditos/
 
 schemas_history/
 supabase/.temp/

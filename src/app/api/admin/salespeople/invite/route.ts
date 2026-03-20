@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
+import { logAudit } from "@/lib/audit";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonOk, jsonError } from "@/lib/api";
 
@@ -76,6 +77,16 @@ export async function POST(request: Request) {
 
     const hashedToken = linkData?.properties?.hashed_token ?? null;
     const inviteUrl = hashedToken ? buildConfirmUrl(hashedToken, "magiclink") : null;
+
+    await logAudit(auth.user!, {
+      eventType: "salesperson.invited",
+      resourceType: "salesperson",
+      resourceId: salesperson_id,
+      resourceLabel: `${sp.full_name} (${email})`,
+      details: { email, resent: true },
+      request,
+    });
+
     return jsonOk({ user_id: sp.user_id, email, resent: true, invite_url: inviteUrl });
   }
 
@@ -127,6 +138,16 @@ export async function POST(request: Request) {
 
     const hashedToken = mlData?.properties?.hashed_token ?? null;
     const inviteUrl = hashedToken ? buildConfirmUrl(hashedToken, "magiclink") : null;
+
+    await logAudit(auth.user!, {
+      eventType: "salesperson.invited",
+      resourceType: "salesperson",
+      resourceId: salesperson_id,
+      resourceLabel: `${sp.full_name} (${email})`,
+      details: { email, resent: false, existing_user: true },
+      request,
+    });
+
     return jsonOk({ user_id: existingUser.id, email, resent: false, invite_url: inviteUrl });
   }
 
@@ -151,5 +172,15 @@ export async function POST(request: Request) {
 
   const hashedToken = linkData?.properties?.hashed_token ?? null;
   const inviteUrl = hashedToken ? buildConfirmUrl(hashedToken, "invite") : null;
+
+  await logAudit(auth.user!, {
+    eventType: "salesperson.invited",
+    resourceType: "salesperson",
+    resourceId: salesperson_id,
+    resourceLabel: `${sp.full_name} (${email})`,
+    details: { email, resent: false },
+    request,
+  });
+
   return jsonOk({ user_id: userId, email, resent: false, invite_url: inviteUrl });
 }

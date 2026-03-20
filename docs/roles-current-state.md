@@ -208,7 +208,7 @@ The weakest layer (easily bypassed via browser dev tools), but important for use
 - CRUD operations on projects
 - Export data (where available)
 
-**NavBar links:** Dashboard, Projects, Desistimientos, Disponibilidad, Reservas, Cotizador, Integracion, Ventas, Referidos, Buyer Persona, Valorizacion, Cesion, Asesores, Roles
+**NavBar links:** Dashboard, Projects, Desistimientos, Disponibilidad, Reservas, Operaciones, Cotizador, Integracion, Ventas, Referidos, Buyer Persona, Valorizacion, Cesion, Asesores, Roles, Auditoría
 
 ### 3.2 Torre de Control (Pati)
 
@@ -244,9 +244,9 @@ The weakest layer (easily bypassed via browser dev tools), but important for use
 - CRUD on projects
 - **Cannot:** Confirm ejecutivo rates, manage GC/Supervisor assignments
 
-**NavBar links:** Dashboard, Projects, Desistimientos, Disponibilidad, Reservas, Cotizador, Integracion, Ventas, Referidos, Buyer Persona, Valorizacion, Cesion, Asesores (**no "Roles" link** — master-only, updated 2026-03-19)
+**NavBar links:** Dashboard, Projects, Desistimientos, Disponibilidad, Reservas, Operaciones, Cotizador, Integracion, Ventas, Referidos, Buyer Persona, Valorizacion, Cesion, Asesores, Auditoría (**no "Roles" link** — master-only, updated 2026-03-19)
 
-**Key observation:** Torre de Control and Master have near-identical access. The only differences are: (1) two master-only API endpoints (management-roles, ejecutivo-rate confirm) and (2) the "Roles" NavBar link is hidden for torredecontrol (updated 2026-03-19). There is no dedicated "operations dashboard" optimized for Pati's workflow — she uses the same analytics dashboard as the system owner.
+**Key observation:** Torre de Control and Master have near-identical access. The only differences are: (1) two master-only API endpoints (management-roles, ejecutivo-rate confirm) and (2) the "Roles" NavBar link is hidden for torredecontrol. ~~There is no dedicated "operations dashboard" optimized for Pati's workflow — she uses the same analytics dashboard as the system owner.~~ **Updated 2026-03-19:** `/admin/operaciones` provides a dedicated operations command center for Pati with work queues, KPI cards, and activity feed.
 
 ### 3.3 Ventas (Ejecutivo de Ventas)
 
@@ -355,6 +355,8 @@ The weakest layer (easily bypassed via browser dev tools), but important for use
 | Sales Velocity | `/ventas` | — | Full | Full | Blocked | Full (view-only) |
 | Cesión | `/cesion` | — | RW | RW | Blocked | Blocked (admin-only page) |
 | Salesperson Mgmt | `/admin/asesores` | — | RW | RW | Blocked | Blocked (admin-only page) |
+| Operations | `/admin/operaciones` | — | Full | Full | Blocked | Blocked (admin-only page) |
+| Audit Log | `/admin/audit` | — | Full | Full | Blocked | Blocked (admin-only page) |
 | HR Roles | `/admin/roles` | — | RW | Blocked (API) | Blocked | Blocked (admin-only page) |
 | Ventas Portal | `/ventas/portal/*` | — | Redirect‡ | Redirect‡ | Full | Redirect‡ |
 | Ventas PCV (RO) | `/ventas/dashboard/pcv/[id]` | — | Full | Full | Own only | Full |
@@ -428,6 +430,7 @@ The weakest layer (easily bypassed via browser dev tools), but important for use
 | `/api/admin/salespeople` | GET | List salespeople |
 | `/api/admin/salespeople/invite` | POST | Create invite |
 | `/api/admin/salespeople/projects` | POST | Project assignment |
+| `/api/admin/audit-log` | GET | Audit events (filter + pagination) |
 | `/api/admin/send-password-link` | POST | Password reset link |
 | `/api/reservas/admin/settings` | GET/PATCH | System settings |
 | `/api/reservas/admin/reservations/[id]` | PATCH/DELETE | Update/delete reservation |
@@ -514,6 +517,7 @@ The weakest layer (easily bypassed via browser dev tools), but important for use
 | `rv_client_profiles` | Authenticated | Service role | Service role |
 | `system_settings` | Authenticated | — | master/torredecontrol |
 | `salesperson_project_assignments` | Own assignments (salespeople) + admin roles | Service role | Admin roles |
+| `audit_events` | Admin only (master/torredecontrol via `jwt_role()`) | Service role | — (append-only, no UPDATE/DELETE) |
 | `salesperson_periods` | Service role | Service role | Service role |
 
 ### 6.2 Notable RLS Observations (Updated 2026-03-19)
@@ -538,16 +542,16 @@ The NavBar fetches the user's role from `app_metadata` on mount and conditionall
 
 **master links:**
 ```
-Dashboard | Projects | Desistimientos | Disponibilidad | Reservas | Cotizador |
-Integracion | Ventas | Referidos | Buyer Persona | Valorizacion |
-Cesion | Asesores | Roles
+Dashboard | Projects | Desistimientos | Disponibilidad | Reservas | Operaciones |
+Cotizador | Integracion | Ventas | Referidos | Buyer Persona | Valorizacion |
+Cesion | Asesores | Roles | Auditoría
 ```
 
 **torredecontrol links:**
 ```
-Dashboard | Projects | Desistimientos | Disponibilidad | Reservas | Cotizador |
-Integracion | Ventas | Referidos | Buyer Persona | Valorizacion |
-Cesion | Asesores
+Dashboard | Projects | Desistimientos | Disponibilidad | Reservas | Operaciones |
+Cotizador | Integracion | Ventas | Referidos | Buyer Persona | Valorizacion |
+Cesion | Asesores | Auditoría
 ```
 (No "Roles" link — master-only)
 

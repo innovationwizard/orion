@@ -1,4 +1,5 @@
 import { requireRole } from "@/lib/auth";
+import { logAudit } from "@/lib/audit";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonOk, jsonError, parseJson } from "@/lib/api";
 import { createManagementRoleSchema } from "@/lib/reservas/validations";
@@ -88,6 +89,20 @@ export async function POST(request: Request) {
     console.error("[POST /api/admin/management-roles]", error);
     return jsonError(500, error.message);
   }
+
+  await logAudit(auth.user!, {
+    eventType: "mgmt_role.created",
+    resourceType: "management_role",
+    resourceId: data.id,
+    resourceLabel: `${input.role} — ${input.recipient_name}`,
+    details: {
+      role: input.role,
+      recipient_name: input.recipient_name,
+      rate: input.rate,
+      start_date: input.start_date,
+    },
+    request,
+  });
 
   return jsonOk(data, { status: 201 });
 }

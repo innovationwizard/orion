@@ -12,6 +12,7 @@ import type {
   RvReceiptType,
   ExtractionConfidence,
   RvBuyerRole,
+  CreditUnitStatus,
 } from "./types";
 
 // ---------------------------------------------------------------------------
@@ -40,6 +41,22 @@ export const UNIT_STATUS_COLORS: Record<RvUnitStatus, string> = {
   RESERVED: "#3b82f6",
   FROZEN: "#a855f7",
   SOLD: "#6b7280",
+};
+
+// ---------------------------------------------------------------------------
+// Credit dashboard status mapping (042)
+// ---------------------------------------------------------------------------
+
+export const CREDIT_STATUS_COLORS: Record<CreditUnitStatus, string> = {
+  VENDIDO: "#3AB893",
+  RESERVADO: "#D4A84A",
+  DISPONIBLE: "#4A9FD4",
+};
+
+export const CREDIT_STATUS_LABELS: Record<CreditUnitStatus, string> = {
+  VENDIDO: "Vendido",
+  RESERVADO: "Reservado",
+  DISPONIBLE: "Disponible",
 };
 
 /** Statuses where the unit can accept a new reservation */

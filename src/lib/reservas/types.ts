@@ -505,6 +505,46 @@ export interface SubmitReservationPayload {
   notes: string | null;
 }
 
+// ---------------------------------------------------------------------------
+// Credit Dashboard — v_creditos_unit_full view type (042)
+// ---------------------------------------------------------------------------
+
+export type CreditUnitStatus = "VENDIDO" | "RESERVADO" | "DISPONIBLE";
+
+export interface CreditUnit {
+  unit_id: string;
+  unit_number: string;
+  unit_type: string;
+  area_total: number | null;
+  bedrooms: number;
+  parking: number;
+  price_list: number | null;
+  valor_inmueble: number | null;
+  unit_status: RvUnitStatus;
+  credit_status: CreditUnitStatus;
+  floor_number: number;
+  tower_id: string;
+  tower_name: string;
+  project_id: string;
+  project_name: string;
+  project_slug: string;
+  reservation_id: string | null;
+  deposit_amount: number | null;
+  cuotas_enganche: number | null;
+  pipedrive_url: string | null;
+  salesperson_id: string | null;
+  salesperson_name: string | null;
+  client_name: string | null;
+  income_source: string | null;
+  prequalification_bank: string | null;
+  is_fha: boolean;
+  is_cash_purchase: boolean;
+  precio_total: number | null;
+  enganche: number | null;
+  promesa_firmada: boolean;
+  financiamiento: number | null;
+}
+
 /** Receipt data collected from the camera + OCR step */
 export interface ReceiptData {
   imageUrl: string | null;

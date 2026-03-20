@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-19
 **Reference:** `docs/roles-gap-analysis.md` — GAP-01, GAP-02, GAP-06
-**Status:** Pending implementation
+**Status:** ✅ COMPLETED (2026-03-19, changelog 074)
 
 ## Context
 

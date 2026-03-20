@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
+import { useElementSize } from "@/hooks/use-element-size";
 import {
   hierarchy,
   treemap,
@@ -161,28 +162,7 @@ function PaymentTooltip({ tooltip }: { tooltip: TooltipState }) {
   );
 }
 
-function useElementSize<T extends HTMLElement>() {
-  const ref = useRef<T | null>(null);
-  const [size, setSize] = useState({ width: 0, height: 0 });
 
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-    const observer = new ResizeObserver((entries) => {
-      const entry = entries[0];
-      if (entry) {
-        setSize({
-          width: entry.contentRect.width,
-          height: entry.contentRect.height
-        });
-      }
-    });
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
-
-  return { ref, size };
-}
 
 export default function PaymentTreemap({ data, onUnitSelect }: PaymentTreemapProps) {
   const { ref, size } = useElementSize<HTMLDivElement>();

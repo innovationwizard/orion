@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
+import { useElementSize } from "@/hooks/use-element-size";
 
 export type MonthlyData = {
   month: string;
@@ -42,25 +43,6 @@ function formatAxis(v: number): string {
   return String(v);
 }
 
-function useElementSize<T extends HTMLElement>() {
-  const ref = useRef<T | null>(null);
-  const [size, setSize] = useState({ width: 0, height: 0 });
-
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-    const observer = new ResizeObserver((entries) => {
-      const entry = entries[0];
-      if (entry) {
-        setSize({ width: entry.contentRect.width, height: entry.contentRect.height });
-      }
-    });
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
-
-  return { ref, size };
-}
 
 type TooltipState = { idx: number; pixelX: number } | null;
 
