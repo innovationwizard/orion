@@ -222,3 +222,34 @@ After Phases 2-3 are complete:
 | Client count | Missing 58+ BLT clients | Complete |
 
 **Bottom line:** Without Phase 2, the Créditos dashboard will show BLT Torre B as 100% available — which is materially wrong for a board report. The "INFO PARA REPORTES" sheet proves at least 58 of 117 units have buyers.
+
+---
+
+## UPDATE 2026-03-20: Authoritative Correction — BLT Torre B Sales Count
+
+**Source:** Jorge (project owner), direct confirmation.
+
+The analysis above (Categories C and D) was based on the "INFO PARA REPORTES" Excel sheet which listed 58 rows of client data for BLT Torre B. Upon authoritative review, the actual situation is:
+
+### Corrected Facts
+
+1. **Only 3 sales exist in Bosque Las Tapias — Torre B.** The 58 rows in "INFO PARA REPORTES" and the 13 orphan income markers in "BASE DE DATOS TORRE B" do NOT represent 58+ real sales. The true number of confirmed sales is **3**.
+
+2. **All existing BLT Torre B sales records will be dropped from the production database.** Any BLT Torre B transactional data currently in prod (reservations, reservation_clients, rv_client_profiles, unit_status_log) will be purged to establish a clean baseline.
+
+3. **Only the 3 currently existing sales will be uploaded.** After the purge, exactly 3 sales will be loaded into the production database as the sole BLT Torre B transactions.
+
+### Impact on Prior Analysis
+
+| Section | Original Conclusion | Corrected Status |
+|---|---|---|
+| Category C (11 units) | 11 hidden reservations from "INFO PARA REPORTES" to load into DB | **Superseded** — only 3 of the 58 "INFO PARA REPORTES" rows are real sales |
+| Category D (13 units) | 13 orphan income markers to review with Patty | **Superseded** — these are not real sales data |
+| Phase 2 roadmap | Load 58 clients, create reservations, update unit status | **Replaced** — drop all, load only 3 |
+| Board report impact | BLT absorption ~50% (58/117) | **TBD** — absorption will reflect only 3 sales |
+
+### Revised Action Plan
+
+1. **DROP** all BLT Torre B sales/reservation records from production database
+2. **INSERT** the 3 confirmed sales (details TBD — pending identification of which 3 units/clients)
+3. Categories C and D analysis remains as historical reference for how the discrepancy was discovered, but the remediation path is now the simplified 3-sale load above

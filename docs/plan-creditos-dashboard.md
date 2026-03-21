@@ -242,3 +242,19 @@ No changes needed — `/creditos` is NOT under `/admin/`, so DATA_PAGE_ROLES can
 2. **Casa Elisa data gap**: CE credit-specific fields will be NULL until separately backfilled (not in pacreditos Excel).
 3. **D3 chart LOC**: 5 new D3 components is ~60% of total effort. Each requires responsive sizing, hover tooltips, axis rendering, and theme consistency.
 4. **New D3 dependencies**: `d3` v7 full bundle is already installed — no new packages needed.
+
+
+---
+
+## ADDENDUM 2026-03-20: BLT Torre B — Authoritative Correction
+
+**Source:** Jorge (project owner), direct confirmation.
+**Cross-reference:** `docs/creditos-33-units-investigation.md` (UPDATE 2026-03-20)
+
+During the Créditos dashboard backfill investigation, 24 BLT Torre B units were flagged with credit data but no reservations. The "INFO PARA REPORTES" Excel sheet listed 58 rows of client data, suggesting 58 hidden sales. Upon authoritative review:
+
+1. **Only 3 sales exist in Bosque Las Tapias — Torre B.** The 58 rows in "INFO PARA REPORTES" do NOT represent real sales. The true number is **3**.
+2. **All existing BLT Torre B sales records will be dropped from the production database** to establish a clean baseline.
+3. **Only the 3 currently existing sales will be uploaded** as the sole BLT Torre B transactions.
+
+Any prior references in this document to BLT Torre B having 11 hidden reservations (Category C), 13 orphan income markers (Category D), or 58 clients missing from the DB are **superseded** by this correction.

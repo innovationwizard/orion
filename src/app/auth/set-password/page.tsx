@@ -1,7 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { supabaseBrowser } from "@/lib/supabase-browser";
+
+/** Translate known Supabase Auth error messages to Spanish */
+function translateAuthError(message: string): string {
+  const translations: Record<string, string> = {
+    "Password is known to be weak and easy to guess, please choose a different one.":
+      "Esta contraseña es muy común y fácil de adivinar. Por favor elige una diferente.",
+    "New password should be different from the old password.":
+      "La nueva contraseña debe ser diferente a la anterior.",
+    "Password should be at least 6 characters.":
+      "La contraseña debe tener al menos 6 caracteres.",
+    "Auth session missing!":
+      "Sesión no encontrada. Solicita un nuevo enlace de invitación.",
+  };
+  return translations[message] ?? message;
+}
+
+interface PasswordCheck {
+  label: string;
+  met: boolean;
+}
+
+function getPasswordChecks(password: string): PasswordCheck[] {
+  return [
+    { label: "Al menos 8 caracteres", met: password.length >= 8 },
+    { label: "Al menos una mayúscula (A-Z)", met: /[A-Z]/.test(password) },
+    { label: "Al menos una minúscula (a-z)", met: /[a-z]/.test(password) },
+    { label: "Al menos un número (0-9)", met: /[0-9]/.test(password) },
+  ];
+}
 
 export default function SetPasswordPage() {
   const [password, setPassword] = useState("");
@@ -9,12 +38,15 @@ export default function SetPasswordPage() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const checks = useMemo(() => getPasswordChecks(password), [password]);
+  const allChecksPassed = checks.every((c) => c.met);
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
 
-    if (password.length < 8) {
-      setError("La contraseña debe tener al menos 8 caracteres.");
+    if (!allChecksPassed) {
+      setError("La contraseña no cumple con todos los requisitos.");
       return;
     }
 
@@ -31,7 +63,7 @@ export default function SetPasswordPage() {
     });
 
     if (updateError) {
-      setError(updateError.message);
+      setError(translateAuthError(updateError.message));
       setIsLoading(false);
       return;
     }
@@ -79,8 +111,24 @@ export default function SetPasswordPage() {
             required
             minLength={8}
           />
+
+          {/* Password strength checklist — visible once user starts typing */}
+          {password.length > 0 && (
+            <ul style={{ margin: 0, padding: "0 0 0 20px", fontSize: 13, lineHeight: 1.8 }}>
+              {checks.map((c) => (
+                <li key={c.label} style={{ color: c.met ? "var(--success)" : "var(--text-muted)" }}>
+                  {c.met ? "✓" : "○"} {c.label}
+                </li>
+              ))}
+            </ul>
+          )}
+
           {error ? <div className="bg-danger/10 text-danger px-4 py-3 rounded-xl font-medium">{error}</div> : null}
-          <button className="border-none bg-primary text-white px-4 py-2.5 rounded-full font-semibold cursor-pointer transition-colors hover:bg-primary-hover" type="submit" disabled={isLoading}>
+          <button
+            className="border-none bg-primary text-white px-4 py-2.5 rounded-full font-semibold cursor-pointer transition-colors hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
+            type="submit"
+            disabled={isLoading || !allChecksPassed || password !== confirm || password.length === 0}
+          >
             {isLoading ? "Guardando..." : "Guardar contraseña"}
           </button>
         </form>
