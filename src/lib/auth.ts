@@ -65,7 +65,8 @@ export const ADMIN_ROLES: Role[] = ["master", "torredecontrol"];
 /** Roles that can view all analytics/financial data (admin + future finance roles). */
 export const DATA_VIEWER_ROLES: Role[] = ["master", "torredecontrol", "gerencia", "financiero", "contabilidad"];
 
-/** Check if user's role is at or above the required minimum level. */
+/** Check if user's role is at or above the required minimum level.
+ * Currently unused — retained for future UI conditional rendering. */
 export function hasMinimumRole(user: User | null, minimumRole: Role): boolean {
   const role = getUserRole(user);
   if (!role) return false;

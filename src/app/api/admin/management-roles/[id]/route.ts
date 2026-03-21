@@ -1,4 +1,5 @@
 import { requireRole } from "@/lib/auth";
+import { rolesFor } from "@/lib/permissions";
 import { logAudit } from "@/lib/audit";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonOk, jsonError, parseJson } from "@/lib/api";
@@ -13,7 +14,7 @@ export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const auth = await requireRole(["master"]);
+  const auth = await requireRole(rolesFor("management_roles", "update"));
   if (auth.response) return auth.response;
 
   const { id } = await params;

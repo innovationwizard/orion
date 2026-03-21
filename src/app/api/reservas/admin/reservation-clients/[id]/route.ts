@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireRole } from "@/lib/auth";
+import { rolesFor } from "@/lib/permissions";
 import { jsonOk, jsonError, parseJson } from "@/lib/api";
 import { updateReservationClientSchema } from "@/lib/reservas/validations";
 
@@ -14,7 +15,7 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const auth = await requireRole(["master", "torredecontrol"]);
+  const auth = await requireRole(rolesFor("reservation_clients", "update"));
   if ("response" in auth) return auth.response;
 
   const { id } = await params;

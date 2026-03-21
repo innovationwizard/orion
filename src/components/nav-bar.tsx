@@ -2,11 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabaseBrowser } from "@/lib/supabase-browser";
+import { ADMIN_ROLES, DATA_VIEWER_ROLES } from "@/lib/permissions";
 
 type NavLink = { href: string; label: string; roles?: string[] };
-
-/** Roles that can manage reservations, salespeople, and operational data. */
-const ADMIN_PAGE_ROLES = ["master", "torredecontrol"];
 
 const NON_VENTAS_LINKS: (NavLink | "divider")[] = [
   { href: "/", label: "Dashboard" },
@@ -14,20 +12,20 @@ const NON_VENTAS_LINKS: (NavLink | "divider")[] = [
   { href: "/desistimientos", label: "Desistimientos" },
   "divider",
   { href: "/disponibilidad", label: "Disponibilidad" },
-  { href: "/admin/reservas", label: "Reservas", roles: ADMIN_PAGE_ROLES },
-  { href: "/admin/operaciones", label: "Operaciones", roles: ADMIN_PAGE_ROLES },
+  { href: "/admin/reservas", label: "Reservas", roles: ADMIN_ROLES },
+  { href: "/admin/operaciones", label: "Operaciones", roles: ADMIN_ROLES },
   { href: "/cotizador", label: "Cotizador" },
-  { href: "/integracion", label: "Integracion", roles: ADMIN_PAGE_ROLES },
+  { href: "/integracion", label: "Integracion", roles: ADMIN_ROLES },
   { href: "/ventas", label: "Ventas" },
-  { href: "/referidos", label: "Referidos", roles: ADMIN_PAGE_ROLES },
-  { href: "/buyer-persona", label: "Buyer Persona", roles: ADMIN_PAGE_ROLES },
-  { href: "/valorizacion", label: "Valorizacion", roles: ADMIN_PAGE_ROLES },
-  { href: "/creditos", label: "Créditos", roles: ["master", "torredecontrol", "gerencia", "financiero", "contabilidad"] },
+  { href: "/referidos", label: "Referidos", roles: ADMIN_ROLES },
+  { href: "/buyer-persona", label: "Buyer Persona", roles: ADMIN_ROLES },
+  { href: "/valorizacion", label: "Valorizacion", roles: ADMIN_ROLES },
+  { href: "/creditos", label: "Créditos", roles: DATA_VIEWER_ROLES },
   "divider",
-  { href: "/cesion", label: "Cesion", roles: ADMIN_PAGE_ROLES },
-  { href: "/admin/asesores", label: "Asesores", roles: ADMIN_PAGE_ROLES },
+  { href: "/cesion", label: "Cesion", roles: ADMIN_ROLES },
+  { href: "/admin/asesores", label: "Asesores", roles: ADMIN_ROLES },
   { href: "/admin/roles", label: "Roles", roles: ["master"] },
-  { href: "/admin/audit", label: "Auditoría", roles: ADMIN_PAGE_ROLES },
+  { href: "/admin/audit", label: "Auditoría", roles: ADMIN_ROLES },
 ];
 
 const VENTAS_LINKS: (NavLink | "divider")[] = [

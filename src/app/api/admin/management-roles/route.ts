@@ -1,4 +1,5 @@
 import { requireRole } from "@/lib/auth";
+import { rolesFor } from "@/lib/permissions";
 import { logAudit } from "@/lib/audit";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonOk, jsonError, parseJson } from "@/lib/api";
@@ -10,7 +11,7 @@ import { createManagementRoleSchema } from "@/lib/reservas/validations";
  * Auth: master only.
  */
 export async function GET() {
-  const auth = await requireRole(["master"]);
+  const auth = await requireRole(rolesFor("management_roles", "view"));
   if (auth.response) return auth.response;
 
   const supabase = createAdminClient();
@@ -49,7 +50,7 @@ export async function GET() {
  * Auth: master only.
  */
 export async function POST(request: Request) {
-  const auth = await requireRole(["master"]);
+  const auth = await requireRole(rolesFor("management_roles", "create"));
   if (auth.response) return auth.response;
 
   const { data: input, error: pErr } = await parseJson(request, createManagementRoleSchema);

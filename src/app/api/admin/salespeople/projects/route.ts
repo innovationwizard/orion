@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
+import { rolesFor } from "@/lib/permissions";
 import { logAudit } from "@/lib/audit";
 import { supabaseAdmin, getSupabaseConfigError } from "@/lib/supabase";
 import { jsonOk, jsonError } from "@/lib/api";
@@ -13,7 +14,7 @@ export async function POST(request: Request) {
   const configError = getSupabaseConfigError();
   if (configError) return jsonError(500, configError);
 
-  const auth = await requireRole(["master", "torredecontrol"]);
+  const auth = await requireRole(rolesFor("salespeople", "assign_project"));
   if (auth.response) return auth.response;
 
   if (!supabaseAdmin) {

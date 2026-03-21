@@ -1,7 +1,7 @@
 # Plan: Fix 11 High-Severity Gaps + Discovered Issues
 
 **Date:** 2026-03-19
-**Last updated:** 2026-03-19 (Phases 1, 3, 5 completed)
+**Last updated:** 2026-03-20 (Phases 1, 2, 3, 5 completed)
 **Prerequisite:** All 3 critical gaps (GAP-01, GAP-02, GAP-06) are resolved and deployed (changelog 074).
 **Scope:** 11 high-severity gaps from `docs/roles-gap-analysis.md` + 5 additional issues discovered during codebase exploration.
 
@@ -39,9 +39,9 @@
 |-----|-------------|-------|----------|
 | GAP-04 | Inactive roles have uncontrolled access | 1 | ✅ COMPLETED 2026-03-19 |
 | GAP-05 | No DB-level ownership enforcement | 1 | ✅ COMPLETED 2026-03-19 |
-| GAP-07 | No formal access control matrix | 2 | P1 — before new roles |
-| GAP-08 | No `can(action, resource)` utility | 2 | P1 — before new roles |
-| GAP-21 | No formal access control document | 2 | P1 — before new roles |
+| GAP-07 | No formal access control matrix | 2 | ✅ COMPLETED 2026-03-20 (changelog 078) |
+| GAP-08 | No `can(action, resource)` utility | 2 | ✅ COMPLETED 2026-03-20 (changelog 078) |
+| GAP-21 | No formal access control document | 2 | ✅ COMPLETED 2026-03-20 (changelog 078) |
 | GAP-22 | Incomplete audit trail | 3 | ✅ COMPLETED 2026-03-19 |
 | GAP-16 | No maker-checker on user provisioning | 3 | ✅ COMPLETED 2026-03-19 (audit-only, Option A) |
 | GAP-03 | No server-side field masking on analytics | 4 | P2 — before activating gerencia/financiero dashboards |
@@ -291,6 +291,7 @@ USING (
 
 ## 3. Phase 2 — Permission Architecture Foundation
 
+**Status:** ✅ COMPLETED 2026-03-20 (changelog 078)
 **Urgency:** Must complete before activating gerencia, financiero, contabilidad, or inventario roles for real users.
 **Effort:** ~16 hours total.
 **Dependencies:** Phase 1 (middleware/NavBar must handle role groups first).
@@ -544,6 +545,16 @@ const navLinks = [
 ```
 
 **Effort:** ~16 hours (permissions module, script, route migration planning, NavBar integration).
+
+#### Implementation Notes (Completed 2026-03-20)
+
+- **`src/lib/permissions.ts` created**: `PERMISSIONS` matrix covering 22 resources, 49 permission triples, 119 role grants. `rolesFor(resource, action)` → `Role[]` for API routes. `can(role, resource, action)` → boolean for UI/scripts. Client-safe `ADMIN_ROLES` and `DATA_VIEWER_ROLES` re-exports (avoids `next/headers` server-only import chain).
+- **15 routes migrated**: Replaced hardcoded `["master", "torredecontrol"]`, `["master"]`, and `["master", "financiero"]` arrays with semantic `rolesFor()` calls (18 total `requireRole()` call replacements).
+- **3 duplicate constants eliminated**: `me/route.ts` (local `ADMIN_ROLES` → import from `@/lib/auth`), `page.tsx` (local `DATA_VIEWER_ROLES` → import from `@/lib/auth`), `nav-bar.tsx` (local `ADMIN_PAGE_ROLES` → import from `@/lib/permissions`). Middleware locals kept (Edge Runtime constraint) with sync comment.
+- **`hasMinimumRole()`**: Retained with JSDoc "Currently unused — retained for future UI conditional rendering."
+- **`scripts/generate-access-matrix.ts`**: Reads PERMISSIONS, generates `docs/access-control-matrix.md` (22 resources, 49 triples, 119 grants). SOC 2 CC6.1 / ISO 27001 A.5.15 compliant.
+- **Build verified**: `npx next build` passes clean (71 routes, zero errors). Zero permission changes — mechanical centralization only.
+- **Key fix during build**: `nav-bar.tsx` is `"use client"` — cannot import from `auth.ts` (uses `next/headers`). Changed to import `ADMIN_ROLES`/`DATA_VIEWER_ROLES` from `permissions.ts` (no server-only imports).
 
 ---
 
@@ -971,11 +982,13 @@ When an admin processes a desistimiento, `reviewed_by` captures who initially co
 
 **Resolution:** Resolved via centralized audit trail — `audit_events` with `event_type = 'reservation.desisted'` captures who desisted and when. No schema change needed. `reviewed_by`/`reviewed_at` already captures the timestamp, and the audit event distinguishes desist from confirm/reject.
 
-### DISC-03: `hasMinimumRole()` Exists But Is Never Used
+### DISC-03: `hasMinimumRole()` Exists But Is Never Used — ✅ RESOLVED (changelog 078, 2026-03-20)
 
 The function was added in changelog 074 but no route or component calls it. All authorization still uses explicit role arrays.
 
-**Fix:** No immediate action needed. The function exists for future use. Once Phase 2 (permissions module) is implemented, routes will use `rolesFor()` which makes `hasMinimumRole()` less relevant. Consider removing it if still unused after Phase 2 to avoid dead code.
+~~**Fix:** No immediate action needed. The function exists for future use. Once Phase 2 (permissions module) is implemented, routes will use `rolesFor()` which makes `hasMinimumRole()` less relevant. Consider removing it if still unused after Phase 2 to avoid dead code.~~
+
+**Resolution:** Retained with JSDoc comment "Currently unused — retained for future UI conditional rendering." 5 lines of code, zero cost. Phase 2's `rolesFor()` handles API-level permissions; `hasMinimumRole()` remains available for hierarchical UI checks.
 
 ### DISC-04: NavBar Shows "Roles" Link to `torredecontrol` — ✅ RESOLVED (Phase 1)
 
@@ -999,14 +1012,14 @@ When an admin changes a salesperson's project assignments via `/api/admin/salesp
 
 | File | Phase | Purpose |
 |------|-------|---------|
-| `src/lib/permissions.ts` | 2 | Access control matrix + `can()` + `rolesFor()` |
+| `src/lib/permissions.ts` | 2 ✅ | Access control matrix + `can()` + `rolesFor()` |
 | `src/lib/audit.ts` | 3 ✅ | `logAudit()` utility |
 | `src/lib/field-masking.ts` | 4 | Role-aware response shaping |
 | `scripts/migrations/040_ventas_ownership_rls.sql` | 1 ✅ | Ownership-scoped RLS policies (deployed) |
 | `scripts/migrations/041_audit_events.sql` | 3 ✅ | `audit_events` table + RLS (deployed) |
 | ~~`scripts/migrations/042_provisioning_audit.sql`~~ | ~~3~~ | ~~`salespeople.provisioned_by` + `reservations.desisted_by/at`~~ — NOT NEEDED (resolved via audit trail) |
-| `scripts/generate-access-matrix.ts` | 2 | Auto-generate access control doc |
-| `docs/access-control-matrix.md` | 2 | Generated formal access control document |
+| `scripts/generate-access-matrix.ts` | 2 ✅ | Auto-generate access control doc |
+| `docs/access-control-matrix.md` | 2 ✅ | Generated formal access control document |
 | `src/app/admin/operaciones/page.tsx` | 5 ✅ | Pati's operations dashboard (page wrapper) |
 | `src/app/admin/operaciones/operaciones-client.tsx` | 5 ✅ | Operations dashboard (main component) |
 | `src/app/admin/audit/page.tsx` | 3 ✅ | Audit log viewer (page wrapper) |
@@ -1034,7 +1047,7 @@ When an admin changes a salesperson's project assignments via `/api/admin/salesp
 | `src/app/api/analytics/payment-compliance/route.ts` | 4 | Add field masking |
 | `src/app/api/commissions/route.ts` | 4 | Add field masking |
 | `src/app/api/commission-rates/route.ts` | 4 | Add field masking |
-| `src/lib/auth.ts` | 2 | Export role groups for NavBar/middleware consumption |
+| `src/lib/auth.ts` | 2 ✅ | `hasMinimumRole()` JSDoc comment added |
 
 ---
 
@@ -1048,11 +1061,11 @@ Phase 1 (Security) ✅ DONE   Phase 3 (Audit) ✅ DONE
   DISC-04: ✅ NavBar Roles link  DISC-05: ✅ assignment audit
          │
          ▼
-Phase 2 (Permissions)          Phase 5 (Dashboards) ✅ DONE
-  GAP-07: Permission matrix      GAP-11: ✅ Pati operations
-  GAP-08: can() utility          GAP-10: ✅ Role routing
-  GAP-21: Access control doc
-  DISC-03: hasMinimumRole cleanup
+Phase 2 (Permissions) ✅ DONE   Phase 5 (Dashboards) ✅ DONE
+  GAP-07: ✅ Permission matrix   GAP-11: ✅ Pati operations
+  GAP-08: ✅ can() utility       GAP-10: ✅ Role routing
+  GAP-21: ✅ Access control doc
+  DISC-03: ✅ hasMinimumRole eval
          │
          ▼
 Phase 4 (Field Masking)
@@ -1065,8 +1078,8 @@ Phase 6 (Deferred)
 ```
 
 **Key dependencies:**
-- Phase 2 depends on Phase 1 ✅ (middleware must handle role groups before NavBar uses `can()`)
-- Phase 4 depends on Phase 2 (masking rules reference the permission matrix)
+- Phase 2 depends on Phase 1 ✅ (middleware must handle role groups before NavBar uses `can()`) — ✅ Phase 2 DONE
+- Phase 4 depends on Phase 2 ✅ (masking rules reference the permission matrix) — Phase 2 unblocked Phase 4
 - ~~Phase 5 is independent (can start anytime, uses existing APIs)~~ ✅ DONE
 - ~~Phase 3 is independent (can start anytime)~~ ✅ DONE
 - Phase 6 has no timeline pressure
@@ -1078,20 +1091,23 @@ Phase 6 (Deferred)
 | Phase | Scope | Estimated Hours |
 |-------|-------|-----------------|
 | Phase 1 | GAP-04 + GAP-05 + DISC-01/04 | ✅ COMPLETED |
-| Phase 2 | GAP-07 + GAP-08 + GAP-21 + DISC-03 | ~16 |
+| Phase 2 | GAP-07 + GAP-08 + GAP-21 + DISC-03 | ✅ COMPLETED |
 | Phase 3 | GAP-22 + GAP-16 + DISC-02/05 | ✅ COMPLETED |
 | Phase 4 | GAP-03 | ~24 |
 | Phase 5 | GAP-10 + GAP-11 | ✅ COMPLETED (MVP) |
 | Phase 6 | GAP-09 + GAP-16b (deferred) | ~32 |
-| **Total remaining** | **Phase 2 + Phase 4 + Phase 6** | **~72 hours** |
+| **Total remaining** | **Phase 4 + Phase 6** | **~56 hours** |
 
 **Execution history:**
 - Phase 1 completed 2026-03-19 (changelogs 074 + 075)
 - Phase 3 completed 2026-03-19 (migration 041 + audit trail)
 - Phase 5 completed 2026-03-19 (operations dashboard MVP)
+- Phase 2 completed 2026-03-20 (permission architecture — changelog 078)
 - **Post-auth redirect fixes completed 2026-03-20** (see below)
 
-**Next:** Phase 2 (permission architecture) — must complete before activating gerencia/financiero/contabilidad for real users. Phase 4 depends on Phase 2. Phase 6 deferred until admin team grows.
+~~**Next:** Phase 2 (permission architecture) — must complete before activating gerencia/financiero/contabilidad for real users.~~ ✅ Phase 2 completed 2026-03-20 (changelog 078).
+
+**Next:** Phase 4 (field masking) — the only remaining phase before activating gerencia/financiero/contabilidad. Phase 6 deferred until admin team grows.
 
 ---
 

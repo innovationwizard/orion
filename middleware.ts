@@ -83,9 +83,12 @@ export async function middleware(request: NextRequest) {
   if (data.user) {
     const role = (data.user.app_metadata?.role as string | undefined) ?? null;
 
-    // Admin roles with full page access
+    // These mirror ADMIN_ROLES and DATA_VIEWER_ROLES from src/lib/auth.ts.
+    // Defined locally because middleware runs in Edge Runtime and cannot
+    // import from src/lib/. Keep in sync manually.
+    // DATA_PAGE_ROLES excludes master/torredecontrol because those are
+    // handled by ADMIN_PAGE_ROLES in the if/else chain above.
     const ADMIN_PAGE_ROLES = ["master", "torredecontrol"];
-    // Roles that can view analytics/dashboard pages (not admin mutation pages)
     const DATA_PAGE_ROLES = ["gerencia", "financiero", "contabilidad"];
 
     // Redirect logged-in users from /login to their home page

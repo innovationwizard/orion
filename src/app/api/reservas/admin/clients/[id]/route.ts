@@ -1,13 +1,14 @@
 import { NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireRole } from "@/lib/auth";
+import { rolesFor } from "@/lib/permissions";
 import { jsonOk, jsonError, parseJson } from "@/lib/api";
 import { updateClientSchema } from "@/lib/reservas/validations";
 
 type Ctx = { params: Promise<{ id: string }> };
 
 export async function PATCH(request: NextRequest, ctx: Ctx) {
-  const auth = await requireRole(["master", "torredecontrol"]);
+  const auth = await requireRole(rolesFor("clients", "update"));
   if ("response" in auth) return auth.response;
 
   const { id } = await ctx.params;

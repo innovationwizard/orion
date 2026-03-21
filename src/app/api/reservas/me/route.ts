@@ -2,11 +2,9 @@ import {
   requireSalesperson,
   isSalespersonFailure,
 } from "@/lib/reservas/require-salesperson";
-import { requireAuth, isSuperuser, hasRole } from "@/lib/auth";
+import { requireAuth, isSuperuser, hasRole, ADMIN_ROLES } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonOk, jsonError } from "@/lib/api";
-
-const ADMIN_ROLES = ["master", "torredecontrol"] as const;
 
 export async function GET() {
   const result = await requireSalesperson();
@@ -21,7 +19,7 @@ export async function GET() {
   if (auth.response) return auth.response;
 
   const user = auth.user!;
-  const isAdmin = isSuperuser(user.email ?? null) || hasRole(user, [...ADMIN_ROLES]);
+  const isAdmin = isSuperuser(user.email ?? null) || hasRole(user, ADMIN_ROLES);
 
   if (!isAdmin) {
     // Regular non-salesperson user → return the original 403

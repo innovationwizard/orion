@@ -2,12 +2,11 @@ import { Suspense } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { DATA_VIEWER_ROLES } from "@/lib/auth";
 import DashboardClient from "./dashboard-client";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
-
-const DATA_VIEWER_ROLES = ["master", "torredecontrol", "gerencia", "financiero", "contabilidad"];
 
 async function getUser() {
   const cookieStore = await cookies();
@@ -32,7 +31,7 @@ export default async function DashboardPage() {
 
   const role = user.app_metadata?.role as string | undefined;
   if (role === "ventas") redirect("/ventas/dashboard");
-  if (!role || !DATA_VIEWER_ROLES.includes(role)) redirect("/login");
+  if (!role || !(DATA_VIEWER_ROLES as string[]).includes(role)) redirect("/login");
 
   return (
     <Suspense

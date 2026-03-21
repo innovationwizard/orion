@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonOk, jsonError, parseJson } from "@/lib/api";
 import { ejecutivoRateSchema } from "@/lib/reservas/validations";
 import { requireRole } from "@/lib/auth";
+import { rolesFor } from "@/lib/permissions";
 import { logAudit } from "@/lib/audit";
 
 /**
@@ -16,7 +17,7 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const auth = await requireRole(["master", "financiero"]);
+  const auth = await requireRole(rolesFor("sales", "confirm_rate"));
   if (auth.response) return auth.response;
 
   const { id: saleId } = await params;

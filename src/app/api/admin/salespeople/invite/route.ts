@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
+import { rolesFor } from "@/lib/permissions";
 import { logAudit } from "@/lib/audit";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonOk, jsonError } from "@/lib/api";
@@ -10,7 +11,7 @@ const inviteSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const auth = await requireRole(["master", "torredecontrol"]);
+  const auth = await requireRole(rolesFor("salespeople", "invite"));
   if (auth.response) return auth.response;
 
   const admin = createAdminClient();

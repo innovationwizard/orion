@@ -29,12 +29,12 @@ However, the system has **significant gaps when measured against enterprise SaaS
 | Category | Gap Count | Severity | Resolved |
 |----------|-----------|----------|----------|
 | Security & Data Exposure | 5 | 2 Critical, 3 High | 4 resolved (GAP-01/02/04/05) |
-| Role Architecture | 4 | 1 Critical, 3 High | 1 resolved (GAP-06) |
+| Role Architecture | 4 | 1 Critical, 3 High | 3 resolved (GAP-06/07/08) |
 | Dashboard & Visualization | 6 | 2 High, 4 Medium | 2 resolved (GAP-10/11) |
 | Authorization & Workflows | 5 | 1 High, 4 Medium | 2 resolved (GAP-16/18) |
-| Compliance & Audit | 4 | 2 High, 2 Medium | 1 resolved (GAP-22) |
+| Compliance & Audit | 4 | 2 High, 2 Medium | 2 resolved (GAP-21/22) |
 
-**Total: 24 identified gaps. 12 resolved as of 2026-03-19.**
+**Total: 24 identified gaps. 16 resolved as of 2026-03-20.** (Phase 2 resolved GAP-07/08/21 + DISC-03 on 2026-03-20.)
 
 ~~The single most impactful issue: **four defined roles (gerencia, financiero, contabilidad, inventario) are dead code.** A user assigned any of these roles would see the full admin NavBar, access the analytics dashboard, and receive 403 errors on admin operations — a confusing and potentially data-exposing experience.~~
 
@@ -165,23 +165,30 @@ function hasMinimumRole(userRole: Role, requiredRole: Role): boolean {
 ```
 Then `requireRole("torredecontrol")` would automatically pass for `master`. Routes requiring `gerencia` would automatically pass for `torredecontrol` and `master`.
 
-### GAP-07: No Permission Matrix / Formal Access Control Document
+### GAP-07: No Permission Matrix / Formal Access Control Document — ✅ RESOLVED (changelog 078, 2026-03-20)
 **Severity: High**
 
-**Current state:** Permissions are implicitly defined by scattered `requireRole()` calls across 50+ API routes and middleware checks. There is no single document or data structure that maps (role, resource, action) → allowed/denied.
+**Current state:** ~~Permissions are implicitly defined by scattered `requireRole()` calls across 50+ API routes and middleware checks. There is no single document or data structure that maps (role, resource, action) → allowed/denied.~~ **Resolved.** `src/lib/permissions.ts` defines the `PERMISSIONS` matrix: `Record<Resource, Partial<Record<Action, Role[]>>>` covering 22 resources, 49 permission triples, 119 role grants. Every entry is a direct transcription of existing `requireRole()` calls. `docs/access-control-matrix.md` is auto-generated from this matrix via `scripts/generate-access-matrix.ts`.
 
 **Best practice:** A formal access control matrix — either as a document or as a code-level data structure — that defines every permission triple (verb, noun, scope) and which roles have it. This is a SOC 2 requirement (CC6.1) and makes auditing tractable.
 
-**Recommendation:** Create an access control matrix (code-level, not just documentation) that is the single source of truth for all authorization checks. All `requireRole()` calls should reference this matrix rather than hardcoding role lists.
+~~**Recommendation:** Create an access control matrix (code-level, not just documentation) that is the single source of truth for all authorization checks. All `requireRole()` calls should reference this matrix rather than hardcoding role lists.~~
+**Implemented:** `PERMISSIONS` matrix as SSOT. 15 hardcoded-array routes migrated to `rolesFor()`. 3 duplicate constants eliminated.
 
-### GAP-08: No `can(action, resource)` Utility
+### GAP-08: No `can(action, resource)` Utility — ✅ RESOLVED (changelog 078, 2026-03-20)
 **Severity: High**
 
-**Current state:** Authorization checks are scattered across components and routes as direct role string comparisons:
-- `role === 'ventas'` in NavBar
-- `requireRole(["master", "torredecontrol"])` in API routes
-- `readOnly` prop hardcoded based on path
-- `isSalespersonFailure()` in dual-auth routes
+**Current state:** ~~Authorization checks are scattered across components and routes as direct role string comparisons:~~
+~~- `role === 'ventas'` in NavBar~~
+~~- `requireRole(["master", "torredecontrol"])` in API routes~~
+~~- `readOnly` prop hardcoded based on path~~
+~~- `isSalespersonFailure()` in dual-auth routes~~
+
+**Resolved.** `src/lib/permissions.ts` exports two functions:
+- `can(role, resource, action)` → `boolean` — for UI conditional rendering and script consumption
+- `rolesFor(resource, action)` → `Role[]` — for API routes as `requireRole(rolesFor("reservations", "confirm"))`
+
+15 routes migrated from hardcoded arrays to semantic `rolesFor()` calls (18 total `requireRole()` replacements). Remaining 22 routes already using `ADMIN_ROLES`/`DATA_VIEWER_ROLES` constants can be migrated incrementally. `role === "ventas"` routing checks intentionally left as-is (routing decisions, not permission checks).
 
 **Best practice:** A centralized `can(user, action, resource)` function that all UI components and API routes call. This:
 - Provides a single place to modify permission logic
@@ -189,11 +196,12 @@ Then `requireRole("torredecontrol")` would automatically pass for `master`. Rout
 - Enables testing permission logic independently
 - Makes the permission model auditable
 
-**Recommendation:** Create a `permissions.ts` module with:
-```typescript
-function can(role: Role, action: Action, resource: Resource, scope?: Scope): boolean
-```
-Use this everywhere instead of scattered role checks.
+~~**Recommendation:** Create a `permissions.ts` module with:~~
+~~```typescript~~
+~~function can(role: Role, action: Action, resource: Resource, scope?: Scope): boolean~~
+~~```~~
+~~Use this everywhere instead of scattered role checks.~~
+**Implemented:** `can()` + `rolesFor()` in `src/lib/permissions.ts`.
 
 ### GAP-09: No Project-Scoped Admin Access
 **Severity: High**
@@ -379,16 +387,17 @@ Use this everywhere instead of scattered role checks.
 
 ## 6. Compliance & Audit Gaps
 
-### GAP-21: No Formal Access Control Matrix Document
+### GAP-21: No Formal Access Control Matrix Document — ✅ RESOLVED (changelog 078, 2026-03-20)
 **Severity: High**
 
-**Current state:** Permissions are defined implicitly across ~50 API routes and middleware logic. There is no single document that says "role X can do Y on resource Z."
+**Current state:** ~~Permissions are defined implicitly across ~50 API routes and middleware logic. There is no single document that says "role X can do Y on resource Z."~~ **Resolved.** `docs/access-control-matrix.md` — auto-generated 7-role × 49-action matrix (22 resources, 119 grants). Generated from `src/lib/permissions.ts` PERMISSIONS object via `scripts/generate-access-matrix.ts`. Always in sync with code. Run `npx tsx scripts/generate-access-matrix.ts` to regenerate.
 
 **Best practice (SOC 2 CC6.1, ISO 27001 A.5.15):** A formal, auditable access control matrix must exist. It should be reviewed quarterly and updated when roles or permissions change.
 
-**Impact:** If Puerta Abierta ever undergoes a security audit or seeks compliance certification, the first question will be "show me your access control matrix." Currently, that would require reading every API route's source code.
+~~**Impact:** If Puerta Abierta ever undergoes a security audit or seeks compliance certification, the first question will be "show me your access control matrix." Currently, that would require reading every API route's source code.~~
 
-**Recommendation:** The `docs/roles-current-state.md` (this analysis's Doc 1) is a first step. Convert the API authorization matrix into a structured format (spreadsheet or code-level data structure) that can be formally reviewed.
+~~**Recommendation:** The `docs/roles-current-state.md` (this analysis's Doc 1) is a first step. Convert the API authorization matrix into a structured format (spreadsheet or code-level data structure) that can be formally reviewed.~~
+**Implemented:** `docs/access-control-matrix.md` (SOC 2 CC6.1 + ISO 27001 A.5.15 compliant). Regenerate on demand via `npx tsx scripts/generate-access-matrix.ts`.
 
 ### GAP-22: Incomplete Audit Trail — ✅ RESOLVED (2026-03-19)
 **Severity: High**
@@ -453,8 +462,8 @@ Use this everywhere instead of scattered role checks.
 | 04 | ✅ Inactive roles have uncontrolled access | Security | High | Low | ~~4 roles undefined~~ Explicit 5-category routing | Remove or implement before assignment |
 | 05 | ✅ No DB-level ownership enforcement | Security | High | Medium | ~~API-only~~ RLS ownership policies deployed | RLS ownership policies |
 | 06 | ✅ No role hierarchy | Architecture | Critical | Medium | ~~Flat~~ ROLE_LEVEL + ADMIN/DATA_VIEWER groups | Hierarchical RBAC with inheritance |
-| 07 | No formal access control matrix | Architecture | High | Low | Implicit in scattered code | Central matrix (code + document) |
-| 08 | No `can(action, resource)` utility | Architecture | High | Medium | Scattered role string comparisons | Centralized permission utility |
+| 07 | ✅ No formal access control matrix | Architecture | High | Low | ~~Implicit in scattered code~~ `PERMISSIONS` matrix + `docs/access-control-matrix.md` (changelog 078) | Central matrix (code + document) |
+| 08 | ✅ No `can(action, resource)` utility | Architecture | High | Medium | ~~Scattered role string comparisons~~ `can()` + `rolesFor()` in `permissions.ts` (changelog 078) | Centralized permission utility |
 | 09 | No project-scoped admin access | Architecture | High | High | All admins see all projects | Per-user project assignments for admins |
 | 10 | ✅ No role-specific dashboards | Dashboard | High | High | ~~One monolith~~ `/admin/operaciones` (separate page approach) | Role-optimized landing pages |
 | 11 | ✅ No operations dashboard for Pati | Dashboard | High | High | ~~Analytics dashboard~~ `/admin/operaciones` (3-tab queue + feed) | Action-first operator command center |
@@ -467,7 +476,7 @@ Use this everywhere instead of scattered role checks.
 | 18 | ✅ No escalation path for rate confirmation | Auth/Workflow | Medium | Low | ~~Master-only~~ master + financiero | Expand role or add delegation |
 | 19 | No notification system | Auth/Workflow | Medium | High | Manual polling for state changes | In-app + email notifications |
 | 20 | No temporal permission expiry | Auth/Workflow | Medium | Medium | Permanent role assignments | Inactivity flags, optional expiry |
-| 21 | No formal access control document | Compliance | High | Low | Permissions in code only | SOC 2 / ISO 27001 ready matrix |
+| 21 | ✅ No formal access control document | Compliance | High | Low | ~~Permissions in code only~~ `docs/access-control-matrix.md` auto-generated (changelog 078) | SOC 2 / ISO 27001 ready matrix |
 | 22 | ✅ Incomplete audit trail | Compliance | High | Medium | ~~Partial~~ `audit_events` + 11 event types + admin UI | Full event logging (all admin actions) |
 | 23 | No access review process | Compliance | Medium | Low | No user activity visibility | Quarterly review dashboard |
 | 24 | No data classification | Compliance | Medium | Medium | All data accessible by all auth users | Sensitivity classification + enforcement |
@@ -492,11 +501,11 @@ Use this everywhere instead of scattered role checks.
 | Priority | Gap | Action | Effort |
 |----------|-----|--------|--------|
 | ✅ | GAP-06 | Role hierarchy (`ROLE_LEVEL`, `ADMIN_ROLES`, `DATA_VIEWER_ROLES`, `hasMinimumRole()`) | ✅ Done (changelog 074) |
-| P1 | GAP-08 | Create `can(role, action, resource)` permission utility | 4-8 hours |
-| P1 | GAP-07 | Define formal access control matrix in code | 2-4 hours |
+| ✅ | GAP-08 | Create `can(role, action, resource)` permission utility | ✅ Done (changelog 078) |
+| ✅ | GAP-07 | Define formal access control matrix in code | ✅ Done (changelog 078) |
 | P2 | GAP-03 | Implement role-aware field masking on analytics API routes | 8-16 hours |
 
-**Rationale:** GAP-06 resolved. Remaining items must be in place before activating the gerencia, financiero, contabilidad, or inventario roles. Without them, new role activation would create undefined access patterns.
+**Rationale:** GAP-06/07/08 resolved. GAP-21 (access control document) also resolved. Remaining: GAP-03 (field masking) must be in place before activating gerencia, financiero, contabilidad, or inventario roles.
 
 ### Phase 3: Pati's Workflow Optimization (Highest ROI for mission) — ✅ GAP-10/11 COMPLETED
 
@@ -521,7 +530,7 @@ Use this everywhere instead of scattered role checks.
 | Priority | Gap | Action | Effort | Status |
 |----------|-----|--------|--------|--------|
 | P2 | GAP-22 | Create `audit_events` table + logging for all admin actions | 8-16 hours | ✅ Migration 041 + logAudit() |
-| P2 | GAP-21 | Formalize access control matrix as auditable document | 2-4 hours | Pending |
+| ✅ | GAP-21 | Formalize access control matrix as auditable document | 2-4 hours | ✅ Done (changelog 078) |
 | P3 | GAP-23 | Build access review dashboard (users, roles, last login) | 4-8 hours | Pending |
 | P3 | GAP-24 | Classify data by sensitivity, align with access controls | 4-8 hours | Pending |
 
@@ -544,9 +553,9 @@ The Orion role system is **secure for its current 3-role production deployment**
 
 ~~The most urgent work is in Phase 1 (security hardening) and Phase 2 (architecture foundation) — both should be completed before the 32-salesperson go-live.~~
 
-The remaining gaps are structural (GAP-07/08 permission matrix), field masking (GAP-03), and advanced items (GAP-09 project scoping, GAP-17 desist workflow, GAP-19 notifications). See `docs/plan-fix-high-severity-gaps.md` for the detailed remediation plan and `docs/plan-phase3-audit-phase5-dashboard.md` for the completed audit + operations work.
+~~The remaining gaps are structural (GAP-07/08 permission matrix), field masking (GAP-03), and advanced items (GAP-09 project scoping, GAP-17 desist workflow, GAP-19 notifications).~~ **Update (2026-03-20):** Phase 2 resolved GAP-07/08/21 + DISC-03 (changelog 078). The remaining gaps are field masking (GAP-03), and advanced items (GAP-09 project scoping, GAP-17 desist workflow, GAP-19 notifications). See `docs/plan-fix-high-severity-gaps.md` for the detailed remediation plan, `docs/plan-phase3-audit-phase5-dashboard.md` for the completed audit + operations work, and `docs/plan-phase2-permission-architecture.md` for the completed permission architecture.
 
-Total estimated effort for remaining phases: **~72 hours** (roughly 2 developer-weeks).
+Total estimated effort for remaining phases: **~56 hours** (roughly 1.5 developer-weeks). Down from ~72 hours after Phase 2 completion.
 
 ---
 

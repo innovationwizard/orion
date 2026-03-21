@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireRole } from "@/lib/auth";
+import { rolesFor } from "@/lib/permissions";
 import { requireSalesperson, isSalespersonFailure } from "@/lib/reservas/require-salesperson";
 import { jsonOk, jsonError } from "@/lib/api";
 
@@ -52,7 +53,7 @@ export async function GET(
   let isAdmin = true;
   let salespersonId: string | null = null;
 
-  const auth = await requireRole(["master", "torredecontrol"]);
+  const auth = await requireRole(rolesFor("reservations", "view"));
   if ("response" in auth) {
     // Not admin — try salesperson auth
     isAdmin = false;

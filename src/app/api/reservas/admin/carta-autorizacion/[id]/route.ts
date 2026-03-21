@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireRole } from "@/lib/auth";
+import { rolesFor } from "@/lib/permissions";
 import { requireSalesperson, isSalespersonFailure } from "@/lib/reservas/require-salesperson";
 import { jsonOk, jsonError } from "@/lib/api";
 
@@ -18,7 +19,7 @@ export async function GET(
 ) {
   // Dual auth: admin OR salesperson (with ownership check below)
   let salespersonId: string | null = null;
-  const adminAuth = await requireRole(["master", "torredecontrol"]);
+  const adminAuth = await requireRole(rolesFor("documents", "view"));
   if (adminAuth.response) {
     const spAuth = await requireSalesperson();
     if (isSalespersonFailure(spAuth)) return adminAuth.response;

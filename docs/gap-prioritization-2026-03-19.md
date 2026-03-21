@@ -1,8 +1,8 @@
 # Gap Prioritization — Post Phase 1 Security Hardening
 
 **Date:** 2026-03-19
-**Last updated:** 2026-03-19 (Phase 3 + Phase 5 completed)
-**Context:** Phase 1 (changelogs 074 + 075) resolved 6 of 24 gaps. Phases 3 + 5 resolved 6 more. This document prioritizes the remaining 12 gaps by criticality and practical urgency.
+**Last updated:** 2026-03-20 (Phase 2 completed)
+**Context:** Phase 1 (changelogs 074 + 075) resolved 6 of 24 gaps. Phases 3 + 5 resolved 6 more. Phase 2 resolved 4 more. This document prioritizes the remaining 8 gaps by criticality and practical urgency.
 **Reference documents:**
 - `docs/roles-gap-analysis.md` — full gap inventory
 - `docs/plan-fix-high-severity-gaps.md` — 6-phase remediation plan
@@ -13,7 +13,7 @@
 
 ---
 
-## Status: 12 of 24 Gaps Resolved
+## Status: 16 of 24 Gaps Resolved
 
 | Gap | Description | Resolution |
 |-----|-------------|------------|
@@ -29,6 +29,10 @@
 | GAP-22 | Incomplete audit trail | `audit_events` table + `logAudit()` utility + 10 routes instrumented (2026-03-19, migration 041) |
 | DISC-02 | No `desisted_by` tracking | Resolved via audit trail (`event_type = 'reservation.desisted'`) — no schema change |
 | DISC-05 | No assignment audit logging | `assignment.created`/`assignment.ended` events logged (2026-03-19) |
+| GAP-07 | No formal access control matrix | `PERMISSIONS` matrix in `src/lib/permissions.ts` — 22 resources, 49 triples, 119 grants (changelog 078, 2026-03-20) |
+| GAP-08 | No `can(action, resource)` utility | `can()` + `rolesFor()` in `src/lib/permissions.ts` — 15 routes migrated (changelog 078, 2026-03-20) |
+| GAP-21 | No formal access control document | Auto-generated `docs/access-control-matrix.md` from PERMISSIONS object (SOC 2 CC6.1) (changelog 078, 2026-03-20) |
+| DISC-03 | `hasMinimumRole()` unused dead code | Retained with "Currently unused" JSDoc — 5 lines, zero cost, future UI value (changelog 078, 2026-03-20) |
 
 ---
 
@@ -45,18 +49,16 @@
 
 **Delivered:** Migration 041, `src/lib/audit.ts`, `/api/admin/audit-log`, `/admin/audit` page.
 
-### Phase 2: Permission Architecture (~16 hours)
+### ~~Phase 2: Permission Architecture (~16 hours)~~ ✅ COMPLETED (2026-03-20)
 
-Unblocked. Next recommended work.
+| Gap | Severity | What | Status |
+|-----|----------|------|--------|
+| GAP-07 | High | Formal access control matrix (code-level `PERMISSIONS` object) | ✅ `src/lib/permissions.ts` — 22 resources, 49 triples, 119 grants |
+| GAP-08 | High | `can(role, action, resource)` utility replacing scattered role checks | ✅ `can()` + `rolesFor()` — 15 routes migrated from hardcoded arrays |
+| GAP-21 | High | Auto-generated access control document (SOC 2 CC6.1) | ✅ `docs/access-control-matrix.md` via `scripts/generate-access-matrix.ts` |
+| DISC-03 | — | `hasMinimumRole()` cleanup (unused dead code) | ✅ Retained with JSDoc comment — zero cost, future UI value |
 
-| Gap | Severity | What |
-|-----|----------|------|
-| GAP-07 | High | Formal access control matrix (code-level `PERMISSIONS` object) |
-| GAP-08 | High | `can(role, action, resource)` utility replacing scattered role checks |
-| GAP-21 | High | Auto-generated access control document (SOC 2 CC6.1) |
-| DISC-03 | — | `hasMinimumRole()` cleanup (unused dead code) |
-
-**Why:** Must complete before activating gerencia/financiero/contabilidad for real users. Provides the foundation Phase 4 (field masking) depends on.
+**Delivered:** `src/lib/permissions.ts`, `scripts/generate-access-matrix.ts`, `docs/access-control-matrix.md`, 15 routes migrated, 3 duplicate constants eliminated, 19 files modified. Changelog 078.
 
 ---
 
@@ -87,9 +89,11 @@ Unblocked. Next recommended work.
 
 ~~**Start with Phase 3 (audit) + Phase 5 (Pati's dashboard) in parallel.**~~ ✅ Done.
 
-**Next:** Phase 2 (permission architecture) is the only remaining high-severity work. Must complete before activating gerencia/financiero/contabilidad for real users. Phase 4 (field masking) depends on Phase 2.
+~~**Next:** Phase 2 (permission architecture) is the only remaining high-severity work.~~ ✅ Done (2026-03-20, changelog 078).
 
-**Completed plans:** `docs/plan-phase3-audit-phase5-dashboard.md` (✅), `docs/plan-fix-critical-gaps.md` (✅).
+**Next:** Phase 4 (field masking) is the only remaining work before activating gerencia/financiero/contabilidad for real users. Phase 6 items are deferred until admin team grows.
+
+**Completed plans:** `docs/plan-phase3-audit-phase5-dashboard.md` (✅), `docs/plan-fix-critical-gaps.md` (✅), `docs/plan-phase2-permission-architecture.md` (✅).
 
 ---
 
@@ -97,9 +101,9 @@ Unblocked. Next recommended work.
 
 | Phase | Scope | Estimated Hours | Status |
 |-------|-------|-----------------|--------|
-| Phase 2 | GAP-07 + GAP-08 + GAP-21 + DISC-03 | ~16 | Pending |
+| Phase 2 | GAP-07 + GAP-08 + GAP-21 + DISC-03 | ~16 | ✅ COMPLETED |
 | Phase 3 | GAP-22 + GAP-16 + DISC-02/05 | ~20 | ✅ COMPLETED |
 | Phase 4 | GAP-03 | ~24 | Pending (depends on Phase 2) |
 | Phase 5 | GAP-10 + GAP-11 | ~40 | ✅ COMPLETED (MVP) |
 | Phase 6 | GAP-09 + GAP-16b (deferred) | ~32 | Deferred |
-| **Total remaining** | **12 gaps** | **~72 hours** |
+| **Total remaining** | **8 gaps** | **~56 hours** |

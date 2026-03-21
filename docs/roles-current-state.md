@@ -1,6 +1,6 @@
 # Orion — Current App Roles: Unabridged Description
 
-**Date:** 2026-03-19
+**Date:** 2026-03-19 (updated 2026-03-20 — Phase 2 permission architecture)
 **Scope:** Complete inventory of roles, access patterns, data visibility, and UI behavior as implemented in production.
 
 ---
@@ -65,7 +65,20 @@ Roles are stored in **Supabase Auth `app_metadata`** — a JSON field on `auth.u
 
 This is a critical security decision. The alternative (`user_metadata`) is **client-editable** — any authenticated user can call `supabase.auth.updateUser({ data: { role: "master" } })`. The system explicitly does NOT use `user_metadata` for authorization.
 
-### 2.2 Five Layers of Enforcement
+### 2.2 Permission Architecture (Added 2026-03-20)
+
+**Single source of truth:** `src/lib/permissions.ts` defines the `PERMISSIONS` matrix — `Record<Resource, Partial<Record<Action, Role[]>>>` covering 22 resources, 13 action types, 49 permission triples, and 119 role grants. Every authorization decision references this matrix.
+
+**Public API:**
+- `rolesFor(resource, action)` → `Role[]` — used in API routes as `requireRole(rolesFor("reservations", "confirm"))`
+- `can(role, resource, action)` → `boolean` — for UI conditional rendering and script consumption
+- `ADMIN_ROLES` / `DATA_VIEWER_ROLES` — client-safe re-exports (auth.ts uses `next/headers` which can't be imported in client components)
+
+**Formal documentation:** `docs/access-control-matrix.md` — auto-generated 7-role × 49-action matrix via `scripts/generate-access-matrix.ts`. SOC 2 CC6.1 / ISO 27001 A.5.15 compliant. Regenerate on demand: `npx tsx scripts/generate-access-matrix.ts`.
+
+See changelog 078 for full details.
+
+### 2.3 Five Layers of Enforcement
 
 Role enforcement operates as a defense-in-depth model with five layers (updated 2026-03-20 — page-level auth guards added):
 

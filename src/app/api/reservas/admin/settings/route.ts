@@ -2,11 +2,12 @@ import { NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonOk, jsonError, parseJson } from "@/lib/api";
 import { requireRole } from "@/lib/auth";
+import { rolesFor } from "@/lib/permissions";
 import { logAudit } from "@/lib/audit";
 import { updateSettingsSchema } from "@/lib/reservas/validations";
 
 export async function GET() {
-  const auth = await requireRole(["master", "torredecontrol"]);
+  const auth = await requireRole(rolesFor("settings", "view"));
   if (auth.response) return auth.response;
 
   const supabase = createAdminClient();
@@ -25,7 +26,7 @@ export async function GET() {
 }
 
 export async function PATCH(request: NextRequest) {
-  const auth = await requireRole(["master", "torredecontrol"]);
+  const auth = await requireRole(rolesFor("settings", "update"));
   if (auth.response) return auth.response;
 
   const { data: input, error: pErr } = await parseJson(request, updateSettingsSchema);
