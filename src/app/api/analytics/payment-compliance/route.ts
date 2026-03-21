@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { getSupabaseConfigError, getSupabaseServerClient } from "@/lib/supabase";
 import { jsonError, jsonOk, parseQuery } from "@/lib/api";
-import { requireRole, DATA_VIEWER_ROLES } from "@/lib/auth";
+import { requireRole, DATA_VIEWER_ROLES, getUserRole } from "@/lib/auth";
+import { maskPaymentCompliance } from "@/lib/field-masking";
 import { getFFExclusions } from "@/lib/ff-filter";
 
 const querySchema = z.object({
@@ -219,7 +220,8 @@ export async function GET(request: Request) {
     const compliancePct =
       totalExpectedToDate > 0 ? Math.round((totalActual / totalExpectedToDate) * 100) : 0;
 
-    return jsonOk({
+    const role = getUserRole(auth.user ?? null) ?? "";
+    return jsonOk(maskPaymentCompliance(role, {
       byProject,
       summary: {
         totalUnits: deduped.length,
@@ -231,7 +233,7 @@ export async function GET(request: Request) {
         variance: totalActual - totalExpectedToDate,
         byAgingBucket: aging
       }
-    });
+    }));
   } catch (err) {
     return jsonError(500, "Database error", err);
   }

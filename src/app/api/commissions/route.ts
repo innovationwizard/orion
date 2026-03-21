@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { getSupabaseConfigError, getSupabaseServerClient } from "@/lib/supabase";
 import { jsonError, jsonOk, parseQuery } from "@/lib/api";
-import { requireRole, DATA_VIEWER_ROLES } from "@/lib/auth";
+import { requireRole, DATA_VIEWER_ROLES, getUserRole } from "@/lib/auth";
+import { maskCommissionsLegacy } from "@/lib/field-masking";
 import type { Commission } from "@/lib/types";
 
 const commissionsQuerySchema = z.object({
@@ -87,7 +88,8 @@ export async function GET(request: Request) {
       0
     );
 
-    return jsonOk({ data: mapped, total_amount: totalAmount, count: count ?? 0 });
+    const role = getUserRole(auth.user ?? null) ?? "";
+    return jsonOk(maskCommissionsLegacy(role, { data: mapped, total_amount: totalAmount, count: count ?? 0 }));
   } catch (error) {
     return jsonError(500, "Database error", error);
   }

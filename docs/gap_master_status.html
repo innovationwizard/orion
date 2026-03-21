@@ -408,20 +408,20 @@
     </div>
     <div class="score-card">
       <div class="label">Resolved</div>
-      <div class="val c-green">22</div>
+      <div class="val c-green">26</div>
     </div>
     <div class="score-card">
       <div class="label">Pending</div>
-      <div class="val c-amber">12</div>
+      <div class="val c-amber">8</div>
     </div>
     <div class="score-card">
       <div class="label">Effort Left</div>
-      <div class="val c-accent">~72h</div>
+      <div class="val c-accent">~56h</div>
     </div>
   </div>
 
   <div class="progress-track">
-    <div class="progress-bar" style="width:64.7%"></div>
+    <div class="progress-bar" style="width:76.5%"></div>
   </div>
 
   <!-- ═══════ PHASE 1 ═══════ -->
@@ -623,12 +623,12 @@
 
   <!-- ═══════ PHASE 2 ═══════ -->
   <div class="phase-header">
-    <span class="phase-label">Phase 2 — Permission Architecture (~16h)</span>
-    <span class="phase-status-pill pill-pending">Pending</span>
+    <span class="phase-label">Phase 2 — Permission Architecture</span>
+    <span class="phase-status-pill pill-completed">Completed</span>
   </div>
   <ul class="issues">
-    <li>
-      <div class="status-dot dot-pending"></div>
+    <li class="resolved">
+      <div class="status-dot dot-resolved"></div>
       <div class="issue-body">
         <div class="issue-top">
           <span class="issue-id">GAP-07</span>
@@ -637,12 +637,12 @@
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
           <span class="cat-badge">Architecture</span>
-          <span class="effort-badge">2–4h</span>
+          <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
     </li>
-    <li>
-      <div class="status-dot dot-pending"></div>
+    <li class="resolved">
+      <div class="status-dot dot-resolved"></div>
       <div class="issue-body">
         <div class="issue-top">
           <span class="issue-id">GAP-08</span>
@@ -651,12 +651,12 @@
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
           <span class="cat-badge">Architecture</span>
-          <span class="effort-badge">4–8h</span>
+          <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
     </li>
-    <li>
-      <div class="status-dot dot-pending"></div>
+    <li class="resolved">
+      <div class="status-dot dot-resolved"></div>
       <div class="issue-body">
         <div class="issue-top">
           <span class="issue-id">GAP-21</span>
@@ -665,12 +665,12 @@
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
           <span class="cat-badge">Compliance</span>
-          <span class="effort-badge">2–4h</span>
+          <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
     </li>
-    <li>
-      <div class="status-dot dot-pending"></div>
+    <li class="resolved">
+      <div class="status-dot dot-resolved"></div>
       <div class="issue-body">
         <div class="issue-top">
           <span class="issue-id">DISC-03</span>
@@ -679,6 +679,7 @@
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
           <span class="cat-badge">Dead Code</span>
+          <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
     </li>
@@ -764,7 +765,7 @@
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
           <span class="cat-badge">Security</span>
-          <span class="effort-badge">~24h · depends on Phase 2</span>
+          <span class="effort-badge">~24h · Phase 2 dependency satisfied</span>
         </div>
       </div>
     </li>
@@ -959,7 +960,7 @@
     <div class="defense-label">Defense-in-Depth Model</div>
     <div class="layer"><span class="layer-num">L1</span><span class="layer-name">Middleware — Role-based page routing (5 categories)</span></div>
     <div class="layer"><span class="layer-num">L2</span><span class="layer-name">Page auth guards — Server-side role check on root page</span></div>
-    <div class="layer"><span class="layer-num">L3</span><span class="layer-name">API route guards — requireRole() on 30+ routes</span></div>
+    <div class="layer"><span class="layer-num">L3</span><span class="layer-name">API route guards — requireRole() on 30+ routes, 15 using rolesFor()</span></div>
     <div class="layer"><span class="layer-num">L4</span><span class="layer-name">RLS policies — Ownership-scoped SELECT on 4 tables</span></div>
     <div class="layer"><span class="layer-num">L5</span><span class="layer-name">Client UI filtering — NavBar + role-aware components</span></div>
   </div>

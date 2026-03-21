@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { getSupabaseConfigError, getSupabaseServerClient } from "@/lib/supabase";
 import { jsonError, jsonOk, parseQuery } from "@/lib/api";
-import { requireRole, DATA_VIEWER_ROLES } from "@/lib/auth";
+import { requireRole, DATA_VIEWER_ROLES, getUserRole } from "@/lib/auth";
+import { maskCommissionsAnalytics } from "@/lib/field-masking";
 import { getFFExclusions } from "@/lib/ff-filter";
 import { computeISR } from "@/lib/isr";
 
@@ -198,7 +199,8 @@ export async function GET(request: Request) {
       { total: 0, paid: 0, unpaid: 0, facturar: 0, isrRetenido: 0, pagar: 0, disbursableTotal: 0, disbursablePaid: 0, disbursableUnpaid: 0 }
     );
 
-    return jsonOk({ byRecipient, summary });
+    const role = getUserRole(auth.user ?? null) ?? "";
+    return jsonOk(maskCommissionsAnalytics(role, { byRecipient, summary }));
   } catch (error) {
     return jsonError(500, "Database error", error);
   }

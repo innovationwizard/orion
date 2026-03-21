@@ -29,6 +29,15 @@
 | Effort remaining | ~72 hours (~2 dev-weeks) |
 | Defense layers | 5 (Middleware → Page guards → API guards → RLS → Client UI) |
 
+### Scoreboard Update (2026-03-20 evening)
+
+| Metric | Updated Value |
+|--------|---------------|
+| Resolved | 27 (+5: Phase 2 resolved GAP-07, GAP-08, GAP-21, DISC-03; Phase 4 resolved GAP-03) |
+| Pending | 7 |
+| Phases completed | 5 of 6 (Phase 1, 2, 3, 4, 5) |
+| Effort remaining | ~32 hours (Phase 6 only) |
+
 ---
 
 ## Phase Summary
@@ -36,9 +45,9 @@
 | Phase | Name | Status | Gaps Resolved | Effort |
 |-------|------|--------|---------------|--------|
 | 1 | Security Hardening | **COMPLETED** 2026-03-19 | GAP-01, 02, 04, 05, 06, 18 + DISC-01, 04 + AUTH-01–05 | Done |
-| 2 | Permission Architecture | **PENDING** | GAP-07, 08, 21 + DISC-03 | ~16h |
+| 2 | Permission Architecture | **COMPLETED** 2026-03-20 | GAP-07, 08, 21 + DISC-03 | Done |
 | 3 | Audit Trail & Compliance | **COMPLETED** 2026-03-19 | GAP-16, 22 + DISC-02, 05 | Done |
-| 4 | Role-Aware Data Filtering | **PENDING** (depends on Phase 2) | GAP-03 | ~24h |
+| 4 | Role-Aware Data Filtering | **COMPLETED** 2026-03-20 | GAP-03 | Done |
 | 5 | Operations Dashboard | **COMPLETED** 2026-03-19 | GAP-10, 11 | Done |
 | 6 | Advanced Capabilities | **DEFERRED** | GAP-09, 12, 13, 14, 15, 17, 19, 20, 23, 24 | ~32h |
 
@@ -132,48 +141,49 @@
 ---
 
 #### GAP-03: No Server-Side Field Masking on Analytics Routes
-**Phase:** 4 | **Category:** Security | **Status:** PENDING
+**Phase:** 4 | **Category:** Security | **Status:** RESOLVED (2026-03-20)
 
 **What's wrong:** All analytics API routes return the same full dataset regardless of the caller's role. When gerencia/financiero/contabilidad roles are activated, users would see the same data as master — including individual commission amounts, ISR details, and PII.
 
-**What needs to be done:**
-- Create `src/lib/field-masking.ts` — role-aware response shaping utility.
-- Define data sensitivity classification (HIGH/MEDIUM/LOW) per endpoint.
-- Define masking rules per role: what fields to redact, anonymize, or aggregate.
-- Update 5 analytics routes to apply masking after Supabase queries.
+**What was done:**
+- Created `src/lib/field-masking.ts` — 4 per-resource masking functions (pure, typed, defense-in-depth: unknown roles default to most restrictive).
+- Applied masking to 4 API routes: `/api/analytics/commissions`, `/api/analytics/payments`, `/api/analytics/payment-compliance`, `/api/commissions`.
+- Cash flow route (`/api/analytics/cash-flow-forecast`) excluded — aggregate data only, no PII.
+- Dashboard UI: `role` prop passed from `page.tsx` → `DashboardClient`. Comisiones tab hidden for gerencia.
 
-**Depends on:** Phase 2 (permission matrix defines what each role sees).
-**Triggered by:** Activation of gerencia/financiero/contabilidad roles for real users.
-**Effort:** ~24 hours.
+**Masking rules by role:**
+- **gerencia:** Aggregates only — `byRecipient: []`, no ISR/disbursable, no payment history, Comisiones tab hidden.
+- **contabilidad:** Amounts + ISR visible, recipient names anonymized → "Beneficiario N".
+- **financiero:** Full access (no masking).
+- **master / torredecontrol:** Full access (no masking).
+
+**Depends on:** Phase 2 (completed 2026-03-20).
+**Plan document:** `docs/plan-phase4-field-masking.md`.
 
 ---
 
 #### GAP-07: No Formal Access Control Matrix
-**Phase:** 2 | **Category:** Architecture | **Status:** PENDING
+**Phase:** 2 | **Category:** Architecture | **Status:** RESOLVED (changelog 078, 2026-03-20)
 
 **What's wrong:** Permissions are implicitly defined across ~50 API routes and middleware checks. No single data structure maps (role, resource, action) → allowed/denied. If Puerta Abierta undergoes a security audit, the first question will be "show me your access control matrix" — currently that requires reading every route's source code.
 
-**What needs to be done:**
-- Create `src/lib/permissions.ts` with a `PERMISSIONS` object: `Record<Resource, Record<Action, Role[]>>`.
-- This becomes the single source of truth for all authorization decisions.
-- SOC 2 CC6.1 and ISO 27001 A.5.15 requirement.
-
-**Effort:** 2–4 hours (part of Phase 2's ~16h total).
+**What was done:**
+- Created `src/lib/permissions.ts` — `PERMISSIONS` matrix: 22 resources, 49 triples, 119 grants.
+- `Resource` and `Action` types formalize the full domain vocabulary.
+- Client-safe `ADMIN_ROLES` and `DATA_VIEWER_ROLES` re-exports (no circular imports).
 
 ---
 
 #### GAP-08: No `can(action, resource)` Utility
-**Phase:** 2 | **Category:** Architecture | **Status:** PENDING
+**Phase:** 2 | **Category:** Architecture | **Status:** RESOLVED (changelog 078, 2026-03-20)
 
 **What's wrong:** Authorization checks are scattered as direct role string comparisons: `role === 'ventas'` in NavBar, `requireRole(["master", "torredecontrol"])` in APIs, `readOnly` prop hardcoded by path. There's no centralized function to check permissions.
 
-**What needs to be done:**
-- Create `can(role, action, resource)` function in `src/lib/permissions.ts`.
-- Create `rolesFor(resource, action)` helper that returns the role list for a given permission triple.
-- Incrementally migrate existing `requireRole(ADMIN_ROLES)` calls to `requireRole(rolesFor("reservations", "confirm"))`.
-- Update NavBar to use `can(role, "analytics", "view")` instead of role array filtering.
-
-**Effort:** 4–8 hours (part of Phase 2's ~16h total).
+**What was done:**
+- Created `can(role, resource, action)` → boolean in `src/lib/permissions.ts`.
+- Created `rolesFor(resource, action)` → Role[] helper.
+- 15 API routes migrated from hardcoded role arrays to `rolesFor()` calls.
+- 3 duplicate `ADMIN_ROLES`/`DATA_VIEWER_ROLES` constants eliminated.
 
 ---
 
@@ -247,17 +257,14 @@
 ---
 
 #### GAP-21: No Formal Access Control Document
-**Phase:** 2 | **Category:** Compliance | **Status:** PENDING
+**Phase:** 2 | **Category:** Compliance | **Status:** RESOLVED (changelog 078, 2026-03-20)
 
 **What's wrong:** No single document says "role X can do Y on resource Z." Permissions are defined implicitly across ~50 API routes. SOC 2 CC6.1 and ISO 27001 A.5.15 require a formal, auditable access control matrix.
 
-**What needs to be done:**
-- Create `scripts/generate-access-matrix.ts` — reads the `PERMISSIONS` object from `src/lib/permissions.ts` and generates `docs/access-control-matrix.md`.
-- Auto-generated document is always in sync with code.
-- Review schedule: update whenever roles or routes change.
-
-**Depends on:** GAP-07 (permission matrix must exist first).
-**Effort:** 2–4 hours (part of Phase 2's ~16h total).
+**What was done:**
+- Created `scripts/generate-access-matrix.ts` — reads `PERMISSIONS` object, generates markdown table.
+- Generated `docs/access-control-matrix.md` — 22 resources, 7 roles, fully auditable.
+- SOC 2 CC6.1 / ISO 27001 A.5.15 requirement satisfied.
 
 ---
 
@@ -302,9 +309,9 @@ The PATCH handler at `src/app/api/reservas/admin/settings/route.ts` already popu
 ---
 
 #### DISC-03: `hasMinimumRole()` Exists But Is Never Used
-**Phase:** 2 | **Category:** Dead Code | **Status:** PENDING
+**Phase:** 2 | **Category:** Dead Code | **Status:** RESOLVED (changelog 078, 2026-03-20)
 
-The function was added in changelog 074 but no route or component calls it. Once Phase 2 implements `rolesFor()`, `hasMinimumRole()` becomes less relevant. Will be removed if still unused after Phase 2.
+The function was added in changelog 074 but no route or component calls it. **Resolution:** Retained with JSDoc comment `"Currently unused — retained for future UI conditional rendering"`. 5 lines, zero cost, future UI value when role-conditional rendering is needed.
 
 ---
 
@@ -476,24 +483,24 @@ The function was added in changelog 074 but no route or component calls it. Once
 
 ## What's Next
 
-### Immediate (Phase 2 — Permission Architecture, ~16h)
+### ~~Immediate (Phase 2 — Permission Architecture, ~16h)~~ COMPLETED 2026-03-20
 
-**Must complete before activating gerencia/financiero/contabilidad for real users.**
+| Gap | What | Status |
+|-----|------|--------|
+| GAP-07 | Formal access control matrix | RESOLVED — `src/lib/permissions.ts` |
+| GAP-08 | `can(role, action, resource)` utility | RESOLVED — `can()` + `rolesFor()` |
+| GAP-21 | Auto-generated access control document | RESOLVED — `docs/access-control-matrix.md` |
+| DISC-03 | `hasMinimumRole()` dead code | RESOLVED — retained with JSDoc |
 
-| Gap | What | Deliverable |
-|-----|------|-------------|
-| GAP-07 | Formal access control matrix | `src/lib/permissions.ts` — `PERMISSIONS` object |
-| GAP-08 | `can(role, action, resource)` utility | `can()` + `rolesFor()` functions |
-| GAP-21 | Auto-generated access control document | `scripts/generate-access-matrix.ts` → `docs/access-control-matrix.md` |
-| DISC-03 | `hasMinimumRole()` dead code | Evaluate — remove or integrate |
+### ~~Next (Phase 4 — Field Masking, ~24h)~~ COMPLETED 2026-03-20
 
-### Next (Phase 4 — Field Masking, ~24h, depends on Phase 2)
+| Gap | What | Status |
+|-----|------|--------|
+| GAP-03 | Role-aware response shaping | RESOLVED — `src/lib/field-masking.ts` + 4 routes masked + dashboard role-aware |
 
-| Gap | What | Deliverable |
-|-----|------|-------------|
-| GAP-03 | Role-aware response shaping | `src/lib/field-masking.ts` + updates to 5 analytics routes |
+**gerencia/financiero/contabilidad roles are now safe to activate for real users.**
 
-### Deferred (Phase 6 — ~32h, triggered by team growth or compliance requirements)
+### Remaining (Phase 6 — ~32h, triggered by team growth or compliance requirements)
 
 GAP-09, 12, 13, 14, 15, 17, 19, 20, 23, 24 — see individual descriptions above.
 
@@ -504,9 +511,10 @@ GAP-09, 12, 13, 14, 15, 17, 19, 20, 23, 24 — see individual descriptions above
 ```
 Layer 1: Middleware           — Role-based page routing (5 categories)
 Layer 2: Page auth guards     — Server-side role check on root page
-Layer 3: API route guards     — requireRole() on 30+ routes
-Layer 4: RLS policies         — Ownership-scoped SELECT on 4 tables + jwt_role() helper
-Layer 5: Client UI filtering  — NavBar role-filtered links + role-aware components
+Layer 3: API route guards     — requireRole() on 30+ routes, 15 using rolesFor()
+Layer 4: Field masking        — Post-query response shaping per role (4 analytics routes)
+Layer 5: RLS policies         — Ownership-scoped SELECT on 4 tables + jwt_role() helper
+Layer 6: Client UI filtering  — NavBar role-filtered links + role-aware tab visibility
 ```
 
 ---
@@ -525,6 +533,12 @@ Layer 5: Client UI filtering  — NavBar role-filtered links + role-aware compon
 | Audit log UI | `src/app/admin/audit/audit-client.tsx` | 3 |
 | Operations dashboard | `src/app/admin/operaciones/operaciones-client.tsx` | 5 |
 | Auth deep investigation | `docs/plan-auth-deep-investigation.md` | Post-deploy |
+| PERMISSIONS matrix | `src/lib/permissions.ts` | 2 |
+| `can()` / `rolesFor()` utilities | `src/lib/permissions.ts` | 2 |
+| Access control matrix generator | `scripts/generate-access-matrix.ts` | 2 |
+| Access control matrix document | `docs/access-control-matrix.md` | 2 |
+| Field masking utility | `src/lib/field-masking.ts` | 4 |
+| Phase 4 plan document | `docs/plan-phase4-field-masking.md` | 4 |
 
 ---
 
@@ -542,3 +556,5 @@ Layer 5: Client UI filtering  — NavBar role-filtered links + role-aware compon
 | `docs/plan-auth-deep-investigation.md` | Post-deploy auth redirect fixes |
 | `docs/_ THESE ARE THE RULES.TXT` | Operating constitution |
 | `docs/_ INTENT OF THE RULES.TXT` | Rules analysis and enforcement rationale |
+| `docs/plan-phase2-permission-architecture.md` | Phase 2 plan (completed) |
+| `docs/plan-phase4-field-masking.md` | Phase 4 plan (completed) |

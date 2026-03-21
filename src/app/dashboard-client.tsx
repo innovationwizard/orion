@@ -127,7 +127,7 @@ function toAnalyticsUnit(u: ComplianceUnit): PaymentAnalyticsUnit {
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
 
-export default function DashboardClient() {
+export default function DashboardClient({ role }: { role?: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -141,11 +141,15 @@ export default function DashboardClient() {
   const [aptoFilter, setAptoFilter] = useState("");
   const [showAllUnits, setShowAllUnits] = useState(false);
 
+  const visibleTabs = role === "gerencia"
+    ? TABS.filter((t) => t.id !== "commissions")
+    : TABS;
+
   const projectId = searchParams.get("project_id") ?? "";
   const startDate = searchParams.get("start_date") ?? "";
   const endDate = searchParams.get("end_date") ?? "";
   const excludeFF = searchParams.get("exclude_ff") === "1";
-  const activeTab = TABS.find((t) => t.id === searchParams.get("tab"))
+  const activeTab = visibleTabs.find((t) => t.id === searchParams.get("tab"))
     ? searchParams.get("tab")!
     : "overview";
 
@@ -384,7 +388,7 @@ export default function DashboardClient() {
       <ErrorBanner error={error} />
 
       {/* Tabs */}
-      <Tabs tabs={TABS} value={activeTab} onChange={setActiveTabId} />
+      <Tabs tabs={visibleTabs} value={activeTab} onChange={setActiveTabId} />
 
       {/* ============================================================ */}
       {/*  TAB: RESUMEN                                                 */}

@@ -1,7 +1,8 @@
 import { z } from "zod";
 import { getSupabaseConfigError, getSupabaseServerClient } from "@/lib/supabase";
 import { jsonError, jsonOk, parseQuery } from "@/lib/api";
-import { requireRole, DATA_VIEWER_ROLES } from "@/lib/auth";
+import { requireRole, DATA_VIEWER_ROLES, getUserRole } from "@/lib/auth";
+import { maskPaymentsAnalytics } from "@/lib/field-masking";
 import type { PaymentType } from "@/lib/types";
 
 const analyticsQuerySchema = z.object({
@@ -218,14 +219,15 @@ export async function GET(request: Request) {
 
     const summaryPercent = summaryExpected > 0 ? Math.round((summaryPaid / summaryExpected) * 100) : 0;
 
-    return jsonOk({
+    const role = getUserRole(auth.user ?? null) ?? "";
+    return jsonOk(maskPaymentsAnalytics(role, {
       byProject,
       summary: {
         totalExpected: summaryExpected,
         totalPaid: summaryPaid,
         percentPaid: summaryPercent
       }
-    });
+    }));
   } catch (error) {
     return jsonError(500, "Database error", error);
   }

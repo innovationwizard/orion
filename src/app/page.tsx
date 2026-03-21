@@ -44,7 +44,7 @@ export default async function DashboardPage() {
         </section>
       }
     >
-      <DashboardClient />
+      <DashboardClient role={role} />
     </Suspense>
   );
 }
