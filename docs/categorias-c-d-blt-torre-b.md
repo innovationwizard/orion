@@ -1,5 +1,7 @@
 # Categorías C y D — BLT Torre B: Inventario Completo por Unidad
 
+> **SUPERSEDED (2026-03-20):** Per authoritative correction from the project owner, only **3 confirmed sales** exist in BLT Torre B as of 2026-03-20 (point-in-time figure — this count will grow as new sales are recorded). The 58 rows in "INFO PARA REPORTES" and the 13 orphan income markers below do NOT represent real sales. All BLT Torre B transactional data will be purged from the production database and only the 3 confirmed sales will be loaded manually. This document is preserved as historical reference only. See `docs/creditos-33-units-investigation.md` for the authoritative correction.
+
 **Fecha:** 2026-03-20
 **Proyecto:** Bosque Las Tapias — Torre B
 **Contexto:** Consolidación de toda la información disponible para las 24 unidades clasificadas en Categoría C (Reservaciones Ocultas) y Categoría D (Marcadores de Ingreso Huérfanos), extraída del documento de investigación de las 33 unidades con datos de crédito.
