@@ -45,6 +45,7 @@ export type Role =
   | "gerencia"
   | "financiero"
   | "contabilidad"
+  | "marketing"
   | "ventas"
   | "inventario"
   | "torredecontrol";
@@ -52,6 +53,7 @@ export type Role =
 const ROLE_LEVEL: Record<Role, number> = {
   ventas: 10,
   inventario: 20,
+  marketing: 25,
   contabilidad: 30,
   financiero: 40,
   gerencia: 50,
@@ -62,8 +64,8 @@ const ROLE_LEVEL: Record<Role, number> = {
 /** Admin roles that can manage reservations and operational data. */
 export const ADMIN_ROLES: Role[] = ["master", "torredecontrol"];
 
-/** Roles that can view all analytics/financial data (admin + future finance roles). */
-export const DATA_VIEWER_ROLES: Role[] = ["master", "torredecontrol", "gerencia", "financiero", "contabilidad"];
+/** Roles that can view all analytics/financial data (admin + finance + marketing). */
+export const DATA_VIEWER_ROLES: Role[] = ["master", "torredecontrol", "gerencia", "financiero", "contabilidad", "marketing"];
 
 /** Check if user's role is at or above the required minimum level.
  * Currently unused — retained for future UI conditional rendering. */

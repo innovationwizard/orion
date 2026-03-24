@@ -15,20 +15,11 @@ import type {
   ReceiptData,
 } from "@/lib/reservas/types";
 import {
-  LEAD_SOURCES,
   GUATEMALAN_BANKS,
   RECEIPT_TYPE_LABELS,
   formatCurrency,
 } from "@/lib/reservas/constants";
 
-const TOP_LEAD_SOURCES = [
-  "Facebook",
-  "Referido",
-  "Perfilan",
-  "Visita Inédita",
-  "Señalética",
-  "Web",
-] as const;
 const DRAFT_KEY_PREFIX = "orion:reservation-draft:";
 
 function getInitialParam(key: string): string {
@@ -133,6 +124,7 @@ export default function NuevaReservaClient() {
 
   // Form state
   const [form, setForm] = useState<FormState>(INITIAL_STATE);
+  const [leadSources, setLeadSources] = useState<string[]>([]);
   const [showAllLeadSources, setShowAllLeadSources] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -202,6 +194,14 @@ export default function NuevaReservaClient() {
     form.receiptType,
     form.depositorName,
   ]);
+
+  // Fetch lead sources from DB
+  useEffect(() => {
+    fetch("/api/reservas/lead-sources")
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data: { name: string }[]) => setLeadSources(data.map((d) => d.name)))
+      .catch(() => {});
+  }, []);
 
   const update = useCallback(
     <K extends keyof FormState>(key: K, value: FormState[K]) => {
@@ -432,8 +432,8 @@ export default function NuevaReservaClient() {
   };
 
   const leadSourcesToShow = showAllLeadSources
-    ? LEAD_SOURCES
-    : TOP_LEAD_SOURCES;
+    ? leadSources
+    : leadSources.slice(0, 6);
 
   // Success screen
   if (success) {
@@ -873,13 +873,13 @@ export default function NuevaReservaClient() {
                   </button>
                 ))}
               </div>
-              {!showAllLeadSources && (
+              {!showAllLeadSources && leadSources.length > 6 && (
                 <button
                   type="button"
                   className="text-xs text-primary font-medium hover:underline text-left"
                   onClick={() => setShowAllLeadSources(true)}
                 >
-                  Ver todas ({LEAD_SOURCES.length})
+                  Ver todas ({leadSources.length})
                 </button>
               )}
             </fieldset>

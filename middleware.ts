@@ -94,7 +94,7 @@ export async function middleware(request: NextRequest) {
     // Redirect logged-in users from /login to their home page
     if (isLoginRoute) {
       if (role === "ventas") return redirectTo("/ventas/dashboard");
-      if (role && [...ADMIN_PAGE_ROLES, ...DATA_PAGE_ROLES].includes(role)) {
+      if (role && [...ADMIN_PAGE_ROLES, ...DATA_PAGE_ROLES, "marketing"].includes(role)) {
         return redirectTo("/");
       }
       // Unknown/unhandled role: stay on login page
@@ -125,6 +125,23 @@ export async function middleware(request: NextRequest) {
       }
     } else if (ADMIN_PAGE_ROLES.includes(role ?? "")) {
       // Full admin access — no page restrictions
+    } else if (role === "marketing") {
+      // Marketing: dashboard + lead sources management only
+      const blockedPrefixes = [
+        "/admin",
+        "/referidos",
+        "/valorizacion",
+        "/cesion",
+        "/buyer-persona",
+        "/integracion",
+      ];
+      const marketingExceptions = ["/admin/lead-sources"];
+      if (
+        blockedPrefixes.some((p) => pathname.startsWith(p)) &&
+        !marketingExceptions.some((p) => pathname.startsWith(p))
+      ) {
+        return redirectTo("/");
+      }
     } else if (DATA_PAGE_ROLES.includes(role ?? "")) {
       // Data viewer roles: block admin-only pages, allow analytics + public
       const adminOnlyPrefixes = [

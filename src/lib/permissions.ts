@@ -26,7 +26,8 @@ export type Resource =
   | "management_roles"
   | "audit_log"
   | "creditos"
-  | "analytics";
+  | "analytics"
+  | "lead_sources";
 
 export type Action =
   | "view"
@@ -51,12 +52,13 @@ export type Action =
 /** Admin roles — client-safe re-export (auth.ts uses next/headers). */
 export const ADMIN_ROLES: Role[] = ["master", "torredecontrol"];
 /** Data viewer roles — client-safe re-export (auth.ts uses next/headers). */
-export const DATA_VIEWER_ROLES: Role[] = ["master", "torredecontrol", "gerencia", "financiero", "contabilidad"];
+export const DATA_VIEWER_ROLES: Role[] = ["master", "torredecontrol", "gerencia", "financiero", "contabilidad", "marketing"];
 
 const A = ADMIN_ROLES;
 const D = DATA_VIEWER_ROLES;
 const M: Role[] = ["master"]; // Master only
 const MF: Role[] = ["master", "financiero"]; // Master + financiero
+const MK: Role[] = ["master", "torredecontrol", "marketing"]; // Admin + marketing
 
 // ────────────────────────────────────────────────────────────────
 // Permission matrix — single source of truth
@@ -165,6 +167,12 @@ export const PERMISSIONS: Record<Resource, Partial<Record<Action, Role[]>>> = {
   },
   analytics: {
     view: D,
+  },
+  lead_sources: {
+    view: MK,
+    create: MK,
+    update: MK,
+    delete: MK,
   },
 };
 

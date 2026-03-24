@@ -19,6 +19,7 @@ const ALL_ROLES: Role[] = [
   "gerencia",
   "financiero",
   "contabilidad",
+  "marketing",
   "inventario",
   "ventas",
 ];

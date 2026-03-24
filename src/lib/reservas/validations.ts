@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { RECEIPT_TYPES, LEAD_SOURCES, BUYER_ROLES } from "./constants";
+import { RECEIPT_TYPES, BUYER_ROLES } from "./constants";
 
 // ---------------------------------------------------------------------------
 // Reservation submission — from salesperson mobile form
@@ -25,7 +25,7 @@ export const submitReservationSchema = z.object({
   dpi_image_url: z.string().url("URL de DPI requerida"),
   client_dpi: z.string().min(1, "CUI requerido"),
   client_birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Fecha inválida (YYYY-MM-DD)").nullable().default(null),
-  lead_source: z.enum(LEAD_SOURCES).nullable().default(null),
+  lead_source: z.string().min(1).nullable().default(null),
   notes: z.string().nullable().default(null),
 });
 

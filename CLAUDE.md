@@ -119,7 +119,7 @@ The existing analytics DB has `projects`, `units`, `clients` tables. The reserva
 - `projects` — Shared. ALTERed to add `slug`, `updated_at`.
 - `rv_units` — New inventory table (avoids conflict with analytics `units`).
 - `rv_clients` — New reservation clients (avoids conflict with analytics `clients`).
-- `towers`, `floors`, `salespeople`, `reservations`, `reservation_clients`, `receipt_extractions`, `unit_status_log`, `freeze_requests` — New tables, no conflicts.
+- `towers`, `floors`, `salespeople`, `reservations`, `reservation_clients`, `receipt_extractions`, `unit_status_log`, `freeze_requests`, `lead_sources` — New tables, no conflicts.
 - Views: `v_rv_units_full`, `v_reservations_pending`, `v_rv_projects_with_towers`, `v_rv_unit_sale_counts`.
 - Enum types: `rv_unit_status`, `rv_reservation_status`, `rv_receipt_type`, `rv_extraction_confidence`, `rv_freeze_request_status`.
 - API namespace: `/api/reservas/` (all reservation routes under this prefix).

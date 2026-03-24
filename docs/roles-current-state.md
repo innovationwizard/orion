@@ -1,6 +1,6 @@
 # Orion — Current App Roles: Unabridged Description
 
-**Date:** 2026-03-19 (updated 2026-03-20 — Phase 2 permission architecture, Phase 4 field masking)
+**Date:** 2026-03-19 (updated 2026-03-20 — Phase 2 permission architecture, Phase 4 field masking; updated 2026-03-24 — marketing role)
 **Scope:** Complete inventory of roles, access patterns, data visibility, and UI behavior as implemented in production.
 
 ---
@@ -22,10 +22,10 @@
 
 ## 1. Role Definitions
 
-The system defines seven roles in `src/lib/auth.ts`:
+The system defines eight roles in `src/lib/auth.ts`:
 
 ```typescript
-type Role = "master" | "gerencia" | "financiero" | "contabilidad" | "ventas" | "inventario" | "torredecontrol"
+type Role = "master" | "gerencia" | "financiero" | "contabilidad" | "marketing" | "ventas" | "inventario" | "torredecontrol"
 ```
 
 **Actively used in production (as of 2026-03-19):**
@@ -35,6 +35,12 @@ type Role = "master" | "gerencia" | "financiero" | "contabilidad" | "ventas" | "
 | `master` | Super Administrador | Full system access, no restrictions | ~1-2 (Jorge, superuser) |
 | `torredecontrol` | Torre de Control | Operational admin, manages day-to-day commercial flow | 1 (Pati) |
 | `ventas` | Ejecutivo de Ventas | Salesperson, restricted to own data and assigned projects | 32 (field sales team) |
+
+**Implemented with scoped access (added 2026-03-24):**
+
+| Role | Human Label | Description | Active Users |
+|------|-------------|-------------|--------------|
+| `marketing` | Marketing | Lead source management + read-only dashboard | 0 (ready to provision) |
 
 **Defined but not actively enforced (no routes, no pages, no RLS policies check for them):**
 
@@ -67,14 +73,14 @@ This is a critical security decision. The alternative (`user_metadata`) is **cli
 
 ### 2.2 Permission Architecture (Added 2026-03-20)
 
-**Single source of truth:** `src/lib/permissions.ts` defines the `PERMISSIONS` matrix — `Record<Resource, Partial<Record<Action, Role[]>>>` covering 22 resources, 13 action types, 49 permission triples, and 119 role grants. Every authorization decision references this matrix.
+**Single source of truth:** `src/lib/permissions.ts` defines the `PERMISSIONS` matrix — `Record<Resource, Partial<Record<Action, Role[]>>>` covering 23 resources, 14 action types, 53 permission triples, and 131 role grants. Every authorization decision references this matrix.
 
 **Public API:**
 - `rolesFor(resource, action)` → `Role[]` — used in API routes as `requireRole(rolesFor("reservations", "confirm"))`
 - `can(role, resource, action)` → `boolean` — for UI conditional rendering and script consumption
 - `ADMIN_ROLES` / `DATA_VIEWER_ROLES` — client-safe re-exports (auth.ts uses `next/headers` which can't be imported in client components)
 
-**Formal documentation:** `docs/access-control-matrix.md` — auto-generated 7-role × 49-action matrix via `scripts/generate-access-matrix.ts`. SOC 2 CC6.1 / ISO 27001 A.5.15 compliant. Regenerate on demand: `npx tsx scripts/generate-access-matrix.ts`.
+**Formal documentation:** `docs/access-control-matrix.md` — auto-generated 8-role × 53-action matrix via `scripts/generate-access-matrix.ts`. SOC 2 CC6.1 / ISO 27001 A.5.15 compliant. Regenerate on demand: `npx tsx scripts/generate-access-matrix.ts`.
 
 See changelog 078 for full details.
 
@@ -95,6 +101,9 @@ The sole routing enforcer. Intercepts every HTTP request before it reaches a pag
 | `ventas` role without `password_set = true` | Redirect → `/auth/set-password` |
 | `ventas` role hits non-allowed route | Redirect → `/ventas/dashboard` |
 | `ventas` role hits allowed route | Allow through |
+| `marketing` role hits `/admin/lead-sources` | Allow through |
+| `marketing` role hits other admin/blocked page | Redirect → `/` |
+| `marketing` role hits analytics page | Allow through |
 | `ADMIN_PAGE_ROLES` (master, torredecontrol) | Full page access (no restrictions) |
 | `DATA_PAGE_ROLES` (gerencia, financiero, contabilidad) | Analytics pages only; blocked from admin-only pages |
 | Unknown/null/unhandled role | Redirect → `/login` |
@@ -123,7 +132,7 @@ The sole routing enforcer. Intercepts every HTTP request before it reaches a pag
 
 ~~**Key observation:** Middleware only distinguishes between `ventas` and `not-ventas`. There is no middleware-level distinction between `master`, `torredecontrol`, `gerencia`, `financiero`, `contabilidad`, or `inventario`. All non-ventas roles receive identical routing treatment.~~
 
-**Updated:** Middleware now has explicit 5-category role routing. DATA_PAGE_ROLES users are blocked from admin mutation pages but can access analytics, projects, ventas velocity, desistimientos, disponibilidad, and cotizador. Unknown/null roles are redirected to login.
+**Updated:** Middleware now has explicit 6-category role routing (ventas, marketing, admin, data viewer, unknown, unauthenticated). Marketing users get the same blocklist as DATA_PAGE_ROLES with an exception for `/admin/lead-sources`. DATA_PAGE_ROLES users are blocked from admin mutation pages but can access analytics, projects, ventas velocity, desistimientos, disponibilidad, and cotizador. Unknown/null roles are redirected to login.
 
 #### Layer 2: Page Auth Guards (Server Component-Level) — NEW 2026-03-20
 **Files:** `src/app/page.tsx`, `src/app/login/page.tsx`
@@ -355,7 +364,45 @@ The weakest layer (easily bypassed via browser dev tools), but important for use
 
 **NavBar links:** Mis Reservas, Inventario, Clientes, Rendimiento, Disponibilidad, Cotizador
 
-### 3.4 Gerencia / Financiero / Contabilidad / Inventario (Inactive Roles)
+### 3.4 Marketing (Added 2026-03-24)
+
+**Who:** Marketing team members managing lead source configuration.
+
+**Authentication:** Email/password login. `app_metadata.role = "marketing"`.
+
+**ROLE_LEVEL:** 25 (between inventario=20 and contabilidad=30).
+
+**What they can access:**
+- `/` — Main analytics dashboard (read-only, same as DATA_VIEWER_ROLES)
+- `/admin/lead-sources` — Lead source management page (full CRUD)
+- `/disponibilidad` — Availability board (public)
+- `/cotizador` — Payment calculator (public)
+- `/projects`, `/desistimientos`, `/ventas` — Analytics pages (read-only)
+
+**What they CANNOT access:**
+- `/admin/reservas` — Reservation admin
+- `/admin/operaciones`, `/admin/asesores`, `/admin/roles`, `/admin/audit` — Other admin pages
+- `/referidos`, `/valorizacion`, `/cesion`, `/buyer-persona`, `/integracion` — Admin-only pages
+- `/reservar` — Reservation form (salesperson only)
+- `/ventas/portal/*` — Salesperson portal
+
+**What they can do:**
+- View, create, update, delete lead sources (name, display_order, is_active)
+- View analytics dashboard (all tabs available to DATA_VIEWER_ROLES)
+
+**What they CANNOT do:**
+- Manage reservations, salespeople, commissions, or any admin operations
+- Access financial detail data beyond what DATA_VIEWER_ROLES allows
+
+**NavBar links:** Dashboard, Projects, Desistimientos, Disponibilidad, Cotizador, Ventas, Créditos, Fuentes
+
+**Enforcement layers:**
+- Middleware: explicit marketing block — same blocklist as DATA_PAGE_ROLES with exception for `/admin/lead-sources`
+- API: `requireRole(rolesFor("lead_sources", ...))` → `["master", "torredecontrol", "marketing"]`
+- RLS: `lead_sources` table — INSERT/UPDATE/DELETE restricted to `jwt_role() IN ('master', 'torredecontrol', 'marketing')`
+- NavBar: "Fuentes" link visible to `["master", "torredecontrol", "marketing"]`
+
+### 3.5 Gerencia / Financiero / Contabilidad / Inventario (Inactive Roles)
 
 **Who:** No users currently assigned to these roles.
 
@@ -390,32 +437,33 @@ The weakest layer (easily bypassed via browser dev tools), but important for use
 
 ### 4.1 Current Production Access (Updated 2026-03-19)
 
-| Page | Route | Public | master | torredecontrol | ventas | gerencia/financiero/contabilidad |
-|------|-------|--------|--------|----------------|--------|----------------------------------|
-| Analytics Dashboard | `/` | — | Full | Full | Blocked (server-side redirect → `/ventas/dashboard`) | Full (view-only, API guards limit mutations) |
-| Login | `/login` | Yes | → `/` (role-aware) | → `/` (role-aware) | → `/ventas/dashboard` (role-aware) | → `/` (role-aware) |
-| Password Setup | `/auth/set-password` | — | N/A | N/A | Required | N/A |
-| Inventory Grid | `/reservar` | — | Full | Full | Own projects | Blocked (admin-only page) |
-| Admin Reservations | `/admin/reservas` | — | Full | Full | Blocked | Blocked (admin-only page) |
-| PCV Editor | `/admin/reservas/pcv/[id]` | — | RW | RW | Blocked | Blocked (admin-only page) |
-| Carta de Pago | `/admin/reservas/carta-pago/[id]` | — | RW | RW | Blocked | Blocked (admin-only page) |
-| Carta de Autorización | `/admin/reservas/carta-autorizacion/[id]` | — | RW | RW | Blocked | Blocked (admin-only page) |
-| Availability Board | `/disponibilidad` | Yes | Full | Full | Full | Full |
-| Projects | `/projects` | — | RW | RW | Blocked | Full (view; API limits mutations) |
-| Desistimientos | `/desistimientos` | — | RW | RW | Blocked | Full (view-only) |
-| Referidos | `/referidos` | — | RW | RW | Blocked | Blocked (admin-only page) |
-| Valorización | `/valorizacion` | — | RW | RW | Blocked | Blocked (admin-only page) |
-| Buyer Persona | `/buyer-persona` | — | RW | RW | Blocked | Blocked (admin-only page) |
-| Cotizador | `/cotizador` | Yes | Full | Full | Full | Full |
-| Integración | `/integracion` | — | Full | Full | Blocked | Blocked (admin-only page) |
-| Sales Velocity | `/ventas` | — | Full | Full | Blocked | Full (view-only) |
-| Cesión | `/cesion` | — | RW | RW | Blocked | Blocked (admin-only page) |
-| Salesperson Mgmt | `/admin/asesores` | — | RW | RW | Blocked | Blocked (admin-only page) |
-| Operations | `/admin/operaciones` | — | Full | Full | Blocked | Blocked (admin-only page) |
-| Audit Log | `/admin/audit` | — | Full | Full | Blocked | Blocked (admin-only page) |
-| HR Roles | `/admin/roles` | — | RW | Blocked (API) | Blocked | Blocked (admin-only page) |
-| Ventas Portal | `/ventas/portal/*` | — | Redirect‡ | Redirect‡ | Full | Redirect‡ |
-| Ventas PCV (RO) | `/ventas/dashboard/pcv/[id]` | — | Full | Full | Own only | Full |
+| Page | Route | Public | master | torredecontrol | marketing | ventas | gerencia/financiero/contabilidad |
+|------|-------|--------|--------|----------------|-----------|--------|----------------------------------|
+| Analytics Dashboard | `/` | — | Full | Full | Full (view-only) | Blocked (server-side redirect → `/ventas/dashboard`) | Full (view-only, API guards limit mutations) |
+| Login | `/login` | Yes | → `/` (role-aware) | → `/` (role-aware) | → `/` (role-aware) | → `/ventas/dashboard` (role-aware) | → `/` (role-aware) |
+| Password Setup | `/auth/set-password` | — | N/A | N/A | N/A | Required | N/A |
+| Inventory Grid | `/reservar` | — | Full | Full | Blocked | Own projects | Blocked (admin-only page) |
+| Admin Reservations | `/admin/reservas` | — | Full | Full | Blocked | Blocked | Blocked (admin-only page) |
+| Lead Sources Mgmt | `/admin/lead-sources` | — | RW | RW | **RW** | Blocked | Blocked (admin-only page) |
+| PCV Editor | `/admin/reservas/pcv/[id]` | — | RW | RW | Blocked | Blocked | Blocked (admin-only page) |
+| Carta de Pago | `/admin/reservas/carta-pago/[id]` | — | RW | RW | Blocked | Blocked | Blocked (admin-only page) |
+| Carta de Autorización | `/admin/reservas/carta-autorizacion/[id]` | — | RW | RW | Blocked | Blocked | Blocked (admin-only page) |
+| Availability Board | `/disponibilidad` | Yes | Full | Full | Full | Full | Full |
+| Projects | `/projects` | — | RW | RW | Full (view) | Blocked | Full (view; API limits mutations) |
+| Desistimientos | `/desistimientos` | — | RW | RW | Full (view) | Blocked | Full (view-only) |
+| Referidos | `/referidos` | — | RW | RW | Blocked | Blocked | Blocked (admin-only page) |
+| Valorización | `/valorizacion` | — | RW | RW | Blocked | Blocked | Blocked (admin-only page) |
+| Buyer Persona | `/buyer-persona` | — | RW | RW | Blocked | Blocked | Blocked (admin-only page) |
+| Cotizador | `/cotizador` | Yes | Full | Full | Full | Full | Full |
+| Integración | `/integracion` | — | Full | Full | Blocked | Blocked | Blocked (admin-only page) |
+| Sales Velocity | `/ventas` | — | Full | Full | Full (view) | Blocked | Full (view-only) |
+| Cesión | `/cesion` | — | RW | RW | Blocked | Blocked | Blocked (admin-only page) |
+| Salesperson Mgmt | `/admin/asesores` | — | RW | RW | Blocked | Blocked | Blocked (admin-only page) |
+| Operations | `/admin/operaciones` | — | Full | Full | Blocked | Blocked | Blocked (admin-only page) |
+| Audit Log | `/admin/audit` | — | Full | Full | Blocked | Blocked | Blocked (admin-only page) |
+| HR Roles | `/admin/roles` | — | RW | Blocked (API) | Blocked | Blocked | Blocked (admin-only page) |
+| Ventas Portal | `/ventas/portal/*` | — | Redirect‡ | Redirect‡ | Redirect‡ | Full | Redirect‡ |
+| Ventas PCV (RO) | `/ventas/dashboard/pcv/[id]` | — | Full | Full | Full | Own only | Full |
 
 ‡ Non-ventas users are not redirected — they could access `/ventas/portal/*` pages, but the content depends on `requireSalesperson()` API calls which would fail
 
@@ -510,6 +558,14 @@ The weakest layer (easily bypassed via browser dev tools), but important for use
 | `/api/reservas/buyer-persona/[client_id]` | GET, PUT | Client profile |
 | `/api/reservas/integracion` | GET | Integration pipeline |
 
+#### Marketing + Admin (`requireRole(["master", "torredecontrol", "marketing"])`) — New 2026-03-24
+| Route | Method | Purpose |
+|-------|--------|---------|
+| `/api/admin/lead-sources` | GET | List all lead sources (active + inactive) |
+| `/api/admin/lead-sources` | POST | Create lead source |
+| `/api/admin/lead-sources/[id]` | PATCH | Update lead source |
+| `/api/admin/lead-sources/[id]` | DELETE | Delete lead source (if unused) |
+
 #### Master Only (`requireRole(["master"])`)
 | Route | Method | Purpose |
 |-------|--------|---------|
@@ -577,6 +633,7 @@ The weakest layer (easily bypassed via browser dev tools), but important for use
 | `salesperson_project_assignments` | Own assignments (salespeople) + admin roles | Service role | Admin roles |
 | `audit_events` | Admin only (master/torredecontrol via `jwt_role()`) | Service role | — (append-only, no UPDATE/DELETE) |
 | `salesperson_periods` | Service role | Service role | Service role |
+| `lead_sources` | Authenticated (all) | marketing/master/torredecontrol | marketing/master/torredecontrol |
 
 ### 6.2 Notable RLS Observations (Updated 2026-03-19)
 
@@ -613,9 +670,15 @@ Cesion | Asesores | Auditoría
 ```
 (No "Roles" link — master-only)
 
+**marketing links:**
+```
+Dashboard | Projects | Desistimientos | Disponibilidad | Cotizador | Ventas | Créditos | Fuentes
+```
+(Same as data viewer roles + Fuentes link for lead source management)
+
 **gerencia / financiero / contabilidad links:**
 ```
-Dashboard | Projects | Desistimientos | Disponibilidad | Cotizador | Ventas
+Dashboard | Projects | Desistimientos | Disponibilidad | Cotizador | Ventas | Créditos
 ```
 (No admin-only links: Reservas, Integracion, Referidos, Buyer Persona, Valorizacion, Cesion, Asesores, Roles are hidden)
 

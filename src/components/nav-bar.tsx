@@ -26,6 +26,7 @@ const NON_VENTAS_LINKS: (NavLink | "divider")[] = [
   { href: "/admin/asesores", label: "Asesores", roles: ADMIN_ROLES },
   { href: "/admin/roles", label: "Roles", roles: ["master"] },
   { href: "/admin/audit", label: "Auditoría", roles: ADMIN_ROLES },
+  { href: "/admin/lead-sources", label: "Fuentes", roles: ["master", "torredecontrol", "marketing"] },
 ];
 
 const VENTAS_LINKS: (NavLink | "divider")[] = [
@@ -48,6 +49,7 @@ const ROLE_LABELS: Record<string, string> = {
   financiero: "Financiero",
   contabilidad: "Contabilidad",
   inventario: "Inventario",
+  marketing: "Marketing",
   ventas: "Ventas",
 };
 
@@ -58,6 +60,7 @@ const ROLE_COLORS: Record<string, string> = {
   financiero: "#16a34a",
   contabilidad: "#64748b",
   inventario: "#f59e0b",
+  marketing: "#ec4899",
   ventas: "#2563eb",
 };
 

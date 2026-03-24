@@ -4,11 +4,10 @@ import { useCallback, useEffect, useState } from "react";
 import CameraInput from "./camera-input";
 import ReceiptPreview from "./receipt-preview";
 import ConfirmationModal from "./confirmation-modal";
-import { LEAD_SOURCES, GUATEMALAN_BANKS, RECEIPT_TYPE_LABELS, formatCurrency } from "@/lib/reservas/constants";
+import { GUATEMALAN_BANKS, RECEIPT_TYPE_LABELS, formatCurrency } from "@/lib/reservas/constants";
 import { uploadImage } from "@/lib/reservas/upload-image";
 import type { UnitFull, OcrExtractionResult, DpiExtractionResult, ReceiptData } from "@/lib/reservas/types";
 
-const TOP_LEAD_SOURCES = ["Facebook", "Referido", "Perfilan", "Visita Inédita", "Señalética", "Web"] as const;
 const DRAFT_KEY_PREFIX = "orion:reservation-draft:";
 
 interface Props {
@@ -75,6 +74,7 @@ export default function ReservationForm({
   onSuccess,
 }: Props) {
   const [form, setForm] = useState<FormState>(INITIAL_STATE);
+  const [leadSources, setLeadSources] = useState<string[]>([]);
   const [showAllLeadSources, setShowAllLeadSources] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -141,6 +141,14 @@ export default function ReservationForm({
     form.receiptType,
     form.depositorName,
   ]);
+
+  // Fetch lead sources from DB
+  useEffect(() => {
+    fetch("/api/reservas/lead-sources")
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data: { name: string }[]) => setLeadSources(data.map((d) => d.name)))
+      .catch(() => {});
+  }, []);
 
   // Update a specific field
   const update = useCallback(
@@ -363,7 +371,7 @@ export default function ReservationForm({
     depositorName: form.depositorName,
   };
 
-  const leadSourcesToShow = showAllLeadSources ? LEAD_SOURCES : TOP_LEAD_SOURCES;
+  const leadSourcesToShow = showAllLeadSources ? leadSources : leadSources.slice(0, 6);
 
   return (
     <div className="p-[clamp(16px,3vw,32px)] max-w-lg mx-auto grid gap-5">
@@ -667,13 +675,13 @@ export default function ReservationForm({
             </button>
           ))}
         </div>
-        {!showAllLeadSources && (
+        {!showAllLeadSources && leadSources.length > 6 && (
           <button
             type="button"
             className="text-xs text-primary font-medium hover:underline text-left"
             onClick={() => setShowAllLeadSources(true)}
           >
-            Ver todas ({LEAD_SOURCES.length})
+            Ver todas ({leadSources.length})
           </button>
         )}
       </fieldset>

@@ -144,37 +144,28 @@ export const BUYER_ROLE_LABELS_SHORT: Record<RvBuyerRole, string> = {
 };
 
 // ---------------------------------------------------------------------------
-// Lead sources — unified across all 4 projects
+// Lead sources — seed data reference (authoritative list now in `lead_sources` DB table)
+// Forms fetch from GET /api/reservas/lead-sources at runtime.
 // ---------------------------------------------------------------------------
 
-export const LEAD_SOURCES = [
+export const LEAD_SOURCES_SEED = [
   "Facebook",
   "Meta",
-  "Perfilan",
   "Referido",
   "Visita Inédita",
   "Señalética",
-  "Vallas",
   "PBX",
-  "Leads",
-  "Web",
   "Página Web",
-  "Pipedrive",
   "Inbox",
-  "Expocasa",
   "Mailing",
   "Prospección",
   "F&F",
   "Wati",
-  "Cartera Antigua",
-  "PD",
   "Activación",
   "Evento",
-  "Lead",
-  "Otro",
+  "TikTok",
+  "LinkedIn",
 ] as const;
-
-export type LeadSource = (typeof LEAD_SOURCES)[number];
 
 // ---------------------------------------------------------------------------
 // Guatemalan banks — for OCR validation and receipt display
