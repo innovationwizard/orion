@@ -68,9 +68,16 @@ export async function POST(request: Request) {
   }
 
   try {
+    const slug = payload.name
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+
     const { data: inserted, error: insertError } = await supabase
       .from("projects")
-      .insert({ id: generateId(), name: payload.name })
+      .insert({ id: generateId(), name: payload.name, slug })
       .select("*")
       .single();
 
@@ -100,9 +107,16 @@ export async function PATCH(request: Request) {
   }
 
   try {
+    const slug = payload.name
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+
     const { data: updated, error: updateError } = await supabase
       .from("projects")
-      .update({ name: payload.name })
+      .update({ name: payload.name, slug })
       .eq("id", payload.id)
       .select("*")
       .single();

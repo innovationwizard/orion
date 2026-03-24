@@ -28,13 +28,13 @@ However, the system has **significant gaps when measured against enterprise SaaS
 
 | Category | Gap Count | Severity | Resolved |
 |----------|-----------|----------|----------|
-| Security & Data Exposure | 5 | 2 Critical, 3 High | 4 resolved (GAP-01/02/04/05) |
+| Security & Data Exposure | 5 | 2 Critical, 3 High | 5 resolved (GAP-01/02/03/04/05) |
 | Role Architecture | 4 | 1 Critical, 3 High | 3 resolved (GAP-06/07/08) |
 | Dashboard & Visualization | 6 | 2 High, 4 Medium | 2 resolved (GAP-10/11) |
 | Authorization & Workflows | 5 | 1 High, 4 Medium | 2 resolved (GAP-16/18) |
 | Compliance & Audit | 4 | 2 High, 2 Medium | 2 resolved (GAP-21/22) |
 
-**Total: 24 identified gaps. 16 resolved as of 2026-03-20.** (Phase 2 resolved GAP-07/08/21 + DISC-03 on 2026-03-20.)
+**Total: 24 identified gaps. 20 resolved as of 2026-03-20.** (Phase 2 resolved GAP-07/08/21 + DISC-03 on 2026-03-20. Phase 4 resolved GAP-03 on 2026-03-20.)
 
 ~~The single most impactful issue: **four defined roles (gerencia, financiero, contabilidad, inventario) are dead code.** A user assigned any of these roles would see the full admin NavBar, access the analytics dashboard, and receive 403 errors on admin operations — a confusing and potentially data-exposing experience.~~
 
@@ -80,16 +80,27 @@ However, the system has **significant gaps when measured against enterprise SaaS
 1. Add `requireAuth()` at minimum (or `requireSalesperson()` for the intended use case)
 2. Add per-user rate limiting (e.g., max 10 OCR requests per hour per user)
 
-### GAP-03: No Server-Side Field Masking on Analytics Routes
+### GAP-03: No Server-Side Field Masking on Analytics Routes — ✅ RESOLVED (changelog 079, 2026-03-20)
 **Severity: High**
 
-**Current state:** The dual-auth routes for reservation detail correctly mask fields (omitting `audit_log`, `sale_rate`, `monthly_context` for salesperson callers). However, the analytics API routes (`/api/analytics/commissions`, `/api/analytics/payments`, etc.) return the full dataset regardless of the caller's role.
+**Current state:** ~~The dual-auth routes for reservation detail correctly mask fields (omitting `audit_log`, `sale_rate`, `monthly_context` for salesperson callers). However, the analytics API routes (`/api/analytics/commissions`, `/api/analytics/payments`, etc.) return the full dataset regardless of the caller's role.
 
 **Best practice:** Every API response should be filtered based on the caller's role. If a route is accessible to a Sales Manager, they should see team-level aggregates, not individual commission amounts for all salespeople across all projects.
 
 **Impact:** If/when the gerencia or financiero roles are activated, users with these roles would receive the same data as master — including potentially sensitive data like individual commission amounts for all salespeople, individual payment compliance per unit, etc.
 
-**Recommendation:** Implement role-aware response shaping — the same API endpoint returns different data granularity depending on the caller's role.
+~~**Recommendation:** Implement role-aware response shaping — the same API endpoint returns different data granularity depending on the caller's role.~~
+
+**Resolution (2026-03-20):** `src/lib/field-masking.ts` — 4 per-resource masking functions applied after Supabase queries, before `jsonOk()`. Defense-in-depth: unknown roles default to most restrictive masking (gerencia-level).
+
+| Function | Route | gerencia | contabilidad |
+|----------|-------|----------|--------------|
+| `maskCommissionsAnalytics()` | `/api/analytics/commissions` | `byRecipient: []`, ISR/disbursable zeroed | `recipientName` → "Beneficiario N" |
+| `maskPaymentCompliance()` | `/api/analytics/payment-compliance` | `paymentHistory: []` per unit | No masking |
+| `maskPaymentsAnalytics()` | `/api/analytics/payments` | Money fields zeroed, `paymentHistory: []` | No masking |
+| `maskCommissionsLegacy()` | `/api/commissions` | `data: []` (keep totals) | `recipient_name` → "Beneficiario N" |
+
+**financiero, master, torredecontrol:** Full access — no masking. Cash flow route excluded (aggregate data, no PII). Dashboard: `role` prop passed to `DashboardClient`, Comisiones tab hidden for gerencia.
 
 ### GAP-04: Inactive Roles Have Uncontrolled Access — ✅ RESOLVED (changelog 075)
 **Severity: High**
@@ -458,7 +469,7 @@ Then `requireRole("torredecontrol")` would automatically pass for `master`. Rout
 |---|-----|----------|----------|--------|---------------|---------------|
 | 01 | ✅ API routes too permissive | Security | Critical | Medium | ~~20+ routes use `requireAuth()` only~~ 30 routes secured | Role-specific guards on all routes |
 | 02 | ✅ Public OCR without auth/rate limit | Security | Critical | Low | ~~Public endpoints~~ Auth + 20 req/hr rate limit | Auth required + rate limiting |
-| 03 | No server-side field masking on analytics | Security | High | High | Full data returned to all authenticated users | Role-aware response shaping |
+| 03 | ✅ No server-side field masking on analytics | Security | High | High | ~~Full data returned~~ 4 masking functions on 4 routes (changelog 079) | Role-aware response shaping |
 | 04 | ✅ Inactive roles have uncontrolled access | Security | High | Low | ~~4 roles undefined~~ Explicit 5-category routing | Remove or implement before assignment |
 | 05 | ✅ No DB-level ownership enforcement | Security | High | Medium | ~~API-only~~ RLS ownership policies deployed | RLS ownership policies |
 | 06 | ✅ No role hierarchy | Architecture | Critical | Medium | ~~Flat~~ ROLE_LEVEL + ADMIN/DATA_VIEWER groups | Hierarchical RBAC with inheritance |
@@ -503,9 +514,9 @@ Then `requireRole("torredecontrol")` would automatically pass for `master`. Rout
 | ✅ | GAP-06 | Role hierarchy (`ROLE_LEVEL`, `ADMIN_ROLES`, `DATA_VIEWER_ROLES`, `hasMinimumRole()`) | ✅ Done (changelog 074) |
 | ✅ | GAP-08 | Create `can(role, action, resource)` permission utility | ✅ Done (changelog 078) |
 | ✅ | GAP-07 | Define formal access control matrix in code | ✅ Done (changelog 078) |
-| P2 | GAP-03 | Implement role-aware field masking on analytics API routes | 8-16 hours |
+| ✅ | GAP-03 | ~~Implement role-aware field masking on analytics API routes~~ | ✅ Done (changelog 079) |
 
-**Rationale:** GAP-06/07/08 resolved. GAP-21 (access control document) also resolved. Remaining: GAP-03 (field masking) must be in place before activating gerencia, financiero, contabilidad, or inventario roles.
+**Rationale:** GAP-06/07/08 resolved. GAP-21 (access control document) also resolved. ~~Remaining: GAP-03 (field masking) must be in place before activating gerencia, financiero, contabilidad, or inventario roles.~~ GAP-03 resolved 2026-03-20. **All pre-activation work is complete. gerencia/financiero/contabilidad roles are now safe to activate for real users.**
 
 ### Phase 3: Pati's Workflow Optimization (Highest ROI for mission) — ✅ GAP-10/11 COMPLETED
 
@@ -553,9 +564,9 @@ The Orion role system is **secure for its current 3-role production deployment**
 
 ~~The most urgent work is in Phase 1 (security hardening) and Phase 2 (architecture foundation) — both should be completed before the 32-salesperson go-live.~~
 
-~~The remaining gaps are structural (GAP-07/08 permission matrix), field masking (GAP-03), and advanced items (GAP-09 project scoping, GAP-17 desist workflow, GAP-19 notifications).~~ **Update (2026-03-20):** Phase 2 resolved GAP-07/08/21 + DISC-03 (changelog 078). The remaining gaps are field masking (GAP-03), and advanced items (GAP-09 project scoping, GAP-17 desist workflow, GAP-19 notifications). See `docs/plan-fix-high-severity-gaps.md` for the detailed remediation plan, `docs/plan-phase3-audit-phase5-dashboard.md` for the completed audit + operations work, and `docs/plan-phase2-permission-architecture.md` for the completed permission architecture.
+~~The remaining gaps are structural (GAP-07/08 permission matrix), field masking (GAP-03), and advanced items (GAP-09 project scoping, GAP-17 desist workflow, GAP-19 notifications).~~ **Update (2026-03-20):** Phase 2 resolved GAP-07/08/21 + DISC-03 (changelog 078). ~~The remaining gaps are field masking (GAP-03), and advanced items (GAP-09 project scoping, GAP-17 desist workflow, GAP-19 notifications).~~ **Update (2026-03-20 evening):** Phase 4 resolved GAP-03 (changelog 079). The remaining gaps are advanced items only (GAP-09 project scoping, GAP-17 desist workflow, GAP-19 notifications, etc.) — all deferred to Phase 6. See `docs/plan-fix-high-severity-gaps.md` for the detailed remediation plan, `docs/plan-phase3-audit-phase5-dashboard.md` for the completed audit + operations work, `docs/plan-phase2-permission-architecture.md` for the completed permission architecture, and `docs/plan-phase4-field-masking.md` for the completed field masking.
 
-Total estimated effort for remaining phases: **~56 hours** (roughly 1.5 developer-weeks). Down from ~72 hours after Phase 2 completion.
+Total estimated effort for remaining phases: **~32 hours** (Phase 6 only). Down from ~56 hours after Phase 4 completion.
 
 ---
 
@@ -583,14 +594,17 @@ Full investigation: `docs/plan-auth-deep-investigation.md`
 
 ### Updated Defense-in-Depth Model
 
-The system now has **5 layers** of defense (previously 4):
+The system now has **6 layers** of defense (previously 5):
 
 ```
 Layer 1: Middleware         — Role-based page routing (5 categories)
 Layer 2: Page auth guards   — Server-side role check on root page (NEW)
-Layer 3: API route guards   — requireRole() on 30+ routes
-Layer 4: RLS policies       — Ownership-scoped SELECT on 4 tables
-Layer 5: Client UI filtering — NavBar role-filtered links + user account menu with logout
+Layer 3: API route guards   — requireRole() on 30+ routes, 15 using rolesFor()
+Layer 4: Field masking      — Post-query response shaping per role (4 analytics routes) (NEW — Phase 4)
+Layer 5: RLS policies       — Ownership-scoped SELECT on 4 tables + jwt_role()
+Layer 6: Client UI filtering — NavBar role-filtered links + role-aware tab visibility
 ```
+
+Layer 4 is new (2026-03-20) — `src/lib/field-masking.ts` applies per-resource masking after Supabase queries and before `jsonOk()`. gerencia sees aggregates only, contabilidad sees anonymized names, financiero/master/torredecontrol see full data.
 
 Layer 2 is new — `src/app/page.tsx` now validates the user's role server-side before rendering, preventing the admin dashboard from being visible to unauthorized users even if middleware fails to redirect.

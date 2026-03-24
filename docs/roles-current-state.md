@@ -1,6 +1,6 @@
 # Orion — Current App Roles: Unabridged Description
 
-**Date:** 2026-03-19 (updated 2026-03-20 — Phase 2 permission architecture)
+**Date:** 2026-03-19 (updated 2026-03-20 — Phase 2 permission architecture, Phase 4 field masking)
 **Scope:** Complete inventory of roles, access patterns, data visibility, and UI behavior as implemented in production.
 
 ---
@@ -78,9 +78,9 @@ This is a critical security decision. The alternative (`user_metadata`) is **cli
 
 See changelog 078 for full details.
 
-### 2.3 Five Layers of Enforcement
+### 2.3 Six Layers of Enforcement
 
-Role enforcement operates as a defense-in-depth model with five layers (updated 2026-03-20 — page-level auth guards added):
+Role enforcement operates as a defense-in-depth model with six layers (updated 2026-03-20 — page-level auth guards + field masking added):
 
 #### Layer 1: Middleware (Request-Level)
 **File:** `middleware.ts`
@@ -156,7 +156,26 @@ Each API route handler explicitly calls one of:
 
 API routes combine these guards to implement role-specific access. The dual-auth pattern (try admin first, fall back to salesperson with ownership check) is used for document routes (PCV, Carta de Pago, Carta de Autorización).
 
-#### Layer 4: Row-Level Security (Database-Level)
+#### Layer 4: Field Masking (Post-Query Response Shaping) — NEW 2026-03-20
+**File:** `src/lib/field-masking.ts`
+
+Post-query response shaping applied after Supabase queries and before `jsonOk()`. 4 per-resource masking functions — pure, typed, defense-in-depth: unknown roles default to most restrictive masking (gerencia-level).
+
+| Function | Route | gerencia | contabilidad |
+|----------|-------|----------|--------------|
+| `maskCommissionsAnalytics()` | `/api/analytics/commissions` | `byRecipient: []`, ISR/disbursable zeroed | `recipientName` → "Beneficiario N" |
+| `maskPaymentCompliance()` | `/api/analytics/payment-compliance` | `paymentHistory: []` per unit | No masking |
+| `maskPaymentsAnalytics()` | `/api/analytics/payments` | Money fields zeroed, `paymentHistory: []` | No masking |
+| `maskCommissionsLegacy()` | `/api/commissions` | `data: []` (keep totals) | `recipient_name` → "Beneficiario N" |
+
+**Full access (no masking):** master, torredecontrol, financiero.
+**Cash flow route excluded:** `/api/analytics/cash-flow-forecast` returns only aggregate monthly data with no PII.
+
+**Dashboard UI integration:** `src/app/page.tsx` passes `role` prop to `DashboardClient`. `src/app/dashboard-client.tsx` filters visible tabs — gerencia sees Resumen, Pagos, Flujo de Caja (Comisiones tab hidden). Server-side masking ensures that even if a role somehow reaches the Comisiones data, the response contains empty arrays.
+
+See changelog 079 for full implementation details.
+
+#### Layer 5: Row-Level Security (Database-Level)
 **Supabase RLS policies on PostgreSQL tables**
 
 RLS policies are the final enforcement boundary. Even if a bug in middleware or API code allows an unauthorized request through, RLS policies prevent data access at the database level.
@@ -184,7 +203,7 @@ Notable role-specific policies:
 - `salesperson_project_assignments`: Salespeople can only SELECT their own assignments
 - `system_settings`: Only `master` and `torredecontrol` can UPDATE
 
-#### Layer 5: Client-Side UI Filtering (UX-Level)
+#### Layer 6: Client-Side UI Filtering (UX-Level)
 **Files:** `src/components/nav-bar.tsx`, various `*-client.tsx` components
 
 The weakest layer (easily bypassed via browser dev tools), but important for user experience:
@@ -356,7 +375,14 @@ The weakest layer (easily bypassed via browser dev tools), but important for use
 - Net effect: no page access until the role is explicitly implemented
 
 ~~**Implications:** These roles are effectively dead code.~~
-**Updated:** gerencia/financiero/contabilidad now have well-defined, scoped behavior at middleware, NavBar, and API levels. inventario remains unimplemented (redirect to login).
+**Updated:** gerencia/financiero/contabilidad now have well-defined, scoped behavior at middleware, NavBar, API, and field masking levels. inventario remains unimplemented (redirect to login).
+
+**Field masking update (2026-03-20):** Analytics API routes now apply role-aware response shaping:
+- **gerencia:** Sees project-level aggregates and compliance data. Individual commission amounts, ISR breakdowns, payment histories, and salesperson-amount pairings are hidden. Comisiones tab hidden in dashboard.
+- **contabilidad:** Sees all amounts and ISR calculations. Salesperson names anonymized to "Beneficiario N" in commission views. Full payment compliance data.
+- **financiero:** Full data access — no masking applied. Same as master/torredecontrol.
+
+**These roles are now safe to activate for real users** — defense-in-depth across 6 layers: middleware routing, page auth guards, API route guards, field masking, RLS policies, and client UI filtering.
 
 ---
 
@@ -652,6 +678,20 @@ Visible in admin reservations header. Only functional for master/torredecontrol 
 ~~† These API routes require only `requireAuth()`, so ventas users could access them via direct API calls even though no UI exposes this data to them.~~
 
 **Updated 2026-03-19:** Analytics, commission, and commission-rate routes now require `DATA_VIEWER_ROLES` — ventas users are blocked at the API level. Sales and payments GET remain `requireAuth()` but are filtered by RLS ownership policies for ventas users. Ejecutivo rates are hidden from ventas in dual-auth response + confirmed by master/financiero only.
+
+**Updated 2026-03-20 (Phase 4 field masking):** Analytics API responses are now role-shaped:
+
+| Data Category | master/torredecontrol | financiero | contabilidad | gerencia |
+|---------------|----------------------|------------|--------------|----------|
+| Project-level aggregates | Full | Full | Full | Full |
+| Client names (display) | Full | Full | Full | Full |
+| Individual commission amounts per recipient | Full | Full | Full | **Hidden** |
+| ISR calculations | Full | Full | Full | **Hidden** |
+| Salesperson name + amount pairing | Full | Full | **Anonymized** | **Hidden** |
+| Payment delinquency per unit | Full | Full | Full | Full |
+| Payment history per unit | Full | Full | Full | **Hidden** |
+| Disbursable/non-disbursable split | Full | Full | Full | **Hidden** |
+| Dashboard Comisiones tab | Visible | Visible | Visible | **Hidden** |
 
 ### 8.2 Project Scoping
 

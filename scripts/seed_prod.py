@@ -114,6 +114,15 @@ SALESPERSON_EXCLUDE = {
     "jd",
 }
 
+# Unit types that are spreadsheet summary/total rows — not real units
+UNIT_TYPE_SUMMARY = {
+    "gran total",
+    "total",
+    "subtotal",
+    "sub total",
+    "totales",
+}
+
 
 # ---------------------------------------------------------------------------
 # Data structures
@@ -222,6 +231,11 @@ def normalize_salesperson(raw: str | None) -> str | None:
     return SALESPERSON_CANONICAL.get(key, cleaned)
 
 
+def is_summary_row(unit_type: str) -> bool:
+    """Return True if the unit_type indicates a spreadsheet summary/total row."""
+    return unit_type.strip().lower() in UNIT_TYPE_SUMMARY
+
+
 def safe_int(val) -> int | None:
     """Safely convert to int."""
     if val is None:
@@ -309,7 +323,7 @@ def extract_blt(wb_path: Path) -> tuple[list[Tower], list[Floor], list[Unit], se
                 # Derive bedrooms from type: A=2, B=3, C=3
                 bedrooms = 2 if unit_type.startswith("A") else 3
 
-            if not unit_type:
+            if not unit_type or is_summary_row(unit_type):
                 continue
 
             status = normalize_status(str(status_raw) if status_raw else None)
@@ -395,7 +409,7 @@ def extract_benestare(wb_path: Path) -> tuple[list[Tower], list[Floor], list[Uni
         status_raw = cell(ws, row, 41)  # AO = Estatus
         sales_raw = cell(ws, row, 44)   # AR = Asesor
 
-        if not unit_type:
+        if not unit_type or is_summary_row(unit_type):
             continue
 
         status = normalize_status(str(status_raw) if status_raw else None)
@@ -487,7 +501,7 @@ def extract_b5(wb_path: Path) -> tuple[list[Tower], list[Floor], list[Unit], set
         status_raw = cell(ws, row, 58)             # BF = Estatus
         sales_raw = cell(ws, row, 60)              # BH = Asesor
 
-        if not unit_type:
+        if not unit_type or is_summary_row(unit_type):
             continue
 
         # Compute area_total
@@ -579,7 +593,7 @@ def extract_ce(wb_path: Path) -> tuple[list[Tower], list[Floor], list[Unit], set
         status_raw = cell(ws, row, 49)                     # AW = Estatus
         sales_raw = cell(ws, row, 51)                      # AY = Vendedor
 
-        if not unit_type:
+        if not unit_type or is_summary_row(unit_type):
             continue
 
         is_local = unit_type.lower() == "local"

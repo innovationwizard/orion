@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Orion — Gap Master Status Report — 2026-03-20</title>
+<title>Orion — PAI APP Cybersecurity Status Report — 2026-03-20</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -92,7 +92,7 @@
   /* ── Scoreboard ── */
   .scoreboard {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 0.75rem;
     margin-bottom: 1.5rem;
   }
@@ -125,7 +125,7 @@
   /* ── Progress ── */
   .progress-track {
     width: 100%;
-    height: 3px;
+    height: 5px;
     background: var(--border);
     border-radius: 2px;
     margin-bottom: 2rem;
@@ -396,37 +396,41 @@
   <div class="header">
     <div class="header-top">
       <div class="icon"></div>
-      <h1>Orion — Gap Master Status</h1>
+      <h1>Orion — PAI APP Cybersecurity Status Report</h1>
     </div>
-    <div class="subtitle">Puerta Abierta Security & Architecture Remediation — <span>2026-03-20</span></div>
+    <div class="subtitle">Puerta Abierta App — Cybersecurity & Multilayer Security Architecture Improvements — <span>2026-03-20</span></div>
   </div>
 
   <div class="scoreboard">
     <div class="score-card">
-      <div class="label">Total</div>
+      <div class="label">Items Total</div>
       <div class="val c-text">34</div>
     </div>
     <div class="score-card">
-      <div class="label">Resolved</div>
-      <div class="val c-green">26</div>
+      <div class="label">Items Improved</div>
+      <div class="val c-green">27</div>
     </div>
     <div class="score-card">
-      <div class="label">Pending</div>
-      <div class="val c-amber">8</div>
+      <div class="label">Items Pending</div>
+      <div class="val c-amber">7</div>
+    </div>
+    <div class="score-card">
+      <div class="label">Effort Done</div>
+      <div class="val c-green">~120h</div>
     </div>
     <div class="score-card">
       <div class="label">Effort Left</div>
-      <div class="val c-accent">~56h</div>
+      <div class="val c-accent">~32h</div>
     </div>
   </div>
 
   <div class="progress-track">
-    <div class="progress-bar" style="width:76.5%"></div>
+    <div class="progress-bar" style="width:79.4%"></div>
   </div>
 
   <!-- ═══════ PHASE 1 ═══════ -->
   <div class="phase-header">
-    <span class="phase-label">Phase 1 — Security Hardening</span>
+    <span class="phase-label">Phase 1 — Security Hardening (~20h)</span>
     <span class="phase-status-pill pill-completed">Completed</span>
   </div>
   <ul class="issues">
@@ -434,13 +438,14 @@
       <div class="status-dot dot-resolved"></div>
       <div class="issue-body">
         <div class="issue-top">
-          <span class="issue-id">GAP-01</span>
-          <span class="issue-title">API Routes Accessible Beyond Intended Roles</span>
+          <span class="issue-id">ITEM-01</span>
+          <span class="issue-title">API Routes Are Not Accessible Beyond Intended Roles</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-critical">Critical</span>
           <span class="cat-badge">Security</span>
-          <span class="resolved-date">2026-03-19</span>
+          <span class="effort-badge">~6h</span>
+          <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
     </li>
@@ -448,13 +453,14 @@
       <div class="status-dot dot-resolved"></div>
       <div class="issue-body">
         <div class="issue-top">
-          <span class="issue-id">GAP-02</span>
-          <span class="issue-title">Public OCR Endpoints Without Auth or Rate Limiting</span>
+          <span class="issue-id">ITEM-02</span>
+          <span class="issue-title">Public OCR Endpoints With Auth and Rate Limiting</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-critical">Critical</span>
           <span class="cat-badge">Security</span>
-          <span class="resolved-date">2026-03-19</span>
+          <span class="effort-badge">~2h</span>
+          <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
     </li>
@@ -462,13 +468,14 @@
       <div class="status-dot dot-resolved"></div>
       <div class="issue-body">
         <div class="issue-top">
-          <span class="issue-id">GAP-04</span>
-          <span class="issue-title">Inactive Roles Have Uncontrolled Access</span>
+          <span class="issue-id">ITEM-04</span>
+          <span class="issue-title">Inactive Roles Have Controlled Access</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
           <span class="cat-badge">Security</span>
-          <span class="resolved-date">2026-03-19</span>
+          <span class="effort-badge">~4h</span>
+          <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
     </li>
@@ -476,13 +483,14 @@
       <div class="status-dot dot-resolved"></div>
       <div class="issue-body">
         <div class="issue-top">
-          <span class="issue-id">GAP-05</span>
-          <span class="issue-title">No Row-Level Ownership Enforcement at DB Level</span>
+          <span class="issue-id">ITEM-05</span>
+          <span class="issue-title">Row-Level Ownership Enforcement at DB Level</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
           <span class="cat-badge">Security</span>
-          <span class="resolved-date">2026-03-19</span>
+          <span class="effort-badge">~8h</span>
+          <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
     </li>
@@ -490,13 +498,14 @@
       <div class="status-dot dot-resolved"></div>
       <div class="issue-body">
         <div class="issue-top">
-          <span class="issue-id">GAP-06</span>
-          <span class="issue-title">No Role Hierarchy</span>
+          <span class="issue-id">ITEM-06</span>
+          <span class="issue-title">Structured Role Hierarchy</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-critical">Critical</span>
           <span class="cat-badge">Architecture</span>
-          <span class="resolved-date">2026-03-19</span>
+          <span class="effort-badge">~2h</span>
+          <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
     </li>
@@ -504,13 +513,14 @@
       <div class="status-dot dot-resolved"></div>
       <div class="issue-body">
         <div class="issue-top">
-          <span class="issue-id">GAP-18</span>
-          <span class="issue-title">No Escalation Path for Rate Confirmation</span>
+          <span class="issue-id">ITEM-18</span>
+          <span class="issue-title">Escalation Path for Rate Confirmation</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
           <span class="cat-badge">Auth/Workflow</span>
-          <span class="resolved-date">2026-03-19</span>
+          <span class="effort-badge">~1h</span>
+          <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
     </li>
@@ -519,7 +529,7 @@
       <div class="issue-body">
         <div class="issue-top">
           <span class="issue-id">DISC-01</span>
-          <span class="issue-title">system_settings.updated_by Never Populated</span>
+          <span class="issue-title">system_settings.updated_by Securely Populated</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
@@ -532,12 +542,13 @@
       <div class="issue-body">
         <div class="issue-top">
           <span class="issue-id">DISC-04</span>
-          <span class="issue-title">NavBar Showed "Roles" Link to Non-Master Users</span>
+          <span class="issue-title">NavBar Hides Unauthorized Links to Non-Master Users</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
           <span class="cat-badge">UX</span>
-          <span class="resolved-date">2026-03-19</span>
+          <span class="effort-badge">incl. ITEM-04</span>
+          <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
     </li>
@@ -545,7 +556,7 @@
 
   <!-- ═══════ POST-DEPLOYMENT (AUTH) ═══════ -->
   <div class="phase-header">
-    <span class="phase-label">Post-Deploy — Auth Flow Fixes</span>
+    <span class="phase-label">Post-Deploy — Auth Flow Improvements (~7h)</span>
     <span class="phase-status-pill pill-completed">Completed</span>
   </div>
   <ul class="issues">
@@ -554,11 +565,12 @@
       <div class="issue-body">
         <div class="issue-top">
           <span class="issue-id">AUTH-01</span>
-          <span class="issue-title">Login redirect("/") Ignores Role</span>
+          <span class="issue-title">Login force redirect("/") Ignores Role</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
           <span class="cat-badge">Auth Flow</span>
+          <span class="effort-badge">~1h</span>
           <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
@@ -568,11 +580,12 @@
       <div class="issue-body">
         <div class="issue-top">
           <span class="issue-id">AUTH-02</span>
-          <span class="issue-title">router.replace("/") Race Condition</span>
+          <span class="issue-title">router.replace("/") Prevents Race Condition</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
           <span class="cat-badge">Auth Flow</span>
+          <span class="effort-badge">~1h</span>
           <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
@@ -587,6 +600,7 @@
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
           <span class="cat-badge">Auth Flow</span>
+          <span class="effort-badge">~2h</span>
           <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
@@ -596,11 +610,12 @@
       <div class="issue-body">
         <div class="issue-top">
           <span class="issue-id">AUTH-04</span>
-          <span class="issue-title">Root Page Has No Server-Side Auth Guard</span>
+          <span class="issue-title">Root Page Has Server-Side Auth Guard</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
           <span class="cat-badge">Auth Flow</span>
+          <span class="effort-badge">~2h</span>
           <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
@@ -610,11 +625,12 @@
       <div class="issue-body">
         <div class="issue-top">
           <span class="issue-id">AUTH-05</span>
-          <span class="issue-title">Pre-March-17 Users Missing password_set</span>
+          <span class="issue-title">Pre-March-10 Users Forced to Set Password</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
           <span class="cat-badge">Auth Flow</span>
+          <span class="effort-badge">~1h</span>
           <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
@@ -623,7 +639,7 @@
 
   <!-- ═══════ PHASE 2 ═══════ -->
   <div class="phase-header">
-    <span class="phase-label">Phase 2 — Permission Architecture</span>
+    <span class="phase-label">Phase 2 — Permission Architecture (~16h)</span>
     <span class="phase-status-pill pill-completed">Completed</span>
   </div>
   <ul class="issues">
@@ -631,12 +647,13 @@
       <div class="status-dot dot-resolved"></div>
       <div class="issue-body">
         <div class="issue-top">
-          <span class="issue-id">GAP-07</span>
-          <span class="issue-title">No Formal Access Control Matrix</span>
+          <span class="issue-id">ITEM-07</span>
+          <span class="issue-title">Formal Access Control Matrix</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
           <span class="cat-badge">Architecture</span>
+          <span class="effort-badge">~6h</span>
           <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
@@ -645,12 +662,13 @@
       <div class="status-dot dot-resolved"></div>
       <div class="issue-body">
         <div class="issue-top">
-          <span class="issue-id">GAP-08</span>
-          <span class="issue-title">No can(action, resource) Utility</span>
+          <span class="issue-id">ITEM-08</span>
+          <span class="issue-title">Formal can(action, resource) Utility</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
           <span class="cat-badge">Architecture</span>
+          <span class="effort-badge">~6h</span>
           <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
@@ -659,12 +677,13 @@
       <div class="status-dot dot-resolved"></div>
       <div class="issue-body">
         <div class="issue-top">
-          <span class="issue-id">GAP-21</span>
-          <span class="issue-title">No Formal Access Control Document</span>
+          <span class="issue-id">ITEM-21</span>
+          <span class="issue-title">Formal Access Control Document</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
           <span class="cat-badge">Compliance</span>
+          <span class="effort-badge">~4h</span>
           <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
@@ -674,11 +693,12 @@
       <div class="issue-body">
         <div class="issue-top">
           <span class="issue-id">DISC-03</span>
-          <span class="issue-title">hasMinimumRole() Exists But Is Never Used</span>
+          <span class="issue-title">hasMinimumRole() Is Deprecated</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
           <span class="cat-badge">Dead Code</span>
+          <span class="effort-badge">&lt;1h</span>
           <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
@@ -687,7 +707,7 @@
 
   <!-- ═══════ PHASE 3 ═══════ -->
   <div class="phase-header">
-    <span class="phase-label">Phase 3 — Audit Trail & Compliance</span>
+    <span class="phase-label">Phase 3 — Audit Trail & Compliance (~20h)</span>
     <span class="phase-status-pill pill-completed">Completed</span>
   </div>
   <ul class="issues">
@@ -695,13 +715,14 @@
       <div class="status-dot dot-resolved"></div>
       <div class="issue-body">
         <div class="issue-top">
-          <span class="issue-id">GAP-16</span>
-          <span class="issue-title">No Maker-Checker on User Provisioning</span>
+          <span class="issue-id">ITEM-16</span>
+          <span class="issue-title">Maker-Checker on User Provisioning</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
           <span class="cat-badge">Auth/Workflow</span>
-          <span class="resolved-date">2026-03-19</span>
+          <span class="effort-badge">~4h</span>
+          <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
     </li>
@@ -709,13 +730,14 @@
       <div class="status-dot dot-resolved"></div>
       <div class="issue-body">
         <div class="issue-top">
-          <span class="issue-id">GAP-22</span>
-          <span class="issue-title">Incomplete Audit Trail</span>
+          <span class="issue-id">ITEM-22</span>
+          <span class="issue-title">Complete Audit Trail</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
           <span class="cat-badge">Compliance</span>
-          <span class="resolved-date">2026-03-19</span>
+          <span class="effort-badge">~16h</span>
+          <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
     </li>
@@ -724,12 +746,13 @@
       <div class="issue-body">
         <div class="issue-top">
           <span class="issue-id">DISC-02</span>
-          <span class="issue-title">No desisted_by Column on Reservations</span>
+          <span class="issue-title">Added desisted_by Column on Reservations</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
           <span class="cat-badge">Data Integrity</span>
-          <span class="resolved-date">2026-03-19</span>
+          <span class="effort-badge">incl. ITEM-22</span>
+          <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
     </li>
@@ -738,12 +761,13 @@
       <div class="issue-body">
         <div class="issue-top">
           <span class="issue-id">DISC-05</span>
-          <span class="issue-title">Salesperson Project Assignments Not Audit-Logged</span>
+          <span class="issue-title">Salesperson Project Assignments Are Audit-Logged</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
           <span class="cat-badge">Compliance</span>
-          <span class="resolved-date">2026-03-19</span>
+          <span class="effort-badge">incl. ITEM-22</span>
+          <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
     </li>
@@ -752,28 +776,6 @@
   <!-- ═══════ PHASE 4 ═══════ -->
   <div class="phase-header">
     <span class="phase-label">Phase 4 — Role-Aware Data Filtering (~24h)</span>
-    <span class="phase-status-pill pill-pending">Pending</span>
-  </div>
-  <ul class="issues">
-    <li>
-      <div class="status-dot dot-pending"></div>
-      <div class="issue-body">
-        <div class="issue-top">
-          <span class="issue-id">GAP-03</span>
-          <span class="issue-title">No Server-Side Field Masking on Analytics Routes</span>
-        </div>
-        <div class="issue-meta">
-          <span class="crit-badge crit-high">High</span>
-          <span class="cat-badge">Security</span>
-          <span class="effort-badge">~24h · Phase 2 dependency satisfied</span>
-        </div>
-      </div>
-    </li>
-  </ul>
-
-  <!-- ═══════ PHASE 5 ═══════ -->
-  <div class="phase-header">
-    <span class="phase-label">Phase 5 — Operations Dashboard</span>
     <span class="phase-status-pill pill-completed">Completed</span>
   </div>
   <ul class="issues">
@@ -781,13 +783,37 @@
       <div class="status-dot dot-resolved"></div>
       <div class="issue-body">
         <div class="issue-top">
-          <span class="issue-id">GAP-10</span>
+          <span class="issue-id">ITEM-03</span>
+          <span class="issue-title">Server-Side Field Masking on Analytics Routes</span>
+        </div>
+        <div class="issue-meta">
+          <span class="crit-badge crit-high">High</span>
+          <span class="cat-badge">Security</span>
+          <span class="effort-badge">~24h</span>
+          <span class="resolved-date">2026-03-20</span>
+        </div>
+      </div>
+    </li>
+  </ul>
+
+  <!-- ═══════ PHASE 5 ═══════ -->
+  <div class="phase-header">
+    <span class="phase-label">Phase 5 — Operations Dashboard (~40h)</span>
+    <span class="phase-status-pill pill-completed">Completed</span>
+  </div>
+  <ul class="issues">
+    <li class="resolved">
+      <div class="status-dot dot-resolved"></div>
+      <div class="issue-body">
+        <div class="issue-top">
+          <span class="issue-id">ITEM-10</span>
           <span class="issue-title">No Role-Specific Dashboard Views</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
           <span class="cat-badge">Dashboard</span>
-          <span class="resolved-date">2026-03-19</span>
+          <span class="effort-badge">~16h</span>
+          <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
     </li>
@@ -795,13 +821,14 @@
       <div class="status-dot dot-resolved"></div>
       <div class="issue-body">
         <div class="issue-top">
-          <span class="issue-id">GAP-11</span>
-          <span class="issue-title">No Dedicated Operations Dashboard for Pati</span>
+          <span class="issue-id">ITEM-11</span>
+          <span class="issue-title">Dedicated Operations Dashboard (Control Tower)</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
           <span class="cat-badge">Dashboard</span>
-          <span class="resolved-date">2026-03-19</span>
+          <span class="effort-badge">~24h</span>
+          <span class="resolved-date">2026-03-20</span>
         </div>
       </div>
     </li>
@@ -817,8 +844,8 @@
       <div class="status-dot dot-deferred"></div>
       <div class="issue-body">
         <div class="issue-top">
-          <span class="issue-id">GAP-09</span>
-          <span class="issue-title">No Project-Scoped Admin Access</span>
+          <span class="issue-id">ITEM-09</span>
+          <span class="issue-title">Project-Scoped Admin Access</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-high">High</span>
@@ -831,8 +858,8 @@
       <div class="status-dot dot-deferred"></div>
       <div class="issue-body">
         <div class="issue-top">
-          <span class="issue-id">GAP-12</span>
-          <span class="issue-title">Ventas Portal Lacks Progressive Disclosure</span>
+          <span class="issue-id">ITEM-12</span>
+          <span class="issue-title">Ventas PWA Progressive Disclosure</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-medium">Medium</span>
@@ -845,8 +872,8 @@
       <div class="status-dot dot-deferred"></div>
       <div class="issue-body">
         <div class="issue-top">
-          <span class="issue-id">GAP-13</span>
-          <span class="issue-title">No Comparison Context on KPIs</span>
+          <span class="issue-id">ITEM-13</span>
+          <span class="issue-title">Comparison Context on KPIs</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-medium">Medium</span>
@@ -859,8 +886,8 @@
       <div class="status-dot dot-deferred"></div>
       <div class="issue-body">
         <div class="issue-top">
-          <span class="issue-id">GAP-14</span>
-          <span class="issue-title">Mobile Optimization Gaps in Ventas Portal</span>
+          <span class="issue-id">ITEM-14</span>
+          <span class="issue-title">Mobile Optimization in Ventas PWA</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-medium">Medium</span>
@@ -873,8 +900,8 @@
       <div class="status-dot dot-deferred"></div>
       <div class="issue-body">
         <div class="issue-top">
-          <span class="issue-id">GAP-15</span>
-          <span class="issue-title">Limited Chart Type Variety</span>
+          <span class="issue-id">ITEM-15</span>
+          <span class="issue-title">Extended Chart Type Variety</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-medium">Medium</span>
@@ -887,8 +914,8 @@
       <div class="status-dot dot-deferred"></div>
       <div class="issue-body">
         <div class="issue-top">
-          <span class="issue-id">GAP-17</span>
-          <span class="issue-title">No Approval Workflow for Desistimientos</span>
+          <span class="issue-id">ITEM-17</span>
+          <span class="issue-title">Approval Workflow for Desistimientos</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-medium">Medium</span>
@@ -901,8 +928,8 @@
       <div class="status-dot dot-deferred"></div>
       <div class="issue-body">
         <div class="issue-top">
-          <span class="issue-id">GAP-19</span>
-          <span class="issue-title">No Notification System</span>
+          <span class="issue-id">ITEM-19</span>
+          <span class="issue-title">External Notification System</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-medium">Medium</span>
@@ -915,8 +942,8 @@
       <div class="status-dot dot-deferred"></div>
       <div class="issue-body">
         <div class="issue-top">
-          <span class="issue-id">GAP-20</span>
-          <span class="issue-title">No Temporal Permission Expiry</span>
+          <span class="issue-id">ITEM-20</span>
+          <span class="issue-title">Temporal Permission Expiry</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-medium">Medium</span>
@@ -929,8 +956,8 @@
       <div class="status-dot dot-deferred"></div>
       <div class="issue-body">
         <div class="issue-top">
-          <span class="issue-id">GAP-23</span>
-          <span class="issue-title">No Access Review Process</span>
+          <span class="issue-id">ITEM-23</span>
+          <span class="issue-title">Access Review Process</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-medium">Medium</span>
@@ -943,8 +970,8 @@
       <div class="status-dot dot-deferred"></div>
       <div class="issue-body">
         <div class="issue-top">
-          <span class="issue-id">GAP-24</span>
-          <span class="issue-title">No Data Classification or Minimization</span>
+          <span class="issue-id">ITEM-24</span>
+          <span class="issue-title">Data Classification or Minimization</span>
         </div>
         <div class="issue-meta">
           <span class="crit-badge crit-medium">Medium</span>
@@ -957,17 +984,18 @@
 
   <!-- ═══════ DEFENSE MODEL ═══════ -->
   <div class="defense">
-    <div class="defense-label">Defense-in-Depth Model</div>
+    <div class="defense-label">Multi-Layer Defense-in-Depth Model</div>
     <div class="layer"><span class="layer-num">L1</span><span class="layer-name">Middleware — Role-based page routing (5 categories)</span></div>
     <div class="layer"><span class="layer-num">L2</span><span class="layer-name">Page auth guards — Server-side role check on root page</span></div>
     <div class="layer"><span class="layer-num">L3</span><span class="layer-name">API route guards — requireRole() on 30+ routes, 15 using rolesFor()</span></div>
-    <div class="layer"><span class="layer-num">L4</span><span class="layer-name">RLS policies — Ownership-scoped SELECT on 4 tables</span></div>
-    <div class="layer"><span class="layer-num">L5</span><span class="layer-name">Client UI filtering — NavBar + role-aware components</span></div>
+    <div class="layer"><span class="layer-num">L4</span><span class="layer-name">Field masking — Per-resource masking on 4 analytics routes</span></div>
+    <div class="layer"><span class="layer-num">L5</span><span class="layer-name">RLS policies — Ownership-scoped SELECT on 4 tables</span></div>
+    <div class="layer"><span class="layer-num">L6</span><span class="layer-name">Client UI filtering — NavBar + role-aware components</span></div>
   </div>
 
   <div class="footer">
-    <span>34 issues · 6 phases · 5 defense layers</span>
-    <span>Generated from gap-master-status-2026-03-20.md</span>
+    <span>34 items · 6 phases · 6 defense layers · ~120h invested</span>
+    <span>Generated from cybersecurity-comprehensive-audit-2026-03-09.md</span>
   </div>
 </div>
 

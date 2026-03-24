@@ -1,8 +1,8 @@
 # Gap Prioritization — Post Phase 1 Security Hardening
 
 **Date:** 2026-03-19
-**Last updated:** 2026-03-20 (Phase 2 completed)
-**Context:** Phase 1 (changelogs 074 + 075) resolved 6 of 24 gaps. Phases 3 + 5 resolved 6 more. Phase 2 resolved 4 more. This document prioritizes the remaining 8 gaps by criticality and practical urgency.
+**Last updated:** 2026-03-20 (Phase 4 completed)
+**Context:** Phase 1 (changelogs 074 + 075) resolved 6 of 24 gaps. Phases 3 + 5 resolved 6 more. Phase 2 resolved 4 more. Phase 4 resolved 1 more (GAP-03). This document prioritizes the remaining 7 gaps by criticality and practical urgency.
 **Reference documents:**
 - `docs/roles-gap-analysis.md` — full gap inventory
 - `docs/plan-fix-high-severity-gaps.md` — 6-phase remediation plan
@@ -13,7 +13,7 @@
 
 ---
 
-## Status: 16 of 24 Gaps Resolved
+## Status: 20 of 24 Gaps Resolved (+ 7 DISC/AUTH = 27 of 34 total)
 
 | Gap | Description | Resolution |
 |-----|-------------|------------|
@@ -33,6 +33,7 @@
 | GAP-08 | No `can(action, resource)` utility | `can()` + `rolesFor()` in `src/lib/permissions.ts` — 15 routes migrated (changelog 078, 2026-03-20) |
 | GAP-21 | No formal access control document | Auto-generated `docs/access-control-matrix.md` from PERMISSIONS object (SOC 2 CC6.1) (changelog 078, 2026-03-20) |
 | DISC-03 | `hasMinimumRole()` unused dead code | Retained with "Currently unused" JSDoc — 5 lines, zero cost, future UI value (changelog 078, 2026-03-20) |
+| GAP-03 | No server-side field masking on analytics routes | `src/lib/field-masking.ts` — 4 masking functions on 4 routes. gerencia: aggregates only. contabilidad: anonymized names. financiero/master/torredecontrol: full. Dashboard: Comisiones tab hidden for gerencia. (changelog 079, 2026-03-20) |
 
 ---
 
@@ -79,7 +80,7 @@
 
 | Phase | Gaps | Trigger |
 |-------|------|---------|
-| Phase 4 (~24 hrs) | GAP-03 (field masking) | When gerencia/financiero/contabilidad roles are activated for real users |
+| ~~Phase 4 (~24 hrs)~~ ✅ | ~~GAP-03 (field masking)~~ | ~~When gerencia/financiero/contabilidad roles are activated for real users~~ ✅ COMPLETED 2026-03-20 (changelog 079) |
 | Phase 6 (~32 hrs) | GAP-09 (project scoping), GAP-17 (desist workflow), GAP-19 (notifications), GAP-20 (permission expiry), GAP-16b (full maker-checker) | When admin team grows or external audit is scheduled |
 | Medium-severity | GAP-12/13/14/15 (ventas portal UX), GAP-23/24 (compliance) | User feedback or compliance requirement |
 
@@ -91,9 +92,11 @@
 
 ~~**Next:** Phase 2 (permission architecture) is the only remaining high-severity work.~~ ✅ Done (2026-03-20, changelog 078).
 
-**Next:** Phase 4 (field masking) is the only remaining work before activating gerencia/financiero/contabilidad for real users. Phase 6 items are deferred until admin team grows.
+~~**Next:** Phase 4 (field masking) is the only remaining work before activating gerencia/financiero/contabilidad for real users. Phase 6 items are deferred until admin team grows.~~ ✅ Phase 4 completed 2026-03-20 (changelog 079).
 
-**Completed plans:** `docs/plan-phase3-audit-phase5-dashboard.md` (✅), `docs/plan-fix-critical-gaps.md` (✅), `docs/plan-phase2-permission-architecture.md` (✅).
+**Status:** All pre-activation work is complete. **gerencia/financiero/contabilidad roles are now safe to activate for real users.** Only Phase 6 (advanced capabilities, ~32h) remains — deferred until admin team grows or external audit is scheduled.
+
+**Completed plans:** `docs/plan-phase3-audit-phase5-dashboard.md` (✅), `docs/plan-fix-critical-gaps.md` (✅), `docs/plan-phase2-permission-architecture.md` (✅), `docs/plan-phase4-field-masking.md` (✅).
 
 ---
 
@@ -103,7 +106,7 @@
 |-------|-------|-----------------|--------|
 | Phase 2 | GAP-07 + GAP-08 + GAP-21 + DISC-03 | ~16 | ✅ COMPLETED |
 | Phase 3 | GAP-22 + GAP-16 + DISC-02/05 | ~20 | ✅ COMPLETED |
-| Phase 4 | GAP-03 | ~24 | Pending (depends on Phase 2) |
+| Phase 4 | GAP-03 | ~24 | ✅ COMPLETED (changelog 079, 2026-03-20) |
 | Phase 5 | GAP-10 + GAP-11 | ~40 | ✅ COMPLETED (MVP) |
 | Phase 6 | GAP-09 + GAP-16b (deferred) | ~32 | Deferred |
-| **Total remaining** | **8 gaps** | **~56 hours** |
+| **Total remaining** | **7 gaps** | **~32 hours** (Phase 6 only) |

@@ -10,11 +10,11 @@
 | Metric | Value |
 |--------|-------|
 | Total issues identified | 34 (24 GAPs + 5 DISCs + 5 AUTHs) |
-| Resolved / closed | 23 |
-| Pending | 11 |
-| Phases completed | 4 of 6 (Phases 1, 2, 3, 5) |
-| Effort remaining | ~56 hours |
-| Defense layers | 5 (Middleware > Page guards > API guards > RLS > Client UI) |
+| Resolved / closed | 27 |
+| Pending | 7 |
+| Phases completed | 5 of 6 (Phases 1, 2, 3, 4, 5) |
+| Effort remaining | ~32 hours (Phase 6 only) |
+| Defense layers | 6 (Middleware > Page guards > API guards > Field masking > RLS > Client UI) |
 
 ---
 
@@ -25,7 +25,7 @@
 | 1 | Security Hardening | API route guards, OCR auth+rate-limiting, role hierarchy, middleware routing, RLS ownership, NavBar filtering | **COMPLETED** 2026-03-19 | GAP-01, 02, 04, 05, 06, 18 + DISC-01, 04 + AUTH-01–05 | Done |
 | 2 | Permission Architecture | Centralized PERMISSIONS matrix, `can()`/`rolesFor()` utilities, auto-generated access control document | **COMPLETED** 2026-03-20 | GAP-07, 08, 21 + DISC-03 | Done |
 | 3 | Audit Trail & Compliance | `audit_events` table, `logAudit()` utility, audit log API+UI, provisioning & assignment tracking | **COMPLETED** 2026-03-19 | GAP-16, 22 + DISC-02, 05 | Done |
-| 4 | Role-Aware Data Filtering | Server-side field masking on analytics routes per role | **PENDING** | GAP-03 | ~24h |
+| 4 | Role-Aware Data Filtering | Server-side field masking on analytics routes per role | **COMPLETED** 2026-03-20 | GAP-03 | Done |
 | 5 | Operations Dashboard | Action-first command center for Pati (work queue, activity feed, KPIs) | **COMPLETED** 2026-03-19 | GAP-10, 11 | Done |
 | 6 | Advanced Capabilities | Project scoping, desist workflow, notifications, permission expiry, UX, compliance | **DEFERRED** | GAP-09, 12–15, 17, 19, 20, 23, 24 | ~32h |
 
@@ -43,7 +43,7 @@
 
 ---
 
-### HIGH — 23 issues, 19 resolved, 4 pending
+### HIGH — 23 issues, 20 resolved, 3 pending
 
 #### Resolved
 
@@ -69,12 +69,15 @@
 | AUTH-03 | `/auth/confirm` always forces password re-set — returning users with `password_set = true` still redirected | Post-deploy | Auth Flow | Check `password_set` in `app_metadata` before routing |
 | AUTH-04 | Root page `/` has no server-side auth guard — sole defense was middleware | Post-deploy | Auth Flow | Async Server Component with full auth guard: role check, redirect logic |
 | AUTH-05 | Pre-March-17 users missing `password_set` — trapped in infinite set-password redirect loop | Post-deploy | Auth Flow | SQL backfill of `app_metadata` for affected confirmed ventas users |
+| GAP-03 | No server-side field masking on analytics routes — all roles see full dataset (commissions, ISR, PII) | 4 | Security | `src/lib/field-masking.ts` — 4 masking functions on 4 routes; gerencia=aggregates only, contabilidad=anonymized names, financiero/master/torredecontrol=full (changelog 079, 2026-03-20) |
 
 #### Pending
 
 | ID | Description | Phase | Category | What needs to be done | Trigger | Effort |
 |----|-------------|-------|----------|-----------------------|---------|--------|
-| GAP-03 | No server-side field masking on analytics routes — all roles see full dataset (commissions, ISR, PII) | 4 | Security | `src/lib/field-masking.ts` — role-aware response shaping on 5 analytics routes | Activation of gerencia/financiero/contabilidad for real users | ~24h |
+| ~~GAP-03~~ | ~~No server-side field masking on analytics routes~~ | ~~4~~ | ~~Security~~ | ~~field masking~~ | ~~Activation~~ | ~~Done~~ |
+
+**GAP-03 RESOLVED (2026-03-20, changelog 079).** Moved to Resolved section above. `src/lib/field-masking.ts` — 4 per-resource masking functions applied to 4 analytics routes. gerencia: aggregates only (byRecipient emptied, payment history stripped, Comisiones tab hidden). contabilidad: amounts visible, recipient names anonymized ("Beneficiario N"). financiero/master/torredecontrol: full access. Unknown roles default to most restrictive masking (defense-in-depth). Cash flow route excluded (aggregate data, no PII).
 | GAP-09 | No project-scoped admin access — all admin users see all 4 projects | 6 | Architecture | `user_project_assignments` table + RLS + analytics query updates | Admin team grows to include project-specific roles | ~24h |
 | GAP-17 | No approval workflow for desistimientos — single-step, no evidence, no second approval | 6 | Auth/Workflow | Two-step: request (with evidence) → approval (different user) | External audit or compliance requirement | 8–16h |
 | GAP-19 | No notification system — no push, email, or in-app alerts between salespeople and admin | 6 | Auth/Workflow | In-app notification badge (NavBar unread count), optionally email | User feedback | 16–24h |
@@ -152,6 +155,20 @@
 | Click-through to `/admin/reservas?selected=ID` | `/admin/operaciones` |
 | NavBar links: "Operaciones" + "Auditoría" (ADMIN_PAGE_ROLES) | `src/components/nav-bar.tsx` |
 
+### Phase 4: Role-Aware Field Masking (2026-03-20, changelog 079)
+
+**1 issue resolved.** Server-side post-query response shaping prevents data leakage when gerencia/financiero/contabilidad roles are activated.
+
+| Deliverable | Location |
+|-------------|----------|
+| 4 per-resource masking functions (pure, typed, defense-in-depth) | `src/lib/field-masking.ts` |
+| Masking on commissions analytics route | `src/app/api/analytics/commissions/route.ts` |
+| Masking on payments analytics route | `src/app/api/analytics/payments/route.ts` |
+| Masking on payment-compliance route | `src/app/api/analytics/payment-compliance/route.ts` |
+| Masking on legacy commissions route | `src/app/api/commissions/route.ts` |
+| Role prop passed to DashboardClient | `src/app/page.tsx` |
+| Comisiones tab hidden for gerencia | `src/app/dashboard-client.tsx` |
+
 ### Post-deployment Auth Fixes (2026-03-20)
 
 **5 AUTH issues resolved.** Production-discovered auth flow bugs after ventas go-live.
@@ -172,22 +189,24 @@
 Phase 1  [##########] 100%  Security Hardening          13 issues  DONE
 Phase 2  [##########] 100%  Permission Architecture      4 issues  DONE
 Phase 3  [##########] 100%  Audit Trail                  4 issues  DONE
-Phase 4  [          ]   0%  Field Masking                1 issue   PENDING (~24h)
+Phase 4  [##########] 100%  Field Masking                1 issue   DONE
 Phase 5  [##########] 100%  Operations Dashboard         2 issues  DONE
 Phase 6  [          ]   0%  Advanced Capabilities       10 issues  DEFERRED (~32h)
 
-Overall: 23 of 34 resolved (68%)  |  ~56 hours remaining
+Overall: 27 of 34 resolved (79%)  |  ~32 hours remaining (Phase 6 only)
 ```
 
 ---
 
 ## What's Next
 
-### Immediate: Phase 4 — Role-Aware Data Filtering (~24h)
+### ~~Immediate: Phase 4 — Role-Aware Data Filtering (~24h)~~ ✅ COMPLETED (2026-03-20, changelog 079)
 
-**Trigger:** Activation of gerencia/financiero/contabilidad roles for real users.
-**Dependency:** Phase 2 (PERMISSIONS matrix) — now satisfied.
-**Scope:** GAP-03 — `src/lib/field-masking.ts` + updates to 5 analytics routes.
+~~**Trigger:** Activation of gerencia/financiero/contabilidad roles for real users.~~
+~~**Dependency:** Phase 2 (PERMISSIONS matrix) — now satisfied.~~
+~~**Scope:** GAP-03 — `src/lib/field-masking.ts` + updates to 5 analytics routes.~~
+
+**Resolution:** `src/lib/field-masking.ts` — 4 per-resource masking functions. 4 analytics routes wrapped. Dashboard passes `role` prop, gerencia sees 3 tabs (no Comisiones). **gerencia/financiero/contabilidad roles are now safe to activate for real users.**
 
 ### Deferred: Phase 6 — Advanced Capabilities (~32h)
 
@@ -202,8 +221,9 @@ Overall: 23 of 34 resolved (68%)  |  ~56 hours remaining
 Layer 1: Middleware           Role-based page routing (5 categories)
 Layer 2: Page auth guards     Server-side role check on root page
 Layer 3: API route guards     requireRole() on 30+ routes, 15 using rolesFor()
-Layer 4: RLS policies         Ownership-scoped SELECT on 4 tables + jwt_role()
-Layer 5: Client UI filtering  NavBar role-filtered links + PERMISSIONS-driven components
+Layer 4: Field masking        Post-query response shaping per role (4 analytics routes)
+Layer 5: RLS policies         Ownership-scoped SELECT on 4 tables + jwt_role()
+Layer 6: Client UI filtering  NavBar role-filtered links + role-aware tab visibility
 ```
 
 ---
@@ -224,6 +244,7 @@ Layer 5: Client UI filtering  NavBar role-filtered links + PERMISSIONS-driven co
 | Operations dashboard | `src/app/admin/operaciones/operaciones-client.tsx` | 5 |
 | Access control matrix | `docs/access-control-matrix.md` | 2 |
 | Matrix generator | `scripts/generate-access-matrix.ts` | 2 |
+| Field masking utility | `src/lib/field-masking.ts` | 4 |
 
 ---
 
@@ -241,3 +262,4 @@ Layer 5: Client UI filtering  NavBar role-filtered links + PERMISSIONS-driven co
 | `docs/plan-fix-high-severity-gaps.md` | 6-phase master remediation plan |
 | `docs/plan-phase2-permission-architecture.md` | Phase 2 plan (completed) |
 | `docs/plan-phase3-audit-phase5-dashboard.md` | Phase 3+5 plan (completed) |
+| `docs/plan-phase4-field-masking.md` | Phase 4 plan (completed) |

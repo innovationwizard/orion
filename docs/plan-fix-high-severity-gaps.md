@@ -1,7 +1,7 @@
 # Plan: Fix 11 High-Severity Gaps + Discovered Issues
 
 **Date:** 2026-03-19
-**Last updated:** 2026-03-20 (Phases 1, 2, 3, 5 completed)
+**Last updated:** 2026-03-20 (Phases 1, 2, 3, 4, 5 completed)
 **Prerequisite:** All 3 critical gaps (GAP-01, GAP-02, GAP-06) are resolved and deployed (changelog 074).
 **Scope:** 11 high-severity gaps from `docs/roles-gap-analysis.md` + 5 additional issues discovered during codebase exploration.
 
@@ -44,7 +44,7 @@
 | GAP-21 | No formal access control document | 2 | ✅ COMPLETED 2026-03-20 (changelog 078) |
 | GAP-22 | Incomplete audit trail | 3 | ✅ COMPLETED 2026-03-19 |
 | GAP-16 | No maker-checker on user provisioning | 3 | ✅ COMPLETED 2026-03-19 (audit-only, Option A) |
-| GAP-03 | No server-side field masking on analytics | 4 | P2 — before activating gerencia/financiero dashboards |
+| GAP-03 | No server-side field masking on analytics | 4 | ✅ COMPLETED 2026-03-20 (changelog 079) |
 | GAP-10 | No role-specific dashboards | 5 | ✅ COMPLETED 2026-03-19 |
 | GAP-11 | No operations dashboard for Pati | 5 | ✅ COMPLETED 2026-03-19 (MVP) |
 | GAP-09 | No project-scoped admin access | 6 | P3 — deferred (2 admin users, 4 projects) |
@@ -728,6 +728,7 @@ Option A implemented: `salesperson.invited` audit events capture who invited who
 
 ## 5. Phase 4 — Role-Aware Data Filtering
 
+**Status:** ✅ COMPLETED 2026-03-20 (changelog 079)
 **Urgency:** Required before activating gerencia, financiero, or contabilidad roles for real users who should see filtered data.
 **Effort:** ~24 hours total.
 **Dependencies:** Phase 2 (permission matrix must exist to define what each role sees).
@@ -815,6 +816,25 @@ if (config?.anonymizeFields) {
 **Effort:** ~24 hours (masking utility, updating 5 analytics routes, testing each role's response).
 
 **Note:** This is the highest-effort gap. Consider deferring detailed masking until a specific role activation is imminent. The `requireRole(DATA_VIEWER_ROLES)` guard from changelog 074 already prevents ventas users from accessing these routes — the remaining risk is only between admin sub-roles.
+
+#### Implementation Notes (Completed 2026-03-20)
+
+**Pragmatic approach chosen:** 4 per-resource masking functions (direct, no generic sensitivity framework — simpler to audit, each route's rules are self-documenting). Defense-in-depth: unknown roles default to most restrictive masking (gerencia-level).
+
+- **`src/lib/field-masking.ts`** (NEW, ~200 lines): `FULL_ACCESS_ROLES = Set(["master", "torredecontrol", "financiero"])`. 4 pure typed functions:
+  - `maskCommissionsAnalytics(role, data)` — gerencia: `byRecipient: []`, ISR/disbursable zeroed. contabilidad: `recipientName` → "Beneficiario N".
+  - `maskPaymentCompliance(role, data)` — gerencia: `paymentHistory: []` per unit.
+  - `maskPaymentsAnalytics(role, data)` — gerencia: money fields zeroed, `paymentHistory: []`.
+  - `maskCommissionsLegacy(role, data)` — gerencia: `data: []` (keep totals). contabilidad: `recipient_name` → "Beneficiario N".
+- **4 API routes modified** (+3 lines each: import + role extraction + mask call):
+  - `src/app/api/analytics/commissions/route.ts`
+  - `src/app/api/analytics/payments/route.ts`
+  - `src/app/api/analytics/payment-compliance/route.ts`
+  - `src/app/api/commissions/route.ts`
+- **Dashboard UI**: `page.tsx` passes `role` prop to `DashboardClient`. `dashboard-client.tsx` filters `visibleTabs` — gerencia sees Resumen, Pagos, Flujo de Caja (no Comisiones).
+- **Cash flow route excluded** — returns only aggregate monthly data with no PII or per-person breakdown.
+- **`/api/commission-rates` NOT masked** — plan proposed it but actual analysis showed the route was already protected by `requireRole(DATA_VIEWER_ROLES)` and data is configuration-level, not PII.
+- **Build:** `npx next build` passes clean, zero errors.
 
 ---
 
@@ -1014,7 +1034,7 @@ When an admin changes a salesperson's project assignments via `/api/admin/salesp
 |------|-------|---------|
 | `src/lib/permissions.ts` | 2 ✅ | Access control matrix + `can()` + `rolesFor()` |
 | `src/lib/audit.ts` | 3 ✅ | `logAudit()` utility |
-| `src/lib/field-masking.ts` | 4 | Role-aware response shaping |
+| `src/lib/field-masking.ts` | 4 ✅ | Role-aware response shaping |
 | `scripts/migrations/040_ventas_ownership_rls.sql` | 1 ✅ | Ownership-scoped RLS policies (deployed) |
 | `scripts/migrations/041_audit_events.sql` | 3 ✅ | `audit_events` table + RLS (deployed) |
 | ~~`scripts/migrations/042_provisioning_audit.sql`~~ | ~~3~~ | ~~`salespeople.provisioned_by` + `reservations.desisted_by/at`~~ — NOT NEEDED (resolved via audit trail) |
@@ -1042,11 +1062,13 @@ When an admin changes a salesperson's project assignments via `/api/admin/salesp
 | `src/app/api/admin/management-roles/route.ts` | 3 ✅ | Add audit logging (POST) |
 | `src/app/api/admin/management-roles/[id]/route.ts` | 3 ✅ | Add audit logging (PATCH) |
 | `src/app/api/reservas/admin/freeze-requests/[id]/release/route.ts` | 3 ✅ | Add audit logging |
-| `src/app/api/analytics/commissions/route.ts` | 4 | Add field masking |
-| `src/app/api/analytics/payments/route.ts` | 4 | Add field masking |
-| `src/app/api/analytics/payment-compliance/route.ts` | 4 | Add field masking |
-| `src/app/api/commissions/route.ts` | 4 | Add field masking |
-| `src/app/api/commission-rates/route.ts` | 4 | Add field masking |
+| `src/app/api/analytics/commissions/route.ts` | 4 ✅ | Add field masking |
+| `src/app/api/analytics/payments/route.ts` | 4 ✅ | Add field masking |
+| `src/app/api/analytics/payment-compliance/route.ts` | 4 ✅ | Add field masking |
+| `src/app/api/commissions/route.ts` | 4 ✅ | Add field masking |
+| `src/app/api/commission-rates/route.ts` | — | Not masked (configuration data, already behind DATA_VIEWER_ROLES) |
+| `src/app/page.tsx` | 4 ✅ | Pass `role` prop to DashboardClient |
+| `src/app/dashboard-client.tsx` | 4 ✅ | Accept `role` prop, filter Comisiones tab for gerencia |
 | `src/lib/auth.ts` | 2 ✅ | `hasMinimumRole()` JSDoc comment added |
 
 ---
@@ -1068,8 +1090,8 @@ Phase 2 (Permissions) ✅ DONE   Phase 5 (Dashboards) ✅ DONE
   DISC-03: ✅ hasMinimumRole eval
          │
          ▼
-Phase 4 (Field Masking)
-  GAP-03: Response shaping
+Phase 4 (Field Masking) ✅ DONE
+  GAP-03: ✅ Response shaping
          │
          ▼
 Phase 6 (Deferred)
@@ -1079,7 +1101,7 @@ Phase 6 (Deferred)
 
 **Key dependencies:**
 - Phase 2 depends on Phase 1 ✅ (middleware must handle role groups before NavBar uses `can()`) — ✅ Phase 2 DONE
-- Phase 4 depends on Phase 2 ✅ (masking rules reference the permission matrix) — Phase 2 unblocked Phase 4
+- Phase 4 depends on Phase 2 ✅ (masking rules reference the permission matrix) — ✅ Phase 4 DONE
 - ~~Phase 5 is independent (can start anytime, uses existing APIs)~~ ✅ DONE
 - ~~Phase 3 is independent (can start anytime)~~ ✅ DONE
 - Phase 6 has no timeline pressure
@@ -1093,10 +1115,10 @@ Phase 6 (Deferred)
 | Phase 1 | GAP-04 + GAP-05 + DISC-01/04 | ✅ COMPLETED |
 | Phase 2 | GAP-07 + GAP-08 + GAP-21 + DISC-03 | ✅ COMPLETED |
 | Phase 3 | GAP-22 + GAP-16 + DISC-02/05 | ✅ COMPLETED |
-| Phase 4 | GAP-03 | ~24 |
+| Phase 4 | GAP-03 | ✅ COMPLETED |
 | Phase 5 | GAP-10 + GAP-11 | ✅ COMPLETED (MVP) |
 | Phase 6 | GAP-09 + GAP-16b (deferred) | ~32 |
-| **Total remaining** | **Phase 4 + Phase 6** | **~56 hours** |
+| **Total remaining** | **Phase 6 only** | **~32 hours** |
 
 **Execution history:**
 - Phase 1 completed 2026-03-19 (changelogs 074 + 075)
@@ -1107,7 +1129,12 @@ Phase 6 (Deferred)
 
 ~~**Next:** Phase 2 (permission architecture) — must complete before activating gerencia/financiero/contabilidad for real users.~~ ✅ Phase 2 completed 2026-03-20 (changelog 078).
 
-**Next:** Phase 4 (field masking) — the only remaining phase before activating gerencia/financiero/contabilidad. Phase 6 deferred until admin team grows.
+~~**Next:** Phase 4 (field masking) — the only remaining phase before activating gerencia/financiero/contabilidad. Phase 6 deferred until admin team grows.~~ ✅ Phase 4 completed 2026-03-20 (changelog 079).
+
+**Status:** All pre-activation phases (1–5) are complete. **gerencia/financiero/contabilidad roles are now safe to activate for real users.** Phase 6 deferred until admin team grows or external audit is scheduled.
+
+**Execution history update:**
+- Phase 4 completed 2026-03-20 (field masking — changelog 079)
 
 ---
 
