@@ -74,12 +74,14 @@ export async function POST(request: Request) {
 
   // Insert new assignments
   if (toAdd.length > 0) {
-    const rows = toAdd.map((pid) => ({
+    // Only one active assignment can be is_primary per salesperson
+    const hasExistingPrimary = currentIds.some((id) => !toRemove.includes(id));
+    const rows = toAdd.map((pid, i) => ({
       salesperson_id,
       project_id: pid,
       start_date: today,
       end_date: null,
-      is_primary: true,
+      is_primary: !hasExistingPrimary && i === 0,
     }));
 
     const { error: insErr } = await supabaseAdmin
