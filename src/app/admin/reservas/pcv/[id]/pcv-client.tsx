@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { formatLegalAmount, diaEnLetras, numeroEnLetras, formatCuiLegal } from "@/lib/reservas/numero-a-letras";
-import { computeEscrituracion, computeEnganche, COTIZADOR_DEFAULTS } from "@/lib/reservas/cotizador";
+import { computeEscrituracion, computeEnganche, configFromDefaults } from "@/lib/reservas/cotizador";
 import { formatCurrency } from "@/lib/reservas/constants";
 import { createReservasClient } from "@/lib/supabase/client";
 
@@ -419,15 +419,17 @@ export default function PcvClientComponent({ reservationId, readOnly }: { reserv
   const monthName = MESES[month];
   const yearWords = ANIOS_LETRAS[year] ?? `${year}`;
 
-  // Pricing
+  // Pricing — use default config as fallback (PCV uses per-reservation overrides when available)
+  const _cfg = configFromDefaults();
   const price = unit.price_list ?? 0;
-  const escrituracion = computeEscrituracion(price);
-  const reservaAmount = reservation.deposit_amount ?? COTIZADOR_DEFAULTS.RESERVA_AMOUNT;
+  const escrituracion = computeEscrituracion(price, _cfg);
+  const reservaAmount = reservation.deposit_amount ?? _cfg.reserva_default;
   const enganche = computeEnganche(
     price,
-    COTIZADOR_DEFAULTS.ENGANCHE_PCT,
+    _cfg,
+    _cfg.enganche_pct,
     reservaAmount,
-    COTIZADOR_DEFAULTS.INSTALLMENT_MONTHS,
+    _cfg.installment_months,
   );
   const ultimoPago = Math.max(0, price - enganche.enganche_total);
 

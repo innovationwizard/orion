@@ -547,8 +547,8 @@ function CompareTab({
       { label: "Reservado", values: projectStats.map((d) => d.stats.reservado), format: (v: number, i: number) => `${v} (${fmtPct(projectStats[i].stats.reservado / projectStats[i].stats.total)})`, best: "max" as const },
       { label: "Disponible", values: projectStats.map((d) => d.stats.disponible), format: (v: number, i: number) => `${v} (${fmtPct(projectStats[i].stats.disponible / projectStats[i].stats.total)})`, best: "min" as const },
       { label: "Tasa Absorción", values: projectStats.map((d) => d.stats.absorption), format: fmtPct, best: "max" as const },
-      { label: "Valor Vendido", values: projectStats.map((d) => d.stats.valorVendido), format: formatCurrency, best: "max" as const },
-      { label: "Valor Total Inventario", values: projectStats.map((d) => d.stats.valorTotal), format: formatCurrency, best: "max" as const },
+      { label: "Valor Vendido", values: projectStats.map((d) => d.stats.valorVendido), format: (v: number) => formatCurrency(v), best: "max" as const },
+      { label: "Valor Total Inventario", values: projectStats.map((d) => d.stats.valorTotal), format: (v: number) => formatCurrency(v), best: "max" as const },
     ];
     return rows.map((row) => {
       const bestIdx = row.best === "max"

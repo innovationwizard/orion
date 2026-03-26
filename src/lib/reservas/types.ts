@@ -240,6 +240,51 @@ export interface UnitFull {
   precalificacion_notes: string | null;
   razon_compra: string | null;
   tipo_cliente: string | null;
+  // 047: cotizador IUSI base
+  valor_inmueble: number | null;
+  // 049: lot/plot area for horizontal projects (casas)
+  area_lot: number | null;
+}
+
+// ---------------------------------------------------------------------------
+// Cotizador config — DB row shape from cotizador_configs table (047)
+// ---------------------------------------------------------------------------
+
+export interface CotizadorConfigRow {
+  id: string;
+  project_id: string;
+  tower_id: string | null;
+  unit_type: string | null;
+  label: string;
+  currency: "GTQ" | "USD";
+  enganche_pct: number;
+  reserva_default: number;
+  installment_months: number;
+  round_enganche_q100: boolean;
+  round_cuota_q100: boolean;
+  round_cuota_q1: boolean;
+  round_saldo_q100: boolean;
+  bank_rates: number[];
+  bank_rate_labels: string[] | null;
+  plazos_years: number[];
+  include_seguro_in_cuota: boolean;
+  include_iusi_in_cuota: boolean;
+  seguro_enabled: boolean;
+  seguro_base: "price" | "monto_financiar";
+  iusi_frequency: "monthly" | "quarterly";
+  income_multiplier: number;
+  income_base: "cuota_banco" | "cuota_mensual";
+  inmueble_pct: number;
+  timbres_rate: number;
+  use_pretax_extraction: boolean;
+  mantenimiento_per_m2: number | null;
+  mantenimiento_label: string | null;
+  disclaimers: string[] | null;
+  validity_days: number;
+  is_active: boolean;
+  display_order: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface ReservationPending {

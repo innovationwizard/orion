@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { computeEnganche, COTIZADOR_DEFAULTS } from "@/lib/reservas/cotizador";
+import { computeEnganche, configFromDefaults } from "@/lib/reservas/cotizador";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -172,13 +172,15 @@ export default function CartaPagoClient({ reservationId }: { reservationId: stri
   const clients = data.clients.filter((c) => c.rv_clients);
   const unit = data.unit;
 
-  // Compute cuota de enganche from cotizador
+  // Compute cuota de enganche from cotizador — default config as fallback
+  const _cfg = configFromDefaults();
   const price = unit.price_list ?? 0;
   const enganche = computeEnganche(
     price,
-    COTIZADOR_DEFAULTS.ENGANCHE_PCT,
-    COTIZADOR_DEFAULTS.RESERVA_AMOUNT,
-    COTIZADOR_DEFAULTS.INSTALLMENT_MONTHS,
+    _cfg,
+    _cfg.enganche_pct,
+    _cfg.reserva_default,
+    _cfg.installment_months,
   );
 
   // Client names joined with " y "

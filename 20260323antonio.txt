@@ -1,0 +1,794 @@
+Saludos, muy buenos días.
+Hola, Jorge, ¿cómo estás?
+No sé si me escuchas.
+Veo que estás hablando, pero no te oigo, no sé si soy yo.
+¿Qué onda, Jorge? No sé si me escuchas.
+Uy, ahora sí te oí, con todo el volumen.
+¿Cómo estamos?
+¿Qué onda? ¿Cómo estás vos?
+Bien, bien.
+¿Todo bien, y vos?
+Bien, bien, también, todo muy bien.
+Por la antigua, ¿no? Qué rico.
+Afirmativo.
+¿Tenés requerimientos para la sesión del día de hoy?
+¿O comenzamos con los míos?
+No, si querés, démosle los tuyos, Jorge.
+Miremos qué más vas necesitando de mi parte para nutrirte.
+¿Puedes presentarme la carpeta?
+Ajá.
+Esta que se llama, ya no me acuerdo cómo.
+Antonio Documentos, ¿está tus proyectos?
+Voy.
+No sé si lográs ver mi pantalla ahí.
+La imagen está abierta porque estás compartiendo la pantalla.
+Ahí está, ahí estamos.
+Esta es la carpeta.
+¿Qué tal?
+Ok.
+Yo lo que quiero es excluir de la app lo que no le está sirviendo ahorita a la app.
+Ok.
+Mira, pues, de lo que no le sirve.
+Por ejemplo, análisis de competencia no lo estamos usando.
+Ahorita no, pero la verdad es que sí sería bueno tenerlo ahí.
+¿Por qué?
+Porque como vamos analizando los proyectos,
+los proyectos del sector que compiten con nosotros.
+Ajá.
+¿Te recordás que lo vimos el día que platicamos con Otto?
+Correcto.
+Que sería bueno tenerlo dentro de la misma app.
+Ok.
+Lo que pasa es que hay, pues, algunos, algunos sectores que aquí tal vez no te sirven ahorita en la app.
+Ajá.
+Por el tiempo.
+Por ejemplo, Cobán no sirve, pero ya, o sea, ya vamos a salir con un test de mercado en Cobán el otro mes.
+Ah, ok.
+Entonces, ahí, ahí va a servir.
+Ajá.
+Y luego, a mediados de año, salimos con un proyecto de zona once.
+Entonces, por eso es de que hoy no sirve, pero en un par de meses ya nos va a servir el de zona once.
+Ok.
+Análisis de competencia permanece.
+Pasemos al siguiente.
+Luego, eh, esa está vacía.
+Este análisis de deuda está vacía.
+Écheselo.
+La voy a dejar ahí por si acaso.
+De ahí.
+Ahorita me la voy a, solo quiero preguntar por qué está aquí.
+Tal vez alguien le iba a poner algo vos.
+Pregunta primero.
+Va.
+Aprovechemos el tiempo que tenemos bloqueado para esta reunión, para hacer estas tareas, que si no, después, ya te agarran como piñata.
+Va, sí, lo que quiero ver es, espérame.
+Que con esto de que me estuvieron cambiando compu.
+A veces me sale, a veces no.
+No.
+No.
+No.
+En realidad.
+Ah, la granja.
+Se tiene doble cuenta, una en la nube y una en la compu.
+Por eso no lo quiero borrar.
+No voy a hacer que me lo huele por gusto.
+Yo.
+No, pero sí estaba.
+Está vacío.
+Si quieres regale una llamada a un par de gentes.
+Y pregúntales.
+Para.
+Ajá.
+Si alguien sabe por qué está ahí.
+No, de seguro la creé yo.
+Pero si no, volemos.
+No la creé yo vos, pero si no, volvémosla.
+Si no tiene nada, quítate.
+Dele.
+Sí.
+Veamos los que habíamos tenido la semana pasada.
+Luego esto de sesión de derechos nos sirve porque es la base de datos
+que te compartí para aquella aplicación, ¿te recordás?
+Sesión de derechos sirve para hacer un reporte.
+Igual, ¿sí?
+Es el reporte que tengo entendido que lo entregas los días miércoles.
+No, no, no.
+Es para aquella cosa, ¿te acordás?
+Que estamos viendo cuáles apartamentos hay que desistir
+y cuáles se les va a ofrecer el servicio.
+Que vos me dices, yo leo una aplicación.
+Sí, sí.
+Eso ya está en la app, te cuento.
+Solo que no me acuerdo dónde lo puse.
+Pero este sí sirve, digamos.
+Ok, entonces voy a agendarme en mis tareas.
+Entonces, ¿darte la dirección directa para el reporte de sesión de derechos?
+Para que ya sepan dónde está.
+Igual le pusimos el marco.
+Va.
+Tarea para mí.
+Listo.
+Pasemos a la siguiente.
+Un saludo, ustedes que llevan también.
+Voy.
+Luego, estos son los cierres, digamos, de mes.
+De aquí salen las comisiones, digamos.
+Ajá.
+Entonces, yo lo que hago es...
+Cierre de proyectos PA, es de donde salen las comisiones.
+Correcto.
+Ajá, lo que pasa aquí es que yo descargo la base de datos de las reservas desde Pairweb.
+Ajá.
+Y yo aquí marco, digamos, en color verde lo que sí se firmó
+y en color rojo lo que desistieron o no se logró firmar en el mes.
+O sea, lo que no corresponde para pago es lo rojo.
+Entonces, espérame.
+Sí.
+Y ya luego le agrego algunos cálculos que no puedo sacar desde Pairweb, digamos,
+pero aparece el precio de venta, que ese sí viene de cajón.
+Ajá.
+Yo le agrego el precio sin impuestos, la comisión total, el 30% de la primera comisión,
+el porcentaje que le corresponda.
+Ajá.
+Entonces, esto es lo más...
+¿Cómo lo agregas?
+Pónete en una celda, quiero ver el...
+Es manual.
+Es a mano.
+Es a mano.
+Cabal.
+¿Sabes en tu cabeza cuántos ha vendido este mes esa persona?
+Lo que pasa es que lo voy filtrando, ¿va, Jorge?
+Sí, pues.
+Entonces, yo sé que, por ejemplo...
+Filtras por asesor.
+Ajá.
+Como está el criterio de que las primeras cuatro son de 1%,
+y la quinta es de 1.25%, entonces lo hago así.
+Y lo veo conforme a las fechas.
+Ok.
+Entonces, por ejemplo, ¿cuáles son las de 1%?
+Las primeras cuatro.
+La del 15, la del 20, la del 22 y la del 28.
+Y la otra del 28 ya sería de 1.25.
+Correcto.
+Entonces, aquí están todos los cierres, digamos.
+Enseñame de dónde lo descargas.
+Vamos.
+Vamos a ver.
+Uff.
+Uff.
+Unop.
+Unop.
+Unop.
+Unop.
+era mejor
+yo no tengo ninguna prisa
+yo lo descargo de aquí
+digamos que aquí tengo
+el general
+entonces aquí puedo ver
+puedo ir filtrando la data
+digamos que yo necesito para ese reporte
+porque como esto lo puedo ir moviendo
+le puedo ir agregando campos y así
+entonces lo único es que aquí tengo todos los proyectos
+entonces ya después solo lo filtro
+y ya me aparece el asesor
+y todo, lo exporto a Excel
+y ya después lo trabajo y lo termino de ordenar
+en el Excel
+si pues, pero exportas
+desde el general
+desde aquí cabal
+ok, anotado
+esto es importante por la reunión
+por lo que hablamos con Gerardo
+el día que
+ese cuate no me transmite
+mucha emoción por su trabajo
+si, es un poco
+raro el chato
+pero el cabal dijo
+que el siguiente paso sería
+por ejemplo esto, si esto es lo que vos exportas
+entonces yo saco los ids
+primero del
+tablero que se llama general
+acá
+y después de las columnas que tenemos dentro del tablero
+así ya lo puedo jalar directo de pipedrive
+a la app
+y en la app ya tengo los cálculos de comisiones
+ya no necesitas
+meterle mano a mano
+ok, ok, si la verdad es que sería lo mejor
+para no tener que estar descargando, ordenando y todo
+o sea que ya te lo
+exacto, que se linkea automáticamente
+digamos
+así es
+ahora en este tablero de pipedrive
+esto que me tenés ahorita en pantalla
+hay alguna
+data sucia
+o todo es confiable
+esa es una buena
+pregunta, lo que pasa es que
+todo esto lo viene al asesor
+Jorge
+te voy a dar un ejemplo
+digamos el trato está vacío
+entonces
+cuando reservan
+el asesor es el que teclea el precio de venta
+el asesor es el que llena digamos
+todos los campos de aquí
+o sea el enganche
+el cuándo se reserva
+entonces como que confiable
+confiable tampoco al 100
+Jorge porque
+está bien lejos del 100 si lo teclea todo
+entonces el asesor es el que teclea el precio de venta
+está como el 0% confiable
+no sale de la mano
+de una persona
+eso es
+una información valiosa
+entonces
+si habría que ver
+por ejemplo hay cosas que si iba a tener
+que teclear pero hay cosas que yo creería
+que no, por ejemplo para mí algo que no
+habría que teclear es el precio pues
+¿dónde es el precio?
+¿dónde está el origen?
+¿cuál es la verdadera verdad?
+¿dónde está esa tabla de autoridad?
+el asesor
+el asesor lo teclea aquí
+si te das cuenta es un campo editable
+entonces agarra su cotización
+y lo pasa para acá
+la cotización
+eso es la empresa
+es la cotización firmada
+si digamos aquí debería de estar
+vamos a ver
+el pdf
+bueno esto es
+muy reciente
+déjame ver
+por ejemplo aquí ya te das cuenta
+de algo, o sea la reserva fue
+desde 12 de marzo
+y todavía no hay nada subido
+ajá
+ya una vez déjame aprovechar aquí
+dale, dale, dale, usa tu tiempo
+dale
+mira nosotros si querés
+porque esto no
+
+, sacale uno a cada uno de los vendedores
+y así les decimos a todos
+y quedamos viéndolos
+de verdad que me sacan de una
+ah ya se ve como es la gente
+entonces
+va por ejemplo
+este es de
+este es de Paula
+de Pablo
+entonces
+ellos suben todo aquí
+para que Paty pueda
+hacer la
+para que Paty pueda
+hacer la promesa
+entonces por ejemplo esto si está todo
+culero va
+es el escáner más feo
+ni digamos el DPI va
+si cero
+ese es el tipo de video que no hay
+ninguna
+inteligencia artificial del mundo que pueda leer
+cabal
+entonces si te das cuenta que esta vez
+668
+que es el precio que puso aquí
+luego nos sirve el enganche que es este
+46800
+que cabal aquí está
+y una reserva de 3000
+que está aquí
+correcto
+pero como te digo todo eso es editable
+entonces
+ahí pueden meter las patas también
+si
+ok
+ok
+,
+entonces
+eso sería
+que más quieres que veamos de estos tratos
+ok
+espérame que ahorita cabal estoy
+tratando de fumarme algo porque
+si tenés acá en el
+en el historial
+del negocio
+veo que
+aunque esté malo pero tenés el DPI
+aunque esté malo pero tenés el DPI
+aunque esté malo pero tenés el DPI
+la
+la cotización firmada
+si ellos
+lo que deberían
+tener subido digamos para que
+para tener
+es el DPI
+RTU
+recibo de servicios
+la cotización
+la carta de pago
+y el DSI
+espérame te me cortaste un poco
+repetime despacito como que
+estuviéramos hablando en larga distancia
+DPI
+el DPI
+RTU
+el RTU
+recibo de servicios
+recibo de servicios
+la cotización
+la cotización
+firmada correcto
+correcto carta de pago
+carta de pago
+carta de pago
+eh
+y la carta de reserva
+ah no es lo mismo la carta de reserva es perdón
+en vez de la carta de pago es la carta de reserva
+carta de reserva en vez de carta de pago
+y el DSI
+y el famoso DSI
+el famosísimo
+el famosísimo
+los conté bien son cinco
+si
+DPI RTU
+carta de reserva cotización
+si eso es lo que deberían de subir ellos inicialmente para poder hacer la papelería
+va
+igualmente
+voy a quedarme
+pensando como encontrar
+una mejor manera de subir
+estos cinco documentos
+de una
+de una
+si yo lo que
+lo que me ocurre Jorge es que
+como la cotización ahora va a salir del
+mismo sistema ajá
+eh
+o sea ahí vamos a poder
+estar seguros del precio
+por ejemplo correcto del precio
+del enganche la reserva
+porque va a salir de ahí
+luego de los datos del
+del cliente digamos como para hacer
+la reserva pide el DPI elegible ahí
+nos quitamos el DPI también
+correcto ok
+el RTU supongo que como es una fuente
+una fuente de consulta pública
+también puede salir por default
+ajá
+o no sé si se puede
+yo no he tratado de hacerlo
+personalmente pero si he visto
+que ese si toda la mara lo entregan
+en digital alguien lo baja en digital y no es como que
+le toman una foto
+a lo que bajaron en digital
+y después le toman foto
+te lo mandan como lo bajaron
+del azar
+va luego
+eh
+que otra cosa
+bueno hay datos del DSI
+que si vamos a tener que tal vez
+agregarlos
+en
+agregarlos en
+o en algún otro lado
+para eliminar el DSI porque yo supongo
+por ahí va la cosa
+es eliminar el DSI en algún momento
+y que se alimente de otro lado
+si no eliminar el concepto
+sino
+ajá pero si el documento
+que ya no sea un excel
+ajá podría ser como
+lleno de datos dentro del mismo sistema
+algo así no sé supongo que por ahí va la cosa
+por ahí va la cosa precisamente
+entonces si podría ser
+obviamente hay cosas que si van a tener
+que ser tecleadas
+por ejemplo eh eso de
+si está casado o no
+ah pero eso parece un drop down
+los estados civiles no son muchos
+ajá eso
+cuantos hijos tienen
+las edades que eso aparece en el DSI
+ajá
+que es más que todo por estadística
+eh el uso que le van a dar
+al inmueble
+entonces seguro va a ser un formulario
+dentro del sistema mucho más amigable
+a lo mejor que con opciones cerradas
+para que no haya tanto error
+exactamente así ahí vamos
+porque esa es otra
+ajá unos escriben que te digo yo
+eh
+mismo concepto pero diferentes palabras
+ajá
+o sea unos ponen para invertir
+unos ponen inversión unos ponen inversión
+con tilde unos con mayúscula
+unos para vivir unos viviendas
+o sea lo mismo pero todos
+le ponen diferente palabra
+sí cabal vamos a
+estandarizar eso
+cabal
+luego otra cosa que estaba viendo yo creo que
+ahorita aprovechando el tema que hay un montón
+de conceptos en la aplicación
+que me mandaste ajá
+cuando se quiera hacer una reserva
+sí
+espérame lo voy a abrir
+dale por favor
+así miramos en vídeo
+eh
+eh
+eh
+eh
+eh
+eh
+eh
+eh
+pero mejor que que no me carga
+está como pensando ahí está
+va digamos
+hay una una parte que hasta
+abajo que dice fuente de captación
+no te estoy viendo
+creo que estás en otro
+no
+aquí estoy
+no que hasta abajo
+está esto de captación
+pensé que lo habías abierto en la compu
+no no no no no
+en el teléfono
+entonces estoy viendo que hay
+muchos digamos que es lo mismo va jorge
+si vamos a tener
+que depurar estas fuentes de captación
+y esto creo que va a ser
+más que todo eh bueno ya te
+puedo decir la verdad es que un 90%
+pero si me gustaría que lo veamos con
+cero
+eh
+por ejemplo facebook
+facebook y meta es lo mismo
+eh
+lead
+o sea leads por ejemplo
+no debería existir solo leads
+o sea esto es de seguro porque
+estos existían en la base de datos
+que vos descargaste
+como te digo porque cada quien lo ponía
+diferente pero deberíamos
+estandarizar para que no hayan tantas opciones
+porque como te digo hay uno que dice leads
+hay uno que dice leads nada más
+hay uno que dice pd
+que es by drive
+hay uno que dice perfil
+eso ya no se usa por ejemplo
+entonces si vamos a tener que depurar estas
+fuentes y dejar solo las que nos sirvan para
+para no estar bien
+aquí estoy
+no no contame
+que se venga
+en la sala que es
+4 sala 4
+gracias
+gracias
+es que si depuramos el estado que te dije la vez pasada
+es que si depuramos el estado que te dije la vez pasada
+si quieres te voy a
+voy a tomar un screenshot
+de Jorge y te voy a marcar en verde
+los que se quedan
+o sea te voy a mandar
+un screenshot, no sé si me explico
+y te voy a marcar los que sí se quedan
+y los que no
+por ejemplo
+Facebook se quedan
+Meta también porque
+cuenta en Instagram
+Meta se queda
+Meta se queda
+pero es diferente a Facebook
+sí porque entra en Instagram
+también
+no crees uno de Instagram
+no se puede porque no está linkeado con Zapier
+a Piper
+a Perfilan ese se va
+referidos
+visita
+señalé que
+vayas también
+aunque ese debería ir como junto
+señalé que vayas
+para dejemos este y nos volamos
+PDX se queda
+Lit se va
+se tendría que llevar
+web
+ah bueno pero está página web
+les dijimos solo página web
+bueno
+la página
+si ustedes
+inbox y se quedan
+porque son los que entran comienzan
+expo casa
+si hay eventos
+se tiene que poder agregar
+mail
+prospección
+en San Fábil
+cuatis y
+cartera antigua
+y se muestra
+esto
+activación
+activación
+activación
+activación
+activación
+activación
+activación
+pero ese evento
+no porque activación puede ser por
+ejemplo lo de CHN y que vamos a
+tener el sábado y evento puede
+ser una
+y aquí
+sí
+vaya creo que de momento serían estos
+porque digamos van
+va a haber alguna situación especial
+donde tal vez si vamos a pedirte algún
+otro
+qué sé yo vamos a una feria la vivienda
+del banco industrial o vamos a una
+feria muy específica
+tal vez abrimos una fuente específica en
+ese momento pero de momento son estos
+acabo de mandar en foto con colorcito verde los que yo dejaría
+estoy descargando la foto
+hay otro también en el que se llama marketplace en una parecida de interés y
+está en el aire
+siempre lo lleva el tracking pero el de metas y el rayo porque como ellos van a
+marcar aquí donde es y también para que marque porque si no
+no van a marcar este pensado que se estuvo
+sí
+bueno ya que estamos que reggaetito y adicionales
+aunque
+y
+, ¿cómo se escribe ese?
+Linkedin
+Linkedin
+sí
+ahí te mande
+¿habías dicho marketplace también?
+no
+no marketplace no
+ok solo agrego tiktok y linkedin
+ajá
+y los verdecitos
+ah si los verdes son los
+los verdes son los
+los verdes son los
+los verdes los verdes son los verdes los verdes
+son los verdes ríos
+los verdes los verdes son los verdes no
+.
+1
+&
+1
+2
+3
+4
+3
+5
+2
+3
+14
+15
+16
+17
+27
+y 19
+7
+18
+20
+18
+20
+va
+ahorita les paso el visual
+ok
+y entonces
+el 8, el 7 es para el 10
+seguimos viendo las carpetas
+¿verdad?
+sí, por favor
+luego
+esto de cronogramas, esto si no
+porque no sirve para
+carpeta de cronogramas
+porque es igual
+ajá
+documentos varios, tenés miles de cosas ahí metidas
+ah, sí, este
+este es mi
+hay algo ahí que valga la pena
+subir a la app
+yo no me tomo el tiempo de abrirlos
+todos, he abierto un par y
+he visto cosas interesantes pero no
+no estoy usando nada de ahí
+por ejemplo ahí
+no, más que todo, estos son controles
+Jorge, te diría que no
+déjame depurarlo a mí
+déjame depurarlo con tiempo
+déjame depurarlo así despacito y te digo
+pero yo creería que no, aquí solo son
+documentos así como de uso
+la carpeta que se llama cronogramas
+de construcción
+la de cronogramas
+documentos varios
+también excluida
+ok
+veamos manuales
+ahí tampoco
+estos son manuales de capacitación
+te diría que tampoco
+carpeta que se llama manuales
+excluida por completo
+matemática
+esto de tiempos
+tampoco, esto es como análisis de los puestos
+entonces tampoco
+ok, carpeta que se llama matemática
+tiempos, excluida
+ok
+pago
+¿qué es esto?
+¿y a quién le sirve?
+vamos a ver
+esto es
+de Paty, fíjate
+esto sí no sé qué es Jorge
+honestamente
+¿y tenés ahí aparte?
+¿puedo preguntarle?
+no, a ti no está, fíjate
+se le enfermó su hijo
+pero aquí es donde ella lleva el control
+de los pagos y no estoy malgos
+ok, entonces es carpeta que se llama pagos
+diferimos para preguntarle
+a Paty otro día
+ok
+ok
+luego
+eh
+promesas
+eso está
+¿qué es eso?
+es de pati documentos como para llenar promesas que van reservas y ventas de 15 sirve aquí son
+los reportes cotizadores reporte de cada proyecto correcto este es el único que debería realmente
+subir a la reserva si este si ha sido urgente si los turnos también esto creería que no no
+debería estar en la aunque incluso imaginando un poquito más allá porque sería interesante
+que dentro de la misma aplicación podamos hacer los turnos de los asesores igual que
+el análisis de competencia se queda en el backlog pero no es algo urgente
+pero si sería bonito para poder ver digamos que no sea alguien de junta directiva que
+era
+bueno qué asesor está de turno pues o qué asesor está de descanso incluso para llevar
+algún control de vacaciones dentro de la serie interesante control de vacaciones dentro de la
+si sería interesante porque si el asesor puede hacer su solicitud en la misma aplicación pues
+desde el momento de que se autoricen y esas aplicaciones deja de aparecer como
+disponible para atención algo así sería interesante ok agregado definitivamente a la lista de santa
+luego esto valorización esto sí sirve bastante porque pero esto me cuesta integrarlo porque esto
+es al dedo un día vamos a valorizar y pam valorizan y esto sí siento que hay que sentarnos
+a ver cómo es donde es conveniente hacerlo porque justo es hacia el dedo entonces puesto
+calcularlo porque hay algunas cosas que se les sube lo mismo a todos pero casi siempre se les
+sube un monto distinto cada apartamento correcto entonces estoy anotando que necesitamos una
+reunión específicamente para poner por escrito el proceso de valorización de proyectos correcto
+lo que pasa es que está como muy
+como textil
+y
+tú
+tú
+tú
+tú
+tú
+lo que pasa es que yo no tengo así para que se vea bonito a jorge esto
+desaparece el valor del proyecto cuando fue el incremento y cuántas unidades todo esto está
+formulado pero por ejemplo estas flechitas y como
+que lo interprete solo así va a estar un poco
+complejo pues porque es como
+si no es
+imposible pero es mejor
+sentarnos a verlo en persona
+porque
+si hay mucho número que me vas a decir
+puchi que de donde sale todo eso
+cabal
+entonces eso Jorge de las carpetas
+esas serían prácticamente
+al fondo tengo un par de
+exeles sueltos
+estos son de entregables
+de Alec que los dejó ahí flotando
+estos los voy a meter aquí
+a la vieja
+confiable
+siempre hay la cuenta cuadradora en todos
+los balances
+y siempre
+se va a documentos varios
+ahí la metemos ahorita
+eso sería Jorge
+te tengo que dejar porque tengo una reunión
+con otro pero cualquier
+duda que tengas
+quizás
+creo que hemos tenido una reunión muy productiva
+tengo bastante información buena
+para seguir mejorando la app
+y éxitos
+en tu reunión con otro
+te demole Jorge
+gusta saludarte vos
+igualmente
+si te gusta el video dale like y suscríbete si te ha gustado el video y no olvides suscribirte al canal y activar la campanita para no perderte ninguna de las novedades

@@ -23,7 +23,7 @@ if (!email) {
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://orion-intelligence.vercel.app";
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://orion-intelligence.vercel.app").replace(/\/+$/, "");
 
 const supabase = createClient(url, key);
 

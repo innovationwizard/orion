@@ -1,15 +1,20 @@
 /**
  * Cotizador — pure computation functions for unit quotation.
  *
- * All functions are side-effect-free. They take unit pricing + user parameters
- * and return computed quotation data (enganche schedule, bank financing
- * scenarios, escrituracion splits).
+ * All functions are side-effect-free. They take unit pricing + per-project
+ * configuration and return computed quotation data (enganche schedule, bank
+ * financing scenarios, escrituracion splits).
  *
- * Guatemala-specific: GTQ currency, IVA 12%, IUSI property tax, FHA/bank rates.
+ * Guatemala-specific: GTQ/USD currency, IVA 12%, timbres fiscales 3%,
+ * IUSI property tax, FHA/bank rates.
+ *
+ * Configuration is per-project/tower/unit-type via `CotizadorConfig`.
+ * The hardcoded `COTIZADOR_DEFAULTS` exist only as a backward-compatible
+ * fallback when no DB config is available.
  */
 
 // ---------------------------------------------------------------------------
-// Defaults — Guatemala market, Puerta Abierta standard terms
+// Defaults — backward-compatible fallback only
 // ---------------------------------------------------------------------------
 
 export const COTIZADOR_DEFAULTS = {
@@ -20,10 +25,81 @@ export const COTIZADOR_DEFAULTS = {
   IVA_RATE: 0.12,
   IUSI_ANNUAL_RATE: 0.009,
   INSURANCE_ANNUAL_RATE: 0.0035,
+  TIMBRES_RATE: 0.03,
   BANK_RATES: [0.075, 0.085, 0.095, 0.105] as readonly number[],
   PLAZOS_YEARS: [15, 20, 25, 30] as readonly number[],
   INCOME_MULTIPLIER: 3,
 } as const;
+
+// ---------------------------------------------------------------------------
+// CotizadorConfig — per-project configuration from DB
+// ---------------------------------------------------------------------------
+
+export interface CotizadorConfig {
+  currency: "GTQ" | "USD";
+  enganche_pct: number;
+  reserva_default: number;
+  installment_months: number;
+  // Rounding
+  round_enganche_q100: boolean;
+  round_cuota_q100: boolean;
+  round_cuota_q1: boolean;
+  round_saldo_q100: boolean;
+  // Bank
+  bank_rates: number[];
+  bank_rate_labels: string[];
+  plazos_years: number[];
+  // Cuota composition
+  include_seguro_in_cuota: boolean;
+  include_iusi_in_cuota: boolean;
+  seguro_enabled: boolean;
+  seguro_base: "price" | "monto_financiar";
+  iusi_frequency: "monthly" | "quarterly";
+  // Income
+  income_multiplier: number;
+  income_base: "cuota_banco" | "cuota_mensual";
+  // Escrituracion
+  inmueble_pct: number;
+  timbres_rate: number;
+  use_pretax_extraction: boolean;
+  // Mantenimiento
+  mantenimiento_per_m2: number | null;
+  mantenimiento_label: string | null;
+  // Presentation
+  disclaimers: string[];
+  validity_days: number;
+}
+
+/** Build a CotizadorConfig from the legacy hardcoded defaults (fallback). */
+export function configFromDefaults(): CotizadorConfig {
+  return {
+    currency: "GTQ",
+    enganche_pct: COTIZADOR_DEFAULTS.ENGANCHE_PCT,
+    reserva_default: COTIZADOR_DEFAULTS.RESERVA_AMOUNT,
+    installment_months: COTIZADOR_DEFAULTS.INSTALLMENT_MONTHS,
+    round_enganche_q100: false,
+    round_cuota_q100: false,
+    round_cuota_q1: false,
+    round_saldo_q100: false,
+    bank_rates: [...COTIZADOR_DEFAULTS.BANK_RATES],
+    bank_rate_labels: COTIZADOR_DEFAULTS.BANK_RATES.map((r) => `${(r * 100).toFixed(1)}%`),
+    plazos_years: [...COTIZADOR_DEFAULTS.PLAZOS_YEARS],
+    include_seguro_in_cuota: true,
+    include_iusi_in_cuota: true,
+    seguro_enabled: true,
+    seguro_base: "monto_financiar",
+    iusi_frequency: "monthly",
+    income_multiplier: COTIZADOR_DEFAULTS.INCOME_MULTIPLIER,
+    income_base: "cuota_mensual",
+    inmueble_pct: COTIZADOR_DEFAULTS.INMUEBLE_PCT,
+    timbres_rate: COTIZADOR_DEFAULTS.TIMBRES_RATE,
+    use_pretax_extraction: true,
+    mantenimiento_per_m2: null,
+    mantenimiento_label: null,
+    disclaimers: [],
+    validity_days: 7,
+  };
+}
 
 // ---------------------------------------------------------------------------
 // Types
@@ -39,11 +115,14 @@ export interface EngancheResult {
 
 export interface FinancingScenario {
   rate: number;
+  rate_label: string;
   plazo_years: number;
   monto_financiar: number;
   cuota_banco: number;
   iusi_monthly: number;
+  iusi_quarterly: number;
   seguro_monthly: number;
+  seguro_informational: boolean;
   total_monthly: number;
   ingreso_requerido: number;
 }
@@ -55,8 +134,24 @@ export interface EscrituracionResult {
   iva_inmueble: number;
   valor_inmueble_con_iva: number;
   valor_acciones: number;
+  timbres_acciones: number;
+  valor_acciones_con_timbres: number;
   total_sin_impuesto: number;
   total_con_impuesto: number;
+}
+
+// ---------------------------------------------------------------------------
+// Rounding utilities
+// ---------------------------------------------------------------------------
+
+/** Round UP to nearest Q100 (Excel ROUNDUP(x, -2)). */
+export function roundUpQ100(amount: number): number {
+  return Math.ceil(amount / 100) * 100;
+}
+
+/** Round UP to nearest Q1 (Excel ROUNDUP(x, 0)). */
+export function roundUpQ1(amount: number): number {
+  return Math.ceil(amount);
 }
 
 // ---------------------------------------------------------------------------
@@ -78,19 +173,46 @@ export function pmt(rate_annual: number, years: number, principal: number): numb
 
 export function computeEnganche(
   price: number,
+  config: Pick<CotizadorConfig, "round_enganche_q100" | "round_cuota_q100" | "round_cuota_q1">,
   enganche_pct: number,
   reserva: number,
   installment_months: number,
 ): EngancheResult {
-  const enganche_total = Math.round(price * enganche_pct);
-  const enganche_neto = Math.max(0, enganche_total - reserva);
-  const cuota_enganche = installment_months > 0 ? Math.round(enganche_neto / installment_months) : enganche_neto;
+  // 1. Enganche total — conditionally round to Q100
+  let enganche_total = price * enganche_pct;
+  if (config.round_enganche_q100) {
+    enganche_total = roundUpQ100(enganche_total);
+  } else {
+    enganche_total = Math.round(enganche_total);
+  }
 
+  // 2. Enganche neto
+  const enganche_neto = Math.max(0, enganche_total - reserva);
+
+  // 3. Cuota — conditionally round to Q100 or Q1
+  let cuota_enganche: number;
+  if (installment_months <= 0) {
+    cuota_enganche = enganche_neto;
+  } else if (config.round_cuota_q100) {
+    cuota_enganche = roundUpQ100(enganche_neto / installment_months);
+  } else if (config.round_cuota_q1) {
+    cuota_enganche = roundUpQ1(enganche_neto / installment_months);
+  } else {
+    cuota_enganche = Math.round(enganche_neto / installment_months);
+  }
+
+  // 4. Installment schedule with last-installment adjustment
   const installments: { number: number; amount: number }[] = [
     { number: 0, amount: reserva },
   ];
   for (let i = 1; i <= installment_months; i++) {
-    installments.push({ number: i, amount: cuota_enganche });
+    if (i === installment_months && installment_months > 1) {
+      // Last installment absorbs rounding remainder
+      const previous_sum = cuota_enganche * (installment_months - 1);
+      installments.push({ number: i, amount: enganche_neto - previous_sum });
+    } else {
+      installments.push({ number: i, amount: cuota_enganche });
+    }
   }
 
   return { enganche_total, reserva, enganche_neto, cuota_enganche, installments };
@@ -103,26 +225,65 @@ export function computeEnganche(
 export function computeFinancingMatrix(
   price: number,
   enganche_total: number,
-  rates: readonly number[] = COTIZADOR_DEFAULTS.BANK_RATES,
-  plazos: readonly number[] = COTIZADOR_DEFAULTS.PLAZOS_YEARS,
+  config: Pick<
+    CotizadorConfig,
+    | "bank_rates"
+    | "bank_rate_labels"
+    | "plazos_years"
+    | "round_saldo_q100"
+    | "seguro_enabled"
+    | "seguro_base"
+    | "include_seguro_in_cuota"
+    | "include_iusi_in_cuota"
+    | "iusi_frequency"
+    | "income_multiplier"
+    | "income_base"
+  >,
+  valor_inmueble: number | null,
 ): FinancingScenario[] {
-  const monto_financiar = Math.max(0, price - enganche_total);
-  const iusi_monthly = Math.round((price * COTIZADOR_DEFAULTS.IUSI_ANNUAL_RATE) / 12);
-  const seguro_monthly = Math.round((monto_financiar * COTIZADOR_DEFAULTS.INSURANCE_ANNUAL_RATE) / 12);
+  // Saldo a financiar — conditionally round to Q100
+  let monto_financiar = Math.max(0, price - enganche_total);
+  if (config.round_saldo_q100) monto_financiar = roundUpQ100(monto_financiar);
+
+  // IUSI base = valor_inmueble if available, else price (fallback)
+  const iusi_base = valor_inmueble ?? price;
+  const iusi_monthly = Math.round((iusi_base * COTIZADOR_DEFAULTS.IUSI_ANNUAL_RATE) / 12);
+  const iusi_quarterly = Math.round((iusi_base * COTIZADOR_DEFAULTS.IUSI_ANNUAL_RATE) / 4);
+
+  // Insurance
+  const seguro_calc_base = config.seguro_base === "price" ? price : monto_financiar;
+  const seguro_monthly = config.seguro_enabled
+    ? Math.round((seguro_calc_base * COTIZADOR_DEFAULTS.INSURANCE_ANNUAL_RATE) / 12)
+    : 0;
 
   const scenarios: FinancingScenario[] = [];
-  for (const rate of rates) {
-    for (const plazo of plazos) {
+  for (let ri = 0; ri < config.bank_rates.length; ri++) {
+    const rate = config.bank_rates[ri];
+    const rate_label = config.bank_rate_labels[ri] ?? `${(rate * 100).toFixed(2)}%`;
+
+    for (const plazo of config.plazos_years) {
       const cuota_banco = Math.round(pmt(rate, plazo, monto_financiar));
-      const total_monthly = cuota_banco + iusi_monthly + seguro_monthly;
-      const ingreso_requerido = total_monthly * COTIZADOR_DEFAULTS.INCOME_MULTIPLIER;
+
+      // Cuota mensual composition
+      let total_monthly = cuota_banco;
+      if (config.include_iusi_in_cuota) total_monthly += iusi_monthly;
+      if (config.include_seguro_in_cuota) total_monthly += seguro_monthly;
+
+      // Income requirement
+      const income_base_amount =
+        config.income_base === "cuota_banco" ? cuota_banco : total_monthly;
+      const ingreso_requerido = Math.round(income_base_amount * config.income_multiplier);
+
       scenarios.push({
         rate,
+        rate_label,
         plazo_years: plazo,
         monto_financiar,
         cuota_banco,
-        iusi_monthly,
-        seguro_monthly,
+        iusi_monthly: config.include_iusi_in_cuota ? iusi_monthly : 0,
+        iusi_quarterly: config.iusi_frequency === "quarterly" ? iusi_quarterly : 0,
+        seguro_monthly: config.seguro_enabled ? seguro_monthly : 0,
+        seguro_informational: config.seguro_enabled && !config.include_seguro_in_cuota,
         total_monthly,
         ingreso_requerido,
       });
@@ -137,15 +298,34 @@ export function computeFinancingMatrix(
 
 export function computeEscrituracion(
   price: number,
-  pct_inmueble: number = COTIZADOR_DEFAULTS.INMUEBLE_PCT,
+  config: Pick<CotizadorConfig, "inmueble_pct" | "timbres_rate" | "use_pretax_extraction">,
 ): EscrituracionResult {
-  const pct_acciones = 1 - pct_inmueble;
-  const valor_inmueble_sin_iva = Math.round(price * pct_inmueble);
+  const pct_inmueble = config.inmueble_pct;
+  const pct_acciones = +(1 - pct_inmueble).toFixed(4); // avoid float noise
+
+  let valor_inmueble_sin_iva: number;
+  let valor_acciones: number;
+
+  if (config.use_pretax_extraction) {
+    // Excel method: extract pre-tax base by dividing total by blended tax factor.
+    // factor = pct_inmueble × 1.12 + pct_acciones × (1 + timbres_rate)
+    // When 70/30 with 3% timbres: 0.70×1.12 + 0.30×1.03 = 1.093
+    // When 100/0 (locales): 1.00×1.12 = 1.12
+    const tax_factor =
+      pct_inmueble * (1 + COTIZADOR_DEFAULTS.IVA_RATE) +
+      pct_acciones * (1 + config.timbres_rate);
+    const base = price / tax_factor;
+    valor_inmueble_sin_iva = Math.round(base * pct_inmueble);
+    valor_acciones = Math.round(base * pct_acciones);
+  } else {
+    valor_inmueble_sin_iva = Math.round(price * pct_inmueble);
+    valor_acciones = Math.round(price * pct_acciones);
+  }
+
   const iva_inmueble = Math.round(valor_inmueble_sin_iva * COTIZADOR_DEFAULTS.IVA_RATE);
+  const timbres_acciones = Math.round(valor_acciones * config.timbres_rate);
   const valor_inmueble_con_iva = valor_inmueble_sin_iva + iva_inmueble;
-  const valor_acciones = Math.round(price * pct_acciones);
-  const total_sin_impuesto = valor_inmueble_sin_iva + valor_acciones;
-  const total_con_impuesto = valor_inmueble_con_iva + valor_acciones;
+  const valor_acciones_con_timbres = valor_acciones + timbres_acciones;
 
   return {
     pct_inmueble,
@@ -154,7 +334,21 @@ export function computeEscrituracion(
     iva_inmueble,
     valor_inmueble_con_iva,
     valor_acciones,
-    total_sin_impuesto,
-    total_con_impuesto,
+    timbres_acciones,
+    valor_acciones_con_timbres,
+    total_sin_impuesto: valor_inmueble_sin_iva + valor_acciones,
+    total_con_impuesto: valor_inmueble_con_iva + valor_acciones_con_timbres,
   };
+}
+
+// ---------------------------------------------------------------------------
+// Mantenimiento (HOA fee)
+// ---------------------------------------------------------------------------
+
+export function computeMantenimiento(
+  area_total: number,
+  per_m2: number | null,
+): number | null {
+  if (per_m2 == null || area_total <= 0) return null;
+  return Math.ceil(per_m2 * area_total);
 }

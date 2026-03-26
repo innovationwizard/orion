@@ -27,7 +27,8 @@ export type Resource =
   | "audit_log"
   | "creditos"
   | "analytics"
-  | "lead_sources";
+  | "lead_sources"
+  | "cotizador_config";
 
 export type Action =
   | "view"
@@ -173,6 +174,12 @@ export const PERMISSIONS: Record<Resource, Partial<Record<Action, Role[]>>> = {
     create: MK,
     update: MK,
     delete: MK,
+  },
+  cotizador_config: {
+    view: A,
+    create: A,
+    update: A,
+    delete: A,
   },
 };
 

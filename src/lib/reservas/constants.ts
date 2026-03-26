@@ -197,6 +197,7 @@ export const PROJECT_SLUGS = {
   CE: "casa-elisa",
   BEN: "benestare",
   B5: "boulevard-5",
+  SE: "santa-elena",
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -223,10 +224,12 @@ export const LOCALE = "es-GT" as const;
 export const CURRENCY = "GTQ" as const;
 export const CURRENCY_SYMBOL = "Q" as const;
 
-/** Format a number as Guatemalan Quetzales */
-export function formatCurrency(amount: number | null | undefined): string {
+/** Format a number as Guatemalan Quetzales (default) or USD */
+export function formatCurrency(amount: number | null | undefined, currency?: "GTQ" | "USD"): string {
   if (amount == null) return "—";
-  return `Q${amount.toLocaleString(LOCALE, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
+  const symbol = currency === "USD" ? "$" : "Q";
+  const minDecimals = currency === "USD" ? 2 : 0;
+  return `${symbol}${amount.toLocaleString(LOCALE, { minimumFractionDigits: minDecimals, maximumFractionDigits: 2 })}`;
 }
 
 /** Compact currency format for KPI cards (Q1.33M, Q133K) */
