@@ -13,7 +13,7 @@ import ClientesView from "./components/clientes-view";
 import DrillDownModal from "./components/drill-down-modal";
 
 function getEstatus(r: CesionUnit): string {
-  return r.compliance_status === "behind" ? "ATRASADO" : "AL D\u00CDA";
+  return r.compliance_status === "behind" ? "ATRASADO" : "AL DÍA";
 }
 
 export default function CesionClient() {

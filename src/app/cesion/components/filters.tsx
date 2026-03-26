@@ -67,12 +67,12 @@ export default function Filters({
       </span>
       <MultiSelect
         label="Estatus"
-        options={["ATRASADO", "AL D\u00CDA"]}
+        options={["ATRASADO", "AL DÍA"]}
         selected={filterEstatus}
         onChange={setFilterEstatus}
         formatOption={(v) =>
-          v === "AL D\u00CDA"
-            ? "Al D\u00EDa"
+          v === "AL DÍA"
+            ? "Al Día"
             : v.charAt(0) + v.slice(1).toLowerCase()
         }
       />
@@ -90,7 +90,7 @@ export default function Filters({
         onChange={setFilterPrecal}
       />
       <MultiSelect
-        label="Raz\u00F3n"
+        label="Razón"
         options={uniqueRazon}
         selected={filterRazon}
         onChange={setFilterRazon}

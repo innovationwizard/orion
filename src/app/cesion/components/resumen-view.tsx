@@ -27,7 +27,7 @@ const PIE_COLORS = [
 const PRECAL_COLORS = ["#10b981", "#ef4444", "#64748b", "#f59e0b"];
 
 function getEstatus(r: CesionUnit): string {
-  return r.compliance_status === "behind" ? "ATRASADO" : "AL D\u00CDA";
+  return r.compliance_status === "behind" ? "ATRASADO" : "AL DÍA";
 }
 
 interface PieItem {
@@ -90,7 +90,7 @@ export default function ResumenView({
   // Estatus pie data
   const estatusData: PieItem[] = [
     { name: "Atrasado", value: stats.atrasados },
-    { name: "Al D\u00EDa", value: stats.alDia },
+    { name: "Al Día", value: stats.alDia },
   ].filter((d) => d.value > 0);
 
   // Precalificación pie data
@@ -160,7 +160,7 @@ export default function ResumenView({
   const handleEstatusClick = (data: any) => {
     const m: Record<string, string> = {
       Atrasado: "ATRASADO",
-      "Al D\u00EDa": "AL D\u00CDA",
+      "Al Día": "AL DÍA",
     };
     const name = (data?.name ?? data?.payload?.name) as string;
     if (m[name])
@@ -181,7 +181,7 @@ export default function ResumenView({
     const name = (data?.name ?? data?.payload?.name) as string;
     if (m[name])
       openDrillDown(
-        `Precalificaci\u00F3n: ${name}`,
+        `Precalificación: ${name}`,
         filtered.filter((r) => r.precalificacion_status === m[name]),
       );
   };
@@ -200,7 +200,7 @@ export default function ResumenView({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-5">
       {/* Estatus de Cobros */}
-      <Card title="Estatus de Cobros" sub="Distribuci\u00F3n actual">
+      <Card title="Estatus de Cobros" sub="Distribución actual">
         <ResponsiveContainer width="100%" height={250}>
           <PieChart>
             <Pie
@@ -230,7 +230,7 @@ export default function ResumenView({
 
       {/* Precalificación Bancaria */}
       <Card
-        title="Precalificaci\u00F3n Bancaria"
+        title="Precalificación Bancaria"
         sub="Estado hipotecario"
       >
         <ResponsiveContainer width="100%" height={250}>
@@ -261,7 +261,7 @@ export default function ResumenView({
       </Card>
 
       {/* Razón de Compra */}
-      <Card title="Raz\u00F3n de Compra" sub="Motivo de adquisici\u00F3n">
+      <Card title="Razón de Compra" sub="Motivo de adquisición">
         <ResponsiveContainer width="100%" height={250}>
           <PieChart>
             <Pie
@@ -277,7 +277,7 @@ export default function ResumenView({
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               onClick={(data: any) => {
                 const name = (data?.name ?? data?.payload?.name) as string;
-                if (name) openDrillDown(`Raz\u00F3n: ${name}`, filtered.filter((r) => r.razon_compra === name));
+                if (name) openDrillDown(`Razón: ${name}`, filtered.filter((r) => r.razon_compra === name));
               }}
             >
               {razonData.map((_, i) => (
@@ -296,7 +296,7 @@ export default function ResumenView({
       {/* Tipo de Cliente */}
       <Card
         title="Tipo de Cliente"
-        sub="Clasificaci\u00F3n de compradores"
+        sub="Clasificación de compradores"
       >
         <ResponsiveContainer width="100%" height={250}>
           <PieChart>
@@ -331,7 +331,7 @@ export default function ResumenView({
 
       {/* Análisis por Bloque */}
       <Card
-        title="An\u00E1lisis por Bloque"
+        title="Análisis por Bloque"
         sub="Unidades por bloque PCV"
       >
         <ResponsiveContainer width="100%" height={220}>

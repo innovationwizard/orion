@@ -4,7 +4,7 @@ import type { CesionUnit } from "@/lib/reservas/types";
 import { formatCurrency } from "@/lib/reservas/constants";
 
 function getEstatus(r: CesionUnit): string {
-  return r.compliance_status === "behind" ? "ATRASADO" : "AL D\u00CDA";
+  return r.compliance_status === "behind" ? "ATRASADO" : "AL DÍA";
 }
 
 const COLS: [string, string][] = [
@@ -17,7 +17,7 @@ const COLS: [string, string][] = [
   ["compliance_status", "Estatus"],
   ["pcv_block", "Bloque"],
   ["precalificacion_status", "Precalif."],
-  ["razon_compra", "Raz\u00F3n Compra"],
+  ["razon_compra", "Razón Compra"],
   ["tipo_cliente", "Tipo Cliente"],
 ];
 

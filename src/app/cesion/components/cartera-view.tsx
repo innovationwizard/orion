@@ -5,7 +5,7 @@ import type { CesionUnit } from "@/lib/reservas/types";
 import { formatCurrency } from "@/lib/reservas/constants";
 
 function getEstatus(r: CesionUnit): string {
-  return r.compliance_status === "behind" ? "ATRASADO" : "AL D\u00CDA";
+  return r.compliance_status === "behind" ? "ATRASADO" : "AL DÍA";
 }
 
 interface CarteraViewProps {
@@ -22,14 +22,14 @@ const COLUMNS: [string, string][] = [
   ["unit_type", "Modelo"],
   ["price_list", "Precio Venta"],
   ["price_suggested", "P. Sugerido"],
-  ["plusvalia", "Plusval\u00EDa"],
+  ["plusvalia", "Plusvalía"],
   ["enganche_total", "Enganche Plan"],
   ["enganche_pagado", "Pagado"],
   ["diferencia", "Diferencia"],
   ["compliance_status", "Estatus"],
   ["pcv_block", "Bloque"],
   ["precalificacion_status", "Precalif."],
-  ["razon_compra", "Raz\u00F3n Compra"],
+  ["razon_compra", "Razón Compra"],
   ["tipo_cliente", "Tipo Cliente"],
 ];
 
@@ -187,25 +187,25 @@ export default function CarteraView({
           const details: [string, string][] = [
             ["Precio Venta", formatCurrency(r.price_list)],
             ["Precio Sugerido", formatCurrency(r.price_suggested)],
-            ["Plusval\u00EDa", formatCurrency(r.plusvalia)],
+            ["Plusvalía", formatCurrency(r.plusvalia)],
             ["Enganche Total", formatCurrency(r.enganche_total)],
             ["Enganche Pactado", formatCurrency(r.enganche_pactado)],
             ["Enganche Pagado", formatCurrency(r.enganche_pagado)],
             ["Diferencia", formatCurrency(r.diferencia)],
-            ["Precio/m\u00B2", formatCurrency(r.precio_m2)],
+            ["Precio/m²", formatCurrency(r.precio_m2)],
             [
-              "m\u00B2 Interno",
-              r.area_interior ? `${r.area_interior} m\u00B2` : "\u2014",
+              "m² Interno",
+              r.area_interior ? `${r.area_interior} m²` : "\u2014",
             ],
             [
-              "m\u00B2 Terraza",
-              r.area_terrace ? `${r.area_terrace} m\u00B2` : "\u2014",
+              "m² Terraza",
+              r.area_terrace ? `${r.area_terrace} m²` : "\u2014",
             ],
             [
-              "m\u00B2 Total",
-              r.area_total ? `${r.area_total} m\u00B2` : "\u2014",
+              "m² Total",
+              r.area_total ? `${r.area_total} m²` : "\u2014",
             ],
-            ["Raz\u00F3n de Compra", r.razon_compra ?? "\u2014"],
+            ["Razón de Compra", r.razon_compra ?? "\u2014"],
             ["Tipo de Cliente", r.tipo_cliente ?? "\u2014"],
           ];
           return (

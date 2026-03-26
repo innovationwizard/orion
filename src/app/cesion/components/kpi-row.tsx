@@ -39,7 +39,7 @@ export default function KpiRow({ stats }: KpiRowProps) {
         hint={`${stats.count} unidades`}
       />
       <KpiCard
-        label="Plusval\u00EDa Total"
+        label="Plusvalía Total"
         value={fmtQCompact(stats.totalPlusvalia)}
         hint={`${pctPlusvalia}% sobre venta`}
         positive
@@ -52,7 +52,7 @@ export default function KpiRow({ stats }: KpiRowProps) {
       <KpiCard
         label="Brecha de Cobro"
         value={fmtQCompact(stats.totalDiferencia)}
-        hint={stats.totalDiferencia < 0 ? "Saldo pendiente" : "Super\u00E1vit"}
+        hint={stats.totalDiferencia < 0 ? "Saldo pendiente" : "Superávit"}
         positive={stats.totalDiferencia >= 0}
         negative={stats.totalDiferencia < 0}
       />

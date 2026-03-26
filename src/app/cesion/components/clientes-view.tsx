@@ -51,7 +51,7 @@ export default function ClientesView({
       <div className="bg-card border border-border rounded-xl p-5 mb-5">
         <div className="mb-4">
           <h3 className="text-sm font-bold text-text-primary">
-            Concentraci\u00F3n por Cliente
+            Concentración por Cliente
           </h3>
           <div className="text-xs text-muted">
             Top 15 clientes por valor de cartera
@@ -100,7 +100,7 @@ export default function ClientesView({
             Resumen por Cliente
           </h3>
           <div className="text-xs text-muted mt-1">
-            {clienteAgg.length} clientes \u00FAnicos
+            {clienteAgg.length} clientes únicos
           </div>
         </div>
         <div className="overflow-x-auto max-h-[500px]">
@@ -113,7 +113,7 @@ export default function ClientesView({
                   "Valor Total",
                   "Pagado",
                   "Diferencia",
-                  "Plusval\u00EDa",
+                  "Plusvalía",
                 ].map((h) => (
                   <th
                     key={h}
