@@ -73,8 +73,8 @@ This change introduces a per-project/tower/unit-type configuration system backed
 
 ## Diff coverage
 
-**36 of 37 diffs closed.** 1 deferred:
-- DIFF-S06 — Payment tracking (LOW priority, duplicates admin functionality)
+**37 of 37 diffs closed.**
+- ~~DIFF-S06 — Payment tracking (LOW priority, duplicates admin functionality)~~ → **CLOSED (2026-03-26).** Not a valid cotizador concern — a cotizador is a stateless computation tool; duplicating payment state is a data integrity anti-pattern. Payment tracking exists in admin reservation detail. Column will be removed from SSOT Excel files.
 
 Previously deferred, now closed by migration 049 (Santa Elena onboarding):
 - ~~DIFF-F13~~ — SE IUSI quarterly → SE cotizador_config seeded with `iusi_frequency: 'quarterly'`

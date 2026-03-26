@@ -6,31 +6,14 @@ import { formatCurrency } from "@/lib/reservas/constants";
 type Props = {
   result: EscrituracionResult;
   config: CotizadorConfig;
-  inmueblePct: number;
-  onInmueblePctChange: (pct: number) => void;
 };
 
-export default function EscrituracionPanel({ result, config, inmueblePct, onInmueblePctChange }: Props) {
+export default function EscrituracionPanel({ result, config }: Props) {
   const hasTimbres = result.timbres_acciones > 0;
 
   return (
     <section className="bg-card rounded-2xl shadow-card border border-border p-5 grid gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted">Escrituración</h2>
-        <label className="flex items-center gap-2 text-sm">
-          <span className="text-muted text-xs">Inmueble</span>
-          <select
-            className="px-2 py-1 rounded border border-border bg-card text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-            value={inmueblePct}
-            onChange={(e) => onInmueblePctChange(Number(e.target.value))}
-          >
-            <option value={0.6}>60 / 40</option>
-            <option value={0.7}>70 / 30</option>
-            <option value={0.8}>80 / 20</option>
-            <option value={1.0}>100 / 0</option>
-          </select>
-        </label>
-      </div>
+      <h2 className="text-sm font-semibold uppercase tracking-wider text-muted">Escrituración</h2>
 
       <div className="overflow-x-auto">
         <table className="w-full text-sm">

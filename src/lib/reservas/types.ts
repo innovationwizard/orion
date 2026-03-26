@@ -255,6 +255,7 @@ export interface CotizadorConfigRow {
   project_id: string;
   tower_id: string | null;
   unit_type: string | null;
+  bedrooms: number | null;
   label: string;
   currency: "GTQ" | "USD";
   enganche_pct: number;

@@ -73,43 +73,75 @@ export function rowToConfig(row: CotizadorConfigRow): CotizadorConfig {
 /**
  * Resolve the best matching config for a given unit.
  * Resolution order (most specific first):
- * 1. (project_id, tower_id, unit_type)
- * 2. (project_id, tower_id, NULL)
- * 3. (project_id, NULL, unit_type)
- * 4. (project_id, NULL, NULL)
- * 5. Hardcoded COTIZADOR_DEFAULTS (fallback)
+ * 1. (tower_id, unit_type, bedrooms)
+ * 2. (tower_id, unit_type, NULL)
+ * 3. (tower_id, NULL, bedrooms)
+ * 4. (tower_id, NULL, NULL)
+ * 5. (NULL, unit_type, bedrooms)
+ * 6. (NULL, unit_type, NULL)
+ * 7. (NULL, NULL, bedrooms)
+ * 8. (NULL, NULL, NULL)
+ * 9. Hardcoded COTIZADOR_DEFAULTS (fallback)
  */
 export function resolveConfig(
   configs: CotizadorConfigRow[],
   towerId: string | null,
   unitType: string | null,
+  bedrooms: number | null = null,
 ): CotizadorConfig {
-  // Try exact match
-  const exact = configs.find(
-    (c) => c.tower_id === towerId && c.unit_type === unitType,
-  );
-  if (exact) return rowToConfig(exact);
+  // Helper: find config matching given criteria
+  const find = (
+    tw: string | null,
+    ut: string | null,
+    bd: number | null,
+  ) =>
+    configs.find(
+      (c) =>
+        c.tower_id === tw &&
+        c.unit_type === ut &&
+        c.bedrooms === bd,
+    );
 
-  // Try tower-only match
+  // Try with tower
   if (towerId) {
-    const towerMatch = configs.find(
-      (c) => c.tower_id === towerId && c.unit_type == null,
-    );
-    if (towerMatch) return rowToConfig(towerMatch);
+    // (tower, type, bedrooms)
+    if (unitType && bedrooms != null) {
+      const m = find(towerId, unitType, bedrooms);
+      if (m) return rowToConfig(m);
+    }
+    // (tower, type, NULL)
+    if (unitType) {
+      const m = find(towerId, unitType, null);
+      if (m) return rowToConfig(m);
+    }
+    // (tower, NULL, bedrooms)
+    if (bedrooms != null) {
+      const m = find(towerId, null, bedrooms);
+      if (m) return rowToConfig(m);
+    }
+    // (tower, NULL, NULL)
+    const m = find(towerId, null, null);
+    if (m) return rowToConfig(m);
   }
 
-  // Try unit-type-only match
+  // Try without tower
+  // (NULL, type, bedrooms)
+  if (unitType && bedrooms != null) {
+    const m = find(null, unitType, bedrooms);
+    if (m) return rowToConfig(m);
+  }
+  // (NULL, type, NULL)
   if (unitType) {
-    const typeMatch = configs.find(
-      (c) => c.tower_id == null && c.unit_type === unitType,
-    );
-    if (typeMatch) return rowToConfig(typeMatch);
+    const m = find(null, unitType, null);
+    if (m) return rowToConfig(m);
   }
-
-  // Try project default
-  const projectDefault = configs.find(
-    (c) => c.tower_id == null && c.unit_type == null,
-  );
+  // (NULL, NULL, bedrooms)
+  if (bedrooms != null) {
+    const m = find(null, null, bedrooms);
+    if (m) return rowToConfig(m);
+  }
+  // (NULL, NULL, NULL)
+  const projectDefault = find(null, null, null);
   if (projectDefault) return rowToConfig(projectDefault);
 
   // Fallback to hardcoded defaults
@@ -123,9 +155,10 @@ export function useResolvedConfig(
   configs: CotizadorConfigRow[],
   towerId: string | null,
   unitType: string | null,
+  bedrooms: number | null = null,
 ): CotizadorConfig {
   return useMemo(
-    () => resolveConfig(configs, towerId, unitType),
-    [configs, towerId, unitType],
+    () => resolveConfig(configs, towerId, unitType, bedrooms),
+    [configs, towerId, unitType, bedrooms],
   );
 }

@@ -637,7 +637,9 @@ Already handled in Phase 3C — `rate_label` displayed next to each rate in the 
 
 ### 4H. Payment Tracking (DIFF-S06)
 
-**Deferred.** This is a B5-specific Excel feature (paid-to-date, remaining). The app already has payment tracking in the admin reservation detail. Adding it to the cotizador would duplicate functionality. **LOW priority — defer.**
+~~**Deferred.** This is a B5-specific Excel feature (paid-to-date, remaining). The app already has payment tracking in the admin reservation detail. Adding it to the cotizador would duplicate functionality. **LOW priority — defer.**~~
+
+**CLOSED (2026-03-26).** Payment tracking is not a valid cotizador concern. A cotizador is a stateless quoting/computation tool — embedding live payment state conflates distinct concerns and creates a data duplication anti-pattern (two sources of truth for payment status). The B5 Excel's "Pagado a la fecha"/"Por pagar" columns are an artifact of Excel being used as an all-in-one tool, not a feature to replicate. Actual payment tracking exists in admin reservation detail (`/admin/reservas/[id]`). These columns will be flagged for removal from the SSOT Excel files.
 
 ---
 
@@ -767,7 +769,7 @@ For each project, pick one real unit and compare:
 The cotizador is at zero diffs when:
 1. All 14 formula diffs produce identical results to Excel
 2. All 10 parameter diffs are resolved via per-project config
-3. All 8 structural gaps are present in the UI (except DIFF-S06, deferred)
+3. All 8 structural gaps are present in the UI (DIFF-S06 closed — not a valid cotizador concern)
 4. All 5 cross-project inconsistencies are modeled as config variations
 5. PCV and Carta de Pago use per-reservation terms (not hardcoded)
 6. Snapshot tests pass for all 10 in-scope cotizador variants (BEN×4, BLT×2, B5×2, CE×3 minus hidden, SE×1)
@@ -800,7 +802,7 @@ Every diff from `cotizador-diff-report-2026-03-26.md` mapped to the phase that c
 | **DIFF-S03** | Delivery date missing | 4C | Already in DB: `towers.delivery_date` |
 | **DIFF-S04** | Disclaimers missing | 1, 4D | `disclaimers[]` per config, rendered in footer |
 | **DIFF-S05** | Mantenimiento missing | 1, 4E | Config + computation |
-| **DIFF-S06** | Payment tracking missing | **DEFERRED** | LOW priority, duplicates admin functionality |
+| **DIFF-S06** | Payment tracking missing | **CLOSED** | Not a valid cotizador concern — data duplication anti-pattern; will be removed from SSOT Excel |
 | **DIFF-S07** | FHA rate labels missing | 1, 3C | `bank_rate_labels[]` per config |
 | **DIFF-S08** | Validity/date missing | 1, 4G | `validity_days` per config, date auto-generated |
 | **INCON-01** | Rounding not uniform | 1 | 4 boolean rounding flags per config row |
@@ -809,8 +811,8 @@ Every diff from `cotizador-diff-report-2026-03-26.md` mapped to the phase that c
 | **INCON-04** | IUSI treatment not uniform | 1 | `iusi_frequency` + `include_iusi_in_cuota` per config |
 | **INCON-05** | Escrituracion split not uniform | 1 | `inmueble_pct` + `timbres_rate` per config |
 
-**36 of 37 diffs closed. 1 deferred:**
-- **DIFF-S06** — Payment tracking (LOW priority, duplicates admin functionality)
+**37 of 37 diffs closed.**
+- ~~**DIFF-S06** — Payment tracking (LOW priority, duplicates admin functionality)~~ → **CLOSED (2026-03-26).** Not a valid cotizador concern — payment tracking is a data duplication anti-pattern in a stateless computation tool. Will be removed from SSOT Excel files.
 
 Previously deferred, now closed (migration 049, 2026-03-26):
 - ~~**DIFF-F13** — SE IUSI quarterly~~ → **CLOSED.** SE cotizador_config seeded with `iusi_frequency: 'quarterly'`.

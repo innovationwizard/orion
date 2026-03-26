@@ -48,11 +48,12 @@ export default function CotizadorClient() {
     [units, unitId],
   );
 
-  // Resolve config for selected unit (tower + unit_type)
+  // Resolve config for selected unit (tower + unit_type + bedrooms)
   const config = useResolvedConfig(
     configRows,
     selectedUnit?.tower_id ?? null,
     selectedUnit?.unit_type ?? null,
+    selectedUnit?.bedrooms ?? null,
   );
 
   // Client/salesperson identity (optional, for print output)
@@ -63,12 +64,10 @@ export default function CotizadorClient() {
   const [enganchePctOverride, setEnganchePctOverride] = useState<number | null>(null);
   const [reservaOverride, setReservaOverride] = useState<number | null>(null);
   const [installmentMonthsOverride, setInstallmentMonthsOverride] = useState<number | null>(null);
-  const [inmueblePctOverride, setInmueblePctOverride] = useState<number | null>(null);
 
   const enganchePct = enganchePctOverride ?? config.enganche_pct;
   const reserva = reservaOverride ?? config.reserva_default;
   const installmentMonths = installmentMonthsOverride ?? config.installment_months;
-  const inmueblePct = inmueblePctOverride ?? config.inmueble_pct;
 
   // Computations
   const price = selectedUnit?.price_list ?? 0;
@@ -84,8 +83,8 @@ export default function CotizadorClient() {
   );
 
   const escrituracion = useMemo(
-    () => computeEscrituracion(price, { inmueble_pct: inmueblePct, timbres_rate: config.timbres_rate, use_pretax_extraction: config.use_pretax_extraction }),
-    [price, inmueblePct, config.timbres_rate, config.use_pretax_extraction],
+    () => computeEscrituracion(price, { inmueble_pct: config.inmueble_pct, timbres_rate: config.timbres_rate, use_pretax_extraction: config.use_pretax_extraction }),
+    [price, config.inmueble_pct, config.timbres_rate, config.use_pretax_extraction],
   );
 
   const mantenimiento = useMemo(
@@ -117,7 +116,6 @@ export default function CotizadorClient() {
     setEnganchePctOverride(null);
     setReservaOverride(null);
     setInstallmentMonthsOverride(null);
-    setInmueblePctOverride(null);
     updateParam("unit", "");
   }
 
@@ -304,12 +302,7 @@ export default function CotizadorClient() {
           <FinancingMatrix scenarios={financing} config={config} />
 
           {/* Escrituracion */}
-          <EscrituracionPanel
-            result={escrituracion}
-            config={config}
-            inmueblePct={inmueblePct}
-            onInmueblePctChange={setInmueblePctOverride}
-          />
+          <EscrituracionPanel result={escrituracion} config={config} />
 
           {/* Mantenimiento */}
           {mantenimiento != null && (
@@ -380,15 +373,16 @@ const printStyles = `
     /* Show print-only elements */
     .cotizador-print-footer { display: block !important; }
 
-    /* Page setup */
+    /* Page setup — tight margins to maximize content area */
     @page {
       size: letter;
-      margin: 1.5cm 2cm;
+      margin: 1cm 1.5cm;
     }
 
     body {
       margin: 0;
       padding: 0;
+      font-size: 8pt !important;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
@@ -396,7 +390,7 @@ const printStyles = `
     .cotizador-page {
       max-width: none !important;
       padding: 0 !important;
-      gap: 12px !important;
+      gap: 6px !important;
     }
 
     .cotizador-page * {
@@ -404,22 +398,52 @@ const printStyles = `
       border-color: #ccc !important;
     }
 
+    .cotizador-page header {
+      margin-bottom: 0 !important;
+    }
+
+    .cotizador-page h1 {
+      font-size: 14pt !important;
+    }
+
+    .cotizador-page h2 {
+      font-size: 8pt !important;
+      margin-bottom: 2px !important;
+    }
+
     .cotizador-page section {
       background: #fff !important;
       box-shadow: none !important;
       border: 1px solid #ddd !important;
-      border-radius: 4px !important;
-      padding: 8px 12px !important;
+      border-radius: 3px !important;
+      padding: 5px 8px !important;
+      gap: 4px !important;
       break-inside: avoid;
     }
 
     .cotizador-page table {
-      font-size: 9pt !important;
+      font-size: 8pt !important;
+    }
+
+    .cotizador-page table th,
+    .cotizador-page table td {
+      padding: 2px 4px !important;
+    }
+
+    /* Compact detail grids */
+    .cotizador-page section > div {
+      gap: 4px !important;
     }
 
     /* Smaller text for disclaimers in print */
     .cotizador-disclaimers {
-      font-size: 8pt !important;
+      font-size: 7pt !important;
+      margin-top: 0 !important;
+    }
+
+    .cotizador-disclaimers p {
+      margin: 0 !important;
+      line-height: 1.2 !important;
     }
 
     /* Hide interactive controls in print */
@@ -433,6 +457,12 @@ const printStyles = `
     /* Show values as text instead of inputs */
     label {
       display: block !important;
+    }
+
+    /* Print footer compact */
+    .cotizador-print-footer > div {
+      margin-top: 12px !important;
+      padding-top: 8px !important;
     }
   }
 `;

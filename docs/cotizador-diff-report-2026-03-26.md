@@ -463,6 +463,8 @@ These turn the cotizador into a mini payment tracker.
 
 **App:** No payment tracking. Cotizador is computation-only.
 
+**Resolution (2026-03-26): CLOSED — Not a valid diff.** Payment tracking does not belong in a cotizador. A cotizador is a stateless quoting/computation tool; embedding live payment state into it conflates two distinct concerns and creates a data duplication anti-pattern. Actual payment tracking already exists in the admin reservation detail (`/admin/reservas/[id]`). The "Pagado a la fecha" / "Por pagar" columns in B5's Excel are an artifact of Excel being used as an all-in-one tool — not a feature to replicate. This diff will be flagged for removal from the SSOT Excel files.
+
 ### DIFF-S07: FHA Rate Notes / Bank Program Labels (Missing)
 
 **Excel (BEN):** Shows labeled rate tiers:
@@ -559,7 +561,7 @@ These are differences between Excel tabs that the app must handle as per-project
 | DIFF-S03 | Delivery date missing | **MEDIUM** | Key selling point missing |
 | DIFF-S04 | Disclaimers missing | **HIGH** | Legal protection missing |
 | DIFF-S05 | Mantenimiento missing | **MEDIUM** | Varies by project |
-| DIFF-S06 | Payment tracking missing | **LOW** | Nice-to-have, not core |
+| DIFF-S06 | Payment tracking missing | ~~LOW~~ **CLOSED** | Not a valid cotizador concern — data duplication anti-pattern; will be removed from SSOT Excel |
 | DIFF-S07 | FHA rate labels missing | **MEDIUM** | Context for rate choices |
 | DIFF-S08 | Validity/date missing | **MEDIUM** | Professional document standard |
 
@@ -589,5 +591,5 @@ All 14 formula diffs, 7 of 8 structural diffs, and all 5 inconsistencies were cl
 - **DIFF-F13** (SE IUSI quarterly) — **CLOSED.** Migration 049 seeds a `cotizador_configs` row for Santa Elena with `iusi_frequency: 'quarterly'`, `include_iusi_in_cuota: false`, `currency: 'USD'`.
 - **SE-specific currency/parameter diffs** — **CLOSED.** SE config row includes: `currency: 'USD'`, `enganche_pct: 0.3000`, `reserva_default: 10000.00`, `installment_months: 15`, `bank_rates: {0.0850}`, `plazos_years: {25,20,15,10,5}`, `seguro_enabled: true`, `include_seguro_in_cuota: true`, `income_multiplier: 2.00`, `income_base: 'cuota_mensual'`.
 
-### Current status: **36 of 37 diffs closed.**
-- **DIFF-S06** (Payment tracking) — **DEFERRED.** LOW priority, duplicates admin functionality.
+### Current status: **37 of 37 diffs closed.**
+- ~~**DIFF-S06** (Payment tracking) — DEFERRED.~~ → **CLOSED (2026-03-26).** Payment tracking does not belong in a cotizador — a cotizador is a stateless computation tool. Duplicating payment state across systems is a data integrity anti-pattern. Existing payment tracking lives in admin reservation detail. This column will be removed from the SSOT Excel files.
