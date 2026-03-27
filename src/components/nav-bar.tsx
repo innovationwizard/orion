@@ -28,6 +28,7 @@ const NON_VENTAS_LINKS: (NavLink | "divider")[] = [
   { href: "/admin/audit", label: "Auditoría", roles: ADMIN_ROLES },
   { href: "/admin/lead-sources", label: "Fuentes", roles: ["master", "torredecontrol", "marketing"] },
   { href: "/admin/cotizador-config", label: "Config Cotizador", roles: ADMIN_ROLES },
+  { href: "/admin/sync", label: "Sync", roles: ADMIN_ROLES },
 ];
 
 const VENTAS_LINKS: (NavLink | "divider")[] = [

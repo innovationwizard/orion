@@ -40,3 +40,37 @@ export async function logAudit(user: User, event: AuditEvent): Promise<void> {
     console.error("[audit] Unexpected error:", err);
   }
 }
+
+/** System actor UUID — used for automated/cron audit events. */
+const SYSTEM_ACTOR_ID = "00000000-0000-0000-0000-000000000000";
+
+/**
+ * Log an audit event from a system actor (no User object needed).
+ * Used by cron jobs, sync processes, and other automated operations.
+ * Fire-and-forget: failure does NOT block the primary operation.
+ */
+export async function logAuditSystem(event: AuditEvent): Promise<void> {
+  try {
+    const supabase = createAdminClient();
+
+    const { error } = await supabase.from("audit_events").insert({
+      actor_id: SYSTEM_ACTOR_ID,
+      actor_role: "system",
+      actor_email: null,
+      event_type: event.eventType,
+      resource_type: event.resourceType,
+      resource_id: event.resourceId ?? null,
+      resource_label: event.resourceLabel ?? null,
+      details: event.details ?? null,
+      ip_address: null,
+      http_method: null,
+      http_path: null,
+    });
+
+    if (error) {
+      console.error("[audit-system] Failed to log event:", error.message, event.eventType);
+    }
+  } catch (err) {
+    console.error("[audit-system] Unexpected error:", err);
+  }
+}

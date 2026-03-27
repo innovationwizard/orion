@@ -28,7 +28,8 @@ export type Resource =
   | "creditos"
   | "analytics"
   | "lead_sources"
-  | "cotizador_config";
+  | "cotizador_config"
+  | "sync";
 
 export type Action =
   | "view"
@@ -180,6 +181,10 @@ export const PERMISSIONS: Record<Resource, Partial<Record<Action, Role[]>>> = {
     create: A,
     update: A,
     delete: A,
+  },
+  sync: {
+    view: A,
+    create: A, // manual trigger
   },
 };
 
