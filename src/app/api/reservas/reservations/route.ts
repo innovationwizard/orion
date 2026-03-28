@@ -76,6 +76,31 @@ export async function POST(request: NextRequest) {
     return jsonError(500, error.message);
   }
 
+  // Store co-buyer phone numbers (RPC only sets phone on primary buyer)
+  if (data && input.client_phones && input.client_phones.length > 1) {
+    const { data: links } = await supabase
+      .from("reservation_clients")
+      .select("client_id, document_order")
+      .eq("reservation_id", data)
+      .order("document_order", { ascending: true });
+
+    if (links && links.length > 1) {
+      for (let i = 1; i < links.length; i++) {
+        const phone = input.client_phones[i];
+        if (phone) {
+          const { error: phoneErr } = await supabase
+            .from("rv_clients")
+            .update({ phone })
+            .eq("id", links[i].client_id);
+
+          if (phoneErr) {
+            console.error(`[POST /api/reservas/reservations] Failed to set phone on co-buyer ${i}:`, phoneErr);
+          }
+        }
+      }
+    }
+  }
+
   // Store CUI on the primary client record
   if (input.client_dpi && data) {
     const { data: primaryLink } = await supabase

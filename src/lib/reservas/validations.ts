@@ -12,6 +12,7 @@ export const submitReservationSchema = z.object({
     .array(z.string().min(1, "Nombre de cliente requerido"))
     .min(1, "Al menos un nombre de cliente es requerido"),
   client_phone: z.string().nullable().default(null),
+  client_phones: z.array(z.string().nullable()).optional().default([]),
   deposit_amount: z.number().positive("Monto debe ser positivo").nullable().default(null),
   deposit_date: z
     .string()

@@ -3,11 +3,15 @@
 import { formatCurrency, formatDate, RECEIPT_TYPE_LABELS } from "@/lib/reservas/constants";
 import type { UnitFull, ReceiptData, RvReceiptType } from "@/lib/reservas/types";
 
+interface ClientEntry {
+  name: string;
+  phone: string;
+}
+
 interface Props {
   unit: UnitFull;
   salesperson: { display_name: string };
-  clientNames: string[];
-  clientPhone: string;
+  clients: ClientEntry[];
   receipt: ReceiptData;
   leadSource: string;
   notes: string;
@@ -19,8 +23,7 @@ interface Props {
 export default function ConfirmationModal({
   unit,
   salesperson,
-  clientNames,
-  clientPhone,
+  clients,
   receipt,
   leadSource,
   notes,
@@ -51,11 +54,25 @@ export default function ConfirmationModal({
             <SummaryRow label="Modelo" value={`${unit.unit_type} · ${unit.bedrooms} dorm.`} />
             <SummaryRow label="Precio" value={formatCurrency(unit.price_list)} />
             <SummaryRow label="Asesor" value={salesperson.display_name} />
-            <SummaryRow
-              label={clientNames.length > 1 ? "Clientes" : "Cliente"}
-              value={clientNames.join(", ")}
-            />
-            {clientPhone && <SummaryRow label="Teléfono" value={clientPhone} />}
+            {/* Buyers */}
+            <div className="grid gap-1.5">
+              <span className="text-muted text-sm">
+                {clients.length > 1 ? "Compradores" : "Comprador"}
+              </span>
+              {clients.map((c, i) => (
+                <div key={i} className="flex items-baseline justify-between gap-2 pl-2">
+                  <span className="text-[11px] text-muted shrink-0">
+                    {i === 0 ? "Principal" : `Co-comp. ${i}`}
+                  </span>
+                  <span className="font-medium text-sm text-right">
+                    {c.name}
+                    {c.phone.trim() ? (
+                      <span className="text-muted font-normal"> · {c.phone.trim()}</span>
+                    ) : null}
+                  </span>
+                </div>
+              ))}
+            </div>
             {receipt.depositAmount && (
               <SummaryRow
                 label="Monto depósito"

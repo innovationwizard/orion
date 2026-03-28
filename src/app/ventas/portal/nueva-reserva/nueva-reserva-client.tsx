@@ -27,9 +27,13 @@ function getInitialParam(key: string): string {
   return new URLSearchParams(window.location.search).get(key) ?? "";
 }
 
+interface ClientEntry {
+  name: string;
+  phone: string;
+}
+
 interface FormState {
-  clientNames: string[];
-  clientPhone: string;
+  clients: ClientEntry[];
   leadSource: string;
   notes: string;
   dpiFile: File | null;
@@ -50,8 +54,7 @@ interface FormState {
 }
 
 const INITIAL_STATE: FormState = {
-  clientNames: [""],
-  clientPhone: "",
+  clients: [{ name: "", phone: "" }],
   leadSource: "",
   notes: "",
   dpiFile: null,
@@ -133,17 +136,25 @@ export default function NuevaReservaClient() {
 
   const draftKey = unit ? `${DRAFT_KEY_PREFIX}${unit.id}` : null;
 
-  // Restore draft
+  // Restore draft (handles old clientNames+clientPhone format)
   useEffect(() => {
     if (!draftKey) return;
     try {
       const raw = localStorage.getItem(draftKey);
       if (raw) {
         const draft = JSON.parse(raw);
+        let clients: ClientEntry[] | undefined;
+        if (Array.isArray(draft.clients)) {
+          clients = draft.clients;
+        } else if (Array.isArray(draft.clientNames)) {
+          clients = draft.clientNames.map((n: string, i: number) => ({
+            name: n,
+            phone: i === 0 ? (draft.clientPhone ?? "") : "",
+          }));
+        }
         setForm((prev) => ({
           ...prev,
-          clientNames: draft.clientNames ?? prev.clientNames,
-          clientPhone: draft.clientPhone ?? prev.clientPhone,
+          clients: clients ?? prev.clients,
           leadSource: draft.leadSource ?? prev.leadSource,
           notes: draft.notes ?? prev.notes,
           depositAmount: draft.depositAmount ?? prev.depositAmount,
@@ -166,8 +177,7 @@ export default function NuevaReservaClient() {
         localStorage.setItem(
           draftKey,
           JSON.stringify({
-            clientNames: form.clientNames,
-            clientPhone: form.clientPhone,
+            clients: form.clients,
             leadSource: form.leadSource,
             notes: form.notes,
             depositAmount: form.depositAmount,
@@ -184,8 +194,7 @@ export default function NuevaReservaClient() {
     return () => clearTimeout(timer);
   }, [
     draftKey,
-    form.clientNames,
-    form.clientPhone,
+    form.clients,
     form.leadSource,
     form.notes,
     form.depositAmount,
@@ -210,26 +219,29 @@ export default function NuevaReservaClient() {
     [],
   );
 
-  // Client name management
-  const updateClientName = useCallback((index: number, value: string) => {
-    setForm((prev) => {
-      const names = [...prev.clientNames];
-      names[index] = value;
-      return { ...prev, clientNames: names };
-    });
-  }, []);
+  // Client management
+  const updateClient = useCallback(
+    (index: number, field: keyof ClientEntry, value: string) => {
+      setForm((prev) => {
+        const clients = [...prev.clients];
+        clients[index] = { ...clients[index], [field]: value };
+        return { ...prev, clients };
+      });
+    },
+    [],
+  );
 
   const addClient = useCallback(() => {
     setForm((prev) => ({
       ...prev,
-      clientNames: [...prev.clientNames, ""],
+      clients: [...prev.clients, { name: "", phone: "" }],
     }));
   }, []);
 
   const removeClient = useCallback((index: number) => {
     setForm((prev) => ({
       ...prev,
-      clientNames: prev.clientNames.filter((_, i) => i !== index),
+      clients: prev.clients.filter((_, i) => i !== index),
     }));
   }, []);
 
@@ -326,12 +338,12 @@ export default function NuevaReservaClient() {
   }, []);
 
   // Validation
-  const validClientNames = form.clientNames.filter(
-    (n) => n.trim().length > 0,
-  );
+  const validClients = form.clients.filter((c) => c.name.trim().length > 0);
+  const validClientNames = validClients.map((c) => c.name.trim());
+  const validClientPhones = validClients.map((c) => c.phone.trim() || null);
   const canSubmit =
     !!unit &&
-    validClientNames.length > 0 &&
+    validClients.length > 0 &&
     form.dpiFile !== null &&
     form.receiptFile !== null &&
     !!form.dpiCui;
@@ -367,7 +379,8 @@ export default function NuevaReservaClient() {
         unit_id: unit.id,
         salesperson_id: salesperson.id,
         client_names: validClientNames,
-        client_phone: form.clientPhone.trim() || null,
+        client_phone: validClientPhones[0] ?? null,
+        client_phones: validClientPhones,
         deposit_amount: form.depositAmount
           ? parseFloat(form.depositAmount)
           : null,
@@ -416,6 +429,7 @@ export default function NuevaReservaClient() {
     form,
     salesperson.id,
     validClientNames,
+    validClientPhones,
     enqueue,
     draftKey,
   ]);
@@ -728,28 +742,42 @@ export default function NuevaReservaClient() {
             {/* Client info */}
             <fieldset className="grid gap-3">
               <legend className="text-sm font-semibold text-text-primary mb-1">
-                Datos del cliente
+                Compradores
               </legend>
-              {form.clientNames.map((name, i) => (
-                <div key={i} className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder={
-                      i === 0 ? "Nombre del cliente *" : "Co-comprador"
-                    }
-                    value={name}
-                    onChange={(e) => updateClientName(i, e.target.value)}
-                    className="flex-1 px-3 py-2.5 rounded-lg border border-border bg-card text-text-primary text-sm placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary/30"
-                  />
+              {form.clients.map((client, i) => (
+                <div
+                  key={i}
+                  className="rounded-xl border border-border bg-card p-3 grid gap-2 relative"
+                >
+                  <span className="text-[11px] font-semibold text-muted uppercase tracking-wide">
+                    {i === 0 ? "Comprador principal" : `Co-comprador ${i}`}
+                  </span>
                   {i > 0 && (
                     <button
                       type="button"
-                      className="shrink-0 w-10 h-10 rounded-lg border border-border bg-card flex items-center justify-center text-muted hover:text-red-500 transition-colors"
+                      className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-red-500/10 text-red-500 text-xs flex items-center justify-center hover:bg-red-500/20 transition-colors"
                       onClick={() => removeClient(i)}
+                      aria-label={`Eliminar co-comprador ${i}`}
                     >
                       &times;
                     </button>
                   )}
+                  <div className="grid sm:grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      placeholder="Nombre completo *"
+                      value={client.name}
+                      onChange={(e) => updateClient(i, "name", e.target.value)}
+                      className="px-3 py-2.5 rounded-lg border border-border bg-background text-text-primary text-sm placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    />
+                    <input
+                      type="tel"
+                      placeholder="Teléfono (opcional)"
+                      value={client.phone}
+                      onChange={(e) => updateClient(i, "phone", e.target.value)}
+                      className="px-3 py-2.5 rounded-lg border border-border bg-background text-text-primary text-sm placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    />
+                  </div>
                 </div>
               ))}
               <button
@@ -759,13 +787,6 @@ export default function NuevaReservaClient() {
               >
                 + Agregar co-comprador
               </button>
-              <input
-                type="tel"
-                placeholder="Teléfono (opcional)"
-                value={form.clientPhone}
-                onChange={(e) => update("clientPhone", e.target.value)}
-                className="px-3 py-2.5 rounded-lg border border-border bg-card text-text-primary text-sm placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-primary/30"
-              />
             </fieldset>
 
             {/* Deposit data */}
@@ -923,8 +944,7 @@ export default function NuevaReservaClient() {
         <ConfirmationModal
           unit={unit}
           salesperson={salesperson}
-          clientNames={validClientNames}
-          clientPhone={form.clientPhone}
+          clients={validClients}
           receipt={receiptData}
           leadSource={form.leadSource}
           notes={form.notes}
