@@ -52,8 +52,8 @@ export function SyncClient() {
 
   return (
     <div style={{ maxWidth: 960, margin: "0 auto", padding: "2rem 1rem" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
-        <h1 style={{ fontSize: "1.5rem", fontWeight: 700 }}>Sincronización OneDrive</h1>
+      <h1 style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: "1rem" }}>Sincronización OneDrive</h1>
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "1.5rem" }}>
         <button
           onClick={triggerSync}
           disabled={syncing}
