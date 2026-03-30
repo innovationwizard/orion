@@ -5,12 +5,14 @@
  * POST — trigger manual sync (admin only)
  */
 
-import { requireRole, ADMIN_ROLES } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 import { jsonError, jsonOk } from "@/lib/api";
 import { createAdminClient } from "@/lib/supabase/admin";
 
+const MASTER_ONLY: ["master"] = ["master"];
+
 export async function GET() {
-  const auth = await requireRole(ADMIN_ROLES);
+  const auth = await requireRole(MASTER_ONLY);
   if ("response" in auth && auth.response) return auth.response;
 
   const supabase = createAdminClient();
@@ -30,11 +32,10 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const auth = await requireRole(ADMIN_ROLES);
+  const auth = await requireRole(MASTER_ONLY);
   if ("response" in auth && auth.response) return auth.response;
 
   // Forward to the cron route's POST handler
-  const cronUrl = new URL("/api/cron/onedrive-sync", request.url);
   const { POST: cronPost } = await import("@/app/api/cron/onedrive-sync/route");
   return cronPost(request);
 }

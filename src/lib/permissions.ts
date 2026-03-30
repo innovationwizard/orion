@@ -183,8 +183,8 @@ export const PERMISSIONS: Record<Resource, Partial<Record<Action, Role[]>>> = {
     delete: A,
   },
   sync: {
-    view: A,
-    create: A, // manual trigger
+    view: M,
+    create: M, // manual trigger
   },
 };
 
