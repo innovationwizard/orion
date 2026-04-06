@@ -10,7 +10,6 @@ import {
   computeEnganche,
   computeFinancingMatrix,
   computeEscrituracion,
-  computeMantenimiento,
 } from "@/lib/reservas/cotizador";
 import { formatCurrency, formatDate } from "@/lib/reservas/constants";
 import NavBar from "@/components/nav-bar";
@@ -94,11 +93,6 @@ export default function CotizadorClient() {
   const escrituracion = useMemo(
     () => computeEscrituracion(price, { inmueble_pct: config.inmueble_pct, timbres_rate: config.timbres_rate, use_pretax_extraction: config.use_pretax_extraction }),
     [price, config.inmueble_pct, config.timbres_rate, config.use_pretax_extraction],
-  );
-
-  const mantenimiento = useMemo(
-    () => computeMantenimiento(selectedUnit?.area_total ?? 0, config.mantenimiento_per_m2),
-    [selectedUnit?.area_total, config.mantenimiento_per_m2],
   );
 
   const currentProject = projects.find((p) => p.project_slug === projectSlug);
@@ -320,20 +314,6 @@ export default function CotizadorClient() {
 
           {/* Escrituracion */}
           <EscrituracionPanel result={escrituracion} config={config} />
-
-          {/* Mantenimiento */}
-          {mantenimiento != null && (
-            <section className="bg-card rounded-2xl shadow-card border border-border p-5 grid gap-2">
-              <h2 className="text-sm font-semibold uppercase tracking-wider text-muted">
-                {config.mantenimiento_label ?? "Cuota de mantenimiento"}
-              </h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
-                <Detail label="Área total" value={`${selectedUnit.area_total ?? 0} m²`} />
-                <Detail label="Precio / m²" value={formatCurrency(config.mantenimiento_per_m2, config.currency)} />
-                <Detail label="Cuota mensual" value={formatCurrency(mantenimiento, config.currency)} />
-              </div>
-            </section>
-          )}
 
           {/* Disclaimers */}
           {config.disclaimers.length > 0 && (
