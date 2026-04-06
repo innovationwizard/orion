@@ -32,8 +32,16 @@ export default function FinancingMatrix({ scenarios, config }: Props) {
   const custom = useMemo(() => {
     if (customYears == null || customYears <= 0 || monto <= 0 || rate == null) return null;
     const cuota_banco = Math.round(pmt(rate, customYears, monto));
-    return { cuota_banco };
-  }, [customYears, monto, rate]);
+    const ref = lookup.get(`${rate}-${plazos_years[0]}`);
+    let total_monthly = cuota_banco;
+    if (ref) {
+      if (config.include_iusi_in_cuota) total_monthly += ref.iusi_monthly;
+      if (config.include_seguro_in_cuota) total_monthly += ref.seguro_monthly;
+    }
+    const income_base = config.income_base === "cuota_banco" ? cuota_banco : total_monthly;
+    const ingreso_requerido = Math.round(income_base * config.income_multiplier);
+    return { cuota_banco, ingreso_requerido };
+  }, [customYears, monto, rate, plazos_years, lookup, config.include_iusi_in_cuota, config.include_seguro_in_cuota, config.income_base, config.income_multiplier]);
 
   return (
     <section className="bg-card rounded-2xl shadow-card border border-border p-5 grid gap-4">
@@ -109,6 +117,33 @@ export default function FinancingMatrix({ scenarios, config }: Props) {
                 )}
               </td>
             </tr>
+            <tr>
+              {plazos_years.map((plazo) => {
+                const s = lookup.get(`${rate}-${plazo}`);
+                return (
+                  <td key={plazo} className="py-1 px-2 text-center">
+                    {s ? (
+                      <div>
+                        <div className="text-[10px] text-muted">Ingreso mínimo</div>
+                        <span className="text-xs text-text-primary">{formatCurrency(s.ingreso_requerido, config.currency)}</span>
+                      </div>
+                    ) : (
+                      "—"
+                    )}
+                  </td>
+                );
+              })}
+              <td className="py-1 px-2 text-center">
+                {custom ? (
+                  <div>
+                    <div className="text-[10px] text-muted">Ingreso mínimo</div>
+                    <span className="text-xs text-text-primary">{formatCurrency(custom.ingreso_requerido, config.currency)}</span>
+                  </div>
+                ) : (
+                  <span className="text-muted">—</span>
+                )}
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -127,10 +162,6 @@ export default function FinancingMatrix({ scenarios, config }: Props) {
               value={formatCurrency(firstScenario.seguro_monthly, config.currency)}
             />
           )}
-          <Detail
-            label="Ingreso requerido mínimo"
-            value={formatCurrency(firstScenario.ingreso_requerido, config.currency)}
-          />
           <Detail label="Relación Cuota Ingreso" value={`${Math.round((1 / config.income_multiplier) * 100)}%`} />
         </div>
       )}
