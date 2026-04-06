@@ -316,6 +316,7 @@ export function computeEscrituracion(
 ): EscrituracionResult {
   const pct_inmueble = config.inmueble_pct;
   const pct_acciones = +(1 - pct_inmueble).toFixed(4); // avoid float noise
+  const r2 = (n: number) => Math.round(n * 100) / 100;
 
   let valor_inmueble_sin_iva: number;
   let valor_acciones: number;
@@ -329,17 +330,17 @@ export function computeEscrituracion(
       pct_inmueble * (1 + COTIZADOR_DEFAULTS.IVA_RATE) +
       pct_acciones * (1 + config.timbres_rate);
     const base = price / tax_factor;
-    valor_inmueble_sin_iva = Math.round(base * pct_inmueble);
-    valor_acciones = Math.round(base * pct_acciones);
+    valor_inmueble_sin_iva = r2(base * pct_inmueble);
+    valor_acciones = r2(base * pct_acciones);
   } else {
-    valor_inmueble_sin_iva = Math.round(price * pct_inmueble);
-    valor_acciones = Math.round(price * pct_acciones);
+    valor_inmueble_sin_iva = r2(price * pct_inmueble);
+    valor_acciones = r2(price * pct_acciones);
   }
 
-  const iva_inmueble = Math.round(valor_inmueble_sin_iva * COTIZADOR_DEFAULTS.IVA_RATE);
-  const timbres_acciones = Math.round(valor_acciones * config.timbres_rate);
-  const valor_inmueble_con_iva = valor_inmueble_sin_iva + iva_inmueble;
-  const valor_acciones_con_timbres = valor_acciones + timbres_acciones;
+  const iva_inmueble = r2(valor_inmueble_sin_iva * COTIZADOR_DEFAULTS.IVA_RATE);
+  const timbres_acciones = r2(valor_acciones * config.timbres_rate);
+  const valor_inmueble_con_iva = r2(valor_inmueble_sin_iva + iva_inmueble);
+  const valor_acciones_con_timbres = r2(valor_acciones + timbres_acciones);
 
   return {
     pct_inmueble,
@@ -350,8 +351,8 @@ export function computeEscrituracion(
     valor_acciones,
     timbres_acciones,
     valor_acciones_con_timbres,
-    total_sin_impuesto: valor_inmueble_sin_iva + valor_acciones,
-    total_con_impuesto: valor_inmueble_con_iva + valor_acciones_con_timbres,
+    total_sin_impuesto: r2(valor_inmueble_sin_iva + valor_acciones),
+    total_con_impuesto: r2(valor_inmueble_con_iva + valor_acciones_con_timbres),
   };
 }
 
