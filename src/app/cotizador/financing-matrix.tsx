@@ -12,6 +12,7 @@ type Props = {
 
 export default function FinancingMatrix({ scenarios, config }: Props) {
   const [customYears, setCustomYears] = useState<number | null>(null);
+  const [selectedRateIdx, setSelectedRateIdx] = useState(0);
 
   if (scenarios.length === 0) return null;
 
@@ -24,36 +25,44 @@ export default function FinancingMatrix({ scenarios, config }: Props) {
   }
 
   const monto = scenarios[0]?.monto_financiar ?? 0;
-  const firstScenario = scenarios[0];
+  const rate = bank_rates[selectedRateIdx];
+  const firstScenario = lookup.get(`${rate}-${plazos_years[0]}`);
 
-  // Compute custom-column scenarios per rate
-  const customByRate = useMemo(() => {
-    if (customYears == null || customYears <= 0 || monto <= 0) return null;
-    const map = new Map<number, { cuota_banco: number; total_monthly: number }>();
-    for (const rate of bank_rates) {
-      const ref = lookup.get(`${rate}-${plazos_years[0]}`);
-      if (!ref) continue;
-      const cuota_banco = Math.round(pmt(rate, customYears, monto));
-      let total_monthly = cuota_banco;
-      if (config.include_iusi_in_cuota) total_monthly += ref.iusi_monthly;
-      if (config.include_seguro_in_cuota) total_monthly += ref.seguro_monthly;
-      map.set(rate, { cuota_banco, total_monthly });
-    }
-    return map;
-  }, [customYears, monto, bank_rates, plazos_years, lookup, config.include_iusi_in_cuota, config.include_seguro_in_cuota]);
+  // Compute custom-column scenario for selected rate
+  const custom = useMemo(() => {
+    if (customYears == null || customYears <= 0 || monto <= 0 || rate == null) return null;
+    const cuota_banco = Math.round(pmt(rate, customYears, monto));
+    return { cuota_banco };
+  }, [customYears, monto, rate]);
 
   return (
     <section className="bg-card rounded-2xl shadow-card border border-border p-5 grid gap-4">
-      <div>
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted">Financiamiento bancario</h2>
-        <p className="text-xs text-muted mt-1">Monto a financiar: {formatCurrency(monto, config.currency)}</p>
+      <div className="flex items-start justify-between gap-3 flex-wrap">
+        <div>
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted">Financiamiento bancario</h2>
+          <p className="text-xs text-muted mt-1">Monto a financiar: {formatCurrency(monto, config.currency)}</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <label htmlFor="rate-select" className="text-xs text-muted whitespace-nowrap">Tasa</label>
+          <select
+            id="rate-select"
+            value={selectedRateIdx}
+            onChange={(e) => setSelectedRateIdx(Number(e.target.value))}
+            className="text-sm bg-surface border border-border rounded-lg px-2 py-1 text-text-primary focus:outline-none focus:ring-1 focus:ring-brand"
+          >
+            {bank_rates.map((r, i) => (
+              <option key={r} value={i}>
+                {(r * 100).toFixed(2)}%{bank_rate_labels[i] ? ` — ${bank_rate_labels[i]}` : ""}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border">
-              <th className="text-left py-2 px-2 text-xs font-semibold uppercase tracking-wider text-muted">Tasa</th>
               {plazos_years.map((p) => (
                 <th key={p} className="text-center py-2 px-2 text-xs font-semibold uppercase tracking-wider text-muted">
                   {p} años
@@ -79,48 +88,27 @@ export default function FinancingMatrix({ scenarios, config }: Props) {
             </tr>
           </thead>
           <tbody>
-            {bank_rates.map((rate, ri) => {
-              const custom = customByRate?.get(rate);
-              return (
-                <tr key={rate} className="border-b border-border/50">
-                  <td className="py-2 px-2 font-medium">
-                    <div>{(rate * 100).toFixed(2)}%</div>
-                    {bank_rate_labels[ri] && (
-                      <div className="text-[10px] text-muted font-normal">{bank_rate_labels[ri]}</div>
-                    )}
-                  </td>
-                  {plazos_years.map((plazo) => {
-                    const s = lookup.get(`${rate}-${plazo}`);
-                    return (
-                      <td key={plazo} className="py-2 px-2 text-center">
-                        {s ? (
-                          <div className="grid gap-0.5">
-                            <span className="font-semibold text-text-primary">{formatCurrency(s.total_monthly, config.currency)}</span>
-                            <span className="text-[10px] text-muted">
-                              Cuota {formatCurrency(s.cuota_banco, config.currency)}
-                            </span>
-                          </div>
-                        ) : (
-                          "—"
-                        )}
-                      </td>
-                    );
-                  })}
-                  <td className="py-2 px-2 text-center">
-                    {custom ? (
-                      <div className="grid gap-0.5">
-                        <span className="font-semibold text-text-primary">{formatCurrency(custom.total_monthly, config.currency)}</span>
-                        <span className="text-[10px] text-muted">
-                          Cuota {formatCurrency(custom.cuota_banco, config.currency)}
-                        </span>
-                      </div>
+            <tr className="border-b border-border/50">
+              {plazos_years.map((plazo) => {
+                const s = lookup.get(`${rate}-${plazo}`);
+                return (
+                  <td key={plazo} className="py-2 px-2 text-center">
+                    {s ? (
+                      <span className="font-semibold text-text-primary">{formatCurrency(s.cuota_banco, config.currency)}</span>
                     ) : (
-                      <span className="text-muted">—</span>
+                      "—"
                     )}
                   </td>
-                </tr>
-              );
-            })}
+                );
+              })}
+              <td className="py-2 px-2 text-center">
+                {custom ? (
+                  <span className="font-semibold text-text-primary">{formatCurrency(custom.cuota_banco, config.currency)}</span>
+                ) : (
+                  <span className="text-muted">—</span>
+                )}
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
