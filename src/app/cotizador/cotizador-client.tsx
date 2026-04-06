@@ -181,8 +181,8 @@ export default function CotizadorClient() {
         </div>
       </section>
 
-      {/* Unit selector */}
-      <section className="bg-card rounded-2xl shadow-card border border-border p-5 grid gap-4">
+      {/* Unit selector — hidden in print */}
+      <section className="cotizador-no-print bg-card rounded-2xl shadow-card border border-border p-5 grid gap-4">
         <h2 className="text-sm font-semibold uppercase tracking-wider text-muted">Seleccionar unidad</h2>
         <div className="flex flex-wrap gap-3">
           <select
@@ -245,7 +245,7 @@ export default function CotizadorClient() {
       {selectedUnit && price > 0 && (
         <>
           {/* Unit summary */}
-          <section className="bg-card rounded-2xl shadow-card border border-border p-5 grid gap-3">
+          <section className="cotizador-unit-summary bg-card rounded-2xl shadow-card border border-border p-5 grid gap-3">
             <h2 className="text-sm font-semibold uppercase tracking-wider text-muted">Unidad</h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
               <Detail label="Unidad" value={selectedUnit.unit_number} />
@@ -390,16 +390,16 @@ const printStyles = `
     /* Show print-only elements */
     .cotizador-print-footer { display: block !important; }
 
-    /* Page setup — tight margins to maximize content area */
+    /* Page setup — fit everything on one page */
     @page {
       size: letter;
-      margin: 1cm 1.5cm;
+      margin: 0.8cm 1.2cm;
     }
 
     body {
       margin: 0;
       padding: 0;
-      font-size: 8pt !important;
+      font-size: 7.5pt !important;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
@@ -407,7 +407,7 @@ const printStyles = `
     .cotizador-page {
       max-width: none !important;
       padding: 0 !important;
-      gap: 6px !important;
+      gap: 4px !important;
     }
 
     .cotizador-page * {
@@ -420,12 +420,12 @@ const printStyles = `
     }
 
     .cotizador-page h1 {
-      font-size: 14pt !important;
+      font-size: 12pt !important;
     }
 
     .cotizador-page h2 {
-      font-size: 8pt !important;
-      margin-bottom: 2px !important;
+      font-size: 7.5pt !important;
+      margin-bottom: 1px !important;
     }
 
     .cotizador-page section {
@@ -433,34 +433,58 @@ const printStyles = `
       box-shadow: none !important;
       border: 1px solid #ddd !important;
       border-radius: 3px !important;
-      padding: 5px 8px !important;
-      gap: 4px !important;
+      padding: 4px 6px !important;
+      gap: 3px !important;
       break-inside: avoid;
     }
 
     .cotizador-page table {
-      font-size: 8pt !important;
+      font-size: 7.5pt !important;
     }
 
     .cotizador-page table th,
     .cotizador-page table td {
-      padding: 2px 4px !important;
+      padding: 1px 3px !important;
     }
 
     /* Compact detail grids */
     .cotizador-page section > div {
-      gap: 4px !important;
+      gap: 3px !important;
     }
 
-    /* Smaller text for disclaimers in print */
-    .cotizador-disclaimers {
+    /* Unit summary — single compact row in print */
+    .cotizador-unit-summary h2 { display: none !important; }
+    .cotizador-unit-summary > div {
+      grid-template-columns: repeat(auto-fill, minmax(0, auto)) !important;
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: 2px 12px !important;
+    }
+    .cotizador-unit-summary > div > div {
+      display: inline-flex !important;
+      gap: 3px !important;
+      align-items: baseline !important;
+    }
+    .cotizador-unit-summary > div > div > div:first-child {
       font-size: 7pt !important;
+    }
+    .cotizador-unit-summary > div > div > div:last-child {
+      font-size: 7.5pt !important;
+    }
+
+    /* Disclaimers — single inline row */
+    .cotizador-disclaimers {
+      font-size: 6.5pt !important;
       margin-top: 0 !important;
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: 0 8px !important;
     }
 
     .cotizador-disclaimers p {
       margin: 0 !important;
       line-height: 1.2 !important;
+      white-space: nowrap !important;
     }
 
     /* Hide interactive controls in print */
@@ -478,8 +502,8 @@ const printStyles = `
 
     /* Print footer compact */
     .cotizador-print-footer > div {
-      margin-top: 12px !important;
-      padding-top: 8px !important;
+      margin-top: 8px !important;
+      padding-top: 6px !important;
     }
   }
 `;
