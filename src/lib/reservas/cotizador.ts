@@ -238,6 +238,9 @@ export function computeFinancingMatrix(
     | "iusi_frequency"
     | "income_multiplier"
     | "income_base"
+    | "inmueble_pct"
+    | "timbres_rate"
+    | "use_pretax_extraction"
   >,
   valor_inmueble: number | null,
 ): FinancingScenario[] {
@@ -245,8 +248,19 @@ export function computeFinancingMatrix(
   let monto_financiar = Math.max(0, price - enganche_total);
   if (config.round_saldo_q100) monto_financiar = roundUpQ100(monto_financiar);
 
-  // IUSI base = valor_inmueble if available, else price (fallback)
-  const iusi_base = valor_inmueble ?? price;
+  // IUSI base = valor_inmueble (70% of price-without-taxes).
+  // When not stored in DB, derive inline using the escrituracion pre-tax method.
+  let iusi_base: number;
+  if (valor_inmueble != null) {
+    iusi_base = valor_inmueble;
+  } else {
+    const pct_inmueble = config.inmueble_pct;
+    const pct_acciones = +(1 - pct_inmueble).toFixed(4);
+    const tax_factor = config.use_pretax_extraction
+      ? pct_inmueble * (1 + COTIZADOR_DEFAULTS.IVA_RATE) + pct_acciones * (1 + config.timbres_rate)
+      : 1 + COTIZADOR_DEFAULTS.IVA_RATE;
+    iusi_base = Math.round((price / tax_factor) * pct_inmueble);
+  }
   const iusi_monthly = Math.round((iusi_base * COTIZADOR_DEFAULTS.IUSI_ANNUAL_RATE) / 12);
   const iusi_quarterly = Math.round((iusi_base * COTIZADOR_DEFAULTS.IUSI_ANNUAL_RATE) / 4);
 
