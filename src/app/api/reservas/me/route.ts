@@ -31,7 +31,7 @@ export async function GET() {
 }
 
 /** Standard salesperson response: their assigned projects + towers */
-async function respondWithProjects(salesperson: { id: string; full_name: string; display_name: string }) {
+async function respondWithProjects(salesperson: { id: string; full_name: string; display_name: string; phone: string | null }) {
   const admin = createAdminClient();
 
   const { data: assignments, error } = await admin
@@ -86,6 +86,7 @@ async function respondWithProjects(salesperson: { id: string; full_name: string;
       id: salesperson.id,
       full_name: salesperson.full_name,
       display_name: salesperson.display_name,
+      phone: salesperson.phone,
     },
     projects,
   });

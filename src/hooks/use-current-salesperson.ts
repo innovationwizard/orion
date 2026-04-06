@@ -6,6 +6,7 @@ interface SalespersonInfo {
   id: string;
   full_name: string;
   display_name: string;
+  phone: string | null;
 }
 
 interface ProjectInfo {

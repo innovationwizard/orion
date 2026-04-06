@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useProjects } from "@/hooks/use-projects";
 import { useUnits } from "@/hooks/use-units";
@@ -14,6 +14,7 @@ import {
 } from "@/lib/reservas/cotizador";
 import { formatCurrency, formatDate } from "@/lib/reservas/constants";
 import NavBar from "@/components/nav-bar";
+import { useCurrentSalesperson } from "@/hooks/use-current-salesperson";
 import InstallmentTable from "./installment-table";
 import FinancingMatrix from "./financing-matrix";
 import EscrituracionPanel from "./escrituracion-panel";
@@ -56,9 +57,17 @@ export default function CotizadorClient() {
     selectedUnit?.bedrooms ?? null,
   );
 
-  // Client/salesperson identity (optional, for print output)
+  // Auto-populate asesor from logged-in salesperson (if any)
+  const { data: spData } = useCurrentSalesperson();
   const [clientName, setClientName] = useState("");
   const [salespersonName, setSalespersonName] = useState("");
+
+  useEffect(() => {
+    if (!spData?.salesperson) return;
+    const { display_name, phone } = spData.salesperson;
+    const label = phone ? `${display_name} — ${phone}` : display_name;
+    setSalespersonName(label);
+  }, [spData]);
 
   // Parameters (user-adjustable, initialized from config)
   const [enganchePctOverride, setEnganchePctOverride] = useState<number | null>(null);
@@ -100,6 +109,14 @@ export default function CotizadorClient() {
     () => units.filter((u) => u.status === "AVAILABLE").sort((a, b) => a.unit_number.localeCompare(b.unit_number, undefined, { numeric: true })),
     [units],
   );
+
+  // Hide sold-out projects from the dropdown (uses initial full-unit fetch)
+  const projectsWithAvailability = useMemo(() => {
+    const slugsWithAvailable = new Set(
+      units.filter((u) => u.status === "AVAILABLE").map((u) => u.project_slug),
+    );
+    return projects.filter((p) => slugsWithAvailable.has(p.project_slug));
+  }, [projects, units]);
 
   function updateParam(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString());
@@ -174,7 +191,7 @@ export default function CotizadorClient() {
             onChange={(e) => handleProjectChange(e.target.value)}
           >
             <option value="">Proyecto</option>
-            {projects.map((p) => (
+            {projectsWithAvailability.map((p) => (
               <option key={p.project_slug} value={p.project_slug}>
                 {p.project_name}
               </option>
