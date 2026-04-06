@@ -178,10 +178,14 @@ export async function runSync(
 async function loadPreviousChecksums(
   supabase: SupabaseClient,
 ): Promise<Record<string, string>> {
+  // Only trust checksums from runs that actually processed files.
+  // A run with files_processed=0 means files were skipped (no real work done),
+  // so its checksums should not be used as a baseline.
   const { data } = await supabase
     .from("sync_runs")
     .select("file_checksums")
     .in("status", ["SUCCESS", "PARTIAL"])
+    .gt("files_processed", 0)
     .order("started_at", { ascending: false })
     .limit(1)
     .maybeSingle();
