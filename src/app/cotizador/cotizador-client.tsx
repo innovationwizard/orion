@@ -259,7 +259,14 @@ export default function CotizadorClient() {
           {/* Enganche parameters */}
           <section className="bg-card rounded-2xl shadow-card border border-border p-5 grid gap-4">
             <h2 className="text-sm font-semibold uppercase tracking-wider text-muted">Enganche</h2>
-            <div className="grid sm:grid-cols-3 gap-4">
+            {/* Print-only enganche summary (single line, no controls) */}
+            <div className="cotizador-print-enganche-summary" style={{ display: "none" }}>
+              <span>Enganche: {Math.round(enganchePct * 100)}%</span>
+              <span style={{ marginLeft: 24 }}>Cuotas de enganche: {installmentMonths}</span>
+            </div>
+
+            {/* Interactive controls — hidden in print */}
+            <div className="cotizador-no-print grid sm:grid-cols-3 gap-4">
               <label className="grid gap-1">
                 <span className="text-xs text-muted">Enganche (%)</span>
                 <div className="flex items-center gap-2">
@@ -369,6 +376,7 @@ const printStyles = `
 
     /* Show print-only elements */
     .cotizador-print-footer { display: block !important; }
+    .cotizador-print-enganche-summary { display: flex !important; font-size: 9pt; font-weight: 600; }
 
     /* Page setup — fit everything on one page */
     @page {
