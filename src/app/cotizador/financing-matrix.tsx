@@ -131,7 +131,7 @@ export default function FinancingMatrix({ scenarios, config }: Props) {
             label="Ingreso requerido mínimo"
             value={formatCurrency(firstScenario.ingreso_requerido, config.currency)}
           />
-          <Detail label="Relación Cuota Ingreso" value={`${Math.round((1 / config.income_multiplier) * 100)}% ${config.income_base === "cuota_banco" ? "cuota banco" : "mensualidad"}`} />
+          <Detail label="Relación Cuota Ingreso" value={`${Math.round((1 / config.income_multiplier) * 100)}%`} />
         </div>
       )}
     </section>
