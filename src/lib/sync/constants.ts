@@ -14,7 +14,7 @@ import type { RvUnitStatus } from "@/lib/reservas/types";
 export const ONEDRIVE_USER = "alek.hernandez@puertaabierta.com.gt";
 
 /** Base path within the user's OneDrive. */
-export const ONEDRIVE_BASE = "Documents/Documentos/0. Estatus Proyectos";
+export const ONEDRIVE_BASE = "Documentos/0. Estatus Proyectos";
 
 /** File key → relative path (under ONEDRIVE_BASE). */
 export const ONEDRIVE_FILES: Record<string, string> = {

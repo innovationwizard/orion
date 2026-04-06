@@ -96,7 +96,9 @@ export async function runSync(
         fileResult.skipped = true;
         fileResult.skipReason = "File not found on OneDrive";
         fileResult.errors.push(`File not found: ${filePath}`);
+        fileResult.durationMs = Date.now() - fileStart;
         result.fileResults.push(fileResult);
+        result.errors.push(`[${fileKey}] File not found: ${filePath}`);
         continue;
       }
 
