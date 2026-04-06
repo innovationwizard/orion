@@ -39,7 +39,8 @@ export default function EscrituracionPanel({ result, config }: Props) {
               <td className="py-2 px-2 text-right">{fmt(result.valor_inmueble_sin_iva, config.currency)}</td>
               <td className="py-2 px-2 text-right text-warning">
                 {fmt(result.iva_inmueble, config.currency)}
-                <span className="text-[10px] text-muted ml-1">IVA 12%</span>
+                <br />
+                <span className="text-[10px] text-muted">IVA 12%</span>
               </td>
               <td className="py-2 px-2 text-right font-medium">{fmt(result.valor_inmueble_con_iva, config.currency)}</td>
             </tr>
@@ -51,7 +52,8 @@ export default function EscrituracionPanel({ result, config }: Props) {
                   {hasTimbres ? (
                     <>
                       {fmt(result.timbres_acciones, config.currency)}
-                      <span className="text-[10px] text-muted ml-1">Timbres {Math.round(config.timbres_rate * 100)}%</span>
+                      <br />
+                      <span className="text-[10px] text-muted">Timbres {Math.round(config.timbres_rate * 100)}%</span>
                     </>
                   ) : (
                     "—"
