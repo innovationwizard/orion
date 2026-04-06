@@ -246,7 +246,7 @@ async function syncUnitStatuses(
       changes.status_detail = "Sync desde Excel OneDrive";
     }
 
-    if (parsed_unit.priceList != null && parsed_unit.priceList !== db.price_list) {
+    if (parsed_unit.priceList != null && parsed_unit.priceList !== Number(db.price_list)) {
       changes.price_list = parsed_unit.priceList;
     }
 

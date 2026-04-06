@@ -85,10 +85,32 @@ export function safeInt(val: unknown): number | null {
   return Math.trunc(n);
 }
 
-/** Safely extract a float with 2 decimal places. */
+/** Safely extract a float with 2 decimal places. Handles Q-prefixed and locale-formatted values. */
 export function safeFloat(val: unknown): number | null {
   if (val == null) return null;
-  const n = Number(val);
+
+  // If already a number, use directly
+  if (typeof val === "number") {
+    if (isNaN(val)) return null;
+    return Math.round(val * 100) / 100;
+  }
+
+  // String: strip currency prefix ("Q", "Q ", "$", "$ ") and whitespace
+  let text = String(val).trim();
+  if (!text) return null;
+  text = text.replace(/^[Q$]\s*/i, "").trim();
+
+  // Handle European/Latin locale: dots as thousands, comma as decimal
+  // e.g., "1.382.700,00" → "1382700.00"
+  if (text.includes(",") && text.includes(".")) {
+    // Dots are thousands separators, comma is decimal
+    text = text.replace(/\./g, "").replace(",", ".");
+  } else if (text.includes(",") && !text.includes(".")) {
+    // Comma might be decimal separator (e.g., "1382700,00")
+    text = text.replace(",", ".");
+  }
+
+  const n = Number(text);
   if (isNaN(n)) return null;
   return Math.round(n * 100) / 100;
 }
