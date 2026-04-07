@@ -22,10 +22,11 @@ export default function CotizadorClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const preselectedUnitId = searchParams.get("unit") ?? "";
+  const initialProject = searchParams.get("project") ?? "";
 
   const { data: projects } = useProjects();
 
-  const [projectSlug, setProjectSlug] = useState("");
+  const [projectSlug, setProjectSlug] = useState(initialProject);
   const [towerId, setTowerId] = useState("");
   const [unitId, setUnitId] = useState(preselectedUnitId);
 
@@ -42,6 +43,13 @@ export default function CotizadorClient() {
     () => (preselectedUnitId ? units.find((u) => u.id === preselectedUnitId) : undefined),
     [units, preselectedUnitId],
   );
+
+  // Auto-set project/tower from preselected unit so config resolves correctly
+  useEffect(() => {
+    if (!preselectedUnit) return;
+    if (!projectSlug) setProjectSlug(preselectedUnit.project_slug);
+    if (!towerId) setTowerId(preselectedUnit.tower_id);
+  }, [preselectedUnit, projectSlug, towerId]);
 
   const selectedUnit: UnitFull | null = useMemo(
     () => units.find((u) => u.id === unitId) ?? null,
@@ -80,11 +88,17 @@ export default function CotizadorClient() {
   const [reservaOverride, setReservaOverride] = useState<number | null>(null);
   const [installmentMonthsOverride, setInstallmentMonthsOverride] = useState<number | null>(null);
 
+  // Special discount (rare, pre-authorized outside the app)
+  const [showDiscount, setShowDiscount] = useState(false);
+  const [discountAmount, setDiscountAmount] = useState(0);
+
   // Reset overrides when resolved config changes (tower, unit-type, or project switch)
   useEffect(() => {
     setEnganchePctOverride(null);
     setReservaOverride(null);
     setInstallmentMonthsOverride(null);
+    setDiscountAmount(0);
+    setShowDiscount(false);
   }, [config.enganche_pct, config.reserva_default, config.installment_months]);
 
   const enganchePct = enganchePctOverride ?? config.enganche_pct;
@@ -93,20 +107,21 @@ export default function CotizadorClient() {
 
   // Computations
   const price = selectedUnit?.price_list ?? 0;
+  const effectivePrice = discountAmount > 0 && discountAmount < price ? price - discountAmount : price;
 
   const enganche = useMemo(
-    () => computeEnganche(price, config, enganchePct, reserva, installmentMonths),
-    [price, config, enganchePct, reserva, installmentMonths],
+    () => computeEnganche(effectivePrice, config, enganchePct, reserva, installmentMonths),
+    [effectivePrice, config, enganchePct, reserva, installmentMonths],
   );
 
   const financing = useMemo(
-    () => computeFinancingMatrix(price, enganche.enganche_total, config, selectedUnit?.valor_inmueble ?? null),
-    [price, enganche.enganche_total, config, selectedUnit?.valor_inmueble],
+    () => computeFinancingMatrix(effectivePrice, enganche.enganche_total, config, selectedUnit?.valor_inmueble ?? null),
+    [effectivePrice, enganche.enganche_total, config, selectedUnit?.valor_inmueble],
   );
 
   const escrituracion = useMemo(
-    () => computeEscrituracion(price, { inmueble_pct: config.inmueble_pct, timbres_rate: config.timbres_rate, use_pretax_extraction: config.use_pretax_extraction }),
-    [price, config.inmueble_pct, config.timbres_rate, config.use_pretax_extraction],
+    () => computeEscrituracion(effectivePrice, { inmueble_pct: config.inmueble_pct, timbres_rate: config.timbres_rate, use_pretax_extraction: config.use_pretax_extraction }),
+    [effectivePrice, config.inmueble_pct, config.timbres_rate, config.use_pretax_extraction],
   );
 
   const currentProject = projects.find((p) => p.project_slug === projectSlug);
@@ -141,7 +156,12 @@ export default function CotizadorClient() {
     setEnganchePctOverride(null);
     setReservaOverride(null);
     setInstallmentMonthsOverride(null);
-    updateParam("unit", "");
+    setDiscountAmount(0);
+    setShowDiscount(false);
+    const params = new URLSearchParams(searchParams.toString());
+    if (slug) params.set("project", slug); else params.delete("project");
+    params.delete("unit");
+    router.replace(`?${params.toString()}`, { scroll: false });
   }
 
   return (
@@ -229,6 +249,8 @@ export default function CotizadorClient() {
             value={unitId}
             onChange={(e) => {
               setUnitId(e.target.value);
+              setDiscountAmount(0);
+              setShowDiscount(false);
               updateParam("unit", e.target.value);
             }}
           >
@@ -269,6 +291,61 @@ export default function CotizadorClient() {
               )}
             </div>
           </section>
+
+          {/* Special discount — discrete toggle, rarely used */}
+          {!showDiscount && (
+            <button
+              type="button"
+              onClick={() => setShowDiscount(true)}
+              className="cotizador-no-print text-xs text-muted underline cursor-pointer hover:text-text-primary transition-colors self-start -mt-3"
+            >
+              Agregar descuento
+            </button>
+          )}
+          {showDiscount && (
+            <section className="cotizador-discount bg-card rounded-2xl shadow-card border border-dashed border-amber-400/60 p-5 grid gap-3">
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-semibold uppercase tracking-wider text-amber-600">Descuento Especial</h2>
+                <button
+                  type="button"
+                  onClick={() => { setShowDiscount(false); setDiscountAmount(0); }}
+                  className="cotizador-no-print text-xs text-muted hover:text-text-primary transition-colors"
+                  title="Quitar descuento"
+                >
+                  ✕
+                </button>
+              </div>
+              <label className="cotizador-no-print grid gap-1 max-w-[200px]">
+                <span className="text-xs text-muted">Descuento ({config.currency === "USD" ? "$" : "Q"})</span>
+                <input
+                  type="number"
+                  min={1}
+                  max={price - 1}
+                  step={1000}
+                  value={discountAmount || ""}
+                  onChange={(e) => setDiscountAmount(Math.max(0, Number(e.target.value)))}
+                  placeholder="0"
+                  className="px-3 py-2 rounded-lg border border-border bg-card text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/30"
+                />
+              </label>
+              {discountAmount > 0 && discountAmount < price && (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm pt-2 border-t border-border">
+                  <Detail label="Precio lista" value={formatCurrency(price, config.currency)} />
+                  <div className="min-w-0">
+                    <div className="text-muted text-xs">Descuento especial</div>
+                    <div className="text-amber-600 font-medium truncate">-{formatCurrency(discountAmount, config.currency)}</div>
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-muted text-xs">Precio con Descuento</div>
+                    <div className="text-text-primary font-bold truncate">{formatCurrency(effectivePrice, config.currency)}</div>
+                  </div>
+                </div>
+              )}
+              {discountAmount >= price && discountAmount > 0 && (
+                <p className="text-xs text-red-500">El descuento debe ser menor al precio lista</p>
+              )}
+            </section>
+          )}
 
           {/* Enganche parameters */}
           <section className="bg-card rounded-2xl shadow-card border border-border p-5 grid gap-4">
@@ -472,6 +549,16 @@ const printStyles = `
     }
     .cotizador-unit-summary > div > div > div:last-child {
       font-size: 7.5pt !important;
+    }
+
+    /* Discount section — keep visible in print, accent border */
+    .cotizador-discount {
+      border-style: dashed !important;
+      border-color: #b45309 !important;
+      padding: 3px 6px !important;
+    }
+    .cotizador-discount h2 {
+      color: #b45309 !important;
     }
 
     /* Disclaimers — single inline row */
