@@ -15,7 +15,38 @@ export async function GET() {
 
   const supabase = createAdminClient();
 
+  // Scope to salesperson's currently assigned projects
+  const { data: assignments, error: aErr } = await supabase
+    .from("salesperson_project_assignments")
+    .select("projects:project_id (slug)")
+    .eq("salesperson_id", salesperson.id)
+    .is("end_date", null);
+
+  if (aErr) {
+    console.error("[GET /api/reservas/ventas/clients] assignments", aErr);
+    return jsonError(500, aErr.message);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const assignedSlugs = (assignments ?? []).map((a: any) => a.projects?.slug).filter(Boolean) as string[];
+  if (assignedSlugs.length === 0) return jsonOk([]);
+
+  // Get unit IDs belonging to assigned projects
+  const { data: projectUnits, error: puErr } = await supabase
+    .from("v_rv_units_full")
+    .select("id")
+    .in("project_slug", assignedSlugs);
+
+  if (puErr) {
+    console.error("[GET /api/reservas/ventas/clients] projectUnits", puErr);
+    return jsonError(500, puErr.message);
+  }
+
+  const assignedUnitIds = (projectUnits ?? []).map((u) => u.id);
+  if (assignedUnitIds.length === 0) return jsonOk([]);
+
   // Get all reservation_clients linked to this salesperson's reservations
+  // scoped to assigned projects
   const { data, error } = await supabase
     .from("reservation_clients")
     .select(`
@@ -33,6 +64,7 @@ export async function GET() {
       )
     `)
     .eq("reservations.salesperson_id", salesperson.id)
+    .in("reservations.unit_id", assignedUnitIds)
     .order("document_order", { ascending: true });
 
   if (error) {

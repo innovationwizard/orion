@@ -18,10 +18,28 @@ export async function GET(request: NextRequest) {
   if (qErr) return jsonError(400, qErr.error, qErr.details);
 
   const supabase = createAdminClient();
+
+  // Scope to salesperson's currently assigned projects
+  const { data: assignments, error: aErr } = await supabase
+    .from("salesperson_project_assignments")
+    .select("projects:project_id (slug)")
+    .eq("salesperson_id", auth.salesperson.id)
+    .is("end_date", null);
+
+  if (aErr) {
+    console.error("[GET /api/reservas/ventas/reservations] assignments", aErr);
+    return jsonError(500, aErr.message);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const assignedSlugs = (assignments ?? []).map((a: any) => a.projects?.slug).filter(Boolean) as string[];
+  if (assignedSlugs.length === 0) return jsonOk([]);
+
   let query = supabase
     .from("v_reservations_pending")
     .select("*")
-    .eq("salesperson_id", auth.salesperson.id);
+    .eq("salesperson_id", auth.salesperson.id)
+    .in("project_slug", assignedSlugs);
 
   if (filters.status) query = query.eq("reservation_status", filters.status);
   if (filters.project) query = query.eq("project_slug", filters.project);
