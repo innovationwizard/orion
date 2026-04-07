@@ -80,6 +80,13 @@ export default function CotizadorClient() {
   const [reservaOverride, setReservaOverride] = useState<number | null>(null);
   const [installmentMonthsOverride, setInstallmentMonthsOverride] = useState<number | null>(null);
 
+  // Reset overrides when resolved config changes (tower, unit-type, or project switch)
+  useEffect(() => {
+    setEnganchePctOverride(null);
+    setReservaOverride(null);
+    setInstallmentMonthsOverride(null);
+  }, [config.enganche_pct, config.reserva_default, config.installment_months]);
+
   const enganchePct = enganchePctOverride ?? config.enganche_pct;
   const reserva = reservaOverride ?? config.reserva_default;
   const installmentMonths = installmentMonthsOverride ?? config.installment_months;
