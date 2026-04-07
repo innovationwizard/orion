@@ -280,8 +280,8 @@ export default function CotizadorClient() {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
               <Detail label="Unidad" value={selectedUnit.unit_number} />
               <Detail label="Proyecto" value={selectedUnit.project_name} />
-              <Detail label="Torre" value={selectedUnit.tower_name} />
-              <Detail label="Piso" value={String(selectedUnit.floor_number)} />
+              {selectedUnit.project_slug !== "santa-elena" && <Detail label="Torre" value={selectedUnit.tower_name} />}
+              {selectedUnit.project_slug !== "santa-elena" && <Detail label="Piso" value={String(selectedUnit.floor_number)} />}
               <Detail label="Tipo" value={selectedUnit.unit_type} />
               <Detail label="Dormitorios" value={String(selectedUnit.bedrooms)} />
               {selectedUnit.area_total ? <Detail label="Área total" value={`${selectedUnit.area_total} m²`} /> : null}

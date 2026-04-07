@@ -50,7 +50,7 @@ export default function ConfirmationModal({
 
           {/* Summary */}
           <div className="grid gap-3 text-sm">
-            <SummaryRow label="Unidad" value={`${unit.unit_number} — ${unit.tower_name}`} />
+            <SummaryRow label="Unidad" value={unit.project_slug === "santa-elena" ? unit.unit_number : `${unit.unit_number} — ${unit.tower_name}`} />
             <SummaryRow label="Modelo" value={`${unit.unit_type}${unit.bedrooms > 0 ? ` · ${unit.bedrooms} dorm.` : ""}`} />
             <SummaryRow label="Precio" value={formatCurrency(unit.price_list, unit.currency)} />
             <SummaryRow label="Asesor" value={salesperson.display_name} />

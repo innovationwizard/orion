@@ -439,8 +439,10 @@ export default function ReservationForm({
         ) : null}
         <span className="text-muted">Precio</span>
         <span className="font-medium">{formatCurrency(unit.price_list, unit.currency)}</span>
-        <span className="text-muted">Torre</span>
-        <span className="font-medium">{unit.tower_name}</span>
+        {unit.project_slug !== "santa-elena" && <>
+          <span className="text-muted">Torre</span>
+          <span className="font-medium">{unit.tower_name}</span>
+        </>}
       </div>
 
       {/* Section 1: Photos */}

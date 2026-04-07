@@ -283,8 +283,8 @@ export default function ReservationDetail({
                 <Section title="Unidad">
                   <Row label="Unidad" value={data.unit.unit_number} />
                   <Row label="Proyecto" value={data.unit.project_name} />
-                  <Row label="Torre" value={data.unit.tower_name} />
-                  <Row label="Piso" value={String(data.unit.floor_number)} />
+                  {data.unit.project_slug !== "santa-elena" && <Row label="Torre" value={data.unit.tower_name} />}
+                  {data.unit.project_slug !== "santa-elena" && <Row label="Piso" value={String(data.unit.floor_number)} />}
                   <Row label="Tipo" value={`${data.unit.unit_type}${data.unit.bedrooms > 0 ? ` · ${data.unit.bedrooms} dorm.` : ""}`} />
                   {data.unit.area_lot ? <Row label="Terreno" value={`${data.unit.area_lot} m²`} /> : null}
                   <Row label="Precio" value={formatCurrency(data.unit.price_list, data.unit.currency)} />

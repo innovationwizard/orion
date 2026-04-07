@@ -579,8 +579,10 @@ export default function NuevaReservaClient() {
             <div className="grid grid-cols-2 gap-2 text-sm">
               <span className="text-muted">Proyecto</span>
               <span className="font-medium">{unit.project_name}</span>
-              <span className="text-muted">Torre</span>
-              <span className="font-medium">{unit.tower_name}</span>
+              {unit.project_slug !== "santa-elena" && <>
+                <span className="text-muted">Torre</span>
+                <span className="font-medium">{unit.tower_name}</span>
+              </>}
               <span className="text-muted">Tipo</span>
               <span className="font-medium">
                 {unit.unit_type}{unit.bedrooms > 0 ? ` · ${unit.bedrooms} dorm.` : ""}

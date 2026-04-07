@@ -49,8 +49,8 @@ export default function UnitDetailModal({ unit, onClose }: Props) {
 
         <div className="grid grid-cols-2 gap-3 text-sm">
           <Detail label="Proyecto" value={unit.project_name} />
-          <Detail label="Torre" value={unit.tower_name} />
-          <Detail label="Piso" value={String(unit.floor_number)} />
+          {unit.project_slug !== "santa-elena" && <Detail label="Torre" value={unit.tower_name} />}
+          {unit.project_slug !== "santa-elena" && <Detail label="Piso" value={String(unit.floor_number)} />}
           <Detail label="Tipo" value={unit.unit_type} />
           {unit.bedrooms > 0 ? <Detail label="Dormitorios" value={String(unit.bedrooms)} /> : null}
           {unit.area_interior ? (

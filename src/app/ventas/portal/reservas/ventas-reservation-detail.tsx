@@ -133,11 +133,11 @@ export default function VentasReservationDetail({
                 <Section title="Unidad">
                   <Row label="Unidad" value={data.unit.unit_number} />
                   <Row label="Proyecto" value={data.unit.project_name} />
-                  <Row label="Torre" value={data.unit.tower_name} />
-                  <Row
+                  {data.unit.project_slug !== "santa-elena" && <Row label="Torre" value={data.unit.tower_name} />}
+                  {data.unit.project_slug !== "santa-elena" && <Row
                     label="Piso"
                     value={String(data.unit.floor_number)}
-                  />
+                  />}
                   <Row
                     label="Tipo"
                     value={`${data.unit.unit_type}${data.unit.bedrooms > 0 ? ` · ${data.unit.bedrooms} dorm.` : ""}`}
