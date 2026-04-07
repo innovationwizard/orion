@@ -140,11 +140,12 @@ export default function VentasReservationDetail({
                   />
                   <Row
                     label="Tipo"
-                    value={`${data.unit.unit_type} · ${data.unit.bedrooms} dorm.`}
+                    value={`${data.unit.unit_type}${data.unit.bedrooms > 0 ? ` · ${data.unit.bedrooms} dorm.` : ""}`}
                   />
+                  {data.unit.area_lot ? <Row label="Terreno" value={`${data.unit.area_lot} m²`} /> : null}
                   <Row
                     label="Precio"
-                    value={formatCurrency(data.unit.price_list)}
+                    value={formatCurrency(data.unit.price_list, data.unit.currency)}
                   />
                   <Row
                     label="Estado"
@@ -201,7 +202,7 @@ export default function VentasReservationDetail({
               <Section title="Depósito">
                 <Row
                   label="Monto"
-                  value={formatCurrency(data.reservation.deposit_amount)}
+                  value={formatCurrency(data.reservation.deposit_amount, data.unit?.currency)}
                 />
                 <Row
                   label="Fecha"
@@ -221,6 +222,7 @@ export default function VentasReservationDetail({
               <ReceiptViewer
                 imageUrl={data.reservation.receipt_image_url}
                 extractions={data.extractions}
+                currency={data.unit?.currency}
               />
 
               {/* Documents — B5 only */}

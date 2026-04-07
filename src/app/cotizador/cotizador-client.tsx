@@ -404,7 +404,7 @@ export default function CotizadorClient() {
               <Detail label="Cuota enganche" value={formatCurrency(enganche.cuota_enganche, config.currency)} />
             </div>
 
-            <InstallmentTable installments={enganche.installments} />
+            <InstallmentTable installments={enganche.installments} currency={config.currency} />
           </section>
 
           {/* Financing matrix */}

@@ -65,15 +65,16 @@ export default function UnitCell({ unit }: Props) {
               <Detail label="Torre" value={unit.tower_name} />
               <Detail label="Piso" value={String(unit.floor_number)} />
               <Detail label="Tipo" value={unit.unit_type} />
-              <Detail label="Dormitorios" value={String(unit.bedrooms)} />
+              {unit.bedrooms > 0 ? <Detail label="Dormitorios" value={String(unit.bedrooms)} /> : null}
               {unit.area_interior ? <Detail label="Interior" value={`${unit.area_interior} m²`} /> : null}
               {unit.area_balcony ? <Detail label="Balcón" value={`${unit.area_balcony} m²`} /> : null}
               {unit.area_terrace ? <Detail label="Terraza" value={`${unit.area_terrace} m²`} /> : null}
               {unit.area_garden ? <Detail label="Jardín" value={`${unit.area_garden} m²`} /> : null}
               {unit.area_total ? <Detail label="Total" value={`${unit.area_total} m²`} /> : null}
+              {unit.area_lot ? <Detail label="Terreno" value={`${unit.area_lot} m²`} /> : null}
               {unit.parking_car > 0 ? <Detail label="Parqueos" value={String(unit.parking_car)} /> : null}
               {unit.bodega_number ? <Detail label="Bodega" value={unit.bodega_number} /> : null}
-              <Detail label="Precio" value={formatCurrency(unit.price_list)} />
+              <Detail label="Precio" value={formatCurrency(unit.price_list, unit.currency)} />
             </div>
 
             <div className="flex gap-2">

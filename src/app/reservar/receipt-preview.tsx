@@ -6,9 +6,10 @@ import { CONFIDENCE_LABELS, CONFIDENCE_COLORS, RECEIPT_TYPE_LABELS, formatCurren
 type Props = {
   extraction: OcrExtractionResult;
   imageUrl: string;
+  currency?: "GTQ" | "USD";
 };
 
-export default function ReceiptPreview({ extraction, imageUrl }: Props) {
+export default function ReceiptPreview({ extraction, imageUrl, currency }: Props) {
   const confidence = extraction.confidence;
 
   return (
@@ -39,7 +40,7 @@ export default function ReceiptPreview({ extraction, imageUrl }: Props) {
           {extraction.amount != null && (
             <>
               <span className="text-muted">Monto</span>
-              <span className="font-medium">{formatCurrency(extraction.amount)}</span>
+              <span className="font-medium">{formatCurrency(extraction.amount, currency)}</span>
             </>
           )}
           {extraction.date && (

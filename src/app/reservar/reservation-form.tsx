@@ -424,15 +424,21 @@ export default function ReservationForm({
         <span className="text-muted">Unidad</span>
         <span className="font-medium">{unit.unit_number}</span>
         <span className="text-muted">Modelo</span>
-        <span className="font-medium">{unit.unit_type} · {unit.bedrooms} dorm.</span>
+        <span className="font-medium">{unit.unit_type}{unit.bedrooms > 0 ? ` · ${unit.bedrooms} dorm.` : ""}</span>
         {unit.area_total ? (
           <>
             <span className="text-muted">Área</span>
             <span className="font-medium">{unit.area_total} m²</span>
           </>
         ) : null}
+        {unit.area_lot ? (
+          <>
+            <span className="text-muted">Terreno</span>
+            <span className="font-medium">{unit.area_lot} m²</span>
+          </>
+        ) : null}
         <span className="text-muted">Precio</span>
-        <span className="font-medium">{formatCurrency(unit.price_list)}</span>
+        <span className="font-medium">{formatCurrency(unit.price_list, unit.currency)}</span>
         <span className="text-muted">Torre</span>
         <span className="font-medium">{unit.tower_name}</span>
       </div>
@@ -507,6 +513,7 @@ export default function ReservationForm({
               <ReceiptPreview
                 extraction={form.ocrExtraction}
                 imageUrl={form.receiptPreviewUrl}
+                currency={unit.currency}
               />
               <button
                 type="button"
@@ -613,7 +620,7 @@ export default function ReservationForm({
         </legend>
         <div className="grid sm:grid-cols-2 gap-3">
           <div className="grid gap-1">
-            <label className="text-xs text-muted">Monto (Q)</label>
+            <label className="text-xs text-muted">Monto ({unit.currency === "USD" ? "$" : "Q"})</label>
             <input
               type="number"
               inputMode="decimal"

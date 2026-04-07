@@ -51,8 +51,8 @@ export default function ConfirmationModal({
           {/* Summary */}
           <div className="grid gap-3 text-sm">
             <SummaryRow label="Unidad" value={`${unit.unit_number} — ${unit.tower_name}`} />
-            <SummaryRow label="Modelo" value={`${unit.unit_type} · ${unit.bedrooms} dorm.`} />
-            <SummaryRow label="Precio" value={formatCurrency(unit.price_list)} />
+            <SummaryRow label="Modelo" value={`${unit.unit_type}${unit.bedrooms > 0 ? ` · ${unit.bedrooms} dorm.` : ""}`} />
+            <SummaryRow label="Precio" value={formatCurrency(unit.price_list, unit.currency)} />
             <SummaryRow label="Asesor" value={salesperson.display_name} />
             {/* Buyers */}
             <div className="grid gap-1.5">
@@ -76,7 +76,7 @@ export default function ConfirmationModal({
             {receipt.depositAmount && (
               <SummaryRow
                 label="Monto depósito"
-                value={formatCurrency(parseFloat(receipt.depositAmount))}
+                value={formatCurrency(parseFloat(receipt.depositAmount), unit.currency)}
               />
             )}
             {receipt.depositDate && (

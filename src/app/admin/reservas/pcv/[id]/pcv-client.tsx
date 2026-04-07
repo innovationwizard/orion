@@ -422,6 +422,7 @@ export default function PcvClientComponent({ reservationId, readOnly }: { reserv
   // Pricing — use default config as fallback (PCV uses per-reservation overrides when available)
   const _cfg = configFromDefaults();
   const price = unit.price_list ?? 0;
+  const pcvCurrency: "GTQ" | "USD" = unit.project_slug === "santa-elena" ? "USD" : "GTQ";
   const escrituracion = computeEscrituracion(price, _cfg);
   const reservaAmount = reservation.deposit_amount ?? _cfg.reserva_default;
   const enganche = computeEnganche(
@@ -1417,13 +1418,13 @@ export default function PcvClientComponent({ reservationId, readOnly }: { reserv
             <tbody>
               <tr><td style={{ padding: "2px 8px", fontWeight: 600 }}>Reserva ID:</td><td>{reservation.id}</td></tr>
               <tr><td style={{ padding: "2px 8px", fontWeight: 600 }}>Unidad:</td><td>{unitDesc}</td></tr>
-              <tr><td style={{ padding: "2px 8px", fontWeight: 600 }}>Precio lista:</td><td>{formatCurrency(price)}</td></tr>
-              <tr><td style={{ padding: "2px 8px", fontWeight: 600 }}>Inmueble (con IVA):</td><td>{formatCurrency(escrituracion.valor_inmueble_con_iva)}</td></tr>
-              <tr><td style={{ padding: "2px 8px", fontWeight: 600 }}>Acciones:</td><td>{formatCurrency(escrituracion.valor_acciones)}</td></tr>
-              <tr><td style={{ padding: "2px 8px", fontWeight: 600 }}>Total escrituración:</td><td>{formatCurrency(escrituracion.total_con_impuesto)}</td></tr>
-              <tr><td style={{ padding: "2px 8px", fontWeight: 600 }}>Reserva:</td><td>{formatCurrency(reservaAmount)}</td></tr>
-              <tr><td style={{ padding: "2px 8px", fontWeight: 600 }}>Enganche neto:</td><td>{formatCurrency(enganche.enganche_neto)}</td></tr>
-              <tr><td style={{ padding: "2px 8px", fontWeight: 600 }}>Último pago:</td><td>{formatCurrency(ultimoPago)}</td></tr>
+              <tr><td style={{ padding: "2px 8px", fontWeight: 600 }}>Precio lista:</td><td>{formatCurrency(price, pcvCurrency)}</td></tr>
+              <tr><td style={{ padding: "2px 8px", fontWeight: 600 }}>Inmueble (con IVA):</td><td>{formatCurrency(escrituracion.valor_inmueble_con_iva, pcvCurrency)}</td></tr>
+              <tr><td style={{ padding: "2px 8px", fontWeight: 600 }}>Acciones:</td><td>{formatCurrency(escrituracion.valor_acciones, pcvCurrency)}</td></tr>
+              <tr><td style={{ padding: "2px 8px", fontWeight: 600 }}>Total escrituración:</td><td>{formatCurrency(escrituracion.total_con_impuesto, pcvCurrency)}</td></tr>
+              <tr><td style={{ padding: "2px 8px", fontWeight: 600 }}>Reserva:</td><td>{formatCurrency(reservaAmount, pcvCurrency)}</td></tr>
+              <tr><td style={{ padding: "2px 8px", fontWeight: 600 }}>Enganche neto:</td><td>{formatCurrency(enganche.enganche_neto, pcvCurrency)}</td></tr>
+              <tr><td style={{ padding: "2px 8px", fontWeight: 600 }}>Último pago:</td><td>{formatCurrency(ultimoPago, pcvCurrency)}</td></tr>
               <tr><td style={{ padding: "2px 8px", fontWeight: 600 }}>Asesor:</td><td>{salesperson?.display_name ?? "—"}</td></tr>
             </tbody>
           </table>

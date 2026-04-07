@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { computeEnganche, configFromDefaults } from "@/lib/reservas/cotizador";
+import { formatCurrency } from "@/lib/reservas/constants";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -44,9 +45,6 @@ function formatDateLine(): string {
   return `Guatemala ${day} de ${month} del ${year}`;
 }
 
-function formatCurrency(amount: number): string {
-  return `Q. ${amount.toLocaleString("es-GT", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-}
 
 // ---------------------------------------------------------------------------
 // Component
@@ -174,6 +172,7 @@ export default function CartaPagoClient({ reservationId }: { reservationId: stri
 
   // Compute cuota de enganche from cotizador — default config as fallback
   const _cfg = configFromDefaults();
+  const cartaCurrency: "GTQ" | "USD" = unit.project_slug === "santa-elena" ? "USD" : "GTQ";
   const price = unit.price_list ?? 0;
   const enganche = computeEnganche(
     price,
@@ -282,7 +281,7 @@ export default function CartaPagoClient({ reservationId }: { reservationId: stri
             Puerta Abierta)</strong>,{" "}
             en las fechas acordadas del 15 al 20 de cada mes, por concepto de
             pago de enganche de apartamento antes mencionado y cuyo valor es de{" "}
-            <strong>{formatCurrency(enganche.cuota_enganche)}</strong>.
+            <strong>{formatCurrency(enganche.cuota_enganche, cartaCurrency)}</strong>.
           </p>
 
           {/* WhatsApp / email */}

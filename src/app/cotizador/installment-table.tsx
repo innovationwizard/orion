@@ -4,9 +4,10 @@ import { formatCurrency } from "@/lib/reservas/constants";
 
 type Props = {
   installments: { number: number; amount: number }[];
+  currency?: "GTQ" | "USD";
 };
 
-export default function InstallmentTable({ installments }: Props) {
+export default function InstallmentTable({ installments, currency }: Props) {
   if (installments.length === 0) return null;
 
   const total = installments.reduce((s, i) => s + i.amount, 0);
@@ -26,12 +27,12 @@ export default function InstallmentTable({ installments }: Props) {
               <td className="py-1.5 px-2">
                 {inst.number === 0 ? "Reserva" : `Cuota ${inst.number}`}
               </td>
-              <td className="py-1.5 px-2 text-right font-medium">{formatCurrency(inst.amount)}</td>
+              <td className="py-1.5 px-2 text-right font-medium">{formatCurrency(inst.amount, currency)}</td>
             </tr>
           ))}
           <tr className="font-bold">
             <td className="py-2 px-2">Total enganche</td>
-            <td className="py-2 px-2 text-right">{formatCurrency(total)}</td>
+            <td className="py-2 px-2 text-right">{formatCurrency(total, currency)}</td>
           </tr>
         </tbody>
       </table>

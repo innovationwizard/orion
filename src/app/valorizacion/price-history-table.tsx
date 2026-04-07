@@ -6,9 +6,10 @@ import { formatCurrency, formatDate } from "@/lib/reservas/constants";
 type Props = {
   entries: PriceHistoryEntry[];
   onDelete: (id: string) => void;
+  currency?: "GTQ" | "USD";
 };
 
-export default function PriceHistoryTable({ entries, onDelete }: Props) {
+export default function PriceHistoryTable({ entries, onDelete, currency }: Props) {
   return (
     <section className="bg-card rounded-2xl shadow-card border border-border overflow-x-auto">
       <table className="w-full text-sm">
@@ -37,16 +38,16 @@ export default function PriceHistoryTable({ entries, onDelete }: Props) {
               <td className="py-2 px-3">{e.tower_name ?? "—"}</td>
               <td className="py-2 px-3 text-right tabular-nums">{e.units_remaining}</td>
               <td className="py-2 px-3 text-right tabular-nums text-success">
-                {formatCurrency(e.increment_amount)}
+                {formatCurrency(e.increment_amount, currency)}
               </td>
               <td className="py-2 px-3 text-right tabular-nums">
                 {e.increment_pct != null ? `${e.increment_pct}%` : "—"}
               </td>
               <td className="py-2 px-3 text-right tabular-nums">
-                {formatCurrency(e.new_price_avg)}
+                {formatCurrency(e.new_price_avg, currency)}
               </td>
               <td className="py-2 px-3 text-right tabular-nums font-semibold">
-                {formatCurrency(e.appreciation_total)}
+                {formatCurrency(e.appreciation_total, currency)}
               </td>
               <td className="py-2 px-3 text-muted max-w-[200px] truncate">
                 {e.notes ?? "—"}

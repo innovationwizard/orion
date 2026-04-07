@@ -253,7 +253,7 @@ export default function ReservarClient() {
               type="button"
               className="min-h-[48px] rounded-lg text-xs font-semibold text-white transition-all duration-150 hover:brightness-110 active:scale-95"
               style={{ backgroundColor: UNIT_STATUS_COLORS[u.status] }}
-              title={`${u.unit_number} — ${u.unit_type} — ${formatCurrency(u.price_list)}`}
+              title={`${u.unit_number} — ${u.unit_type} — ${formatCurrency(u.price_list, u.currency)}`}
               onClick={() => handleSelectUnit(u)}
             >
               <span className="block leading-tight">{u.unit_number}</span>

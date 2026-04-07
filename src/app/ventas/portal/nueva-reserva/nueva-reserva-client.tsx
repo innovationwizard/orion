@@ -558,8 +558,8 @@ export default function NuevaReservaClient() {
                 </option>
                 {availableUnits.map((u) => (
                   <option key={u.id} value={u.id}>
-                    {u.unit_number} — {u.unit_type} · {u.bedrooms} dorm. ·{" "}
-                    {formatCurrency(u.price_list)}
+                    {u.unit_number} — {u.unit_type}{u.bedrooms > 0 ? ` · ${u.bedrooms} dorm.` : ""} ·{" "}
+                    {formatCurrency(u.price_list, u.currency)}
                   </option>
                 ))}
               </select>
@@ -583,7 +583,7 @@ export default function NuevaReservaClient() {
               <span className="font-medium">{unit.tower_name}</span>
               <span className="text-muted">Tipo</span>
               <span className="font-medium">
-                {unit.unit_type} · {unit.bedrooms} dorm.
+                {unit.unit_type}{unit.bedrooms > 0 ? ` · ${unit.bedrooms} dorm.` : ""}
               </span>
               {unit.area_total && (
                 <>
@@ -591,9 +591,15 @@ export default function NuevaReservaClient() {
                   <span className="font-medium">{unit.area_total} m²</span>
                 </>
               )}
+              {unit.area_lot ? (
+                <>
+                  <span className="text-muted">Terreno</span>
+                  <span className="font-medium">{unit.area_lot} m²</span>
+                </>
+              ) : null}
               <span className="text-muted">Precio</span>
               <span className="font-medium">
-                {formatCurrency(unit.price_list)}
+                {formatCurrency(unit.price_list, unit.currency)}
               </span>
             </div>
             {!unitIdParam && (
@@ -689,6 +695,7 @@ export default function NuevaReservaClient() {
                       <ReceiptPreview
                         extraction={form.ocrExtraction}
                         imageUrl={form.receiptPreviewUrl}
+                        currency={unit?.currency}
                       />
                       <button
                         type="button"
@@ -801,7 +808,7 @@ export default function NuevaReservaClient() {
               </legend>
               <div className="grid sm:grid-cols-2 gap-3">
                 <div className="grid gap-1">
-                  <label className="text-xs text-muted">Monto (Q)</label>
+                  <label className="text-xs text-muted">Monto ({unit?.currency === "USD" ? "$" : "Q"})</label>
                   <input
                     type="number"
                     inputMode="decimal"

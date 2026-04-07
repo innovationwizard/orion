@@ -40,7 +40,7 @@ export default function ReservationRow({ reservation: r, selected, onClick }: Pr
         {r.salesperson_name}
       </td>
       <td className="px-4 py-3 text-sm text-text-primary tabular-nums">
-        {formatCurrency(r.deposit_amount)}
+        {formatCurrency(r.deposit_amount, r.currency)}
       </td>
       <td className="px-4 py-3 text-sm text-muted whitespace-nowrap">
         {formatDate(r.submitted_at)}

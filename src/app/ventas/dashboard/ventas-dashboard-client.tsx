@@ -146,7 +146,7 @@ export default function VentasDashboardClient() {
                       {r.client_names?.join(", ") ?? "—"}
                     </td>
                     <td className="px-4 py-3 text-text-primary tabular-nums">
-                      {r.deposit_amount != null ? formatCurrency(r.deposit_amount) : "—"}
+                      {r.deposit_amount != null ? formatCurrency(r.deposit_amount, r.currency) : "—"}
                     </td>
                     <td className="px-4 py-3 text-muted whitespace-nowrap">
                       {formatDate(r.submitted_at)}

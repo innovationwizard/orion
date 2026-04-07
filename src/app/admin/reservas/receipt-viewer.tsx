@@ -6,9 +6,10 @@ import { CONFIDENCE_LABELS, CONFIDENCE_COLORS, formatCurrency, formatDate } from
 type Props = {
   imageUrl: string | null;
   extractions: ReceiptExtraction[];
+  currency?: "GTQ" | "USD";
 };
 
-export default function ReceiptViewer({ imageUrl, extractions }: Props) {
+export default function ReceiptViewer({ imageUrl, extractions, currency }: Props) {
   const latest = extractions[0] ?? null;
 
   return (
@@ -48,7 +49,7 @@ export default function ReceiptViewer({ imageUrl, extractions }: Props) {
             {latest.extracted_amount != null && (
               <>
                 <span className="text-muted">Monto</span>
-                <span>{formatCurrency(latest.extracted_amount)}</span>
+                <span>{formatCurrency(latest.extracted_amount, currency)}</span>
               </>
             )}
             {latest.extracted_date && (

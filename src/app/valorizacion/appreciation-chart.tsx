@@ -4,13 +4,14 @@ import type { PriceHistoryEntry } from "@/lib/reservas/types";
 
 type Props = {
   data: PriceHistoryEntry[];
+  currency?: "GTQ" | "USD";
 };
 
 const CHART_WIDTH = 600;
 const CHART_HEIGHT = 180;
 const PADDING = { top: 20, right: 20, bottom: 40, left: 60 };
 
-export default function AppreciationChart({ data }: Props) {
+export default function AppreciationChart({ data, currency }: Props) {
   // Only show entries with appreciation_total
   const points = data.filter((d) => d.appreciation_total != null);
   if (points.length < 2) return null;
@@ -111,7 +112,7 @@ export default function AppreciationChart({ data }: Props) {
                 fontSize={9}
                 fill="var(--color-muted)"
               >
-                Q{Math.round(val).toLocaleString("es-GT")}
+                {currency === "USD" ? "$" : "Q"}{Math.round(val).toLocaleString("es-GT")}
               </text>
             );
           })}

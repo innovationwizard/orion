@@ -348,7 +348,7 @@ function QueueRow({
       <div className="text-right shrink-0">
         {tab === "pendientes" && r.deposit_amount != null && (
           <span className="text-sm font-medium text-text-primary tabular-nums">
-            {formatCurrency(r.deposit_amount)}
+            {formatCurrency(r.deposit_amount, r.currency)}
           </span>
         )}
         {tab === "tasas" && (

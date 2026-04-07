@@ -206,7 +206,7 @@ export default function ReservasClient() {
                     </td>
                     <td className="px-4 py-3 text-text-primary tabular-nums">
                       {r.deposit_amount != null
-                        ? formatCurrency(r.deposit_amount)
+                        ? formatCurrency(r.deposit_amount, r.currency)
                         : "—"}
                     </td>
                     <td className="px-4 py-3 text-muted whitespace-nowrap">

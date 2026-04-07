@@ -285,8 +285,9 @@ export default function ReservationDetail({
                   <Row label="Proyecto" value={data.unit.project_name} />
                   <Row label="Torre" value={data.unit.tower_name} />
                   <Row label="Piso" value={String(data.unit.floor_number)} />
-                  <Row label="Tipo" value={`${data.unit.unit_type} · ${data.unit.bedrooms} dorm.`} />
-                  <Row label="Precio" value={formatCurrency(data.unit.price_list)} />
+                  <Row label="Tipo" value={`${data.unit.unit_type}${data.unit.bedrooms > 0 ? ` · ${data.unit.bedrooms} dorm.` : ""}`} />
+                  {data.unit.area_lot ? <Row label="Terreno" value={`${data.unit.area_lot} m²`} /> : null}
+                  <Row label="Precio" value={formatCurrency(data.unit.price_list, data.unit.currency)} />
                   <Row label="Estado" value={UNIT_STATUS_LABELS[data.unit.status]} />
                 </Section>
               )}
@@ -473,7 +474,7 @@ export default function ReservationDetail({
 
               {/* Deposit */}
               <Section title="Depósito">
-                <Row label="Monto" value={formatCurrency(data.reservation.deposit_amount)} />
+                <Row label="Monto" value={formatCurrency(data.reservation.deposit_amount, data.unit?.currency)} />
                 <Row label="Fecha" value={formatDate(data.reservation.deposit_date)} />
                 <Row label="Banco" value={data.reservation.deposit_bank ?? "—"} />
                 <Row label="Depositante" value={data.reservation.depositor_name ?? "—"} />
@@ -483,6 +484,7 @@ export default function ReservationDetail({
               <ReceiptViewer
                 imageUrl={data.reservation.receipt_image_url}
                 extractions={data.extractions}
+                currency={data.unit?.currency}
               />
 
               {/* PCV Generation — B5 only */}
@@ -676,7 +678,7 @@ function MonthlyContext({ entries }: { entries: MonthlySaleContext[] }) {
             <span className="tabular-nums">{e.unit_number}</span>
             <span className="text-muted truncate">{e.unit_type}</span>
             <span className="tabular-nums text-right">
-              {e.deposit_amount != null ? formatCurrency(e.deposit_amount) : "—"}
+              {e.deposit_amount != null ? formatCurrency(e.deposit_amount, e.project_slug === "santa-elena" ? "USD" : "GTQ") : "—"}
             </span>
             <span className={`tabular-nums text-right font-medium ${
               e.ejecutivo_rate_confirmed ? "text-success" : e.ejecutivo_rate != null ? "text-warning" : "text-muted"

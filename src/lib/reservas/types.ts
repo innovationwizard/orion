@@ -244,6 +244,8 @@ export interface UnitFull {
   valor_inmueble: number | null;
   // 049: lot/plot area for horizontal projects (casas)
   area_lot: number | null;
+  // 050: project currency
+  currency: "GTQ" | "USD";
 }
 
 // ---------------------------------------------------------------------------
@@ -325,6 +327,8 @@ export interface ReservationPending {
   // 033: ejecutivo rate + confirmation status
   ejecutivo_rate: number | null;
   ejecutivo_rate_confirmed: boolean;
+  // 050: project currency
+  currency: "GTQ" | "USD";
 }
 
 export interface ProjectWithTowers {
@@ -337,6 +341,8 @@ export interface ProjectWithTowers {
     is_default: boolean;
     delivery_date: string | null;
   }[];
+  // 050: project currency
+  currency: "GTQ" | "USD";
 }
 
 export interface UnitSaleCount {

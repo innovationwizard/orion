@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useProjects } from "@/hooks/use-projects";
 import { usePriceHistory } from "@/hooks/use-price-history";
+import { formatCurrency } from "@/lib/reservas/constants";
 import NavBar from "@/components/nav-bar";
 import PriceHistoryTable from "./price-history-table";
 import AppreciationChart from "./appreciation-chart";
@@ -79,7 +80,7 @@ export default function ValorizacionClient() {
         </span>
         {latest?.appreciation_total != null && (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-card border border-border text-xs font-medium text-success">
-            Apreciacion total: <strong className="tabular-nums">Q{latest.appreciation_total.toLocaleString("es-GT")}</strong>
+            Apreciacion total: <strong className="tabular-nums">{formatCurrency(latest.appreciation_total, projects.find(p => p.project_slug === projectSlug)?.currency)}</strong>
           </span>
         )}
       </div>
@@ -94,13 +95,13 @@ export default function ValorizacionClient() {
         </div>
       ) : (
         <>
-          <AppreciationChart data={entries} />
+          <AppreciationChart data={entries} currency={projects.find(p => p.project_slug === projectSlug)?.currency} />
           {entries.length === 0 ? (
             <div className="py-12 text-center text-muted">
               No hay registros de valorizacion con los filtros seleccionados.
             </div>
           ) : (
-            <PriceHistoryTable entries={entries} onDelete={handleDelete} />
+            <PriceHistoryTable entries={entries} onDelete={handleDelete} currency={projects.find(p => p.project_slug === projectSlug)?.currency} />
           )}
         </>
       )}
