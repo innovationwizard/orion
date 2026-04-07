@@ -56,6 +56,13 @@ export default function CotizadorClient() {
     selectedUnit?.bedrooms ?? null,
   );
 
+  // Disclaimers are project-wide — always use the project-default config's disclaimers
+  // so ALL units show ALL terms regardless of which specific config row resolves.
+  const projectDefaultConfig = useResolvedConfig(configRows, null, null, null);
+  const disclaimers = projectDefaultConfig.disclaimers.length > 0
+    ? projectDefaultConfig.disclaimers
+    : config.disclaimers;
+
   // Auto-populate asesor from logged-in salesperson (if any)
   const { data: spData } = useCurrentSalesperson();
   const [clientName, setClientName] = useState("");
@@ -323,9 +330,9 @@ export default function CotizadorClient() {
           <EscrituracionPanel result={escrituracion} config={config} />
 
           {/* Disclaimers */}
-          {config.disclaimers.length > 0 && (
+          {disclaimers.length > 0 && (
             <section className="cotizador-disclaimers text-xs text-muted space-y-1 px-1">
-              {config.disclaimers.map((d, i) => (
+              {disclaimers.map((d, i) => (
                 <p key={i}>* {d}</p>
               ))}
             </section>

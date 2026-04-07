@@ -40,7 +40,7 @@ export default function FinancingMatrix({ scenarios, config }: Props) {
     }
     const income_base = config.income_base === "cuota_banco" ? cuota_banco : total_monthly;
     const ingreso_requerido = Math.round(income_base * config.income_multiplier);
-    return { cuota_banco, ingreso_requerido };
+    return { cuota_banco, total_monthly, ingreso_requerido };
   }, [customYears, monto, rate, plazos_years, lookup, config.include_iusi_in_cuota, config.include_seguro_in_cuota, config.income_base, config.income_multiplier]);
 
   return (
@@ -102,7 +102,7 @@ export default function FinancingMatrix({ scenarios, config }: Props) {
                 return (
                   <td key={plazo} className="py-2 px-2 text-center">
                     {s ? (
-                      <span className="font-semibold text-text-primary">{formatCurrency(s.cuota_banco, config.currency)}</span>
+                      <span className="font-semibold text-text-primary">{formatCurrency(s.total_monthly, config.currency)}</span>
                     ) : (
                       "—"
                     )}
@@ -111,7 +111,7 @@ export default function FinancingMatrix({ scenarios, config }: Props) {
               })}
               <td className="py-2 px-2 text-center">
                 {custom ? (
-                  <span className="font-semibold text-text-primary">{formatCurrency(custom.cuota_banco, config.currency)}</span>
+                  <span className="font-semibold text-text-primary">{formatCurrency(custom.total_monthly, config.currency)}</span>
                 ) : (
                   <span className="text-muted">—</span>
                 )}
