@@ -37,6 +37,7 @@ interface ConfigRow {
   disclaimers: string[] | null;
   validity_days: number;
   is_active: boolean;
+  min_enganche_pct: number | null;
   display_order: number;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   projects: { name: string; slug: string } | any;
@@ -58,6 +59,7 @@ interface FormData {
   label: string;
   currency: "GTQ" | "USD";
   enganche_pct: string; // % display (e.g. "7")
+  min_enganche_pct: string; // % display (e.g. "30"), empty = no minimum
   reserva_default: string;
   installment_months: string;
   round_enganche_q100: boolean;
@@ -96,6 +98,7 @@ function emptyForm(): FormData {
     label: "",
     currency: "GTQ",
     enganche_pct: "7",
+    min_enganche_pct: "",
     reserva_default: "1500",
     installment_months: "7",
     round_enganche_q100: false,
@@ -135,6 +138,7 @@ function configToForm(c: ConfigRow): FormData {
     label: c.label,
     currency: c.currency,
     enganche_pct: (Number(c.enganche_pct) * 100).toFixed(2).replace(/\.?0+$/, ""),
+    min_enganche_pct: c.min_enganche_pct != null ? (Number(c.min_enganche_pct) * 100).toFixed(2).replace(/\.?0+$/, "") : "",
     reserva_default: String(c.reserva_default),
     installment_months: String(c.installment_months),
     round_enganche_q100: c.round_enganche_q100,
@@ -170,6 +174,7 @@ function formToPayload(f: FormData) {
     label: f.label.trim(),
     currency: f.currency,
     enganche_pct: parseFloat(f.enganche_pct) / 100,
+    min_enganche_pct: f.min_enganche_pct ? parseFloat(f.min_enganche_pct) / 100 : null,
     reserva_default: parseFloat(f.reserva_default),
     installment_months: parseInt(f.installment_months),
     round_enganche_q100: f.round_enganche_q100,
@@ -648,6 +653,11 @@ function ConfigFormModal({
     if (!form.label.trim()) return "El label es requerido";
     const eng = parseFloat(form.enganche_pct);
     if (isNaN(eng) || eng < 0 || eng > 100) return "Enganche debe estar entre 0% y 100%";
+    if (form.min_enganche_pct) {
+      const minEng = parseFloat(form.min_enganche_pct);
+      if (isNaN(minEng) || minEng < 0 || minEng > 100) return "Enganche mínimo debe estar entre 0% y 100%";
+      if (minEng > eng) return "Enganche mínimo no puede ser mayor que el enganche default";
+    }
     const reserva = parseFloat(form.reserva_default);
     if (isNaN(reserva) || reserva < 0) return "Reserva debe ser >= 0";
     const cuotas = parseInt(form.installment_months);
@@ -781,6 +791,10 @@ function ConfigFormModal({
               <div>
                 <label className={labelCls}>Enganche %</label>
                 <input type="number" step="0.01" min="0" max="100" value={form.enganche_pct} onChange={(e) => set("enganche_pct", e.target.value)} className={inputCls} />
+              </div>
+              <div>
+                <label className={labelCls}>Eng. mínimo %</label>
+                <input type="number" step="0.01" min="0" max="100" placeholder="Sin mínimo" value={form.min_enganche_pct} onChange={(e) => set("min_enganche_pct", e.target.value)} className={inputCls} />
               </div>
               <div>
                 <label className={labelCls}>Reserva</label>

@@ -286,6 +286,7 @@ export interface CotizadorConfigRow {
   validity_days: number;
   is_active: boolean;
   display_order: number;
+  min_enganche_pct: number | null;
   created_at: string;
   updated_at: string;
 }

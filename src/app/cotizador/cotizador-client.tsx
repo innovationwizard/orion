@@ -107,7 +107,10 @@ export default function CotizadorClient() {
     setShowMarkup(false);
   }, [config.enganche_pct, config.reserva_default, config.installment_months]);
 
-  const enganchePct = enganchePctOverride ?? config.enganche_pct;
+  const minEnganchePct = config.min_enganche_pct ?? 0.05;
+  const enganchePct = enganchePctOverride != null
+    ? Math.max(enganchePctOverride, minEnganchePct)
+    : config.enganche_pct;
   const reserva = reservaOverride ?? config.reserva_default;
   const installmentMonths = installmentMonthsOverride ?? config.installment_months;
 
@@ -436,7 +439,7 @@ export default function CotizadorClient() {
                 <div className="flex items-center gap-2">
                   <input
                     type="range"
-                    min={5}
+                    min={Math.round(minEnganchePct * 100)}
                     max={50}
                     step={1}
                     value={Math.round(enganchePct * 100)}

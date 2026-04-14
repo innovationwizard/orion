@@ -12,6 +12,7 @@ const createConfigSchema = z.object({
   label: z.string().min(1).max(200),
   currency: z.enum(["GTQ", "USD"]).default("GTQ"),
   enganche_pct: z.number().min(0).max(1),
+  min_enganche_pct: z.number().min(0).max(1).nullable().default(null),
   reserva_default: z.number().min(0),
   installment_months: z.number().int().min(1).max(60),
   round_enganche_q100: z.boolean().default(false),

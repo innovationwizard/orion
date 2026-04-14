@@ -65,6 +65,8 @@ export interface CotizadorConfig {
   // Mantenimiento
   mantenimiento_per_m2: number | null;
   mantenimiento_label: string | null;
+  // Enganche constraints
+  min_enganche_pct: number | null;
   // Presentation
   disclaimers: string[];
   validity_days: number;
@@ -96,6 +98,7 @@ export function configFromDefaults(): CotizadorConfig {
     use_pretax_extraction: true,
     mantenimiento_per_m2: null,
     mantenimiento_label: null,
+    min_enganche_pct: null,
     disclaimers: [],
     validity_days: 7,
   };

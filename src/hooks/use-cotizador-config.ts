@@ -65,6 +65,7 @@ export function rowToConfig(row: CotizadorConfigRow): CotizadorConfig {
     use_pretax_extraction: row.use_pretax_extraction,
     mantenimiento_per_m2: row.mantenimiento_per_m2 != null ? Number(row.mantenimiento_per_m2) : null,
     mantenimiento_label: row.mantenimiento_label,
+    min_enganche_pct: row.min_enganche_pct != null ? Number(row.min_enganche_pct) : null,
     disclaimers: row.disclaimers ?? [],
     validity_days: row.validity_days,
   };

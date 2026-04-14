@@ -10,6 +10,7 @@ const updateConfigSchema = z
     label: z.string().min(1).max(200).optional(),
     currency: z.enum(["GTQ", "USD"]).optional(),
     enganche_pct: z.number().min(0).max(1).optional(),
+    min_enganche_pct: z.number().min(0).max(1).nullable().optional(),
     reserva_default: z.number().min(0).optional(),
     installment_months: z.number().int().min(1).max(60).optional(),
     round_enganche_q100: z.boolean().optional(),
