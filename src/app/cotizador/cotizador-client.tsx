@@ -92,6 +92,10 @@ export default function CotizadorClient() {
   const [showDiscount, setShowDiscount] = useState(false);
   const [discountAmount, setDiscountAmount] = useState(0);
 
+  // Sobreprecio (negotiation markup — show price above list to client)
+  const [showMarkup, setShowMarkup] = useState(false);
+  const [markupAmount, setMarkupAmount] = useState(0);
+
   // Reset overrides when resolved config changes (tower, unit-type, or project switch)
   useEffect(() => {
     setEnganchePctOverride(null);
@@ -99,6 +103,8 @@ export default function CotizadorClient() {
     setInstallmentMonthsOverride(null);
     setDiscountAmount(0);
     setShowDiscount(false);
+    setMarkupAmount(0);
+    setShowMarkup(false);
   }, [config.enganche_pct, config.reserva_default, config.installment_months]);
 
   const enganchePct = enganchePctOverride ?? config.enganche_pct;
@@ -107,7 +113,11 @@ export default function CotizadorClient() {
 
   // Computations
   const price = selectedUnit?.price_list ?? 0;
-  const effectivePrice = discountAmount > 0 && discountAmount < price ? price - discountAmount : price;
+  const markedUpPrice = markupAmount > 0 ? price + markupAmount : price;
+  const maxDiscount = markupAmount > 0 ? markupAmount : markedUpPrice - 1;
+  const effectivePrice = discountAmount > 0 && discountAmount <= maxDiscount
+    ? markedUpPrice - discountAmount
+    : markedUpPrice;
 
   const enganche = useMemo(
     () => computeEnganche(effectivePrice, config, enganchePct, reserva, installmentMonths),
@@ -158,6 +168,8 @@ export default function CotizadorClient() {
     setInstallmentMonthsOverride(null);
     setDiscountAmount(0);
     setShowDiscount(false);
+    setMarkupAmount(0);
+    setShowMarkup(false);
     const params = new URLSearchParams(searchParams.toString());
     if (slug) params.set("project", slug); else params.delete("project");
     params.delete("unit");
@@ -251,6 +263,8 @@ export default function CotizadorClient() {
               setUnitId(e.target.value);
               setDiscountAmount(0);
               setShowDiscount(false);
+              setMarkupAmount(0);
+              setShowMarkup(false);
               updateParam("unit", e.target.value);
             }}
           >
@@ -285,23 +299,78 @@ export default function CotizadorClient() {
               <Detail label="Tipo" value={selectedUnit.unit_type} />
               <Detail label="Dormitorios" value={String(selectedUnit.bedrooms)} />
               {selectedUnit.area_total ? <Detail label="Área total" value={`${selectedUnit.area_total} m²`} /> : null}
-              <Detail label="Precio lista" value={formatCurrency(price, config.currency)} />
+              <Detail label={markupAmount > 0 ? "Precio" : "Precio lista"} value={formatCurrency(markedUpPrice, config.currency)} />
               {selectedUnit.tower_delivery_date && (
                 <Detail label="Entrega estimada" value={formatDate(selectedUnit.tower_delivery_date)} />
               )}
             </div>
           </section>
 
-          {/* Special discount — discrete toggle, rarely used */}
-          {!showDiscount && (
-            <button
-              type="button"
-              onClick={() => setShowDiscount(true)}
-              className="cotizador-no-print text-xs text-muted underline cursor-pointer hover:text-text-primary transition-colors self-start -mt-3"
-            >
-              Agregar descuento
-            </button>
+          {/* Sobreprecio + Descuento toggle links — discrete, rarely used */}
+          <div className="cotizador-no-print flex flex-wrap gap-3 self-start -mt-3">
+            {!showMarkup && (
+              <button
+                type="button"
+                onClick={() => setShowMarkup(true)}
+                className="text-xs text-muted underline cursor-pointer hover:text-text-primary transition-colors"
+              >
+                Agregar sobreprecio
+              </button>
+            )}
+            {!showDiscount && (
+              <button
+                type="button"
+                onClick={() => setShowDiscount(true)}
+                className="text-xs text-muted underline cursor-pointer hover:text-text-primary transition-colors"
+              >
+                Agregar descuento
+              </button>
+            )}
+          </div>
+
+          {/* Sobreprecio — negotiation markup, hidden entirely in print */}
+          {showMarkup && (
+            <section className="cotizador-markup bg-card rounded-2xl shadow-card border border-dashed border-emerald-400/60 p-5 grid gap-3">
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-semibold uppercase tracking-wider text-emerald-600">Sobreprecio</h2>
+                <button
+                  type="button"
+                  onClick={() => { setShowMarkup(false); setMarkupAmount(0); }}
+                  className="cotizador-no-print text-xs text-muted hover:text-text-primary transition-colors"
+                  title="Quitar sobreprecio"
+                >
+                  ✕
+                </button>
+              </div>
+              <label className="cotizador-no-print grid gap-1 max-w-[200px]">
+                <span className="text-xs text-muted">Sobreprecio ({config.currency === "USD" ? "$" : "Q"})</span>
+                <input
+                  type="number"
+                  min={1}
+                  step={1000}
+                  value={markupAmount || ""}
+                  onChange={(e) => setMarkupAmount(Math.max(0, Number(e.target.value)))}
+                  placeholder="0"
+                  className="px-3 py-2 rounded-lg border border-border bg-card text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400/30"
+                />
+              </label>
+              {markupAmount > 0 && (
+                <div className="cotizador-no-print grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm pt-2 border-t border-border">
+                  <Detail label="Precio lista" value={formatCurrency(price, config.currency)} />
+                  <div className="min-w-0">
+                    <div className="text-muted text-xs">Sobreprecio</div>
+                    <div className="text-emerald-600 font-medium truncate">+{formatCurrency(markupAmount, config.currency)}</div>
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-muted text-xs">Precio al cliente</div>
+                    <div className="text-text-primary font-bold truncate">{formatCurrency(markedUpPrice, config.currency)}</div>
+                  </div>
+                </div>
+              )}
+            </section>
           )}
+
+          {/* Special discount */}
           {showDiscount && (
             <section className="cotizador-discount bg-card rounded-2xl shadow-card border border-dashed border-amber-400/60 p-5 grid gap-3">
               <div className="flex items-center justify-between">
@@ -320,7 +389,7 @@ export default function CotizadorClient() {
                 <input
                   type="number"
                   min={1}
-                  max={price - 1}
+                  max={maxDiscount}
                   step={1000}
                   value={discountAmount || ""}
                   onChange={(e) => setDiscountAmount(Math.max(0, Number(e.target.value)))}
@@ -328,9 +397,9 @@ export default function CotizadorClient() {
                   className="px-3 py-2 rounded-lg border border-border bg-card text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-amber-400/30"
                 />
               </label>
-              {discountAmount > 0 && discountAmount < price && (
+              {discountAmount > 0 && discountAmount <= maxDiscount && (
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm pt-2 border-t border-border">
-                  <Detail label="Precio lista" value={formatCurrency(price, config.currency)} />
+                  <Detail label={markupAmount > 0 ? "Precio" : "Precio lista"} value={formatCurrency(markedUpPrice, config.currency)} />
                   <div className="min-w-0">
                     <div className="text-muted text-xs">Descuento especial</div>
                     <div className="text-amber-600 font-medium truncate">-{formatCurrency(discountAmount, config.currency)}</div>
@@ -341,8 +410,12 @@ export default function CotizadorClient() {
                   </div>
                 </div>
               )}
-              {discountAmount >= price && discountAmount > 0 && (
-                <p className="text-xs text-red-500">El descuento debe ser menor al precio lista</p>
+              {discountAmount > maxDiscount && discountAmount > 0 && (
+                <p className="text-xs text-red-500">
+                  {markupAmount > 0
+                    ? "El descuento no puede ser mayor al sobreprecio"
+                    : "El descuento debe ser menor al precio lista"}
+                </p>
               )}
             </section>
           )}
@@ -550,6 +623,9 @@ const printStyles = `
     .cotizador-unit-summary > div > div > div:last-child {
       font-size: 7.5pt !important;
     }
+
+    /* Markup section — hidden in print (price already in unit summary) */
+    .cotizador-markup { display: none !important; }
 
     /* Discount section — keep visible in print, accent border */
     .cotizador-discount {

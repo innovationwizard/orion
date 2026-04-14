@@ -1,0 +1,402 @@
+TRANSCRIPCIÓN DE REUNIÓN DE VENTAS — 14 de abril de 2026
+
+Participantes identificados: Jorge Luis (líder/desarrollador de la app), José Gutiérrez, Airway, Paula, Iván, Ronnie, Eder, Pablo, Anaí/Anael, Selván (mención).
+
+---
+
+[Saludos iniciales y problemas de audio]
+
+Jorge Luis: Muchas gracias, buenos días. Llamó Selván. ¿Una impresora?
+
+[Conversación informal inaudible]
+
+Jorge Luis: Hola, José, buenos días.
+
+José: Buenos días.
+
+Jorge Luis: Nosotros te escuchamos. No sé si estás hablando.
+
+José: ¿Ahora me escuchan?
+
+Jorge Luis: Un poquito más fuerte, pero...
+
+José: Es que me estaba mandando el audio a otro dispositivo cercano en vez de tenerlo acá en el cel. En que... [incomprensible] ...por qué.
+
+Jorge Luis: Es muy delicado pronunciar el nombre; fíjate, los nombres asiáticos se me dificultan. Pero bueno, voy a comenzar en el orden en el que los miro en la pantalla, ¿eso les parece bien?
+
+Todos: Ok.
+
+---
+
+JOSÉ GUTIÉRREZ
+
+Jorge Luis: El primero, que bueno, José Gutiérrez. La pregunta de examen es: ¿has utilizado la app durante esta semana?
+
+José: No.
+
+Jorge Luis: ¿Has utilizado el cotizador? ¿Qué diferencia hay entre el cotizador del Excel y el cotizador?
+
+[Problemas técnicos — José intenta ingresar a la aplicación]
+
+Jorge Luis: Jorge, disculpa, espérate que me vuelve a tirar el enlace otra vez de la nueva contraseña. ¿Qué ves? ¿Qué estás viendo ahorita que nosotros no lo estamos viendo?
+
+José: Ya abrió. Vamos a ver. Metí a cotizador. Datos de cotización, asesor, opcional, proyecto y unidad. Estoy viendo donde dice cotizador. Cotizador y seleccionar unidad. Datos de cotización.
+
+[Problemas de audio prolongados — José no se escucha bien]
+
+José: ¿No sé si me escucha?
+
+Varios: Sí me escucha. Se escucha muy lejos, pero se escucha.
+
+Jorge Luis: Jorge Luis, voy a tratar de subirle volumen a esto.
+
+[Audio sigue con dificultades]
+
+Jorge Luis: Voy a ver eso inmediatamente. Para mientras, poderlo seguir. Pasándonos de tiempo, pasemos con el siguiente que veo que es Airway.
+
+---
+
+AIRWAY
+
+Jorge Luis: La pregunta es... muy buenos días.
+
+Airway: No te escucho.
+
+Jorge Luis: ¿Utilizaste esta semana la aplicación?
+
+Airway: Sí. No, Jorge.
+
+Jorge Luis: ¿Utilizaste esta semana Excel?
+
+Airway: Sí.
+
+Jorge Luis: ¿Para qué usaste Excel esta semana?
+
+Airway: El tema de cotizaciones y algunas... y hacerles algunos cálculos a algunos clientes.
+
+Jorge Luis: Ok. ¿Y podríamos hacer el mismo ejercicio de probar ahorita mismo? De probar ahorita mismo, a ver si te funciona el cotizador.
+
+Airway: Sí, a mí se debe funcionar. Yo cargó, se me dejó el proyecto. Sí, ok. Y las unidades disponibles también. Sí. Lo que estaba fallando aquí es que en la cuota general no aparece el UCI cargado, pero aparece abajo un apartado que dice UCI.
+
+Jorge Luis: La última vez que revisamos esto con Antonio, sí nos aparecía que la cuota ya tiene cargado el UCI. Pero regálame tu número de unidad que estás viendo.
+
+Airway: 614.
+
+Jorge Luis: Ok, vamos a revisar detenidamente la línea de 614.
+
+Airway: Para vos, probablemente... porque, disculpe que me interrumpa, probablemente es porque aparece, pasa del 7%, el 7.26%. Es la que sí trabaja con el PAXA, pero no deja; los decimales no deja cargarlos en la aplicación para que lo tenga inocuado [incomprensible].
+
+Jorge Luis: Perdón, perdón, ¿dónde es que no te cargarían los decimales?
+
+Airway: En el apartado que dice enganche. Nosotros trabajamos 7.26%, que es la tasa, la tasa corre.
+
+Jorge Luis: Ok, entonces probablemente esa es la validación que no cuadra. Ya, en tu caso, solo necesito agregar una línea de tasa de 7.26%. Para eso necesito el nombre del proyecto y el nombre de la torre.
+
+Airway: Ah, yo no sé si es en todos los proyectos, pero en donde estoy es Boulevard 5.
+
+Jorge Luis: Boulevard 5. ¿En cuánto reyes? [incomprensible]
+
+Airway: Es torre única.
+
+Jorge Luis: Torre única. Boulevard 5. A agregar 7.26%. Anotado. Eso ya queda en mi cancha entonces.
+
+Airway: Parra, así.
+
+---
+
+PAULA
+
+Jorge Luis: Pasemos a la siguiente persona. Estoy viendo a Paula. Paula, muy buenos días.
+
+Paula: Hola, ¿qué tal?
+
+Jorge Luis: ¿Tú has utilizado la app durante esta semana?
+
+Paula: No, la verdad es que sí intenté hacer una comparativa el fin de semana para ver alguna cotización, pero me surgió una duda.
+
+Jorge Luis: ¿Y tienes por ahí en la mano tu duda?
+
+Paula: Sí, sí, sí. Yo el fin de semana estaba cotizando un apartamento, pero justo tuve que hacer un ajuste por lo del descuento que te comenté el martes pasado, no sé si tú recuerdas.
+
+Jorge Luis: Sí, lo recuerdo.
+
+Paula: Entonces, pero como no me parecía, igual pues terminé usando Excel, porque solo quería como comparar y ver ahí la disponibilidad. Pero no sé si al final sí se va a poner la opción como para poder hacer un ajuste, Jorge Luis.
+
+Jorge Luis: Ya lo pusimos. Debería aparecer de pequeñito el texto "agregar descuento". Podría aparecer, si te aparece.
+
+Paula: Es decir, que no me aparece. Pero si quieres voy a darle como refresco, entonces. ¿Por qué?
+
+[Interrupción]
+
+Participante: Disculpen la interrupción, Jorge. Con nosotros tampoco nos permite hacer esta mejora en el precio.
+
+Jorge Luis: Esa sí la lanzamos general para todos los usuarios. Entonces, bueno, sí debería estarle apareciendo a todos ya. Es posible. Los navegadores son bastante agresivos con guardar versiones que ya tienen en memoria. Si ven que no les aparece, hagan una prueba desde una ventana de incógnito. Tal vez ahí sí funciona. En todo caso, esto es algo que ya tiene la app. Eso sería refrescar la memoria del navegador.
+
+Jorge Luis: ¿Alguna otra cosa, Paula, que tú hayas visto que le hace falta a la app y que tú necesitas?
+
+Paula: No, solo, bueno, con el tema de la modificación. ¿También te recuerdas que hablamos de modificación en las cuotas del enganche?
+
+Jorge Luis: Eso no está todavía. Eso está en espera.
+
+Paula: Ok.
+
+Jorge Luis: Que las primeras dos, tres cuotas, una cantidad, un número de cuotas iniciales sean de montos extraños o que tal vez alguien quiere pagar un monto diferente con el 1.14 [incomprensible], con el aguinaldo. Eso todavía no está.
+
+Paula: Ok. Sí, ahorita ya, justo lo abrí en una pestaña de incógnito y ahora sí parece que sale "agregar el descuento", ¿verdad?
+
+Jorge Luis: Así es. Si le das clic ahí, ya te debería permitirte agregar el monto y te dice cuánto es el porcentaje.
+
+Paula: Sí, ahorita sí, ya lo abrí en una pestaña de incógnito y sí funciona.
+
+Jorge Luis: Excelente, excelente. Aparte de estos dos puntos, ¿tenemos algún otro pendiente?
+
+Paula: No, me detenido [incomprensible], no lo es.
+
+Jorge Luis: Ok, muchísimas gracias, Paula.
+
+---
+
+IVÁN
+
+Jorge Luis: Ya se me movieron los cuadritos de la pantalla. Ahora el que tengo en primer lugar es Iván. Muy buenos días, Iván. La pregunta del examen es si has utilizado la aplicación esta semana.
+
+[Iván tiene problemas de autenticación]
+
+Jorge Luis: Ah, ok, autenticación. Lo vemos después. Ok, sí, esos pequeños detalles suelen ser más tardados. Entonces Iván queda pendiente por autenticación.
+
+---
+
+RONNIE
+
+Jorge Luis: Pasamos a la siguiente persona en la lista, que es Ronnie. Muy buenos días, Ronnie. La pregunta del examen es si utilizaste la aplicación durante esta semana.
+
+Ronnie: Buenos días, Jorge. No, no la he utilizado. La estaba viendo ahorita exactamente.
+
+Jorge Luis: Muy bueno, ¿qué bueno?
+
+Ronnie: La verdad que las dudas creo que ya las han venido resolviendo, ¿verdad? Porque, más que todo, como de los precios. Ahora solo quisiera aclarar algo, sí. Esta zona de descuento especial: nosotros, al precio que tiene lista, nosotros ya no lo podemos hacer descuento. Entonces yo siento que esta zona lo solicitaría además, pero si se necesita, porque nosotros en el Excel aumentamos un poco, y de ahí jugamos con eso, ¿verdad? Ya le hacemos el descuento.
+
+Jorge Luis: Y el descuento especial no es al gusto del cliente, como diríamos. El descuento especial sí requiere que antes lo haya autorizado una serie de personas. Solamente cuando ya tengan la autorización de todas las personas necesarias, úsenlo. Pero no es libre para que se bajen los precios a todos los apartamentos.
+
+Ronnie: No, es que no sea solo ahora, Jorge. Tal vez vos lo ves así, pero realmente no es algo que nosotros a regalar. Por lo menos le aumentamos unos 5 mil, 10 mil que chagas más [incomprensible] el precio, para poder jugar con eso y decirle al cliente "le voy a hacer un descuento aquí". Aparte es un descuento especial que ya lo solicitamos directamente a gerencia, ¿verdad?
+
+Jorge Luis: Ya, ya, ya, creo que ya te entendí. Tenemos el precio de lista. Arriba de eso se le dice al cliente un precio distinto al precio de lista. Ese sería el precio de venta. Y eso te da un margen para jugar.
+
+Ronnie: Exacto. Para que no caiga debajo del precio de lista.
+
+Jorge Luis: Exacto. Sí, eso sí no lo tenía en mi panorama, no me lo habían pedido. Queda anotado a partir de este momento que al cliente se le muestra un precio mayor para poder después decirle que le ofreciste un descuento.
+
+Ronnie: Exacto, exacto.
+
+Paula: Solo para aportar, perdón que te interrumpa. Eso tal vez sí lo podemos ver con Hub, porque a nosotros nos ayuda que, por ejemplo, en la pobreza [incomprensible], tú te recuerdas que teníamos un precio distinto al que podíamos pegarle con el descuento de primera vivienda.
+
+Jorge Luis: Sí, sí, claro, cierto.
+
+Paula: Ajá, entonces, por ejemplo, Jorge Luis, a nosotros sí nos puso el precio que tenemos en la disponibilidad, y por eso pedí lo del descuento, como para jugar con el precio, ¿verdad?
+
+Jorge Luis: Ya. Sí, cabal, ya. Entonces, Jorge, lo pregunte y pues lo analice, ¿verdad? La gente entiende como un gancho para el cierre, hacer eso. O sea, un precio más alto y decirle "bueno, se te va a hacer esto ahorita, le consigo este descuento, pero es ahorita."
+
+Ronnie: No, ya, además también tenemos la intención de que todas las veces que sea posible se venda arriba del precio de lista.
+
+Jorge Luis: Entonces sí deberíamos poder imprimir la cotización que dice un precio arriba del precio de lista, ya sea con ese descuento que es gancho de cierre o sin él. Eso sí lo vamos a implementar. Definitivamente es algo que creo que les puede servir mucho a todos.
+
+Ronnie: Gracias. Porque hay otra cosita. Dentro de los ingresos que solicitan aquí en la cotización, deben estar en por lo menos uno de 30 años. Especializaciones en ingresos de 5,600. Como un 7%, ¿no? Realmente no es ese, ¿verdad? A veces tiende a confundir un poquito a los clientes porque nosotros les solicitamos siempre un poco más. Son de por lo menos 7,000 a 7,500, ¿verdad?
+
+Jorge Luis: Ajá.
+
+Ronnie: A veces tiende a confundir un poquito en estos ingresos cuando le imprimimos, miren, por aquí pide eso. No es exclusiva, pero sin verlo.
+
+Jorge Luis: Ah, ya, ya, ya. Sí, estos son cuando están en blanco. Es cierto, es cierto. Esto no tomé de un cuadro que me pasó por ahí Antonio. Pero definitivamente, el banco, si ve a una persona aquí hasta medio endeudada hasta la coronilla, le va a pedir más ingresos.
+
+Ronnie: Exacto. Y es que comúnmente, Jorge, siempre va a ser más, o sea, la gente siempre va a tener deudas. Entonces, de ahí sí me piden que con eso vamos a aplicar y no.
+
+Jorge Luis: Ok, voy a hablar esto con Antonio. Vamos a ver qué hacemos para poner ahí un número que sea más realista en los ingresos mínimos que le vamos a requerir a la persona. No podemos poner que todos están libres de deuda en el mismo momento de la vida, realmente.
+
+Ronnie: Y otra cosita, tal vez en el formato de la impresión de la cotización, ponerle el logo de cada proyecto, porque se ve muy... o sea, el que hemos entregado muy bonito en Excel, pero ya se ve como muy, no sé, muy triste.
+
+Jorge Luis: Esa sí ya me la habían pedido. Esa sí la tengo en mi lista de pendientes: agregarle el logo de cada proyecto a la impresión. Me está llevando un poco más de tiempo, porque armar un PDF es —no sé cómo decirlo— es bastante trabajoso. No sé si se acuerdan ustedes, cuando hacían un trabajo en Word y le metían una foto y se les descuadraba todo.
+
+Varios: Sí, sí.
+
+Jorge Luis: Más o menos así es la cosa. Entonces esto sí lo tengo en la lista, va a estar resuelto, solo que un poquito de paciencia. Es algo truculento, decía uno de mis maestros. Pero sí lo tenemos en la lista.
+
+Ronnie: Gracias, Jorge.
+
+Jorge Luis: ¿Alguna otra cosita que tengas por ahí para pedir?
+
+Ronnie: No, solo contarles, bueno, me voy a preguntar a Jorge. Ya lo podemos realmente, pues, él debe revisarlo y todo. No lo he utilizado directamente ya en materia, pero solo parecía me autorizarlo y utilizarlo para poder ya meterme ahí.
+
+Jorge Luis: Ok, muy bien, muy bien. Cualquier cosa, cualquier pregunta que tengan, me ponen un mensajito y resolvemos.
+
+Ronnie: Gracias, Jorge.
+
+---
+
+EDER
+
+Jorge Luis: Pasamos al siguiente en la lista. Quiero ver quién es. Me queda él.
+
+Eder: Muy bueno, gracias. Gracias, fíjate que yo sí lo utilicé el fin de semana. De hecho, me sirvió mucho para ver la disponibilidad larga.
+
+Jorge Luis: Ah, qué bueno, me alegra muchísimo escuchar eso.
+
+Eder: Sí, sí, sí, sí.
+
+Jorge Luis: ¿Qué cosas se hicieron por este lado o por aquí lo otro que podría facilitar más la vida con esta aplicación?
+
+Eder: No tengas pena. Creo que en lo que dijo Ronnie, en eso estamos bien: en el logotipo, en poder poner un precio un poquito más alto para poder negociar.
+
+Jorge Luis: Correcto.
+
+Eder: Eso sería. Sí, fíjate que ahorita casualmente tengo una duda. Mira pues, nosotros casi que todos los apartamentos lo vendemos con primera vivienda, pero ayer casualmente un cliente me pidió que le mandara la cotización con COTALIPO [incomprensible — posible producto o programa financiero].
+
+Jorge Luis: Ajá. Sí.
+
+Eder: Entonces es otro tipo de cotización porque tiene diferentes porcentajes por años.
+
+Jorge Luis: Eder, yo creo que voy a llamarte individual más tarde para que veamos tu caso, porque este es el primero que he escuchado de esos. Y como tenés un caso real, quiero verlo en día de veras, digamos, no en casos supuestos.
+
+Eder: Va, buenísimo.
+
+Jorge Luis: Sí.
+
+Eder: Porque estamos hablando de que los primeros cuatro años es el 40% menos, después el 30, y después se queda el 100.
+
+Jorge Luis: Va.
+
+Eder: O sea, estamos hablando de que yo te puedo pasar los valores en porcentaje para que lo podamos hacer. O sea, ponerle en la persona, no pido 30 años, pero los primeros cuatro años tiene, por decirte, 426, el quinto al séptimo tiene 530, y del séptimo al treintavo le queda con 726.
+
+Jorge Luis: Sí, pero está bueno, platicamos. Sí, sí, sí, cabal. Voy a hacer una entrevista personalizada para ver bien esos valores [incomprensible: "valentores"]. Esos casos todavía no los conozco hasta el momento.
+
+---
+
+PABLO
+
+Jorge Luis: Yo no veo a nadie más en mi pantalla, pero no sé si hay alguien que se salga de la pantalla.
+
+[Pablo se identifica]
+
+Pablo: Tiene demasiado margen perdido, tanto en el área superior como en el inferior. Una hoja para mí, yo creo que es mejor que salga una, dos. Porque en la segunda solo sale escrituración, concepto de la acción, en total precios, y dice asesor Pablo, pero hay una línea que dice "firma". Habría que poner "firma del cliente", "firma del comprador" o "firma del inversionista". Porque entonces, en la firma que va del lado izquierdo, deberíamos poner "firma del cliente" o "firma del inversionista", y ya la de la derecha "firma del asesor", y que diga tal cual "firma del asesor".
+
+Jorge Luis: Correcto.
+
+Pablo: Porque solo aparece un espacio de firma, no aparecen dos. Y además de eso, deberíamos seguir comprimiendo para que quepa todo en una sola página. Y sí, los márgenes: hay demasiado margen perdido.
+
+Jorge Luis: Ok.
+
+Pablo: Solo es cuestión como de información. En la torre D estamos dando fraccionados hasta 26 meses en el mes de abril, y 24 en la torre C. Pero hagamos cotizadores de [incomprensible] solo 24, no poco del 25. En la torre 20, lo comento porque hay gente que exige los 26 meses. Yo estoy dando 20 o 18.
+
+Jorge Luis: Yo no sé si exigiría, pero si es que así es y está autorizado que sean más, vamos a modificar la aplicación para que les permita: torre 20 de [incomprensible — "tapias"] 25, y 26 meses de fraccionamientos. 25 que estamos todavía en el tiempo, ok. Ok, eso es algo que podemos arreglar definitivamente. ¿Qué otra cosa le has visto por ahí a la aplicación para que te sea más útil?
+
+Pablo: No, está muy bien. No hay... en el camino...
+
+Participante: No hay más de 24 porque 24 es lo que cubre la promesa de compraventa máximo. Para que se lo pregunten a [incomprensible — "joven"].
+
+Paula: Perdón, es que estaba hablando con Paula. Paula dice que en su aplicación se puede modificar la torre de 26 cuotas virtuales [incomprensible]. Entonces tal vez tengo que refrescar yo. Creo que a mí no me sale, pero voy a intentar.
+
+Jorge Luis: Muchas gracias, José. Dale ahí probar refrescar. Y efectivamente, me comparten cualquier cosa que no funcione, ya saben, un mensajito. Yo lo agrego a mi lista de pendientes y vamos. Bien.
+
+Pablo: Solo una cosita, perdón. Para mí, es de acuerdo al... al pedir... en las personas guatemaltecas, mientras más les damos, es mejor porque entienden más. Mientras menos les damos, se hacen bolas y se confunden. En el cotizador que usábamos en Excel, en donde estaba "reserva" poníamos la fecha de la reserva, que insolvía [incomprensible] la reserva, luego ponía el protagón [incomprensible] que sería el mes de mayo, cortamos, julio, corta 3, julio, y así nos sigamos por año. Aquí no. Entonces solo lo comento, por si hay un... para que le pasara a... ¿no me haces en alguna desayunada? [incomprensible]
+
+Jorge Luis: No, no. De hecho, creo que es bastante válido el punto de vista de Pablo, porque eso queda plasmado y la gente lo firma.
+
+Pablo: Claro. Y va de la mano también con otro documento que se llama DSI. Entiendo yo que esto también se va a generar de este programa. Pues, el DSI, para poder hacer la promesa.
+
+Jorge Luis: En eso estamos trabajando, de hecho. Ya se puede imprimir la promesa a partir de esta aplicación.
+
+Pablo: Ok, entonces sí es válido el punto de vista que dice Pablo. Porque tenemos un cuadro nosotros al lado derecho de la cotización donde te aparece cuántos... la reserva, qué fecha se va haciendo la reserva, y de hecho ahí puedes plasmar si por ejemplo el cliente va a pagar su mensualidad del 18 al 20 o del 28 al 31 de cada mes.
+
+Jorge Luis: Correcto, correcto. Vamos a... sí. Este dato de cuándo paga la mensualidad sí me lo habían pedido. Sí lo tengo en la lista. El que me hacía falta es agregar la fecha de la promesa como me están pidiendo ahora, y agregar una columna de la fecha exacta de cada pago que sale en la cotización. Vamos a agregar esos también para que el cliente tenga más información, que se haga menos bolas, y que suelte de una vez la plática, ¿verdad? Que eso es lo que todos queremos.
+
+Jorge Luis: ¿Algún otro comentario por ahí, Pablo?
+
+Pablo: Estamos muy bien, muchas gracias.
+
+Jorge Luis: Gracias por tu colaboración y por tus comentarios. Tal como platicamos, ahorita van a ser de utilidad para todo el equipo.
+
+---
+
+PARTICIPANTE NO IDENTIFICADO (posiblemente de Santa Elena)
+
+Participante: Hola, Jorge Luis, buenos días. Qué gusto saludarte.
+
+Jorge Luis: Igual, ya sabes. Ya sabes tú cuál es la pregunta de examen.
+
+Participante: Sí, la verdad es que yo no la... yo no la estoy usando mucho, principalmente por el ritmo, ¿verdad? Pero sí he estado como viendo cotizaciones y comparando con el Excel. Y la verdad es que todo está muy bien. Lo único es que me gustaría como, pues, como dato, tal vez que el 30% no se pueda dejar en menos. Porque puedo cometer el error [incomprensible: "el mundo"]. Y no permitimos menos del 30% de enganche. Entonces, si se pudiera quedar fijo en 30% de enganche o más, sería fantástico, si se pudiera, ¿verdad?
+
+Jorge Luis: Me gustaría saber si esto aplica a todos los proyectos.
+
+Participante: No, no. Es algo en Santa Elena.
+
+Jorge Luis: Santa Elena. Que tenga fijo como mínimo un 30% de enganche.
+
+Participante: Correcto. Si no se pueda accidentalmente establecer un enganche menor al 30%.
+
+Jorge Luis: Así es. Ok, ok, perfecto. Queda esto anotado. ¿De qué más te puede la app facilitar la vida?
+
+Participante: Bueno, realmente básicamente sería eso. Porque de ahí serían las cuotas de enganche. A mí me aparecen como, por default, me aparecen 15 cuotas. Y no estoy equivocado. Me aparece... voy a refrescar. Me aparecen 15 cuotas de enganche y nosotros vamos por 18 cuotas de enganche.
+
+Jorge Luis: Ahora, pero si coincide bastante bien, entonces tal vez si se puede dejar como por default 18.
+
+Participante: También sería bueno, como para que no me vaya a equivocar yo, porque la cuota sí sube como 10 mil dólares.
+
+Jorge Luis: Claro que sí. Vamos a poner 18 cuotas por default. Esto de hecho está en el configurador. Si por ejemplo Antonio o Hope, que tal vez están por ahí cerca, se pueden meter y cambiarlo de una vez. Si ellos no lo hacen, yo en un ratito te lo cambio. Esto no es ningún problema, se hace en dos minutos y queda resuelto.
+
+Participante: Ok, perfecto. Muchas gracias. Pues hasta ahora creo que sería eso. Tal vez alguna otra anotación que tengo, creo que no es algo como seguro de usar. Entonces, creo que realmente es eso.
+
+Jorge Luis: ¿Cuál es esa otra anotación?
+
+Participante: El tema de la tasa de banco. No se puede cambiar. Por ejemplo, está como la general que están manejando los bancos del 8.5, pero me gustaría como poder calcular al 8, por ejemplo, porque hay bancos que a veces tienen tasa preferencial.
+
+Jorge Luis: Las tasas preferenciales, las tasas de banco también tienen su configurador. Yo me basé en el Excel que en algún momento tenía Antonio. Pero si una tasa, digamos, 8... si en ese momento no tenía 8, yo no la puse. Y si ahora ya la tenemos, solo es agregarle una opción más a ese configurador de tasas, que se divide por proyecto, por torre, por piso, por apartamento, por número de habitaciones. Y en tu caso particular, todos estos valores van por omisión en uno. Así que queda bastante fácil de actualizar.
+
+Participante: Perfecto. Y por último, no sé si se puede agregar el costo del mantenimiento en la cotización también.
+
+Jorge Luis: De negado. Me lo habían pedido antes y la respuesta que me dieron las altas autoridades de Puerta Abierta es que puede haber cambios en el monto del mantenimiento en el futuro. Y si nosotros dejamos un documento firmado que diga el monto, solitos nos clavamos.
+
+Participante: Ah, ok, perfecto.
+
+Jorge Luis: Esa es la razón por la cual no aparece el mantenimiento como un monto en la cotización.
+
+Participante: Ok, de acuerdo. Entonces básicamente sería solo eso: el monto del enganche y la cantidad de cuotas, porque si son 18 y me aparecen únicamente las 15. Pero eso sería lo único. Enganche mínimo 30, cuotas por default 18.
+
+Jorge Luis: Correcto, correcto. Sí, por lo menos en abril. Ok. ¿Alguna otra cosita que se te haya atravesado por ahí en mente, alguna otra idea de cómo seguir mejorando?
+
+Participante: No, de hecho la otra sugerencia que yo tenía pues ya la dieron mis compañeros antes: del tema de logotipo en la cotización. Pero por lo demás, todo está bien. Gracias.
+
+Jorge Luis: Gracias. A ti, gracias por estar utilizando la aplicación. Eso es lo que todos queremos hacer, porque solo mediante el uso normal, regular, de las cosas es que uno se va dando cuenta: "a medio de cuenta esto, a medio de sobra lo otro", y así es como vamos mejorando.
+
+---
+
+ANAÍ
+
+Jorge Luis: Ahorita ya vi más personas en mi reunión. Ahí está Anaí, que no ha hablado. Está muy calladita. Muy buenos días, Anaí, ¿cómo estás?
+
+[Problemas severos de audio con Anaí — incomprensible por varios intentos]
+
+Anaí: Muy buenos días, te escucho fuerte y claro.
+
+Jorge Luis: Qué bueno, gracias.
+
+Anaí: Pues, la verdad no he usado tanto la aplicación, pero como lo viste el martes pasado, Pablo, Paula y yo pues trabajamos muy en equipo, y las consultas que teníamos pues ya las hicieron mis compañeros. Pero pues, esta semana vamos a empezar más de lleno a utilizar la aplicación. Sé que está bastante completa, por lo que todos mis compañeros anteriormente lo han dicho. Y pues, gracias por el tiempo y gracias por saludarme.
+
+Jorge Luis: Claro que sí, ya sabes. Cualquier cosita que vean, me ponen un mensajito. Ya si yo no entiendo, después hablamos, pero que no se les pase. Que de pronto está uno en un momento muy corrido, que no tiene en frente, está uno en una llamada y de pronto tiene una idea. Solo escríbanme un mensajito: "es tal y tal cosa". Y ya, más tarde o el día siguiente nos hablamos y nos explicamos, eso se vale. No es necesario que me manden una explicación académica y científica de qué es lo que está pasando, solo "me falta tal cosa". Ahí hablamos. Eso me sirve perfectamente para agendar una charla posterior y seguir mejorando.
+
+Anaí: Ok, muchísimas gracias. Igual quedo a la orden.
+
+Jorge Luis: A ti, gracias, Anaí.
+
+---
+
+CIERRE
+
+Jorge Luis: Yo creo que ahora sí tenemos a todos, ¿cierto?
+
+Participante: Sí, Jorge.
+
+Jorge Luis: Y también estamos al filo de las 10 de la mañana, que era el límite que me habían establecido para la reunión del día de hoy. Gracias a todos ustedes. Les agradezco mucho por su participación, por su buen ánimo en utilizar la aplicación, por sus comentarios, que son de beneficio para todos. Y yo le quedé mal a algunas personas que les he prometido que les voy a ir diciendo conforme hago los cambios. Pido perdón otra vez. Voy a tratar de mejorar en ese sentido y mandarles breves cápsulas de las mejoras que voy haciendo, para que se metan a probar si es cierto que lo mejoraron, o si solo arruiné otra cosa por estar mejorando. Eso pasa también. Así que nuevamente, gracias. Gracias a todos por estar aquí, gracias por sus colaboraciones, y les deseo un excelente día. Si no hay más comentarios, dudas o preguntas, nuevamente les agradezco de todo corazón, y que tengamos un muy, muy feliz día.
+
+Varios: Gracias, Jorge. Que tengan un buen día.
+
+---
+FIN DE LA TRANSCRIPCIÓN
