@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { formatLegalAmount, diaEnLetras, numeroEnLetras, formatCuiLegal } from "@/lib/reservas/numero-a-letras";
-import { computeEscrituracion, computeEnganche, configFromDefaults } from "@/lib/reservas/cotizador";
+import { computeEscrituracion, computeEnganche, configFromDefaults, scheduleToOverrides } from "@/lib/reservas/cotizador";
+import { resolveConfig } from "@/hooks/use-cotizador-config";
+import type { CotizadorConfigRow } from "@/lib/reservas/types";
 import { formatCurrency } from "@/lib/reservas/constants";
 import { createReservasClient } from "@/lib/supabase/client";
 
@@ -44,11 +46,16 @@ interface PcvData {
     deposit_bank: string | null;
     notes: string | null;
     created_at: string;
+    sale_price: number | null;
+    enganche_pct: number | null;
+    cuotas_enganche: number | null;
+    enganche_schedule: { cuota: number; amount: number }[] | null;
   };
   clients: PcvClient[];
   unit: {
     unit_number: string;
     unit_code: string | null;
+    tower_id: string;
     unit_type: string;
     bedrooms: number;
     area_interior: number | null;
@@ -72,6 +79,7 @@ interface PcvData {
   client_profiles: Record<string, ClientProfileData>;
   client_profile: ClientProfileData | null;
   salesperson: { full_name: string; display_name: string } | null;
+  cotizador_configs: CotizadorConfigRow[];
 }
 
 // ---------------------------------------------------------------------------
@@ -419,18 +427,24 @@ export default function PcvClientComponent({ reservationId, readOnly }: { reserv
   const monthName = MESES[month];
   const yearWords = ANIOS_LETRAS[year] ?? `${year}`;
 
-  // Pricing — use default config as fallback (PCV uses per-reservation overrides when available)
-  const _cfg = configFromDefaults();
-  const price = unit.price_list ?? 0;
-  const pcvCurrency: "GTQ" | "USD" = unit.project_slug === "santa-elena" ? "USD" : "GTQ";
-  const escrituracion = computeEscrituracion(price, _cfg);
-  const reservaAmount = reservation.deposit_amount ?? _cfg.reserva_default;
+  // Pricing — use resolved project config, with reservation-level overrides where available
+  const cfg = data.cotizador_configs?.length
+    ? resolveConfig(data.cotizador_configs, unit.tower_id ?? null, unit.unit_type ?? null, unit.bedrooms ?? null)
+    : configFromDefaults();
+  const price = reservation.sale_price ?? unit.price_list ?? 0;
+  const pcvCurrency: "GTQ" | "USD" = cfg.currency === "USD" ? "USD" : unit.project_slug === "santa-elena" ? "USD" : "GTQ";
+  const escrituracion = computeEscrituracion(price, cfg);
+  const enganchePct = reservation.enganche_pct != null ? Number(reservation.enganche_pct) : cfg.enganche_pct;
+  const cuotasCount = reservation.cuotas_enganche ?? cfg.installment_months;
+  const reservaAmount = reservation.deposit_amount ?? cfg.reserva_default;
+  const overrides = reservation.enganche_schedule ? scheduleToOverrides(reservation.enganche_schedule) : undefined;
   const enganche = computeEnganche(
     price,
-    _cfg,
-    _cfg.enganche_pct,
+    cfg,
+    enganchePct,
     reservaAmount,
-    _cfg.installment_months,
+    cuotasCount,
+    overrides,
   );
   const ultimoPago = Math.max(0, price - enganche.enganche_total);
 

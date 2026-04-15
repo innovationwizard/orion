@@ -202,6 +202,21 @@ export const upsertClientProfileSchema = z.object({
 });
 
 // ---------------------------------------------------------------------------
+// Enganche schedule — admin updates custom installment amounts (054)
+// ---------------------------------------------------------------------------
+
+export const updateEngancheScheduleSchema = z.object({
+  enganche_schedule: z
+    .array(
+      z.object({
+        cuota: z.number().int().positive("Cuota debe ser positiva"),
+        amount: z.number().positive("Monto debe ser positivo"),
+      }),
+    )
+    .nullable(),
+});
+
+// ---------------------------------------------------------------------------
 // Junction metadata — admin updates to reservation_clients (030: M:N)
 // ---------------------------------------------------------------------------
 

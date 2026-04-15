@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { computeEnganche, configFromDefaults } from "@/lib/reservas/cotizador";
+import { computeEnganche, configFromDefaults, scheduleToOverrides } from "@/lib/reservas/cotizador";
+import { resolveConfig } from "@/hooks/use-cotizador-config";
+import type { CotizadorConfigRow } from "@/lib/reservas/types";
 import { formatCurrency } from "@/lib/reservas/constants";
 
 // ---------------------------------------------------------------------------
@@ -18,14 +20,29 @@ interface CartaPagoClient {
 }
 
 interface CartaPagoData {
-  reservation: { id: string; unit_id: string; status: string; created_at: string };
+  reservation: {
+    id: string;
+    unit_id: string;
+    status: string;
+    created_at: string;
+    sale_price: number | null;
+    enganche_pct: number | null;
+    cuotas_enganche: number | null;
+    deposit_amount: number | null;
+    enganche_schedule: { cuota: number; amount: number }[] | null;
+  };
   clients: CartaPagoClient[];
   unit: {
+    project_id: string;
     project_slug: string;
     project_name: string;
     unit_number: string;
     price_list: number | null;
+    tower_id: string;
+    unit_type: string;
+    bedrooms: number;
   } | null;
+  cotizador_configs: CotizadorConfigRow[];
 }
 
 // ---------------------------------------------------------------------------
@@ -170,16 +187,24 @@ export default function CartaPagoClient({ reservationId }: { reservationId: stri
   const clients = data.clients.filter((c) => c.rv_clients);
   const unit = data.unit;
 
-  // Compute cuota de enganche from cotizador — default config as fallback
-  const _cfg = configFromDefaults();
-  const cartaCurrency: "GTQ" | "USD" = unit.project_slug === "santa-elena" ? "USD" : "GTQ";
-  const price = unit.price_list ?? 0;
+  // Compute cuota de enganche — use resolved project config + reservation overrides
+  const reservation = data.reservation;
+  const cfg = data.cotizador_configs?.length
+    ? resolveConfig(data.cotizador_configs, unit.tower_id ?? null, unit.unit_type ?? null, unit.bedrooms ?? null)
+    : configFromDefaults();
+  const cartaCurrency: "GTQ" | "USD" = cfg.currency === "USD" ? "USD" : unit.project_slug === "santa-elena" ? "USD" : "GTQ";
+  const price = reservation.sale_price ?? unit.price_list ?? 0;
+  const enganchePct = reservation.enganche_pct != null ? Number(reservation.enganche_pct) : cfg.enganche_pct;
+  const cuotasCount = reservation.cuotas_enganche ?? cfg.installment_months;
+  const reservaAmount = reservation.deposit_amount ?? cfg.reserva_default;
+  const overrides = reservation.enganche_schedule ? scheduleToOverrides(reservation.enganche_schedule) : undefined;
   const enganche = computeEnganche(
     price,
-    _cfg,
-    _cfg.enganche_pct,
-    _cfg.reserva_default,
-    _cfg.installment_months,
+    cfg,
+    enganchePct,
+    reservaAmount,
+    cuotasCount,
+    overrides,
   );
 
   // Client names joined with " y "

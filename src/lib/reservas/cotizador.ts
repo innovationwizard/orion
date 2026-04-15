@@ -180,6 +180,7 @@ export function computeEnganche(
   enganche_pct: number,
   reserva: number,
   installment_months: number,
+  overrides?: Record<number, number>,
 ): EngancheResult {
   // 1. Enganche total — conditionally round to Q100
   let enganche_total = price * enganche_pct;
@@ -204,21 +205,116 @@ export function computeEnganche(
     cuota_enganche = Math.round(enganche_neto / installment_months);
   }
 
-  // 4. Installment schedule with last-installment adjustment
+  // 4. Build installment schedule
   const installments: { number: number; amount: number }[] = [
     { number: 0, amount: reserva },
   ];
-  for (let i = 1; i <= installment_months; i++) {
-    if (i === installment_months && installment_months > 1) {
-      // Last installment absorbs rounding remainder
-      const previous_sum = cuota_enganche * (installment_months - 1);
-      installments.push({ number: i, amount: enganche_neto - previous_sum });
+
+  // Filter valid overrides: keys must be 1..installment_months, amounts >= 1
+  const validOverrides: Record<number, number> = {};
+  if (overrides && installment_months > 0) {
+    for (const [key, amount] of Object.entries(overrides)) {
+      const k = Number(key);
+      if (k >= 1 && k <= installment_months && amount >= 1) {
+        validOverrides[k] = Math.round(amount);
+      }
+    }
+
+    // Clamp: total overrides cannot exceed enganche_neto minus floor for remaining cuotas
+    const overriddenKeys = Object.keys(validOverrides).map(Number);
+    const nonOverriddenCount = installment_months - overriddenKeys.length;
+    const overrideSum = Object.values(validOverrides).reduce((a, b) => a + b, 0);
+    const maxOverrideSum = enganche_neto - nonOverriddenCount; // each remaining cuota >= 1
+
+    if (overrideSum > maxOverrideSum && nonOverriddenCount > 0) {
+      // Scale down proportionally to fit within budget
+      const scale = maxOverrideSum / overrideSum;
+      for (const k of overriddenKeys) {
+        validOverrides[k] = Math.max(1, Math.round(validOverrides[k] * scale));
+      }
+    }
+  }
+
+  const hasOverrides = Object.keys(validOverrides).length > 0;
+
+  if (!hasOverrides) {
+    // Uniform distribution (original behavior)
+    for (let i = 1; i <= installment_months; i++) {
+      if (i === installment_months && installment_months > 1) {
+        const previous_sum = cuota_enganche * (installment_months - 1);
+        installments.push({ number: i, amount: enganche_neto - previous_sum });
+      } else {
+        installments.push({ number: i, amount: cuota_enganche });
+      }
+    }
+  } else {
+    // Custom distribution: overrides where specified, uniform remainder elsewhere
+    const overriddenKeys = new Set(Object.keys(validOverrides).map(Number));
+    const overrideTotal = Object.values(validOverrides).reduce((a, b) => a + b, 0);
+    const remainingBudget = enganche_neto - overrideTotal;
+    const nonOverriddenCount = installment_months - overriddenKeys.size;
+
+    // Compute uniform cuota for non-overridden installments
+    let uniformRemaining: number;
+    if (nonOverriddenCount <= 0) {
+      uniformRemaining = 0;
+    } else if (config.round_cuota_q100) {
+      uniformRemaining = roundUpQ100(remainingBudget / nonOverriddenCount);
+    } else if (config.round_cuota_q1) {
+      uniformRemaining = roundUpQ1(remainingBudget / nonOverriddenCount);
     } else {
-      installments.push({ number: i, amount: cuota_enganche });
+      uniformRemaining = Math.round(remainingBudget / nonOverriddenCount);
+    }
+
+    // Update cuota_enganche to reflect the uniform portion (informational)
+    cuota_enganche = nonOverriddenCount > 0 ? uniformRemaining : 0;
+
+    // Find the last non-overridden cuota to absorb rounding remainder
+    let lastNonOverridden = -1;
+    for (let i = installment_months; i >= 1; i--) {
+      if (!overriddenKeys.has(i)) {
+        lastNonOverridden = i;
+        break;
+      }
+    }
+
+    // Build installments
+    let runningSum = 0;
+    for (let i = 1; i <= installment_months; i++) {
+      if (overriddenKeys.has(i)) {
+        installments.push({ number: i, amount: validOverrides[i] });
+        runningSum += validOverrides[i];
+      } else if (i === lastNonOverridden) {
+        // Last non-overridden absorbs rounding remainder
+        const uniformAlreadyPlaced = installments.filter(
+          (inst) => inst.number >= 1 && !overriddenKeys.has(inst.number),
+        ).length;
+        const uniformAfterThis = nonOverriddenCount - uniformAlreadyPlaced - 1;
+        const absorberAmount = enganche_neto - runningSum - (uniformAfterThis * uniformRemaining);
+        installments.push({ number: i, amount: absorberAmount });
+        runningSum += absorberAmount;
+      } else {
+        installments.push({ number: i, amount: uniformRemaining });
+        runningSum += uniformRemaining;
+      }
     }
   }
 
   return { enganche_total, reserva, enganche_neto, cuota_enganche, installments };
+}
+
+/**
+ * Convert a persisted enganche_schedule JSONB array to the overrides Record
+ * used by computeEnganche. Used by PCV, carta de pago, and admin UI.
+ */
+export function scheduleToOverrides(
+  schedule: { cuota: number; amount: number }[],
+): Record<number, number> {
+  const overrides: Record<number, number> = {};
+  for (const entry of schedule) {
+    overrides[entry.cuota] = entry.amount;
+  }
+  return overrides;
 }
 
 // ---------------------------------------------------------------------------

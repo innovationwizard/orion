@@ -237,6 +237,17 @@ export async function GET(
     }
   }
 
+  // Fetch cotizador configs for config resolution (enganche computation)
+  let cotizadorConfigs: unknown[] = [];
+  if (rvUnit) {
+    const { data: configs } = await supabase
+      .from("cotizador_configs")
+      .select("*")
+      .eq("project_id", rvUnit.project_id)
+      .eq("active", true);
+    cotizadorConfigs = configs ?? [];
+  }
+
   return jsonOk({
     reservation: {
       ...reservation,
@@ -251,5 +262,71 @@ export async function GET(
     audit_log: auditResult.data ?? [],
     sale_rate: isAdmin ? saleRateData : null,
     monthly_context: isAdmin ? monthlyContext : null,
+    cotizador_configs: isAdmin ? cotizadorConfigs : [],
   });
+}
+
+/**
+ * PATCH /api/reservas/admin/reservations/[id]
+ *
+ * Update the custom enganche schedule on a reservation.
+ * Admin-only (master/torredecontrol).
+ */
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const auth = await requireRole(rolesFor("reservations", "update"));
+  if ("response" in auth) return auth.response;
+
+  const { id } = await params;
+  const body = await request.json();
+
+  // Validate payload
+  const { updateEngancheScheduleSchema } = await import("@/lib/reservas/validations");
+  const parsed = updateEngancheScheduleSchema.safeParse(body);
+  if (!parsed.success) {
+    return jsonError(400, parsed.error.errors.map((e) => e.message).join(", "));
+  }
+
+  const { enganche_schedule } = parsed.data;
+  const supabase = createAdminClient();
+
+  // Verify reservation exists
+  const { data: reservation, error: rErr } = await supabase
+    .from("reservations")
+    .select("id, status")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (rErr || !reservation) {
+    return jsonError(404, "Reserva no encontrada");
+  }
+
+  // Update enganche_schedule
+  const { error: updateError } = await supabase
+    .from("reservations")
+    .update({
+      enganche_schedule: enganche_schedule,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id);
+
+  if (updateError) {
+    console.error("[PATCH /api/reservas/admin/reservations/[id]]", updateError);
+    return jsonError(500, updateError.message);
+  }
+
+  // Audit log
+  const { logAudit } = await import("@/lib/audit");
+  await logAudit(auth.user, {
+    eventType: "reservation.schedule_updated",
+    resourceType: "reservation",
+    resourceId: id,
+    details: {
+      schedule: enganche_schedule ? `${enganche_schedule.length} cuotas` : "uniform",
+    },
+  });
+
+  return jsonOk({ saved: true });
 }

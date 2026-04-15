@@ -96,6 +96,10 @@ export default function CotizadorClient() {
   const [showMarkup, setShowMarkup] = useState(false);
   const [markupAmount, setMarkupAmount] = useState(0);
 
+  // Custom enganche cuotas (non-uniform installments)
+  const [editingInstallments, setEditingInstallments] = useState(false);
+  const [installmentOverrides, setInstallmentOverrides] = useState<Record<number, number>>({});
+
   // Reset overrides when resolved config changes (tower, unit-type, or project switch)
   useEffect(() => {
     setEnganchePctOverride(null);
@@ -105,6 +109,8 @@ export default function CotizadorClient() {
     setShowDiscount(false);
     setMarkupAmount(0);
     setShowMarkup(false);
+    setInstallmentOverrides({});
+    setEditingInstallments(false);
   }, [config.enganche_pct, config.reserva_default, config.installment_months]);
 
   const minEnganchePct = config.min_enganche_pct ?? 0.05;
@@ -123,8 +129,8 @@ export default function CotizadorClient() {
     : markedUpPrice;
 
   const enganche = useMemo(
-    () => computeEnganche(effectivePrice, config, enganchePct, reserva, installmentMonths),
-    [effectivePrice, config, enganchePct, reserva, installmentMonths],
+    () => computeEnganche(effectivePrice, config, enganchePct, reserva, installmentMonths, installmentOverrides),
+    [effectivePrice, config, enganchePct, reserva, installmentMonths, installmentOverrides],
   );
 
   const financing = useMemo(
@@ -173,6 +179,8 @@ export default function CotizadorClient() {
     setShowDiscount(false);
     setMarkupAmount(0);
     setShowMarkup(false);
+    setInstallmentOverrides({});
+    setEditingInstallments(false);
     const params = new URLSearchParams(searchParams.toString());
     if (slug) params.set("project", slug); else params.delete("project");
     params.delete("unit");
@@ -268,6 +276,8 @@ export default function CotizadorClient() {
               setShowDiscount(false);
               setMarkupAmount(0);
               setShowMarkup(false);
+              setInstallmentOverrides({});
+              setEditingInstallments(false);
               updateParam("unit", e.target.value);
             }}
           >
@@ -480,7 +490,50 @@ export default function CotizadorClient() {
               <Detail label="Cuota enganche" value={formatCurrency(enganche.cuota_enganche, config.currency)} />
             </div>
 
-            <InstallmentTable installments={enganche.installments} currency={config.currency} />
+            <InstallmentTable
+              installments={enganche.installments}
+              currency={config.currency}
+              editing={editingInstallments}
+              overrides={installmentOverrides}
+              onOverride={(cuotaNumber, amount) => {
+                setInstallmentOverrides((prev) => ({ ...prev, [cuotaNumber]: amount }));
+              }}
+              onClearOverride={(cuotaNumber) => {
+                setInstallmentOverrides((prev) => {
+                  const next = { ...prev };
+                  delete next[cuotaNumber];
+                  return next;
+                });
+              }}
+              maxOverride={(cuotaNumber) => {
+                // Max for this cuota = enganche_neto - sum(other overrides) - (remaining_count × 1)
+                const otherOverridesSum = Object.entries(installmentOverrides)
+                  .filter(([k]) => Number(k) !== cuotaNumber)
+                  .reduce((s, [, v]) => s + v, 0);
+                const otherNonOverriddenCount = installmentMonths
+                  - Object.keys(installmentOverrides).filter((k) => Number(k) !== cuotaNumber).length
+                  - 1; // -1 for current cuota
+                return Math.max(1, enganche.enganche_neto - otherOverridesSum - otherNonOverriddenCount);
+              }}
+            />
+
+            {/* Toggle link for custom cuotas — hidden in print */}
+            <div className="cotizador-no-print flex gap-3 -mt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  if (editingInstallments) {
+                    setEditingInstallments(false);
+                    setInstallmentOverrides({});
+                  } else {
+                    setEditingInstallments(true);
+                  }
+                }}
+                className="text-xs text-muted underline cursor-pointer hover:text-text-primary transition-colors"
+              >
+                {editingInstallments ? "Restaurar cuotas uniformes" : "Personalizar cuotas"}
+              </button>
+            </div>
           </section>
 
           {/* Financing matrix */}
@@ -544,6 +597,7 @@ const printStyles = `
     /* Show print-only elements */
     .cotizador-print-footer { display: block !important; }
     .cotizador-print-enganche-summary { display: flex !important; font-size: 9pt; font-weight: 600; }
+    .cotizador-print-only { display: inline !important; }
 
     /* Page setup — fit everything on one page */
     @page {

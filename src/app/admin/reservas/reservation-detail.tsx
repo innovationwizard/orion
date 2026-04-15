@@ -15,7 +15,11 @@ import type {
   ReceiptExtraction,
   UnitStatusLog,
   RvBuyerRole,
+  CotizadorConfigRow,
 } from "@/lib/reservas/types";
+import { computeEnganche, configFromDefaults, scheduleToOverrides } from "@/lib/reservas/cotizador";
+import { resolveConfig } from "@/hooks/use-cotizador-config";
+import InstallmentTable from "@/app/cotizador/installment-table";
 import ReceiptViewer from "./receipt-viewer";
 import AuditLog from "./audit-log";
 import ActionConfirmDialog from "./action-confirm-dialog";
@@ -62,6 +66,7 @@ type DetailData = {
   audit_log: UnitStatusLog[];
   sale_rate: SaleRateData | null;
   monthly_context: MonthlySaleContext[] | null;
+  cotizador_configs: CotizadorConfigRow[];
 };
 
 type Props = {
@@ -92,6 +97,12 @@ export default function ReservationDetail({
   const [rateInput, setRateInput] = useState("");
   const [rateSaving, setRateSaving] = useState(false);
   const [rateMsg, setRateMsg] = useState<string | null>(null);
+
+  // Enganche schedule editing
+  const [editingSchedule, setEditingSchedule] = useState(false);
+  const [scheduleOverrides, setScheduleOverrides] = useState<Record<number, number>>({});
+  const [scheduleSaving, setScheduleSaving] = useState(false);
+  const [scheduleMsg, setScheduleMsg] = useState<string | null>(null);
 
   const sortedClients = data?.clients.slice().sort((a, b) => a.document_order - b.document_order) ?? [];
   const editingClientLink = sortedClients.find((c) => c.client_id === editingClientId);
@@ -479,6 +490,184 @@ export default function ReservationDetail({
                 <Row label="Banco" value={data.reservation.deposit_bank ?? "—"} />
                 <Row label="Depositante" value={data.reservation.depositor_name ?? "—"} />
               </Section>
+
+              {/* Plan de Enganche */}
+              {data.reservation.status === "CONFIRMED" && data.unit && (() => {
+                const configs = data.cotizador_configs ?? [];
+                const cfg = configs.length
+                  ? resolveConfig(configs, data.unit!.tower_id ?? null, data.unit!.unit_type ?? null, data.unit!.bedrooms ?? null)
+                  : configFromDefaults();
+                const price = data.reservation.sale_price ?? data.unit!.price_list ?? 0;
+                const enganchePct = data.reservation.enganche_pct != null ? Number(data.reservation.enganche_pct) : cfg.enganche_pct;
+                const cuotasCount = data.reservation.cuotas_enganche ?? cfg.installment_months;
+                const reservaAmt = data.reservation.deposit_amount ?? cfg.reserva_default;
+
+                // Use schedule overrides for editing, or saved schedule, or uniform
+                const activeOverrides = editingSchedule
+                  ? scheduleOverrides
+                  : data.reservation.enganche_schedule
+                    ? scheduleToOverrides(data.reservation.enganche_schedule)
+                    : undefined;
+
+                const enganche = computeEnganche(price, cfg, enganchePct, reservaAmt, cuotasCount, activeOverrides);
+                const hasCustomSchedule = data.reservation.enganche_schedule != null;
+
+                const saveSchedule = async () => {
+                  setScheduleSaving(true);
+                  setScheduleMsg(null);
+                  try {
+                    // Convert current installments (excluding reserva) to schedule array
+                    const schedule = enganche.installments
+                      .filter((i) => i.number > 0)
+                      .map((i) => ({ cuota: i.number, amount: i.amount }));
+
+                    const res = await fetch(`/api/reservas/admin/reservations/${reservationId}`, {
+                      method: "PATCH",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ enganche_schedule: schedule }),
+                    });
+
+                    if (!res.ok) {
+                      const err = await res.json().catch(() => ({ error: "Error" }));
+                      throw new Error(err.error ?? `HTTP ${res.status}`);
+                    }
+
+                    setScheduleMsg("Guardado");
+                    setEditingSchedule(false);
+                    // Refresh data
+                    fetch(`/api/reservas/admin/reservations/${reservationId}`)
+                      .then((r) => r.json())
+                      .then(setData);
+                  } catch (e) {
+                    setScheduleMsg(e instanceof Error ? e.message : "Error");
+                  } finally {
+                    setScheduleSaving(false);
+                  }
+                };
+
+                const clearSchedule = async () => {
+                  setScheduleSaving(true);
+                  setScheduleMsg(null);
+                  try {
+                    const res = await fetch(`/api/reservas/admin/reservations/${reservationId}`, {
+                      method: "PATCH",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ enganche_schedule: null }),
+                    });
+                    if (!res.ok) {
+                      const err = await res.json().catch(() => ({ error: "Error" }));
+                      throw new Error(err.error ?? `HTTP ${res.status}`);
+                    }
+                    setScheduleMsg("Restaurado a uniforme");
+                    setEditingSchedule(false);
+                    setScheduleOverrides({});
+                    fetch(`/api/reservas/admin/reservations/${reservationId}`)
+                      .then((r) => r.json())
+                      .then(setData);
+                  } catch (e) {
+                    setScheduleMsg(e instanceof Error ? e.message : "Error");
+                  } finally {
+                    setScheduleSaving(false);
+                  }
+                };
+
+                return (
+                  <Section title="Plan de Enganche">
+                    <div className="col-span-2 grid gap-3">
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                        <div><span className="text-muted">Enganche</span><br /><span className="font-medium">{Math.round(enganchePct * 100)}%</span></div>
+                        <div><span className="text-muted">Cuotas</span><br /><span className="font-medium">{cuotasCount}</span></div>
+                        <div><span className="text-muted">Total</span><br /><span className="font-medium">{formatCurrency(enganche.enganche_total, cfg.currency)}</span></div>
+                        <div><span className="text-muted">Tipo</span><br /><span className="font-medium">{hasCustomSchedule ? "Personalizado" : "Uniforme"}</span></div>
+                      </div>
+
+                      <InstallmentTable
+                        installments={enganche.installments}
+                        currency={cfg.currency}
+                        editing={editingSchedule}
+                        overrides={scheduleOverrides}
+                        onOverride={(cuotaNumber, amount) => {
+                          setScheduleOverrides((prev) => ({ ...prev, [cuotaNumber]: amount }));
+                        }}
+                        onClearOverride={(cuotaNumber) => {
+                          setScheduleOverrides((prev) => {
+                            const next = { ...prev };
+                            delete next[cuotaNumber];
+                            return next;
+                          });
+                        }}
+                        maxOverride={(cuotaNumber) => {
+                          const otherSum = Object.entries(scheduleOverrides)
+                            .filter(([k]) => Number(k) !== cuotaNumber)
+                            .reduce((s, [, v]) => s + v, 0);
+                          const otherNon = cuotasCount
+                            - Object.keys(scheduleOverrides).filter((k) => Number(k) !== cuotaNumber).length
+                            - 1;
+                          return Math.max(1, enganche.enganche_neto - otherSum - otherNon);
+                        }}
+                      />
+
+                      <div className="flex gap-2 flex-wrap">
+                        {!editingSchedule ? (
+                          <button
+                            type="button"
+                            className="text-xs text-primary underline cursor-pointer"
+                            onClick={() => {
+                              // Initialize overrides from saved schedule if any
+                              if (data.reservation.enganche_schedule) {
+                                setScheduleOverrides(scheduleToOverrides(data.reservation.enganche_schedule));
+                              } else {
+                                setScheduleOverrides({});
+                              }
+                              setScheduleMsg(null);
+                              setEditingSchedule(true);
+                            }}
+                          >
+                            Personalizar cuotas
+                          </button>
+                        ) : (
+                          <>
+                            <button
+                              type="button"
+                              className="px-3 py-1 rounded bg-primary text-white text-xs font-medium disabled:opacity-50"
+                              disabled={scheduleSaving || Object.keys(scheduleOverrides).length === 0}
+                              onClick={saveSchedule}
+                            >
+                              {scheduleSaving ? "Guardando..." : "Guardar"}
+                            </button>
+                            <button
+                              type="button"
+                              className="px-3 py-1 rounded border border-border text-xs font-medium"
+                              onClick={() => {
+                                setEditingSchedule(false);
+                                setScheduleOverrides({});
+                                setScheduleMsg(null);
+                              }}
+                            >
+                              Cancelar
+                            </button>
+                          </>
+                        )}
+                        {hasCustomSchedule && !editingSchedule && (
+                          <button
+                            type="button"
+                            className="text-xs text-muted underline cursor-pointer"
+                            onClick={clearSchedule}
+                            disabled={scheduleSaving}
+                          >
+                            Restaurar uniforme
+                          </button>
+                        )}
+                        {scheduleMsg && (
+                          <span className={`text-xs ${scheduleMsg === "Guardado" || scheduleMsg.startsWith("Restaurado") ? "text-success" : "text-danger"}`}>
+                            {scheduleMsg}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </Section>
+                );
+              })()}
 
               {/* Receipt + OCR */}
               <ReceiptViewer

@@ -33,7 +33,7 @@ export async function GET(
 
   const { data: reservation, error: rErr } = await supabase
     .from("reservations")
-    .select("id, unit_id, status, created_at, salesperson_id")
+    .select("id, unit_id, status, created_at, salesperson_id, sale_price, enganche_pct, cuotas_enganche, deposit_amount, enganche_schedule")
     .eq("id", id)
     .maybeSingle();
 
@@ -58,14 +58,27 @@ export async function GET(
       .order("document_order", { ascending: true }),
     supabase
       .from("v_rv_units_full")
-      .select("project_slug, project_name, unit_number, price_list")
+      .select("project_id, project_slug, project_name, unit_number, price_list, tower_id, unit_type, bedrooms")
       .eq("id", reservation.unit_id)
       .maybeSingle(),
   ]);
 
+  // Fetch cotizador configs for the project
+  const unit = unitResult.data;
+  let cotizadorConfigs: unknown[] = [];
+  if (unit) {
+    const { data: configs } = await supabase
+      .from("cotizador_configs")
+      .select("*")
+      .eq("project_id", unit.project_id)
+      .eq("active", true);
+    cotizadorConfigs = configs ?? [];
+  }
+
   return jsonOk({
     reservation,
     clients: clientsResult.data ?? [],
-    unit: unitResult.data ?? null,
+    unit: unit ?? null,
+    cotizador_configs: cotizadorConfigs,
   });
 }

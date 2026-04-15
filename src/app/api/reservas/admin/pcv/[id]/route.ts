@@ -109,6 +109,17 @@ export async function GET(
     primaryProfile = clientProfiles[primaryClient.client_id] ?? null;
   }
 
+  // Fetch cotizador configs for the project so the client can resolve the correct config
+  let cotizadorConfigs: unknown[] = [];
+  if (unit) {
+    const { data: configs } = await supabase
+      .from("cotizador_configs")
+      .select("*")
+      .eq("project_id", unit.project_id)
+      .eq("active", true);
+    cotizadorConfigs = configs ?? [];
+  }
+
   return jsonOk({
     reservation,
     clients,
@@ -116,6 +127,7 @@ export async function GET(
     client_profiles: clientProfiles,
     client_profile: primaryProfile,
     salesperson: salespersonResult.data,
+    cotizador_configs: cotizadorConfigs,
   });
 }
 

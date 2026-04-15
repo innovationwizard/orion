@@ -143,6 +143,13 @@ export interface Reservation {
   pcv_url: string | null;
   pcv_generated_at: string | null;
   pcv_generated_by: string | null;
+  // 048: Financial terms
+  sale_price: number | null;
+  enganche_pct: number | null;
+  cuotas_enganche: number | null;
+  inmueble_pct: number | null;
+  // 054: Custom enganche schedule
+  enganche_schedule: { cuota: number; amount: number }[] | null;
 }
 
 export interface ReservationClient {

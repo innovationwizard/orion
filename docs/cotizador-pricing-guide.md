@@ -74,7 +74,20 @@ Precio lista  →  (+) Sobreprecio  →  Precio al cliente  →  (-) Descuento  
 | Resumen de unidad (precio) | Sí | **Sí** — muestra el precio al cliente |
 | Desglose del sobreprecio | Sí | **No** — marcado `cotizador-no-print` |
 
-### 2.4 Reinicio automático
+### 2.4 Enganche mínimo por proyecto
+
+El slider de enganche tiene un piso configurable por proyecto via `cotizador_configs.min_enganche_pct`:
+
+| Proyecto | Mínimo | Razón |
+|----------|--------|-------|
+| Santa Elena | 30% | Requisito del proyecto — bajar de 30% cambia la cuota en ~$10,000 USD |
+| Todos los demás | 5% (default) | `min_enganche_pct = NULL` → app usa 5% hardcodeado |
+
+- El campo es nullable. `NULL` = sin restricción especial (5% hardcodeado).
+- El slider `min` y el override del usuario se clampean al mínimo configurado.
+- Configurable desde `/admin/cotizador-config` (campo "Eng. mínimo %").
+
+### 2.5 Reinicio automático
 
 Tanto el sobreprecio como el descuento se reinician a cero cuando:
 - Se cambia de unidad
@@ -236,6 +249,18 @@ const [showDiscount, setShowDiscount] = useState(false);
 const [discountAmount, setDiscountAmount] = useState(0);
 ```
 
+### Enganche mínimo
+
+```typescript
+// Derived from config — NULL means 5% default
+const minEnganchePct = config.min_enganche_pct ?? 0.05;
+const enganchePct = enganchePctOverride != null
+  ? Math.max(enganchePctOverride, minEnganchePct)
+  : config.enganche_pct;
+```
+
+Slider `min` is set to `Math.round(minEnganchePct * 100)`. The override is clamped so the user can never go below the configured minimum, even if they type a value directly.
+
 ### Cadena de cálculo
 
 ```typescript
@@ -278,6 +303,7 @@ Las funciones de cálculo en `cotizador.ts` no conocen el concepto de sobrepreci
 | `price_list` | `rv_units` | Precio de lista oficial. Fuente para el cotizador. |
 | `price_suggested` | `rv_units` | Precio sugerido para cesión de derechos. **No usado en cotizador.** |
 | `sale_price` | `reservations` | Precio efectivo de venta por reserva. Nullable. **No usado en cotizador** (preparado para futuro). |
+| `min_enganche_pct` | `cotizador_configs` | Piso del slider de enganche (decimal, e.g. 0.30 = 30%). NULL = 5%. Migración 053. |
 
 ---
 
@@ -290,6 +316,7 @@ Las funciones de cálculo en `cotizador.ts` no conocen el concepto de sobrepreci
 | 085 | 2026-04-07 | Rediseño UX de financiamiento + fix IUSI + optimización de impresión |
 | 086 | 2026-04-07 | Descuento especial: soporte para descuentos planos pre-autorizados |
 | 087 | 2026-04-14 | Sobreprecio: markup de negociación para cotizar arriba del precio de lista |
+| 053 | 2026-04-14 | Enganche mínimo: `min_enganche_pct` column + SE set to 30% (migración) |
 
 ---
 
