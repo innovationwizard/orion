@@ -56,7 +56,7 @@
           "description": "Supervisor Comercial — conditional on sale_date",
           "timeline": [
             { "holder": "(none)", "rate": 0, "period": "start → 2025-07-06" },
-            { "holder": "antonio_rada", "rate": 0.0015, "period": "2025-07-07 → 2026-03-16" },
+            { "holder": "antonio_rada", "rate": 0.0025, "period": "2025-07-07 → 2026-03-16" },
             { "holder": "job_jimenez", "rate": 0.0015, "period": "2026-03-16 → ongoing" }
           ]
         }
