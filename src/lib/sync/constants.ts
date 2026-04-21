@@ -116,10 +116,10 @@ export const DISP_COLUMNS = {
     sheet: "Precios Torre B",
     towerName: "Torre B",
     unitCol: 1,      // B
-    statusCol: 23,   // X
-    clientCol: 24,   // Y
-    asesorCol: 25,   // Z
-    priceCol: 15,    // P (Aproximación FHA)
+    statusCol: 25,   // Z  — "Estatus" (was 23/X before column insertion)
+    clientCol: 26,   // AA — "Cliente"
+    asesorCol: 27,   // AB — "Asesor"
+    priceCol: 16,    // Q  — "Aproximación FHA" (was 15/P before column insertion)
     headerRow: 1,
   },
   b5: {

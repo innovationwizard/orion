@@ -211,10 +211,7 @@ export function normalizeTower(raw: string | null, projectSlug: string): string 
 export function normalizeStatus(raw: string | null | undefined): RvUnitStatus {
   if (raw == null) return "AVAILABLE";
   const key = String(raw).trim().toLowerCase();
-
-  // If the cell contains a number, it's typically a date → unit is SOLD
-  if (/^\d+(\.\d+)?$/.test(key)) return "SOLD";
-
+  if (!key) return "AVAILABLE";
   return STATUS_MAP[key] ?? "AVAILABLE";
 }
 
