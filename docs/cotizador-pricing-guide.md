@@ -317,6 +317,7 @@ Las funciones de cálculo en `cotizador.ts` no conocen el concepto de sobrepreci
 | 086 | 2026-04-07 | Descuento especial: soporte para descuentos planos pre-autorizados |
 | 087 | 2026-04-14 | Sobreprecio: markup de negociación para cotizar arriba del precio de lista |
 | 053 | 2026-04-14 | Enganche mínimo: `min_enganche_pct` column + SE set to 30% (migración) |
+| 088 | 2026-04-14 | Enganche personalizado: cuotas con montos custom + fix PCV/carta de pago config resolution |
 
 ---
 
@@ -340,14 +341,9 @@ Extraídas de la reunión de ventas del 14 de abril de 2026. Fuente completa: `d
 |---|-----------|-----------|-------|
 | 1.3 | Enganche mínimo por config (`min_enganche_pct`) | 053 (migración) | 2026-04-14 |
 | 2.1 | Sobreprecio (markup de negociación) | 087 | 2026-04-14 |
+| 2.2 | Cuotas de enganche personalizadas | 088 | 2026-04-14 |
 
 ### 7.3 Funcionalidades de Código — Pendientes
-
-#### 2.2 — Cuotas iniciales de enganche con montos personalizados [Mediano plazo]
-- **Solicitante:** Paula
-- **Problema:** Las primeras 2–3 cuotas de enganche a veces tienen montos distintos (aguinaldo, bono 14, pago extraordinario). La app solo permite cuotas uniformes.
-- **Solución propuesta:** Permitir que el usuario sobreescriba el monto de las primeras N cuotas. El motor de enganche ya genera un array de `installments` — se trataría de permitir editar los primeros elementos y recalcular el resto para que el total cuadre.
-- **Complejidad:** Media. Requiere UI de edición inline en `InstallmentTable` + ajuste en `computeEnganche`.
 
 #### 3.1 — Logo del proyecto en el PDF de cotización [Mediano plazo]
 - **Solicitantes:** Ronnie, Eder, participante SE

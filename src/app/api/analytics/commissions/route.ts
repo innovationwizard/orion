@@ -91,23 +91,25 @@ export async function GET(request: Request) {
 
     while (true) {
       // Use sales!inner(project_id) when filtering by project so PostgREST allows eq("sales.project_id", ...)
+      // Use payments!inner(payment_date) when filtering by date — commissions.created_at is unreliable
+      // because calculate_commissions() DELETEs+re-INSERTs rows, resetting created_at to NOW().
       const baseCols = "recipient_id, recipient_name, commission_amount, paid, created_at, paid_date";
       const saleIdCol = excludingFF ? ", sale_id" : "";
-      const selectWithSales =
-        query?.project_id
-          ? `${baseCols}${saleIdCol}, sales!inner( project_id )`
-          : `${baseCols}${saleIdCol}, sales ( project_id )`;
+      const needsDateFilter = query?.start_date || query?.end_date;
+      const salesJoin = query?.project_id ? ", sales!inner( project_id )" : ", sales ( project_id )";
+      const paymentJoin = needsDateFilter ? ", payments!inner( payment_date )" : "";
+      const selectCols = `${baseCols}${saleIdCol}${salesJoin}${paymentJoin}`;
 
       let builder = supabase
         .from("commissions")
-        .select(selectWithSales)
+        .select(selectCols)
         .range(offset, offset + pageSize - 1);
 
       if (query?.start_date) {
-        builder = builder.gte("created_at", query.start_date);
+        builder = builder.gte("payments.payment_date", query.start_date);
       }
       if (query?.end_date) {
-        builder = builder.lte("created_at", query.end_date);
+        builder = builder.lte("payments.payment_date", query.end_date);
       }
       if (query?.project_id) {
         builder = builder.eq("sales.project_id", query.project_id);
