@@ -140,6 +140,7 @@ export default function DashboardClient({ role }: { role?: string }) {
   const [selectedUnit, setSelectedUnit] = useState<PaymentAnalyticsUnit | null>(null);
   const [aptoFilter, setAptoFilter] = useState("");
   const [showAllUnits, setShowAllUnits] = useState(false);
+  const [activeMonths2026, setActiveMonths2026] = useState<string[]>([]);
 
   const visibleTabs = role === "gerencia"
     ? TABS.filter((t) => t.id !== "commissions")
@@ -174,6 +175,19 @@ export default function DashboardClient({ role }: { role?: string }) {
         if (res.ok) setProjects(payload.data ?? []);
       } catch {
         setProjects([]);
+      }
+    })();
+  }, []);
+
+  /* Fetch 2026 months that have at least one payment — drives month shortcut availability */
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch("/api/analytics/payments-months", { cache: "no-store" });
+        const payload = await res.json();
+        if (res.ok) setActiveMonths2026(payload.months ?? []);
+      } catch {
+        setActiveMonths2026([]);
       }
     })();
   }, []);
@@ -375,6 +389,7 @@ export default function DashboardClient({ role }: { role?: string }) {
             startDate={startDate}
             endDate={endDate}
             excludeFF={excludeFF}
+            activeMonths2026={activeMonths2026}
             onChange={updateFilters}
             onToggleFF={toggleFF}
           />

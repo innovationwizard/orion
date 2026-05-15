@@ -192,6 +192,34 @@ class SupabaseClient:
         resp.raise_for_status()
         return resp.json()
 
+    def query_all(self, table: str, params: dict[str, str] | None = None, page_size: int = 1000) -> list[dict]:
+        """Paginate through all rows, returning the complete result set.
+
+        Supabase PostgREST enforces a server-side max-rows cap per request.
+        This method fetches in pages of `page_size` until an empty page is returned.
+        All results are accumulated and returned as a single list.
+        """
+        base_params = dict(params or {})
+        all_rows: list[dict] = []
+        offset = 0
+        while True:
+            page_params = {**base_params, "limit": str(page_size), "offset": str(offset)}
+            resp = requests.get(
+                f"{self.url}/rest/v1/{table}",
+                headers={**self.headers, "Prefer": "return=representation"},
+                params=page_params,
+                timeout=60,
+            )
+            resp.raise_for_status()
+            batch = resp.json()
+            if not batch:
+                break
+            all_rows.extend(batch)
+            if len(batch) < page_size:
+                break  # last (partial) page
+            offset += page_size
+        return all_rows
+
     def rpc(self, fn: str, body: dict) -> Any:
         resp = requests.post(
             f"{self.url}/rest/v1/rpc/{fn}",
@@ -200,6 +228,9 @@ class SupabaseClient:
             timeout=30,
         )
         resp.raise_for_status()
+        # Void RPCs return HTTP 204 with empty body — return None instead of crashing
+        if not resp.content:
+            return None
         return resp.json()
 
     def insert(self, table: str, rows: list[dict]) -> list[dict]:
@@ -590,6 +621,7 @@ def discover_db_payments(
     project_keys: list[str],
     unit_formats: dict[str, str],
     xlsx_data: dict[str, list[XlsxUnit]],
+    run_date: str = "",
 ) -> dict[str, dict]:
     """
     For each project, query all active sales + their payments.
@@ -653,21 +685,25 @@ def discover_db_payments(
 
         print(f"  [{key.upper()}] {len(db_sales)} active sales in DB | {len(db_units)} units")
 
-        # Fetch all payments for these sales
+        # Fetch ALL payments for these sales using paginated query_all.
+        # query_all fetches in pages of 1000 rows per request, accumulating until exhausted.
+        # All fetched payments are persisted to a local snapshot JSON for auditing.
         payments_by_sale: dict[str, list[DbPayment]] = {}
+        all_raw_payments: list[dict] = []
         if sale_ids:
-            # Batch in chunks of 100 to avoid URL length limits
+            # Batch in chunks of 100 sale IDs to keep URL length reasonable
             chunk_size = 100
             for i in range(0, len(sale_ids), chunk_size):
                 chunk = sale_ids[i : i + chunk_size]
                 in_clause = "in.(" + ",".join(chunk) + ")"
-                db_payments = client.query(
+                db_payments = client.query_all(
                     "payments",
                     {
                         "select": "id,sale_id,payment_date,amount,payment_type",
                         "sale_id": in_clause,
                     },
                 )
+                all_raw_payments.extend(db_payments)
                 for p in db_payments:
                     sid = p["sale_id"]
                     pd = date.fromisoformat(p["payment_date"][:10])
@@ -679,6 +715,12 @@ def discover_db_payments(
                         payment_type=p["payment_type"],
                     )
                     payments_by_sale.setdefault(sid, []).append(dp)
+
+        # Persist full payment snapshot for this project
+        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        snapshot_path = OUTPUT_DIR / f"payments-snapshot-{key}-{run_date}.json"
+        snapshot_path.write_text(json.dumps(all_raw_payments, indent=2, default=str), encoding="utf-8")
+        print(f"  [{key.upper()}] Payment snapshot written: {snapshot_path} ({len(all_raw_payments)} rows)")
 
         total_payments = sum(len(v) for v in payments_by_sale.values())
         down_payments = sum(
@@ -756,12 +798,12 @@ def compare(
                 last_day = calendar.monthrange(d.year, d.month)[1]
                 return date(d.year, d.month, last_day)
 
-            db_phase2_by_month: dict[date, DbPayment] = {}
+            db_phase2_by_month: dict[date, list[DbPayment]] = {}
             db_phase1_by_month: dict[date, DbPayment] = {}
             for p in db_payments:
                 me = to_month_end(p.payment_date)
                 if p.payment_type == "down_payment":
-                    db_phase2_by_month[me] = p
+                    db_phase2_by_month.setdefault(me, []).append(p)
                 elif p.payment_type == "reservation":
                     db_phase1_by_month[me] = p
 
@@ -800,10 +842,12 @@ def compare(
                     # Phase 1 is not inserted by this script — only flagged.
                     continue
 
-                # Phase 2
-                db_p2 = db_phase2_by_month.get(month_end)
+                # Phase 2 — aggregate all DB down_payments in this month (handles multiple payments per month)
+                db_p2_list = db_phase2_by_month.get(month_end, [])
+                db_p2_total = sum(p.amount for p in db_p2_list)
+                db_p2_ids = ",".join(p.id for p in db_p2_list) if db_p2_list else None
 
-                if db_p2 is None:
+                if not db_p2_list:
                     diffs.append(DiffRow(
                         project=key,
                         apto=unit.apto,
@@ -813,16 +857,16 @@ def compare(
                         status="MISSING_IN_DB",
                         sale_id=sale_id,
                     ))
-                elif abs(db_p2.amount - xlsx_payment.amount) <= AMOUNT_TOLERANCE:
+                elif abs(db_p2_total - xlsx_payment.amount) <= AMOUNT_TOLERANCE:
                     diffs.append(DiffRow(
                         project=key,
                         apto=unit.apto,
                         month_end=month_end,
                         xlsx_amount=xlsx_payment.amount,
-                        db_amount=db_p2.amount,
+                        db_amount=db_p2_total,
                         status="MATCH",
                         sale_id=sale_id,
-                        db_payment_id=db_p2.id,
+                        db_payment_id=db_p2_ids,
                     ))
                 else:
                     diffs.append(DiffRow(
@@ -830,11 +874,11 @@ def compare(
                         apto=unit.apto,
                         month_end=month_end,
                         xlsx_amount=xlsx_payment.amount,
-                        db_amount=db_p2.amount,
+                        db_amount=db_p2_total,
                         status="AMOUNT_MISMATCH",
                         sale_id=sale_id,
-                        db_payment_id=db_p2.id,
-                        note=f"XLSX={xlsx_payment.amount} DB={db_p2.amount} delta={xlsx_payment.amount - db_p2.amount:.2f}",
+                        db_payment_id=db_p2_ids,
+                        note=f"XLSX={xlsx_payment.amount} DB={db_p2_total} delta={xlsx_payment.amount - db_p2_total:.2f}",
                     ))
 
             # Check for DB Phase 2 payments with no XLSX counterpart
@@ -843,17 +887,19 @@ def compare(
                 for p in unit.payments
                 if p.classification == "phase_2"
             }
-            for me, db_p in db_phase2_by_month.items():
+            for me, db_p_list in db_phase2_by_month.items():
                 if me not in xlsx_phase2_months:
+                    db_total = sum(p.amount for p in db_p_list)
+                    db_ids = ",".join(p.id for p in db_p_list)
                     diffs.append(DiffRow(
                         project=key,
                         apto=unit.apto,
                         month_end=me,
                         xlsx_amount=None,
-                        db_amount=db_p.amount,
+                        db_amount=db_total,
                         status="EXTRA_IN_DB",
                         sale_id=sale_id,
-                        db_payment_id=db_p.id,
+                        db_payment_id=db_ids,
                         note="DB has a Phase2 payment with no XLSX counterpart. Possible manual entry or desistimiento.",
                     ))
 
@@ -967,16 +1013,42 @@ def write_report(diffs: list[DiffRow], run_date: str) -> Path:
 # Stage 5: GATE
 # ---------------------------------------------------------------------------
 
-def gate(diffs: list[DiffRow], write: bool, confirmed: bool) -> bool:
+def gate(
+    diffs: list[DiffRow],
+    write: bool,
+    confirmed: bool,
+    gate_after: "date | None" = None,
+    skip_set: "set[tuple] | None" = None,
+) -> bool:
     """
     Returns True if execution may proceed, False otherwise.
     Exits non-zero if write was requested but gate fails.
+
+    gate_after: if set, only rows with month_end >= gate_after are considered blocking.
+    skip_set: set of (project, apto, month_end_str, status) tuples excluded from gate.
     """
     print("\n── STAGE 5: GATE ───────────────────────────────────────────────────")
 
     blocking_statuses = {"UNMATCHED_UNIT", "AMBIGUOUS", "AMOUNT_MISMATCH"}
-    blocking = [d for d in diffs if d.status in blocking_statuses]
+
+    def is_blocking(d: DiffRow) -> bool:
+        if d.status not in blocking_statuses:
+            return False
+        if gate_after is not None and d.month_end < gate_after:
+            return False
+        if skip_set is not None and (d.project, d.apto, str(d.month_end), d.status) in skip_set:
+            return False
+        return True
+
+    blocking = [d for d in diffs if is_blocking(d)]
     missing = [d for d in diffs if d.status == "MISSING_IN_DB"]
+
+    gate_info = []
+    if gate_after:
+        gate_info.append(f"gate_after={gate_after}")
+    if skip_set:
+        gate_info.append(f"skip_list={len(skip_set)} entries")
+    print(f"  Effective blocking after filters ({', '.join(gate_info) or 'none'}): {len(blocking)}")
 
     if not write:
         print("  [DRY-RUN] --write not set. No changes will be made.")
@@ -1048,8 +1120,9 @@ def execute(
 
         # Idempotency: remove rows that already exist in DB
         # (double-check before inserting — the compare stage may have missed concurrent inserts)
+        # Use query_all to avoid the Supabase ~1000-row-per-request cap.
         sale_ids = list({r["sale_id"] for r in inserts})
-        existing = client.query(
+        existing = client.query_all(
             "payments",
             {
                 "select": "sale_id,payment_date,payment_type",
@@ -1132,6 +1205,20 @@ def main() -> None:
         action="store_true",
         help="Confirm that the report has been reviewed and write is intentional.",
     )
+    parser.add_argument(
+        "--gate-after",
+        dest="gate_after",
+        type=str,
+        metavar="YYYY-MM-DD",
+        help="Only gate on blocking rows with month_end >= this date. Pre-scope rows are reported but not blocking.",
+    )
+    parser.add_argument(
+        "--skip-list",
+        dest="skip_list",
+        type=str,
+        metavar="PATH",
+        help="Path to JSON skip-list file. Rows matching (project, apto, month_end, status) are excluded from gate blocking.",
+    )
     args = parser.parse_args()
 
     project_keys = [args.project] if args.project else list(PROJECT_CONFIG.keys())
@@ -1157,7 +1244,7 @@ def main() -> None:
     xlsx_data = extract_all(project_keys)
 
     # Stage 2
-    db_data = discover_db_payments(client, project_keys, unit_formats, xlsx_data)
+    db_data = discover_db_payments(client, project_keys, unit_formats, xlsx_data, run_date=run_date)
 
     # Stage 3
     diffs = compare(xlsx_data, db_data)
@@ -1165,8 +1252,28 @@ def main() -> None:
     # Stage 4
     write_report(diffs, run_date)
 
+    # Load gate options
+    gate_after: "date | None" = None
+    if args.gate_after:
+        gate_after = date.fromisoformat(args.gate_after)
+        print(f"Gate scope: rows with month_end >= {gate_after} only.")
+
+    skip_set: "set[tuple] | None" = None
+    if args.skip_list:
+        skip_path = Path(args.skip_list)
+        if not skip_path.exists():
+            print(f"ERROR: skip-list file not found: {skip_path}")
+            sys.exit(1)
+        with open(skip_path, encoding="utf-8") as f:
+            skip_entries = json.load(f)
+        skip_set = {
+            (e["project"], e["apto"], e["month_end"], e["status"])
+            for e in skip_entries
+        }
+        print(f"Skip-list: {len(skip_set)} entries loaded from {skip_path}.")
+
     # Stage 5
-    can_write = gate(diffs, args.write, args.confirmed)
+    can_write = gate(diffs, args.write, args.confirmed, gate_after=gate_after, skip_set=skip_set)
 
     # Stage 6
     if can_write:
