@@ -18,7 +18,7 @@ The standalone paventas app at `paventas/` is a Vite+React SPA that reads a stat
 |---|---|---|
 | `parking_car_area` | `numeric(10,2)` | Universal — parking m2, useful for any unit |
 | `parking_tandem_area` | `numeric(10,2)` | Universal — tandem parking m2 |
-| `price_suggested` | `numeric(14,2)` | Current market price per unit |
+| `price_suggested` | `numeric(14,2)` | Current market price per unit |4
 | `is_cesion` | `boolean NOT NULL DEFAULT false` | Flags cesion program units (partial index) |
 | `pcv_block` | `integer` | PCV signing block (1-4) |
 | `precalificacion_status` | `text` | APROBADA / DENEGADA / N/A / DISPONIBLE |

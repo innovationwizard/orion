@@ -18,6 +18,11 @@ import InstallmentTable from "./installment-table";
 import FinancingMatrix from "./financing-matrix";
 import EscrituracionPanel from "./escrituracion-panel";
 
+/** Extension override for project logos that are not JPEG. Keyed by project_slug. */
+const PROJECT_LOGO_EXT: Partial<Record<string, "png">> = {
+  benestare: "png",
+};
+
 export default function CotizadorClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -100,6 +105,9 @@ export default function CotizadorClient() {
   const [editingInstallments, setEditingInstallments] = useState(false);
   const [installmentOverrides, setInstallmentOverrides] = useState<Record<number, number>>({});
 
+  // Project logo display (reset on project change to clear stale error state)
+  const [imageError, setImageError] = useState(false);
+
   // Reset overrides when resolved config changes (tower, unit-type, or project switch)
   useEffect(() => {
     setEnganchePctOverride(null);
@@ -168,6 +176,7 @@ export default function CotizadorClient() {
   }
 
   function handleProjectChange(slug: string) {
+    setImageError(false);
     setProjectSlug(slug);
     setTowerId("");
     setUnitId("");
@@ -191,6 +200,17 @@ export default function CotizadorClient() {
     <div className="cotizador-page p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[900px] mx-auto">
       <style dangerouslySetInnerHTML={{ __html: printStyles }} />
       <NavBar />
+
+      {projectSlug && !imageError && (
+        <div className="cotizador-project-banner">
+          <img
+            src={`/projects/${projectSlug}.${PROJECT_LOGO_EXT[projectSlug] ?? "jpg"}`}
+            alt={currentProject?.project_name ?? projectSlug}
+            className="cotizador-project-banner-img"
+            onError={() => setImageError(true)}
+          />
+        </div>
+      )}
 
       <header className="flex flex-wrap items-start justify-between gap-2">
         <div>
@@ -542,25 +562,28 @@ export default function CotizadorClient() {
           {/* Escrituracion */}
           <EscrituracionPanel result={escrituracion} config={config} />
 
-          {/* Disclaimers */}
-          {disclaimers.length > 0 && (
-            <section className="cotizador-disclaimers text-xs text-muted space-y-1 px-1">
-              {disclaimers.map((d, i) => (
-                <p key={i}>* {d}</p>
-              ))}
-            </section>
-          )}
+          {/* Bottom block — disclaimers + signature must never split across pages */}
+          <div className="cotizador-print-bottom">
+            {/* Disclaimers */}
+            {disclaimers.length > 0 && (
+              <section className="cotizador-disclaimers text-xs text-muted space-y-1 px-1">
+                {disclaimers.map((d, i) => (
+                  <p key={i}>* {d}</p>
+                ))}
+              </section>
+            )}
 
-          {/* Print footer — visible only in print */}
-          <div className="cotizador-print-footer" style={{ display: "none" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 32, paddingTop: 16, borderTop: "1px solid #ddd" }}>
-              <div>
-                {salespersonName && <div>Asesor: {salespersonName}</div>}
-                <div style={{ marginTop: 32, borderTop: "1px solid #000", width: 200, paddingTop: 4 }}>Firma</div>
-              </div>
-              <div style={{ textAlign: "right", fontSize: "9pt", color: "#888" }}>
-                <div>Puerta Abierta Inmobiliaria</div>
-                <div>Cotización válida {config.validity_days} días</div>
+            {/* Print footer — visible only in print */}
+            <div className="cotizador-print-footer" style={{ display: "none" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 32, paddingTop: 16, borderTop: "1px solid #ddd" }}>
+                <div>
+                  {salespersonName && <div>Asesor: {salespersonName}</div>}
+                  <div style={{ marginTop: 32, borderTop: "1px solid #000", width: 200, paddingTop: 4 }}>Firma</div>
+                </div>
+                <div style={{ textAlign: "right", fontSize: "9pt", color: "#888" }}>
+                  <div>Puerta Abierta Inmobiliaria</div>
+                  <div>Cotización válida {config.validity_days} días</div>
+                </div>
               </div>
             </div>
           </div>
@@ -599,10 +622,10 @@ const printStyles = `
     .cotizador-print-enganche-summary { display: flex !important; font-size: 9pt; font-weight: 600; }
     .cotizador-print-only { display: inline !important; }
 
-    /* Page setup — fit everything on one page */
+    /* Page setup */
     @page {
       size: letter;
-      margin: 0.8cm 1.2cm;
+      margin: 0.5cm 0.8cm;
     }
 
     body {
@@ -616,7 +639,7 @@ const printStyles = `
     .cotizador-page {
       max-width: none !important;
       padding: 0 !important;
-      gap: 4px !important;
+      gap: 3px !important;
     }
 
     .cotizador-page * {
@@ -626,6 +649,7 @@ const printStyles = `
 
     .cotizador-page header {
       margin-bottom: 0 !important;
+      padding-bottom: 2px !important;
     }
 
     .cotizador-page h1 {
@@ -642,8 +666,8 @@ const printStyles = `
       box-shadow: none !important;
       border: 1px solid #ddd !important;
       border-radius: 3px !important;
-      padding: 4px 6px !important;
-      gap: 3px !important;
+      padding: 3px 5px !important;
+      gap: 2px !important;
       break-inside: avoid;
     }
 
@@ -653,12 +677,12 @@ const printStyles = `
 
     .cotizador-page table th,
     .cotizador-page table td {
-      padding: 1px 3px !important;
+      padding: 1px 2px !important;
     }
 
     /* Compact detail grids */
     .cotizador-page section > div {
-      gap: 3px !important;
+      gap: 2px !important;
     }
 
     /* Unit summary — single compact row in print */
@@ -667,7 +691,7 @@ const printStyles = `
       grid-template-columns: repeat(auto-fill, minmax(0, auto)) !important;
       display: flex !important;
       flex-wrap: wrap !important;
-      gap: 2px 12px !important;
+      gap: 2px 8px !important;
     }
     .cotizador-unit-summary > div > div {
       display: inline-flex !important;
@@ -688,7 +712,7 @@ const printStyles = `
     .cotizador-discount {
       border-style: dashed !important;
       border-color: #b45309 !important;
-      padding: 3px 6px !important;
+      padding: 3px 5px !important;
     }
     .cotizador-discount h2 {
       color: #b45309 !important;
@@ -709,6 +733,12 @@ const printStyles = `
       white-space: nowrap !important;
     }
 
+    /* Bottom block — disclaimers + signature stay on the same page, no orphans */
+    .cotizador-print-bottom {
+      break-inside: avoid;
+      break-before: avoid;
+    }
+
     /* Hide interactive controls in print */
     input[type="range"],
     input[type="number"],
@@ -727,5 +757,36 @@ const printStyles = `
       margin-top: 8px !important;
       padding-top: 6px !important;
     }
+
+    /* Project logo — left-aligned, contained, above the title */
+    .cotizador-project-banner {
+      display: flex !important;
+      align-items: center !important;
+      break-after: avoid;
+      padding: 0 0 3px !important;
+    }
+    .cotizador-project-banner-img {
+      max-height: 1.5cm !important;
+      width: auto !important;
+      max-width: 60% !important;
+      object-fit: contain !important;
+      object-position: left center !important;
+      display: block !important;
+    }
+  }
+
+  /* Screen styles for project logo banner */
+  .cotizador-project-banner {
+    display: flex;
+    align-items: center;
+    padding: 4px 0 0;
+  }
+  .cotizador-project-banner-img {
+    max-height: 72px;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    object-position: left center;
+    display: block;
   }
 `;

@@ -1,0 +1,38 @@
+feat(cotizador): add project logos + fix orphaned print signature
+
+Adds project logos to the live cotizador view and to the printed
+output, and hardens the print layout against the signature-orphaning
+bug that was causing client distrust.
+
+LOGO DISPLAY
+- Static logos placed at public/projects/[slug].{jpg,png} — one per
+  active project (benestare, bosque-las-tapias, boulevard-5,
+  casa-elisa, santa-elena)
+- PROJECT_LOGO_EXT const handles the mixed-extension case: benestare
+  is a 2250×2250 PNG with alpha channel; all others are JPEG
+- Logo renders as soon as a project is selected, above the cotizador
+  header — matches the Excel template layout
+- imageError state suppresses the element on 404; setImageError(false)
+  fires on every project change to clear stale state
+- Screen: max-height 72px, object-fit contain, left-aligned
+- Print: max-height 1.5cm, object-fit contain, break-after: avoid to
+  keep title on the same page as the logo
+
+SIGNATURE ORPHAN FIX
+- Wraps disclaimers + print footer in a single cotizador-print-bottom
+  div with break-inside: avoid; break-before: avoid
+- Guarantees signature and disclaimers always land on the same page —
+  they can never be separated, regardless of how much content precedes
+  them
+
+COMPACT PRINT LAYOUT
+- @page margin: 0.8cm 1.2cm → 0.5cm 0.8cm (~0.6cm vertical gain)
+- Section gap: 4px → 3px
+- Section padding: 4px 6px → 3px 5px
+- Table cell padding: 1px 3px → 1px 2px
+- Detail grid gap: 3px → 2px
+- Unit summary item gap: 2px 12px → 2px 8px
+- 7-cuota configs (BEN, B5, CE) fit on one letter page including logo
+- BLT 24–28 cuota configs overflow to page 2 as before, but the
+  signature now stays attached to the disclaimers on the final page
+
