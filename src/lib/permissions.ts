@@ -40,6 +40,7 @@ export type Action =
   | "confirm"
   | "reject"
   | "desist"
+  | "mark_sold"
   | "release_freeze"
   | "confirm_rate"
   | "invite"
@@ -81,6 +82,7 @@ export const PERMISSIONS: Record<Resource, Partial<Record<Action, Role[]>>> = {
     confirm: A,
     reject: A,
     desist: A,
+    mark_sold: A,
     release_freeze: A,
     update: A,
   },

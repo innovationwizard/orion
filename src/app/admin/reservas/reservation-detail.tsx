@@ -77,7 +77,7 @@ type Props = {
   onActionComplete: () => void;
 };
 
-type ActionType = "confirm" | "reject" | "desist" | null;
+type ActionType = "confirm" | "reject" | "desist" | "mark-sold" | null;
 
 export default function ReservationDetail({
   reservationId,
@@ -241,6 +241,7 @@ export default function ReservationDetail({
   }
 
   const isPending = data?.reservation.status === "PENDING_REVIEW";
+  const isConfirmed = data?.reservation.status === "CONFIRMED";
 
   return (
     <>
@@ -733,7 +734,7 @@ export default function ReservationDetail({
               {/* Audit log */}
               <AuditLog entries={data.audit_log} />
 
-              {/* Actions */}
+              {/* Actions — PENDING_REVIEW: confirm, reject, desist */}
               {isPending && (
                 <div className="sticky bottom-0 bg-card border-t border-border -mx-5 px-5 py-4 flex gap-2">
                   <button
@@ -759,6 +760,26 @@ export default function ReservationDetail({
                   </button>
                 </div>
               )}
+
+              {/* Actions — CONFIRMED: mark sold, desist */}
+              {isConfirmed && (
+                <div className="sticky bottom-0 bg-card border-t border-border -mx-5 px-5 py-4 flex gap-2">
+                  <button
+                    type="button"
+                    className="flex-1 py-2.5 rounded-lg bg-success text-white font-medium text-sm hover:bg-success/90 transition-colors"
+                    onClick={() => setAction("mark-sold")}
+                  >
+                    Marcar como vendido
+                  </button>
+                  <button
+                    type="button"
+                    className="flex-1 py-2.5 rounded-lg border border-border text-muted font-medium text-sm hover:bg-bg transition-colors"
+                    onClick={() => setAction("desist")}
+                  >
+                    Desistir
+                  </button>
+                </div>
+              )}
             </>
           )}
         </div>
@@ -768,7 +789,7 @@ export default function ReservationDetail({
       {action === "confirm" && (
         <ActionConfirmDialog
           title="Confirmar reserva"
-          description="Esta acción marcará la reserva como confirmada y la unidad como vendida."
+          description="Esta acción marcará la reserva como confirmada y la unidad como reservada."
           confirmLabel="Confirmar"
           onConfirm={async () => {
             await handleAction("confirm", { admin_user_id: adminUserId });
@@ -804,6 +825,23 @@ export default function ReservationDetail({
               admin_user_id: adminUserId,
               reason,
               desistimiento_date: date,
+            });
+          }}
+          onCancel={() => setAction(null)}
+        />
+      )}
+
+      {action === "mark-sold" && (
+        <ActionConfirmDialog
+          title="Marcar como vendido"
+          description="Esta acción marcará la unidad como vendida de forma permanente."
+          confirmLabel="Marcar como vendido"
+          requireDate
+          onConfirm={async (reason, date) => {
+            await handleAction("mark-sold", {
+              admin_user_id: adminUserId,
+              sale_date: date,
+              notes: reason || null,
             });
           }}
           onCancel={() => setAction(null)}

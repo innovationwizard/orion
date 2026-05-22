@@ -26,6 +26,7 @@ export const SALESPERSON_CANONICAL: Record<string, string> = {
   "laura molina": "Laura Molina",
   "efren sanchez": "Efren Sanchez",
   "eder veliz": "Eder Veliz",
+  "daniel veliz": "Eder Veliz",
   "pedro pablo sarti": "Pedro Pablo Sarti",
   "ronaldo ogaldez": "Ronaldo Ogaldez",
   "pablo marroquin": "Pablo Marroquin",

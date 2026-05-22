@@ -9,7 +9,6 @@ type NavLink = { href: string; label: string; roles?: string[] };
 const NON_VENTAS_LINKS: (NavLink | "divider")[] = [
   { href: "/", label: "Dashboard" },
   { href: "/projects", label: "Projects" },
-  { href: "/desistimientos", label: "Desistimientos" },
   "divider",
   { href: "/disponibilidad", label: "Disponibilidad" },
   { href: "/admin/reservas", label: "Reservas", roles: ADMIN_ROLES },

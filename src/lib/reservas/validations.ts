@@ -53,6 +53,14 @@ export const desistReservationSchema = z.object({
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Formato de fecha: YYYY-MM-DD"),
 });
 
+export const markUnitSoldSchema = z.object({
+  admin_user_id: z.string().uuid("ID de administrador inválido"),
+  sale_date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Formato de fecha: YYYY-MM-DD"),
+  notes: z.string().nullable().default(null),
+});
+
 export const updateClientsSchema = z.object({
   client_names: z
     .array(z.string().min(1))
