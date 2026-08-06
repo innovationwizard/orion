@@ -127,12 +127,12 @@ function OrbitalGauge({ pct, label, compact = false }: { pct: number; label: str
       </svg>
 
       <div
-        className={`${compact ? "text-4xl" : "text-6xl sm:text-7xl"} font-extrabold tabular-nums -mt-4`}
+        className={`${compact ? "text-2xl" : "text-4xl sm:text-5xl"} [font-family:var(--font-hud-display)] tabular-nums -mt-4`}
         style={{ color, textShadow: `0 0 24px ${color}` }}
       >
         {Math.round(display)}%
       </div>
-      <div className="mt-3 text-xs tracking-[0.35em] uppercase text-slate-400 text-center">{label}</div>
+      <div className="mt-3 [font-family:var(--font-hud-display)] text-[9px] tracking-[0.35em] uppercase text-cyan-300 text-center">{label}</div>
 
       <style>{`
         @keyframes hud-orbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -168,8 +168,8 @@ function AreaTab({
         className="absolute inset-y-0 left-0 transition-[width] duration-700"
         style={{ width: `${Math.max(0, Math.min(100, pct))}%`, background: color, opacity: 0.85 }}
       />
-      <span className="relative z-10 block text-[11px] font-bold tracking-wider text-slate-900">{label}</span>
-      <span className="relative z-10 block text-xs font-semibold tabular-nums text-slate-700">
+      <span className="relative z-10 block [font-family:var(--font-hud-display)] text-[8px] font-bold tracking-wider text-slate-900">{label}</span>
+      <span className="relative z-10 block [font-family:var(--font-hud-display)] text-[9px] font-semibold tabular-nums text-slate-800">
         {Math.round(pct)} %
       </span>
     </button>
@@ -194,12 +194,12 @@ function RequirementRow({ req }: { req: HudRequirement }) {
       />
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm text-slate-100">{req.label}</span>
-          <span className={`text-[10px] font-bold tracking-wider uppercase rounded-full px-2 py-0.5 border ${ui.badgeClass}`}>
+          <span className="text-lg leading-tight text-emerald-100">{req.label}</span>
+          <span className={`text-sm font-bold tracking-wider uppercase rounded-full px-2 py-0.5 border ${ui.badgeClass}`}>
             {ui.badge}
           </span>
         </div>
-        {req.note && <p className="mt-1 text-xs text-slate-400">{req.note}</p>}
+        {req.note && <p className="mt-1 text-base leading-snug text-emerald-300/70">{req.note}</p>}
       </div>
     </li>
   );
@@ -209,7 +209,7 @@ function RequirementRow({ req }: { req: HudRequirement }) {
 function SectionPane({ section }: { section: HudSection }) {
   return (
     <div>
-      <h2 className="text-sm font-bold tracking-[0.25em] uppercase text-sky-200">{section.label}</h2>
+      <h2 className="[font-family:var(--font-hud-display)] text-[10px] font-bold tracking-[0.25em] uppercase text-cyan-300">{section.label}</h2>
       <ul className="mt-2 divide-y divide-white/10">
         {section.requirements.map((r) => (
           <RequirementRow key={r.id} req={r} />
@@ -229,7 +229,7 @@ function ResumenPane({ area }: { area: HudArea }) {
   return (
     <div className="grid gap-8">
       <OrbitalGauge compact pct={areaCompletion(area)} label={area.label} />
-      <p className="text-center text-sm text-slate-300 -mt-4">
+      <p className="text-center text-lg text-emerald-200 -mt-4">
         {complete.length} de {reqs.length} requisitos completos (data vinculada y desplegada)
       </p>
 
@@ -239,7 +239,7 @@ function ResumenPane({ area }: { area: HudArea }) {
 
       {pending.length > 0 && (
         <div>
-          <h2 className="text-sm font-bold tracking-[0.25em] uppercase text-red-300">
+          <h2 className="[font-family:var(--font-hud-display)] text-[10px] font-bold tracking-[0.25em] uppercase text-red-300">
             Pendientes
           </h2>
           <ul className="mt-2 divide-y divide-white/10">
@@ -258,13 +258,13 @@ function BarList({ title, items }: { title: string; items: Array<{ label: string
   const max = items.reduce((m, i) => Math.max(m, i.count), 0);
   return (
     <div>
-      <h3 className="text-xs font-bold tracking-[0.2em] uppercase text-slate-400">{title}</h3>
+      <h3 className="[font-family:var(--font-hud-display)] text-[9px] font-bold tracking-[0.2em] uppercase text-cyan-400">{title}</h3>
       <ul className="mt-3 grid gap-2">
         {items.map((item) => (
           <li key={item.label} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
             <div className="min-w-0">
               <div className="flex items-baseline justify-between gap-2">
-                <span className="text-xs text-slate-200 truncate">{item.label}</span>
+                <span className="text-base text-emerald-100 truncate">{item.label}</span>
               </div>
               <div className="mt-1 h-2 rounded-full bg-white/10 overflow-hidden">
                 <div
@@ -273,7 +273,7 @@ function BarList({ title, items }: { title: string; items: Array<{ label: string
                 />
               </div>
             </div>
-            <span className="text-sm font-semibold tabular-nums text-slate-100">{item.count}</span>
+            <span className="[font-family:var(--font-hud-display)] text-[10px] font-semibold tabular-nums text-emerald-100">{item.count}</span>
           </li>
         ))}
       </ul>
@@ -284,8 +284,8 @@ function BarList({ title, items }: { title: string; items: Array<{ label: string
 function KpiTile({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3">
-      <div className="text-[11px] text-slate-400">{label}</div>
-      <div className="mt-1 text-lg font-bold tabular-nums text-slate-100">{value}</div>
+      <div className="text-sm text-cyan-300/80">{label}</div>
+      <div className="mt-1 text-2xl font-bold tabular-nums text-emerald-100">{value}</div>
     </div>
   );
 }
@@ -301,7 +301,7 @@ function VentasViz({
 }) {
   if (!["canales", "inventario", "desistimientos"].includes(sectionKey)) return null;
   if (error) {
-    return <p className="mt-6 text-xs text-red-300">No se pudo cargar la data: {error}</p>;
+    return <p className="mt-6 text-base text-red-300">No se pudo cargar la data: {error}</p>;
   }
   if (!data) {
     return (
@@ -340,7 +340,7 @@ function VentasViz({
   return (
     <div className="mt-8 grid gap-6">
       <div>
-        <h3 className="text-xs font-bold tracking-[0.2em] uppercase text-slate-400">
+        <h3 className="[font-family:var(--font-hud-display)] text-[9px] font-bold tracking-[0.2em] uppercase text-cyan-400">
           Reembolsos y retención — ventas canceladas
         </h3>
         <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -357,13 +357,13 @@ function VentasViz({
       </div>
 
       <div>
-        <h3 className="text-xs font-bold tracking-[0.2em] uppercase text-slate-400">
+        <h3 className="[font-family:var(--font-hud-display)] text-[9px] font-bold tracking-[0.2em] uppercase text-cyan-400">
           Trazabilidad de unidades desistidas
         </h3>
         <div className="mt-3 overflow-x-auto rounded-xl border border-white/10">
-          <table className="w-full text-xs">
+          <table className="w-full text-base">
             <thead>
-              <tr className="text-left text-slate-400 border-b border-white/10">
+              <tr className="text-left text-cyan-400 border-b border-white/10">
                 <th className="px-3 py-2 font-medium">Unidad</th>
                 <th className="px-3 py-2 font-medium">Proyecto</th>
                 <th className="px-3 py-2 font-medium">Fecha desist.</th>
@@ -373,7 +373,7 @@ function VentasViz({
             </thead>
             <tbody className="divide-y divide-white/5">
               {data.desistidos.map((d, i) => (
-                <tr key={`${d.project}-${d.unit}-${i}`} className="text-slate-200">
+                <tr key={`${d.project}-${d.unit}-${i}`} className="text-emerald-100">
                   <td className="px-3 py-2 whitespace-nowrap">{d.unit}</td>
                   <td className="px-3 py-2 whitespace-nowrap">{d.project}</td>
                   <td className="px-3 py-2 whitespace-nowrap">{d.fecha ?? "—"}</td>
@@ -418,7 +418,7 @@ function AreaView({ area }: { area: HudArea }) {
     return (
       <div className="flex flex-col items-center gap-2">
         <OrbitalGauge pct={0} label={area.label} />
-        <p className="text-sm text-slate-400">Requisitos aún no definidos para esta área.</p>
+        <p className="text-lg text-emerald-300/70">Requisitos aún no definidos para esta área.</p>
       </div>
     );
   }
@@ -435,14 +435,14 @@ function AreaView({ area }: { area: HudArea }) {
             <button
               key={s.key}
               onClick={() => setSectionKey(s.key)}
-              className={`flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-left text-sm whitespace-nowrap transition-colors ${
-                active ? "bg-sky-400/15 text-sky-200 ring-1 ring-sky-400/40" : "text-slate-300 hover:bg-white/5"
+              className={`flex items-center justify-between gap-3 rounded-lg px-3 py-2 text-left text-lg whitespace-nowrap transition-colors ${
+                active ? "bg-sky-400/15 text-cyan-300 ring-1 ring-sky-400/40" : "text-emerald-200 hover:bg-white/5"
               }`}
               aria-current={active ? "page" : undefined}
             >
               <span>{s.label}</span>
               <span
-                className="text-[10px] font-semibold tabular-nums"
+                className="[font-family:var(--font-hud-display)] text-[8px] font-semibold tabular-nums"
                 style={{ color: completionColor(total ? (done / total) * 100 : 0) }}
               >
                 {done}/{total}
@@ -471,13 +471,13 @@ export default function HudClient() {
   const selectedArea = HUD_AREAS.find((a) => a.key === selected) ?? null;
 
   return (
-    <div className="min-h-screen bg-[#0b1230] bg-[radial-gradient(ellipse_at_50%_30%,#12204d_0%,#0b1230_65%)] text-white">
+    <div className="min-h-screen bg-[#0b1230] bg-[radial-gradient(ellipse_at_50%_30%,#12204d_0%,#0b1230_65%)] text-emerald-100 [font-family:var(--font-hud-body)]">
       {/* Sticky header: title + tabs */}
       <header className="sticky top-0 z-20 bg-[#0b1230]/90 backdrop-blur border-b border-white/10">
         <div className="text-center py-3">
           <button
             onClick={() => setSelected(null)}
-            className="text-lg font-bold tracking-[0.3em] text-sky-200"
+            className="[font-family:var(--font-hud-display)] text-sm font-bold tracking-[0.3em] text-emerald-300"
             aria-label="Ir al total del proyecto"
           >
             PAI HUD
