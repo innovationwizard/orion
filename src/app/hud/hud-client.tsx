@@ -484,8 +484,8 @@ export default function HudClient() {
           </button>
         </div>
         <div className="overflow-x-auto pb-3 px-3">
-          {/* Equal columns sized so the longest label (CUMPLIMIENTO) fits */}
-          <div className="grid grid-cols-5 gap-2 min-w-[620px] max-w-3xl mx-auto">
+          {/* Equal columns sized to the longest label (CUMPLIMIENTO); w-max + mx-auto centers the row */}
+          <div className="grid grid-flow-col auto-cols-fr gap-2 w-max mx-auto">
             {HUD_AREAS.map((a) => (
               <AreaTab
                 key={a.key}
