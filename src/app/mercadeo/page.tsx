@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import NavBar from "@/components/nav-bar";
 import FunnelStrip from "./funnel-strip";
 import LeadsMetasStrip from "./leads-metas-strip";
+import RoasStrip from "./roas-strip";
 
 export const metadata: Metadata = {
   title: "Mercadeo | Puerta Abierta",
@@ -15,6 +16,7 @@ export default function MercadeoPage() {
       <NavBar />
       <FunnelStrip />
       <LeadsMetasStrip />
+      <RoasStrip />
       <iframe
         src="/mercadeo/performance.html"
         title="Reporte maestro de mercadeo — Performance Dashboard Puerta Abierta"

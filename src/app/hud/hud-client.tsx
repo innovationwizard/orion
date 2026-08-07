@@ -18,6 +18,13 @@ function formatMoney(amount: number, currency: string): string {
   return new Intl.NumberFormat("es-GT", { style: "currency", currency, maximumFractionDigits: 0 }).format(amount);
 }
 
+/** Parses a fetch Response, surfacing the server's error message instead of a bare HTTP status. */
+export async function parseJsonResponse<T>(r: Response): Promise<T> {
+  if (r.ok) return r.json() as Promise<T>;
+  const body = (await r.json().catch(() => null)) as { error?: string; details?: string } | null;
+  throw new Error(body?.error ? `${body.error}${body.details ? ` — ${body.details}` : ""}` : `HTTP ${r.status}`);
+}
+
 // ─── Completion color: red (0%) → green (100%) ───────────────
 function completionColor(pct: number): string {
   const clamped = Math.max(0, Math.min(100, pct));
@@ -669,7 +676,7 @@ function AreaView({ area }: { area: HudArea }) {
     if (area.key !== "ventas" && area.key !== "cobros") return;
     let cancelled = false;
     fetch(`/api/hud/${area.key}`)
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then((r) => parseJsonResponse<HudVentasPayload | HudCobrosPayload>(r))
       .then((d: HudVentasPayload | HudCobrosPayload) => {
         if (cancelled) return;
         if (area.key === "ventas") setVentasData(d as HudVentasPayload);

@@ -35,7 +35,11 @@ export default function FunnelStrip() {
   useEffect(() => {
     let cancelled = false;
     fetch("/api/mercadeo/funnel")
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then(async (r) => {
+        if (r.ok) return r.json() as Promise<MercadeoFunnelPayload>;
+        const body = (await r.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(body?.error ?? `HTTP ${r.status}`);
+      })
       .then((d: MercadeoFunnelPayload) => {
         if (!cancelled) setData(d);
       })

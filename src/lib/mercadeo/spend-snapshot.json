@@ -1,0 +1,41 @@
+{
+  "_source": "Extracted from ARTIFACT/Performance-Report-Puerta-Abierta.xlsx (Meta Ads export, Power BI source). The 'Importe gastado (USD)' column label is WRONG for GTQ-billed accounts — real currency comes from the Divisa column, one per ad account. Regenerate with scripts/extract-mercadeo-spend.py after replacing the Excel.",
+  "accounts": {
+    "Benestare": {
+      "currency": "GTQ",
+      "spend": 51809.48,
+      "from": "2024-07-05",
+      "to": "2026-08-04"
+    },
+    "Bosque Las Tapias": {
+      "currency": "GTQ",
+      "spend": 69160.23,
+      "from": "2024-10-09",
+      "to": "2026-08-04"
+    },
+    "Boulevard5": {
+      "currency": "USD",
+      "spend": 84781.2,
+      "from": "2024-07-05",
+      "to": "2026-08-04"
+    },
+    "Casa Elisa": {
+      "currency": "USD",
+      "spend": 24967.86,
+      "from": "2024-07-05",
+      "to": "2025-09-22"
+    },
+    "Puerta Abierta": {
+      "currency": "GTQ",
+      "spend": 5776.69,
+      "from": "2024-07-05",
+      "to": "2026-07-31"
+    },
+    "Santa Elena": {
+      "currency": "GTQ",
+      "spend": 23631.7,
+      "from": "2024-07-10",
+      "to": "2026-05-22"
+    }
+  }
+}

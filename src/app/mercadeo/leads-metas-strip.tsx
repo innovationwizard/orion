@@ -19,7 +19,11 @@ export default function LeadsMetasStrip() {
   useEffect(() => {
     let cancelled = false;
     fetch("/api/mercadeo/leads-metas")
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then(async (r) => {
+        if (r.ok) return r.json() as Promise<LeadsMetasPayload>;
+        const body = (await r.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(body?.error ?? `HTTP ${r.status}`);
+      })
       .then((d: LeadsMetasPayload) => {
         if (!cancelled) setData(d);
       })

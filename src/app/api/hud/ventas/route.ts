@@ -219,7 +219,7 @@ export async function GET() {
   const assignmentResult = await fetchAll<any>((from, to) =>
     supabase
       .from("salesperson_project_assignments")
-      .select("salesperson_id, project_id, salespeople(name)")
+      .select("salesperson_id, project_id, salespeople(full_name)")
       .is("end_date", null)
       .range(from, to),
   );
@@ -231,7 +231,7 @@ export async function GET() {
   const monthResResult = await fetchAll<any>((from, to) =>
     supabase
       .from("reservations")
-      .select("salesperson_id, salespeople(name), rv_units(floors(towers(project_id)))")
+      .select("salesperson_id, salespeople(full_name), rv_units(floors(towers(project_id)))")
       .in("status", ["CONFIRMED", "DESISTED"])
       .gte("deposit_date", monthStart)
       .lt("deposit_date", nextStart)
@@ -265,7 +265,7 @@ export async function GET() {
     const projectId = tower?.project_id as string | undefined;
     if (!projectId) continue;
     ventasByProject.set(projectId, (ventasByProject.get(projectId) ?? 0) + 1);
-    const asesor = (one(r.salespeople)?.name as string | undefined) ?? "Sin asesor";
+    const asesor = (one(r.salespeople)?.full_name as string | undefined) ?? "Sin asesor";
     const key = `${r.salesperson_id}|${projectId}`;
     const entry = ventasByAsesorProject.get(key) ?? {
       asesor,
@@ -291,7 +291,7 @@ export async function GET() {
     const meta = metaByProject.get(projectId) ?? 0;
     const ventas = ventasByAsesorProject.get(key)?.ventas ?? 0;
     asesores.push({
-      asesor: (one(a.salespeople)?.name as string | undefined) ?? "—",
+      asesor: (one(a.salespeople)?.full_name as string | undefined) ?? "—",
       project: projectName.get(projectId) ?? "—",
       meta,
       ventas,

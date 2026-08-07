@@ -132,7 +132,7 @@ export const HUD_AREAS: HudArea[] = [
             id: "v10",
             label: "Control de descuentos",
             status: "NO_VINCULADA",
-            note: "Los descuentos son rebajas de precio distintas a los vales (v11) — esa data aún no está en la app.",
+            note: "Los descuentos son rebajas de precio distintas a los vales (v11). Su data existe únicamente en PDFs escaneados — no se mantiene ningún reporte. Vincularla requiere digitalización (ej. OCR, como el flujo de boletas) o captura manual.",
           },
           {
             id: "v11",
@@ -215,8 +215,8 @@ export const HUD_AREAS: HudArea[] = [
           {
             id: "k6",
             label: "ROAS / ROI",
-            status: "NO_VINCULADA",
-            note: "Requiere gasto de pauta (no vinculado) + ingresos por venta (ya en la app).",
+            status: "COMPLETA",
+            note: "Desplegado en /mercadeo — ROAS amplio y atribuido por proyecto: gasto Meta Ads en su divisa real (columna Divisa del Excel fuente; el Power BI mezclaba GTQ/USD) vs ventas no canceladas de la DB. Conversión fija Q7.75/USD.",
           },
           {
             id: "k7",
@@ -254,8 +254,8 @@ export const HUD_AREAS: HudArea[] = [
           {
             id: "k11",
             label: "Operatividad de todos los canales digitales en la aplicación",
-            status: "NO_VINCULADA",
-            note: "Operatividad = salud de la vinculación (confirmado por Jorge): semáforo de si cada canal digital está conectado a la app y reportando data. Hoy ningún canal reporta a la app.",
+            status: "COMPLETA",
+            note: "Completo por decisión de Jorge (2026-08-07): la app de seguimiento que usa mercadeo se actualiza en vivo con visibilidad total de los canales. Nuestra app no lo extrae en vivo — la visibilidad operativa vive en la herramienta de mercadeo.",
           },
         ],
       },
