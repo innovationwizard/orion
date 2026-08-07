@@ -132,13 +132,13 @@ export const HUD_AREAS: HudArea[] = [
             id: "v10",
             label: "Control de descuentos",
             status: "NO_VINCULADA",
-            note: "No existen estructuras de descuento en la base de datos.",
+            note: "Los descuentos son rebajas de precio distintas a los vales (v11) — esa data aún no está en la app.",
           },
           {
             id: "v11",
             label: "Control de promociones",
-            status: "NO_VINCULADA",
-            note: "No existe tabla de promociones en la base de datos.",
+            status: "COMPLETA",
+            note: "Desplegado aquí en el HUD: vales activos desde el export de Pipedrive (snapshot 2026-08-07, B5). La data de todos los proyectos está completa en Pipedrive — pendiente de descarga para ampliar el snapshot.",
           },
         ],
       },
@@ -168,14 +168,16 @@ export const HUD_AREAS: HudArea[] = [
           {
             id: "k2",
             label: "Meta mensual de lead",
-            status: "NO_VINCULADA",
-            note: "El conteo de leads y sus metas no existen en la app. Vincular esta data también desbloquea el funnel de conversión de VENTAS (v8).",
+            status: "COMPLETA",
+            note:
+              "Desplegado en /mercadeo — rangos mensuales por proyecto (migración 069: BEN 350–400, BLT 250–300, B5 150–200, SE 50–100; CE sin meta) vs leads reales del último mes completo del snapshot. Rangos confirmados como MENSUALES contra la propia data de mercadeo.",
           },
           {
             id: "k3",
             label: "Meta diaria de lead",
-            status: "NO_VINCULADA",
-            note: "Misma data que la meta mensual con granularidad diaria — un toggle de período, no una vista aparte.",
+            status: "COMPLETA",
+            note:
+              "Desplegado en /mercadeo — equivalente diario derivado (rango ÷ días del mes) junto al promedio diario real, en la misma franja de metas.",
           },
         ],
       },

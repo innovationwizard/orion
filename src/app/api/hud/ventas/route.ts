@@ -2,6 +2,7 @@ import { getSupabaseConfigError, getSupabaseServerClient } from "@/lib/supabase"
 import { jsonError, jsonOk } from "@/lib/api";
 import { requireRole, DATA_VIEWER_ROLES } from "@/lib/auth";
 import { fetchAll } from "@/lib/fetch-all";
+import valesSnapshot from "@/lib/ventas/vales-snapshot.json";
 
 export type HudVentasPayload = {
   /** CONFIRMED reservations grouped by lead_source */
@@ -29,6 +30,26 @@ export type HudVentasPayload = {
     estadoActual: string;
     precioLista: number | null;
   }>;
+  /** Promotional vouchers (vales) from the Pipedrive deals export — snapshot, served behind auth (client PII) */
+  vales: {
+    exportedAt: string;
+    scope: string;
+    dealCount: number;
+    totalVales: number;
+    rows: Array<{
+      cliente: string;
+      apartamento: string;
+      valorTrato: number;
+      vale: number;
+      promoLabel: string;
+      embudo: string;
+      propietario: string;
+      estado: string;
+      creado: string;
+      cierrePrevista: string;
+      flag?: string;
+    }>;
+  };
   /** Monthly targets vs production. Counting rule (Jorge 2026-08-07): CONFIRMED + DESISTED by deposit_date month. */
   objetivos: {
     month: string;
@@ -320,6 +341,13 @@ export async function GET() {
       porMoneda,
     },
     desistidos,
+    vales: {
+      exportedAt: valesSnapshot.exportedAt,
+      scope: valesSnapshot.scope,
+      dealCount: valesSnapshot.dealCount,
+      totalVales: valesSnapshot.totalVales,
+      rows: valesSnapshot.rows,
+    },
     objetivos: {
       month: monthStart.slice(0, 7),
       proyectos,

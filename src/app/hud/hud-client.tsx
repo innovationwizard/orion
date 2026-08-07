@@ -300,7 +300,7 @@ function VentasViz({
   data: HudVentasPayload | null;
   error: string | null;
 }) {
-  if (!["objetivos", "canales", "inventario", "desistimientos"].includes(sectionKey)) return null;
+  if (!["objetivos", "canales", "inventario", "desistimientos", "descuentos"].includes(sectionKey)) return null;
   if (error) {
     return <p className="mt-6 text-base text-red-300">No se pudo cargar la data: {error}</p>;
   }
@@ -427,6 +427,70 @@ function VentasViz({
           title="Split por modelo — unidades reservadas y vendidas"
           items={data.modelos.map((m) => ({ label: `${m.project} — ${m.modelo}`, count: m.count }))}
         />
+      </div>
+    );
+  }
+
+  if (sectionKey === "descuentos") {
+    const v = data.vales;
+    return (
+      <div className="mt-8 grid gap-4">
+        <div>
+          <h3 className="[font-family:var(--font-hud-display)] text-[9px] font-bold tracking-[0.2em] uppercase text-cyan-400">
+            Promociones — vales activos (Pipedrive, export {v.exportedAt})
+          </h3>
+          <p className="mt-1 text-base text-emerald-300/70">{v.scope}</p>
+          <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <KpiTile label="Tratos con vale" value={String(v.dealCount)} />
+            <KpiTile label="Exposición total en vales" value={formatMoney(v.totalVales, "GTQ")} />
+            <KpiTile
+              label="Vale promedio"
+              value={formatMoney(v.dealCount > 0 ? v.totalVales / v.dealCount : 0, "GTQ")}
+            />
+          </div>
+        </div>
+        <div className="overflow-x-auto rounded-xl border border-white/10">
+          <table className="w-full text-base">
+            <thead>
+              <tr className="text-left text-cyan-400 border-b border-white/10">
+                <th className="px-3 py-2 font-medium">Cliente</th>
+                <th className="px-3 py-2 font-medium">Apto</th>
+                <th className="px-3 py-2 font-medium text-right">Valor trato</th>
+                <th className="px-3 py-2 font-medium text-right">Vale</th>
+                <th className="px-3 py-2 font-medium">Asesor</th>
+                <th className="px-3 py-2 font-medium">Creado</th>
+                <th className="px-3 py-2 font-medium">Cierre prev.</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {v.rows.map((r, i) => (
+                <tr key={`${r.apartamento}-${i}`} className="text-emerald-100">
+                  <td className="px-3 py-2 whitespace-nowrap">
+                    {r.cliente}
+                    {r.flag && (
+                      <span
+                        className="ml-2 text-sm font-bold uppercase rounded-full px-1.5 border border-amber-400/70 text-amber-300"
+                        title={r.flag}
+                      >
+                        ⚠ dato inconsistente
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-3 py-2 whitespace-nowrap">{r.apartamento}</td>
+                  <td className="px-3 py-2 whitespace-nowrap text-right tabular-nums">
+                    {formatMoney(r.valorTrato, "GTQ")}
+                  </td>
+                  <td className="px-3 py-2 whitespace-nowrap text-right tabular-nums">
+                    {formatMoney(r.vale, "GTQ")}
+                  </td>
+                  <td className="px-3 py-2 whitespace-nowrap">{r.propietario}</td>
+                  <td className="px-3 py-2 whitespace-nowrap">{r.creado}</td>
+                  <td className="px-3 py-2 whitespace-nowrap">{r.cierrePrevista}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   }

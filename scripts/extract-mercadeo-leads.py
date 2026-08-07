@@ -25,11 +25,17 @@ led_total = sum(r[LED] for r in payload["daily"])
 led_excl = sum(r[LED] for r in payload["exclDaily"])
 
 epoch = date.fromisoformat(payload["meta"]["epoch"])
+accounts = payload["acc"]
 monthly: dict[str, int] = defaultdict(int)
+monthly_account: dict[str, dict[str, int]] = {a: defaultdict(int) for a in accounts}
 for r in payload["daily"]:
-    monthly[(epoch + timedelta(days=r[0])).strftime("%Y-%m")] += r[LED]
+    month = (epoch + timedelta(days=r[0])).strftime("%Y-%m")
+    monthly[month] += r[LED]
+    monthly_account[accounts[r[1]]][month] += r[LED]
 for r in payload["exclDaily"]:
-    monthly[(epoch + timedelta(days=r[0])).strftime("%Y-%m")] -= r[LED]
+    month = (epoch + timedelta(days=r[0])).strftime("%Y-%m")
+    monthly[month] -= r[LED]
+    monthly_account[accounts[r[1]]][month] -= r[LED]
 
 out = {
     "_source": (
@@ -44,6 +50,7 @@ out = {
     "leadsExcludedCampaign": led_excl,
     "leadsNet": led_total - led_excl,
     "leadsByMonth": dict(sorted(monthly.items())),
+    "leadsByMonthAccount": {a: dict(sorted(m.items())) for a, m in monthly_account.items()},
 }
 json.dump(out, open(OUT_PATH, "w"), ensure_ascii=False, indent=2)
 print(f"wrote {OUT_PATH}: leadsNet={out['leadsNet']} ({out['epoch']} → {out['refreshed']})")
