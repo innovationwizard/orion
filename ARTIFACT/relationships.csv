@@ -1,0 +1,2 @@
+FromTableName,FromColumnName,ToTableName,ToColumnName,IsActive,Cardinality,CrossFilteringBehavior,FromKeyCount,ToKeyCount,RelyOnReferentialIntegrity
+Performance - Data Base PA,Nombre de la cuenta,insights list,Proyecto,1,M:M,Both,,,0

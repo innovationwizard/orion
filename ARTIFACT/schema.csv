@@ -1,0 +1,119 @@
+TableName,ColumnName,PandasDataType
+Calendario,Año,Int64
+Calendario,Mes,Int64
+Calendario,Dia,Int64
+Calendario,Semestre,Float64
+Calendario,Cuatrimestre,Float64
+Calendario,Trimestre,Float64
+Calendario,Bimestre,Float64
+Calendario,Semana,Int64
+Calendario,NombreDía,string
+DateTableTemplate_0a7b6912-1bfa-4ed5-b038-5028c265bd27,Año,Int64
+DateTableTemplate_0a7b6912-1bfa-4ed5-b038-5028c265bd27,NroMes,Int64
+DateTableTemplate_0a7b6912-1bfa-4ed5-b038-5028c265bd27,Mes,string
+DateTableTemplate_0a7b6912-1bfa-4ed5-b038-5028c265bd27,NroTrimestre,Int64
+DateTableTemplate_0a7b6912-1bfa-4ed5-b038-5028c265bd27,Trimestre,string
+DateTableTemplate_0a7b6912-1bfa-4ed5-b038-5028c265bd27,Día,Int64
+Inventarios,Proyecto,string
+Inventarios,Nivel,string
+Inventarios,Número ,Int64
+Inventarios,Tipo,string
+Inventarios,M² ,Float64
+Inventarios,Habitaciones,Int64
+Inventarios,No. Bodega  5mts,Int64
+Inventarios,Balcon,Float64
+Inventarios,Jardín,Int64
+Inventarios,Parqueos ,Int64
+Inventarios,Parqueo Tandem,Int64
+Inventarios,Bodega No. ,Int64
+Inventarios,Bodega NUEVA UBICACIÓN,Int64
+Inventarios,Comparativa Bodegas ,string
+Inventarios,Sotano y parqueo,string
+Inventarios,Sótano y parqueo,string
+Inventarios,Sótano y parqueo NUEVA UBICACIÓN,string
+Inventarios,Comparativa Sótanos,string
+Inventarios,Q/M2,Float64
+Inventarios,Precio sin imp ,Float64
+Inventarios,Precio (Impuestos),Float64
+Inventarios,Precio sin imp FHA,Float64
+Inventarios,Aproximacion - FHA,Int64
+Inventarios,Ajuste 1,Int64
+Inventarios,Precio de Venta,Int64
+Inventarios,Estatus,string
+Inventarios,Fecha de reserva,datetime64[ns]
+Inventarios,Column28,string
+Inventarios,Column29,string
+Inventarios,Column30,string
+Inventarios,Column31,string
+LocalDateTable_35995480-e9ae-4194-9257-d8b7be2a7d8f,Año,Int64
+LocalDateTable_35995480-e9ae-4194-9257-d8b7be2a7d8f,NroMes,Int64
+LocalDateTable_35995480-e9ae-4194-9257-d8b7be2a7d8f,Mes,string
+LocalDateTable_35995480-e9ae-4194-9257-d8b7be2a7d8f,NroTrimestre,Int64
+LocalDateTable_35995480-e9ae-4194-9257-d8b7be2a7d8f,Trimestre,string
+LocalDateTable_35995480-e9ae-4194-9257-d8b7be2a7d8f,Día,Int64
+LocalDateTable_5587b065-4ae7-421d-be09-41610ce0c155,Año,Int64
+LocalDateTable_5587b065-4ae7-421d-be09-41610ce0c155,NroMes,Int64
+LocalDateTable_5587b065-4ae7-421d-be09-41610ce0c155,Mes,string
+LocalDateTable_5587b065-4ae7-421d-be09-41610ce0c155,NroTrimestre,Int64
+LocalDateTable_5587b065-4ae7-421d-be09-41610ce0c155,Trimestre,string
+LocalDateTable_5587b065-4ae7-421d-be09-41610ce0c155,Día,Int64
+LocalDateTable_741ec559-585e-4d0c-aab3-8bc4cb4342b2,Año,Int64
+LocalDateTable_741ec559-585e-4d0c-aab3-8bc4cb4342b2,NroMes,Int64
+LocalDateTable_741ec559-585e-4d0c-aab3-8bc4cb4342b2,Mes,string
+LocalDateTable_741ec559-585e-4d0c-aab3-8bc4cb4342b2,NroTrimestre,Int64
+LocalDateTable_741ec559-585e-4d0c-aab3-8bc4cb4342b2,Trimestre,string
+LocalDateTable_741ec559-585e-4d0c-aab3-8bc4cb4342b2,Día,Int64
+LocalDateTable_87a470eb-6633-4ca6-ab5b-e28a32755155,Año,Int64
+LocalDateTable_87a470eb-6633-4ca6-ab5b-e28a32755155,NroMes,Int64
+LocalDateTable_87a470eb-6633-4ca6-ab5b-e28a32755155,Mes,string
+LocalDateTable_87a470eb-6633-4ca6-ab5b-e28a32755155,NroTrimestre,Int64
+LocalDateTable_87a470eb-6633-4ca6-ab5b-e28a32755155,Trimestre,string
+LocalDateTable_87a470eb-6633-4ca6-ab5b-e28a32755155,Día,Int64
+LocalDateTable_e9a2ceb8-ae42-4aa1-9a2a-4d2657e2b27c,Año,Int64
+LocalDateTable_e9a2ceb8-ae42-4aa1-9a2a-4d2657e2b27c,NroMes,Int64
+LocalDateTable_e9a2ceb8-ae42-4aa1-9a2a-4d2657e2b27c,Mes,string
+LocalDateTable_e9a2ceb8-ae42-4aa1-9a2a-4d2657e2b27c,NroTrimestre,Int64
+LocalDateTable_e9a2ceb8-ae42-4aa1-9a2a-4d2657e2b27c,Trimestre,string
+LocalDateTable_e9a2ceb8-ae42-4aa1-9a2a-4d2657e2b27c,Día,Int64
+Performance - Data Base PA,Fecha,datetime64[ns]
+Performance - Data Base PA,Nombre de la cuenta,string
+Performance - Data Base PA,Nombre de la campaña,string
+Performance - Data Base PA,Alcance,Int64
+Performance - Data Base PA,Impresiones,Int64
+Performance - Data Base PA,Clientes potenciales,Int64
+Performance - Data Base PA,Divisa,string
+Performance - Data Base PA,Costo por cliente potencial,Float64
+Performance - Data Base PA,CTR (todos),Float64
+Performance - Data Base PA,Frecuencia,Float64
+Performance - Data Base PA,Clics (todos),Int64
+Performance - Data Base PA,CPC (todos),Float64
+Performance - Data Base PA,Importe gastado (USD),Float64
+Performance - Data Base PA,Configuración de atribución,string
+Performance - Data Base PA,Presupuesto de la campaña,string
+Performance - Data Base PA,Tipo de presupuesto de la campaña,string
+Performance - Data Base PA,Presupuesto del conjunto de anuncios,string
+Performance - Data Base PA,Tipo de presupuesto del conjunto de anuncios,string
+Performance - Data Base PA,Inicio del informe,datetime64[ns]
+Performance - Data Base PA,Fin del informe,datetime64[ns]
+Presupuesto,Fecha,string
+Presupuesto,Mes,string
+Presupuesto,Proyecto,string
+Presupuesto,Concepto,string
+Presupuesto,Proveedor,string
+Presupuesto,Inversión,Float64
+Presupuesto,Tipología,string
+Presupuesto,Frecuencia,string
+Presupuesto,Responsable,string
+insights list,Asunto,string
+insights list,Tipo,string
+insights list,Asignado al usuario,string
+insights list,Estado,string
+insights list,Fecha de añadición,datetime64[ns]
+insights list,Fecha de vencimiento,datetime64[ns]
+insights list,Trato,string
+insights list,Proyecto,string
+insights list,Fuente - Trato,string
+insights list,Fuente - Persona,string
+insights list,[Meta] Campaign Name,string
+insights list,[Meta] Ad Name,string
+insights list,Etapa,string

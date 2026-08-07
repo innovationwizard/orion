@@ -1,0 +1,7 @@
+TableName,Name,Expression,DisplayFolder,Description
+insights list,Med Importe Gastado,SUM('Performance - Data Base PA'[Importe gastado (USD)]),,
+insights list,Med Recuento Fuente,COUNT('insights list'[Fuente - Trato]),,
+insights list,Costo por Cierre,"DIVIDE([Med Importe Gastado],[Med Recuento Fuente])",,
+insights list,Med Recuento Trato,COUNT('insights list'[Trato]),,
+insights list,Reservas Mes Anterior,"CALCULATE(CALCULATE([Med Recuento Trato],DATEADD(FILTER(DATESMTD(Calendario[Date]),Calendario[Date] <= TODAY()),-1,MONTH),Calendario[Date] <= TODAY()))",,
+insights list,% Variación Mensual,"DIVIDE([Med Recuento Trato],[Reservas Mes Anterior])-1",,

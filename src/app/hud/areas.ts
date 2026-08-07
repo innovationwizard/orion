@@ -82,8 +82,9 @@ export const HUD_AREAS: HudArea[] = [
           {
             id: "v8",
             label: "Tasa de conversión — funnel completo: Leads → Reserva → PCV firmada",
-            status: "NO_VINCULADA",
-            note: "El conteo de leads no existe en la app — vendrá del área de Mercadeo. El tramo Reserva → PCV sí es medible hoy.",
+            status: "COMPLETA",
+            note:
+              "Desplegado en /mercadeo — funnel del período del snapshot: leads de pauta Meta (netos de campaña mal mapeada) → reservas → PCV firmadas, con tasas de conversión. Leads snapshot al 2026-08-04; reservas y PCV en vivo desde la DB.",
           },
         ],
       },
@@ -154,8 +155,9 @@ export const HUD_AREAS: HudArea[] = [
           {
             id: "k1",
             label: "Reporte maestro",
-            status: "NO_VINCULADA",
-            note: "Jorge subirá un ejemplo del reporte maestro — su forma final (¿overview del área, exportable, o ambos?) se define al verlo. Toda la data de mercadeo vive en Excel/reportes manuales, aún no entregados.",
+            status: "COMPLETA",
+            note:
+              "Desplegado en /mercadeo (reporte maestro Power BI reconstruido). Snapshot al 2026-08-04 — actualización manual reemplazando public/mercadeo/performance.html.",
           },
         ],
       },
@@ -184,19 +186,23 @@ export const HUD_AREAS: HudArea[] = [
           {
             id: "k4",
             label: "Uso de presupuesto diario de pauta",
-            status: "NO_VINCULADA",
-            note: "El gasto de pauta no existe en la app — fuente: Excel/reportes manuales del equipo de mercadeo.",
+            status: "COMPLETA",
+            note:
+              "Desplegado en /mercadeo — gasto diario de pauta (Meta Ads) en Performance Ads. Snapshot al 2026-08-04 — actualización manual reemplazando public/mercadeo/performance.html.",
           },
           {
             id: "k5",
             label: "Uso de presupuesto mensual de pauta",
-            status: "NO_VINCULADA",
+            status: "COMPLETA",
+            note:
+              "Desplegado en /mercadeo — gasto mensual y presupuestos en Performance Ads y Presupuesto. Snapshot al 2026-08-04 — actualización manual reemplazando public/mercadeo/performance.html.",
           },
           {
             id: "k10",
             label: "Evolución de inversiones en pauta acumulada mensual",
-            status: "NO_VINCULADA",
-            note: "Curva acumulada del mismo gasto de pauta (burn-up vs presupuesto).",
+            status: "COMPLETA",
+            note:
+              "Desplegado en /mercadeo — inversión acumulada en Inversión/Reservas. Snapshot al 2026-08-04 — actualización manual reemplazando public/mercadeo/performance.html.",
           },
         ],
       },
@@ -213,14 +219,16 @@ export const HUD_AREAS: HudArea[] = [
           {
             id: "k7",
             label: "Costo por cierre / medio de venta",
-            status: "NO_VINCULADA",
-            note: "Parcial: los cierres por medio YA existen en la app (reservations.lead_source) — falta el lado del gasto por canal.",
+            status: "COMPLETA",
+            note:
+              "Desplegado en /mercadeo — Costo por Cierre por fuente (medida DAX reproducida) en Inversión/Reservas. Snapshot al 2026-08-04 — actualización manual reemplazando public/mercadeo/performance.html.",
           },
           {
             id: "k9",
             label: "Evolución de costos por lead de manera mensual",
-            status: "NO_VINCULADA",
-            note: "Requiere conteo de leads + gasto mensual, ninguno vinculado aún.",
+            status: "COMPLETA",
+            note:
+              "Desplegado en /mercadeo — evolución de CPL en Performance Ads. Snapshot al 2026-08-04 — actualización manual reemplazando public/mercadeo/performance.html.",
           },
         ],
       },
@@ -231,8 +239,9 @@ export const HUD_AREAS: HudArea[] = [
           {
             id: "k8",
             label: "Efectividad de campañas",
-            status: "NO_VINCULADA",
-            note: "No existe registro de campañas en la app — fuente: Excel/reportes del equipo de mercadeo.",
+            status: "COMPLETA",
+            note:
+              "Desplegado en /mercadeo — treemap y tabla de campañas. Snapshot al 2026-08-04 — actualización manual reemplazando public/mercadeo/performance.html.",
           },
         ],
       },
