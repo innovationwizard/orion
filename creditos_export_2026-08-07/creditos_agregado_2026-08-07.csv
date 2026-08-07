@@ -1,0 +1,27 @@
+fecha_export,embudo,etapa_orden,etapa,estado,tratos
+2026-08-07,Créditos BLT,1,Promesa,lost,13
+2026-08-07,Créditos BLT,1,Promesa,open,61
+2026-08-07,Créditos BLV5,1,Promesa,lost,244
+2026-08-07,Créditos BLV5,1,Promesa,open,35
+2026-08-07,Créditos BLV5,2,Armado de Expediente,lost,12
+2026-08-07,Créditos BLV5,2,Armado de Expediente,open,9
+2026-08-07,Créditos BLV5,3,Análisis,lost,1
+2026-08-07,Créditos BLV5,3,Análisis,open,11
+2026-08-07,Créditos BLV5,4,Suspendido,open,27
+2026-08-07,Créditos BLV5,5,Re-análisis,lost,1
+2026-08-07,Créditos BLV5,5,Re-análisis,open,13
+2026-08-07,Créditos BLV5,6,Aprobación,lost,15
+2026-08-07,Créditos BLV5,6,Aprobación,open,115
+2026-08-07,Créditos BLV5,7,Ingreso E. Técnico / Avalúo,open,19
+2026-08-07,Créditos BLV5,9,Resguardo / Resolución,open,67
+2026-08-07,Créditos Benestare,1,Promesa,lost,51
+2026-08-07,Créditos Benestare,1,Promesa,open,195
+2026-08-07,Créditos Casa Elisa,1,Promesa,lost,5
+2026-08-07,Créditos Casa Elisa,1,Promesa,open,68
+2026-08-07,Créditos Casa Elisa,2,Armado de Expediente,lost,5
+2026-08-07,Créditos Casa Elisa,2,Armado de Expediente,open,29
+2026-08-07,Créditos Casa Elisa,2,Armado de Expediente,won,46
+2026-08-07,Créditos Casa Elisa,6,Aprobación,lost,2
+2026-08-07,Créditos Casa Elisa,6,Aprobación,open,6
+2026-08-07,Créditos Casa Elisa,6,Aprobación,won,1
+2026-08-07,Créditos Santa Elena,1,Promesa,open,1

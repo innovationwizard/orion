@@ -1,0 +1,134 @@
+fecha_export,pipeline_id,embudo,es_credito,orden,stage_id,etapa
+2026-08-07,2,Benestare,False,1,6,[BN] Ingreso
+2026-08-07,2,Benestare,False,2,7,Contactado
+2026-08-07,2,Benestare,False,3,8,En Perfilamiento
+2026-08-07,2,Benestare,False,4,9,Calificados
+2026-08-07,2,Benestare,False,5,10,Cita Programada
+2026-08-07,2,Benestare,False,6,11,[BN] Visita Efectiva
+2026-08-07,2,Benestare,False,7,12,En Decisión
+2026-08-07,2,Benestare,False,8,13,Reserva
+2026-08-07,3,Bosque Las Tapias,False,1,14,[BLT] Ingreso
+2026-08-07,3,Bosque Las Tapias,False,2,15,Contactado
+2026-08-07,3,Bosque Las Tapias,False,3,16,En Perfilamiento
+2026-08-07,3,Bosque Las Tapias,False,4,17,Calificados
+2026-08-07,3,Bosque Las Tapias,False,5,18,Cita Programada
+2026-08-07,3,Bosque Las Tapias,False,6,19,Visita Efectiva [BLT]
+2026-08-07,3,Bosque Las Tapias,False,7,20,En Decisión
+2026-08-07,3,Bosque Las Tapias,False,8,21,Reserva
+2026-08-07,4,Boulevard5,False,1,22,[BLV5] Ingreso
+2026-08-07,4,Boulevard5,False,2,23,Contactado
+2026-08-07,4,Boulevard5,False,3,24,En Perfilamiento
+2026-08-07,4,Boulevard5,False,4,25,Calificados
+2026-08-07,4,Boulevard5,False,5,26,Cita Programada
+2026-08-07,4,Boulevard5,False,6,27,Visita Efectiva [BLV5]
+2026-08-07,4,Boulevard5,False,7,28,En Decisión
+2026-08-07,4,Boulevard5,False,8,29,Reserva
+2026-08-07,5,Santa Elena,False,1,30,[Santa Elena] Ingreso
+2026-08-07,5,Santa Elena,False,2,31,Contactado
+2026-08-07,5,Santa Elena,False,3,32,En Perfilamiento
+2026-08-07,5,Santa Elena,False,4,33,Calificados
+2026-08-07,5,Santa Elena,False,5,34,Cita Programada
+2026-08-07,5,Santa Elena,False,6,35,Visita Efectiva [Santa Elena]
+2026-08-07,5,Santa Elena,False,7,36,En Decisión
+2026-08-07,5,Santa Elena,False,8,37,Reserva
+2026-08-07,7,Créditos Benestare,True,1,46,Promesa
+2026-08-07,7,Créditos Benestare,True,2,47,Armado de Expediente
+2026-08-07,7,Créditos Benestare,True,3,49,Análisis
+2026-08-07,7,Créditos Benestare,True,4,50,Suspendido
+2026-08-07,7,Créditos Benestare,True,5,51,Re-análisis
+2026-08-07,7,Créditos Benestare,True,6,53,Aprobación
+2026-08-07,7,Créditos Benestare,True,7,54,Expediente Técnico
+2026-08-07,7,Créditos Benestare,True,8,52,Resguardo / Resolución
+2026-08-07,7,Créditos Benestare,True,9,55,Escritura
+2026-08-07,7,Créditos Benestare,True,10,130,Desembolso
+2026-08-07,7,Créditos Benestare,True,11,131,Liquidación
+2026-08-07,8,Créditos BLT,True,1,56,Promesa
+2026-08-07,8,Créditos BLT,True,2,57,Armado de Expediente
+2026-08-07,8,Créditos BLT,True,3,59,Análisis
+2026-08-07,8,Créditos BLT,True,4,60,Suspendido
+2026-08-07,8,Créditos BLT,True,5,61,Re-análisis
+2026-08-07,8,Créditos BLT,True,6,63,Aprobación
+2026-08-07,8,Créditos BLT,True,7,64,Expediente Técnico
+2026-08-07,8,Créditos BLT,True,8,62,Resguardo / Resolución
+2026-08-07,8,Créditos BLT,True,9,65,Escritura
+2026-08-07,8,Créditos BLT,True,10,132,Desembolso
+2026-08-07,8,Créditos BLT,True,11,133,Liquidación
+2026-08-07,9,Créditos BLV5,True,1,66,Promesa
+2026-08-07,9,Créditos BLV5,True,2,67,Armado de Expediente
+2026-08-07,9,Créditos BLV5,True,3,69,Análisis
+2026-08-07,9,Créditos BLV5,True,4,70,Suspendido
+2026-08-07,9,Créditos BLV5,True,5,71,Re-análisis
+2026-08-07,9,Créditos BLV5,True,6,73,Aprobación
+2026-08-07,9,Créditos BLV5,True,7,74,Ingreso E. Técnico / Avalúo
+2026-08-07,9,Créditos BLV5,True,8,163,Aprobación E. Técnico / Avalúo
+2026-08-07,9,Créditos BLV5,True,9,72,Resguardo / Resolución
+2026-08-07,9,Créditos BLV5,True,9,75,Escritura
+2026-08-07,9,Créditos BLV5,True,9,134,Desembolso
+2026-08-07,9,Créditos BLV5,True,9,135,Liquidación
+2026-08-07,10,Créditos Santa Elena,True,1,76,Promesa
+2026-08-07,10,Créditos Santa Elena,True,2,77,Armado de Expediente
+2026-08-07,10,Créditos Santa Elena,True,3,79,Análisis
+2026-08-07,10,Créditos Santa Elena,True,4,80,Suspendido
+2026-08-07,10,Créditos Santa Elena,True,5,81,Re-análisis
+2026-08-07,10,Créditos Santa Elena,True,6,83,Aprobación
+2026-08-07,10,Créditos Santa Elena,True,7,84,Expediente Técnico
+2026-08-07,10,Créditos Santa Elena,True,8,82,Resguardo / Resolución
+2026-08-07,10,Créditos Santa Elena,True,9,85,Escritura
+2026-08-07,10,Créditos Santa Elena,True,10,136,Desembolso
+2026-08-07,10,Créditos Santa Elena,True,11,137,Liquidación
+2026-08-07,11,Créditos Casa Elisa,True,1,86,Promesa
+2026-08-07,11,Créditos Casa Elisa,True,2,87,Armado de Expediente
+2026-08-07,11,Créditos Casa Elisa,True,3,89,Análisis
+2026-08-07,11,Créditos Casa Elisa,True,4,90,Suspendido
+2026-08-07,11,Créditos Casa Elisa,True,5,91,Re-análisis
+2026-08-07,11,Créditos Casa Elisa,True,6,93,Aprobación
+2026-08-07,11,Créditos Casa Elisa,True,7,94,Expediente Técnico
+2026-08-07,11,Créditos Casa Elisa,True,8,92,Resguardo / Resolución
+2026-08-07,11,Créditos Casa Elisa,True,9,95,Escritura
+2026-08-07,11,Créditos Casa Elisa,True,10,138,Desembolso
+2026-08-07,11,Créditos Casa Elisa,True,11,139,Liquidación
+2026-08-07,13,Casa Elisa,False,1,104,[Casa Elisa] Ingreso
+2026-08-07,13,Casa Elisa,False,2,105,Contactado
+2026-08-07,13,Casa Elisa,False,3,106,En Perfilamiento
+2026-08-07,13,Casa Elisa,False,4,107,Calificados
+2026-08-07,13,Casa Elisa,False,5,108,Cita Programada
+2026-08-07,13,Casa Elisa,False,6,109,Visita Efectiva [Casa Elisa]
+2026-08-07,13,Casa Elisa,False,7,110,En Decisión
+2026-08-07,13,Casa Elisa,False,8,111,Reserva
+2026-08-07,14,Eventos BLT,False,1,112,Ingresos
+2026-08-07,14,Eventos BLT,False,2,113,Contacto establecido
+2026-08-07,14,Eventos BLT,False,3,114,Agendaron Cita
+2026-08-07,14,Eventos BLT,False,4,115,Confirmaron Cita
+2026-08-07,14,Eventos BLT,False,5,116,Asistencias
+2026-08-07,14,Eventos BLT,False,6,117,Reservas
+2026-08-07,15,Eventos Benestare,False,1,118,Ingresos
+2026-08-07,15,Eventos Benestare,False,2,119,Contacto establecido
+2026-08-07,15,Eventos Benestare,False,3,120,Agendaron Cita
+2026-08-07,15,Eventos Benestare,False,4,121,Confirmaron Cita
+2026-08-07,15,Eventos Benestare,False,5,122,Asistencias
+2026-08-07,15,Eventos Benestare,False,6,123,Reservas
+2026-08-07,16,Eventos BLV5,False,1,124,Ingresos
+2026-08-07,16,Eventos BLV5,False,2,125,Contacto establecido
+2026-08-07,16,Eventos BLV5,False,3,126,Agendaron Cita
+2026-08-07,16,Eventos BLV5,False,4,127,Confirmaron Cita
+2026-08-07,16,Eventos BLV5,False,5,128,Asistencias
+2026-08-07,16,Eventos BLV5,False,6,129,Reservas
+2026-08-07,17,Torre Coban,False,1,140,[TCA] Ingreso
+2026-08-07,17,Torre Coban,False,2,141,Contacto 
+2026-08-07,17,Torre Coban,False,3,142,En Perfilamiento
+2026-08-07,17,Torre Coban,False,4,143,Calificado
+2026-08-07,17,Torre Coban,False,5,144,Cita Programada
+2026-08-07,17,Torre Coban,False,6,145,Visita Efectiva
+2026-08-07,17,Torre Coban,False,7,146,En Decisión 
+2026-08-07,17,Torre Coban,False,8,147,Reseva
+2026-08-07,18,Créditos TCA,True,1,148,Promesa
+2026-08-07,18,Créditos TCA,True,2,149,Armado de Expediente
+2026-08-07,18,Créditos TCA,True,3,150,Análisis
+2026-08-07,18,Créditos TCA,True,4,151,Suspendido
+2026-08-07,18,Créditos TCA,True,5,152,Re-análisis
+2026-08-07,18,Créditos TCA,True,6,153,Aprobación 
+2026-08-07,18,Créditos TCA,True,7,154,Expediente Técnico
+2026-08-07,18,Créditos TCA,True,8,155,Resguardo / Resolución 
+2026-08-07,18,Créditos TCA,True,9,156,Escritura 
+2026-08-07,18,Créditos TCA,True,10,157,Desembolso
+2026-08-07,18,Créditos TCA,True,11,158,Liquidación 

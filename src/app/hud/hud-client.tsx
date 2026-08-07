@@ -13,6 +13,7 @@ import {
 } from "./areas";
 import type { HudVentasPayload } from "@/app/api/hud/ventas/route";
 import type { HudCobrosPayload } from "@/app/api/hud/cobros/route";
+import type { HudCreditosPayload } from "@/app/api/hud/creditos/route";
 
 function formatMoney(amount: number, currency: string): string {
   return new Intl.NumberFormat("es-GT", { style: "currency", currency, maximumFractionDigits: 0 }).format(amount);
@@ -663,6 +664,142 @@ function CobrosViz({
   );
 }
 
+// ─── Minimalist aggregate views (CRÉDITOS) ───────────────────
+const CREDITOS_SECTION_ETAPAS: Record<string, string[]> = {
+  "expediente-inicial": ["Promesa", "Armado de Expediente"],
+  "analisis-aprobacion": ["Análisis", "Suspendido", "Re-análisis", "Aprobación"],
+  "tramite-tecnico": [
+    "Expediente Técnico",
+    "Ingreso E. Técnico / Avalúo",
+    "Aprobación E. Técnico / Avalúo",
+    "Resguardo / Resolución",
+  ],
+  "escrituracion-entrega": ["Escritura"],
+  "cierre-archivo": ["Desembolso", "Liquidación"],
+};
+
+function CreditosViz({
+  sectionKey,
+  data,
+  error,
+}: {
+  sectionKey: string;
+  data: HudCreditosPayload | null;
+  error: string | null;
+}) {
+  if (error) {
+    return <p className="mt-6 text-base text-red-300">No se pudo cargar la data: {error}</p>;
+  }
+  if (!data) {
+    return (
+      <div className="mt-6 animate-pulse grid gap-2">
+        <div className="h-3 w-40 rounded bg-white/10" />
+        <div className="h-2 rounded bg-white/10" />
+        <div className="h-2 rounded bg-white/10" />
+      </div>
+    );
+  }
+
+  if (sectionKey === "resumen") {
+    return (
+      <div className="mt-8 grid gap-6">
+        <div>
+          <h3 className="[font-family:var(--font-hud-display)] text-[9px] font-bold tracking-[0.2em] uppercase text-cyan-400">
+            Pipeline de expedientes — Pipedrive al {data.boundary}
+          </h3>
+          <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <KpiTile label="Tratos abiertos" value={String(data.estados.open ?? 0)} />
+            <KpiTile label="Perdidos" value={String(data.estados.lost ?? 0)} />
+            <KpiTile
+              label="Suspendidos (abiertos)"
+              value={String(data.etapasGlobal.find((e) => e.etapa === "Suspendido")?.open ?? 0)}
+            />
+            <KpiTile
+              label="Sin tipo de crédito"
+              value={`${Math.round(((data.tipoCredito["Sin dato"] ?? 0) / data.totalTratos) * 100)}%`}
+            />
+          </div>
+        </div>
+        <BarList
+          title="Tratos abiertos por etapa — todos los embudos"
+          items={data.etapasGlobal.map((e) => ({ label: e.etapa, count: e.open }))}
+        />
+        <div>
+          <h3 className="[font-family:var(--font-hud-display)] text-[9px] font-bold tracking-[0.2em] uppercase text-amber-300">
+            Advertencias del origen
+          </h3>
+          <ul className="mt-2 grid gap-1">
+            {data.notas.map((n, i) => (
+              <li key={i} className="text-base text-emerald-300/70">
+                • {n}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    );
+  }
+
+  const etapas = CREDITOS_SECTION_ETAPAS[sectionKey];
+  if (!etapas) return null;
+  const rows = data.etapasPorEmbudo.filter((e) => etapas.includes(e.etapa));
+  const isTail = sectionKey === "escrituracion-entrega" || sectionKey === "cierre-archivo";
+
+  return (
+    <div className="mt-8 grid gap-4">
+      {sectionKey === "analisis-aprobacion" && (
+        <BarList
+          title="Split por tipo de crédito — dos campos custom consolidados"
+          items={Object.entries(data.tipoCredito).map(([label, count]) => ({ label, count }))}
+        />
+      )}
+      <div>
+        <h3 className="[font-family:var(--font-hud-display)] text-[9px] font-bold tracking-[0.2em] uppercase text-cyan-400">
+          Tratos por embudo y etapa (Pipedrive al {data.boundary})
+        </h3>
+        {rows.length === 0 ? (
+          <p className="mt-2 text-base text-emerald-300/70">
+            0 tratos en estas etapas — el registro operativo se detiene en Resguardo/Resolución; las
+            etapas existen en Pipedrive pero no se usan.
+          </p>
+        ) : (
+          <div className="mt-3 overflow-x-auto rounded-xl border border-white/10">
+            <table className="w-full text-base">
+              <thead>
+                <tr className="text-left text-cyan-400 border-b border-white/10">
+                  <th className="px-3 py-2 font-medium">Embudo</th>
+                  <th className="px-3 py-2 font-medium">Etapa</th>
+                  <th className="px-3 py-2 font-medium text-right">Abiertos</th>
+                  <th className="px-3 py-2 font-medium text-right">Perdidos</th>
+                  <th className="px-3 py-2 font-medium text-right">Mediana días en etapa</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {rows.map((r, i) => (
+                  <tr key={`${r.embudo}-${r.etapa}-${i}`} className="text-emerald-100">
+                    <td className="px-3 py-2 whitespace-nowrap">{r.embudo}</td>
+                    <td className="px-3 py-2 whitespace-nowrap">{r.etapa}</td>
+                    <td className="px-3 py-2 text-right tabular-nums">{r.open}</td>
+                    <td className="px-3 py-2 text-right tabular-nums">{r.lost}</td>
+                    <td className="px-3 py-2 text-right tabular-nums">
+                      {r.medianaDiasEnEtapa != null ? r.medianaDiasEnEtapa : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        {isTail && rows.length > 0 && (
+          <p className="mt-2 text-base text-emerald-300/70">
+            Etapas existentes pero sin uso operativo — el registro se detiene en Resguardo/Resolución.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ─── Area view: left side panel + content ────────────────────
 function AreaView({ area }: { area: HudArea }) {
   const [sectionKey, setSectionKey] = useState(area.sections[0]?.key ?? "");
@@ -670,22 +807,26 @@ function AreaView({ area }: { area: HudArea }) {
   const [ventasError, setVentasError] = useState<string | null>(null);
   const [cobrosData, setCobrosData] = useState<HudCobrosPayload | null>(null);
   const [cobrosError, setCobrosError] = useState<string | null>(null);
+  const [creditosData, setCreditosData] = useState<HudCreditosPayload | null>(null);
+  const [creditosError, setCreditosError] = useState<string | null>(null);
   const section = area.sections.find((s) => s.key === sectionKey) ?? area.sections[0];
 
   useEffect(() => {
-    if (area.key !== "ventas" && area.key !== "cobros") return;
+    if (!["ventas", "cobros", "creditos"].includes(area.key)) return;
     let cancelled = false;
     fetch(`/api/hud/${area.key}`)
-      .then((r) => parseJsonResponse<HudVentasPayload | HudCobrosPayload>(r))
-      .then((d: HudVentasPayload | HudCobrosPayload) => {
+      .then((r) => parseJsonResponse<HudVentasPayload | HudCobrosPayload | HudCreditosPayload>(r))
+      .then((d) => {
         if (cancelled) return;
         if (area.key === "ventas") setVentasData(d as HudVentasPayload);
-        else setCobrosData(d as HudCobrosPayload);
+        else if (area.key === "cobros") setCobrosData(d as HudCobrosPayload);
+        else setCreditosData(d as HudCreditosPayload);
       })
       .catch((e: Error) => {
         if (cancelled) return;
         if (area.key === "ventas") setVentasError(e.message);
-        else setCobrosError(e.message);
+        else if (area.key === "cobros") setCobrosError(e.message);
+        else setCreditosError(e.message);
       });
     return () => {
       cancelled = true;
@@ -738,6 +879,9 @@ function AreaView({ area }: { area: HudArea }) {
         )}
         {area.key === "cobros" && section && (
           <CobrosViz sectionKey={section.key} data={cobrosData} error={cobrosError} />
+        )}
+        {area.key === "creditos" && section && (
+          <CreditosViz sectionKey={section.key} data={creditosData} error={creditosError} />
         )}
       </section>
     </div>

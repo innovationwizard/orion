@@ -1,0 +1,247 @@
+{
+  "_source": "Aggregated from creditos_snapshot_2026-08-07.csv (Pipedrive extraction, boundary 2026-08-05). Per-deal file contains client PII and stays OUT of the app; this JSON is aggregates only. Regenerate with scripts/extract-creditos-pipedrive.py after a fresh export.",
+  "boundary": "2026-08-05",
+  "totalTratos": 1052,
+  "estados": {
+    "open": 656,
+    "lost": 349,
+    "won": 47
+  },
+  "tipoCredito": {
+    "Sin dato": 546,
+    "FHA": 359,
+    "Contado": 75,
+    "Crédito Directo": 72
+  },
+  "etapasGlobal": [
+    {
+      "etapa": "Promesa",
+      "orden": 1,
+      "open": 360,
+      "lost": 313,
+      "won": 0
+    },
+    {
+      "etapa": "Armado de Expediente",
+      "orden": 2,
+      "open": 38,
+      "lost": 17,
+      "won": 46
+    },
+    {
+      "etapa": "Análisis",
+      "orden": 3,
+      "open": 11,
+      "lost": 1,
+      "won": 0
+    },
+    {
+      "etapa": "Suspendido",
+      "orden": 4,
+      "open": 27,
+      "lost": 0,
+      "won": 0
+    },
+    {
+      "etapa": "Re-análisis",
+      "orden": 5,
+      "open": 13,
+      "lost": 1,
+      "won": 0
+    },
+    {
+      "etapa": "Aprobación",
+      "orden": 6,
+      "open": 121,
+      "lost": 17,
+      "won": 1
+    },
+    {
+      "etapa": "Ingreso E. Técnico / Avalúo",
+      "orden": 7,
+      "open": 19,
+      "lost": 0,
+      "won": 0
+    },
+    {
+      "etapa": "Resguardo / Resolución",
+      "orden": 9,
+      "open": 67,
+      "lost": 0,
+      "won": 0
+    }
+  ],
+  "etapasPorEmbudo": [
+    {
+      "embudo": "Créditos BLT",
+      "orden": 1,
+      "etapa": "Promesa",
+      "open": 61,
+      "lost": 13,
+      "won": 0,
+      "medianaDiasEnEtapa": 261,
+      "conFechaEtapa": 61
+    },
+    {
+      "embudo": "Créditos BLV5",
+      "orden": 1,
+      "etapa": "Promesa",
+      "open": 35,
+      "lost": 244,
+      "won": 0,
+      "medianaDiasEnEtapa": 76,
+      "conFechaEtapa": 33
+    },
+    {
+      "embudo": "Créditos BLV5",
+      "orden": 2,
+      "etapa": "Armado de Expediente",
+      "open": 9,
+      "lost": 12,
+      "won": 0,
+      "medianaDiasEnEtapa": 64,
+      "conFechaEtapa": 9
+    },
+    {
+      "embudo": "Créditos BLV5",
+      "orden": 3,
+      "etapa": "Análisis",
+      "open": 11,
+      "lost": 1,
+      "won": 0,
+      "medianaDiasEnEtapa": 33,
+      "conFechaEtapa": 11
+    },
+    {
+      "embudo": "Créditos BLV5",
+      "orden": 4,
+      "etapa": "Suspendido",
+      "open": 27,
+      "lost": 0,
+      "won": 0,
+      "medianaDiasEnEtapa": 27,
+      "conFechaEtapa": 27
+    },
+    {
+      "embudo": "Créditos BLV5",
+      "orden": 5,
+      "etapa": "Re-análisis",
+      "open": 13,
+      "lost": 1,
+      "won": 0,
+      "medianaDiasEnEtapa": 7,
+      "conFechaEtapa": 13
+    },
+    {
+      "embudo": "Créditos BLV5",
+      "orden": 6,
+      "etapa": "Aprobación",
+      "open": 115,
+      "lost": 15,
+      "won": 0,
+      "medianaDiasEnEtapa": 61,
+      "conFechaEtapa": 115
+    },
+    {
+      "embudo": "Créditos BLV5",
+      "orden": 7,
+      "etapa": "Ingreso E. Técnico / Avalúo",
+      "open": 19,
+      "lost": 0,
+      "won": 0,
+      "medianaDiasEnEtapa": 20,
+      "conFechaEtapa": 19
+    },
+    {
+      "embudo": "Créditos BLV5",
+      "orden": 9,
+      "etapa": "Resguardo / Resolución",
+      "open": 67,
+      "lost": 0,
+      "won": 0,
+      "medianaDiasEnEtapa": 2,
+      "conFechaEtapa": 67
+    },
+    {
+      "embudo": "Créditos Benestare",
+      "orden": 1,
+      "etapa": "Promesa",
+      "open": 195,
+      "lost": 51,
+      "won": 0,
+      "medianaDiasEnEtapa": 219,
+      "conFechaEtapa": 187
+    },
+    {
+      "embudo": "Créditos Casa Elisa",
+      "orden": 1,
+      "etapa": "Promesa",
+      "open": 68,
+      "lost": 5,
+      "won": 0,
+      "medianaDiasEnEtapa": 320,
+      "conFechaEtapa": 68
+    },
+    {
+      "embudo": "Créditos Casa Elisa",
+      "orden": 2,
+      "etapa": "Armado de Expediente",
+      "open": 29,
+      "lost": 5,
+      "won": 46,
+      "medianaDiasEnEtapa": 337,
+      "conFechaEtapa": 29
+    },
+    {
+      "embudo": "Créditos Casa Elisa",
+      "orden": 6,
+      "etapa": "Aprobación",
+      "open": 6,
+      "lost": 2,
+      "won": 1,
+      "medianaDiasEnEtapa": 337,
+      "conFechaEtapa": 6
+    },
+    {
+      "embudo": "Créditos Santa Elena",
+      "orden": 1,
+      "etapa": "Promesa",
+      "open": 1,
+      "lost": 0,
+      "won": 0,
+      "medianaDiasEnEtapa": 275,
+      "conFechaEtapa": 1
+    }
+  ],
+  "bancos": {
+    "Banco G&T Continental": 136,
+    "Banco Industrial": 43,
+    "BAC": 13,
+    "Banco CHN": 8,
+    "Banrural": 8,
+    "Banco de Guatemala": 3,
+    "BAM": 2,
+    "Bantrab": 1
+  },
+  "propietariosAbiertos": {
+    "Job Jiménez": 172,
+    "Antonio Rada": 137,
+    "Paula Hernandez": 118,
+    "Anahi Cisneros": 78,
+    "Rony Ramirez": 39,
+    "Pablo Marroquin": 31,
+    "Jose Gutierrez": 29,
+    "Erwin Cardona": 29,
+    "Ivan Castillo": 17,
+    "Isaac Ordoñez": 3,
+    "Brenda Pérez": 2,
+    "Keilly Pinto": 1
+  },
+  "notas": [
+    "Entregable A (historial de cambios de etapa) no disponible — antigüedad calculada solo sobre la etapa actual (fecha_entrada_etapa, 97% poblado).",
+    "'Ganado' se marca al armar expediente, NO al desembolsar (46/47 won están en Armado de Expediente).",
+    "Ningún trato abierto en Escritura, Desembolso ni Liquidación — el registro operativo se detiene en Resguardo/Resolución.",
+    "Tipo de Crédito consolidado de dos campos custom duplicados con erratas; ~55% sin dato.",
+    "Embudo Créditos TCA (Torre Cobán) existe con 0 tratos — proyecto no presente en la DB de Orion."
+  ]
+}

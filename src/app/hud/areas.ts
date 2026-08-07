@@ -373,23 +373,29 @@ export const HUD_AREAS: HudArea[] = [
             id: "c1",
             label: "Control de expediente inicial — check list de papelería",
             status: "NO_VINCULADA",
-            note: "Todo el pipeline de expedientes vive en Pipedrive (sin API disponible) — export manual pendiente.",
+            note:
+              "Verificado contra la extracción de Pipedrive (2026-08-05): no existen etapas de control de expediente inicial. Si este control se lleva fuera (Excel/físico), esa es la fuente a vincular.",
           },
           {
             id: "c2",
             label: "Control de scanners de expediente inicial",
             status: "NO_VINCULADA",
+            note:
+              "No existe en Pipedrive (verificado 2026-08-05).",
           },
           {
             id: "c3",
             label: "Control de Promesas de compraventa — físicos, digital, scanner",
             status: "NO_VINCULADA",
+            note:
+              "No existe como etapa de control en Pipedrive; lo más cercano es la etapa Promesa (mostrada en esta sección), pero el control físico/digital/scanner de PCVs no se registra.",
           },
           {
             id: "c4",
             label: "Armado de expediente",
-            status: "NO_VINCULADA",
-            note: "Sub-pasos: solicitud de papelería, recolección, llenado de formularios, firma de documentos.",
+            status: "COMPLETA",
+            note:
+              "Desplegado aquí: tratos en Armado de Expediente por embudo, con antigüedad. Los sub-pasos 4.1–4.4 no existen en Pipedrive (solo flag armado sí/no + fecha).",
           },
         ],
       },
@@ -401,31 +407,36 @@ export const HUD_AREAS: HudArea[] = [
             id: "c5",
             label: "Autorización de ventas al contado",
             status: "NO_VINCULADA",
-            note: "Contado corre el mismo pipeline saltando etapas bancarias — el tipo de financiamiento (FHA/Banco/Contado) es un filtro.",
+            note:
+              "El acto de autorización no se registra en Pipedrive: contado se identifica solo por el campo Tipo de Crédito (75 tratos, visible en el split de esta área). No hay etapa ni campo de autorización.",
           },
           {
             id: "c6",
             label: "Envío a análisis",
-            status: "NO_VINCULADA",
-            note: "Split FHA / Banco.",
+            status: "COMPLETA",
+            note:
+              "Desplegado aquí: tratos en Análisis por embudo. El split FHA/Banco vive en campos custom duplicados (~52% sin dato) — mostrado como split de tipo de crédito.",
           },
           {
             id: "c7",
             label: "Suspendidos",
-            status: "NO_VINCULADA",
-            note: "Estado de excepción (no etapa secuencial). Split FHA / Banco.",
+            status: "COMPLETA",
+            note:
+              "Desplegado aquí: suspendidos por embudo (27 abiertos al corte) con antigüedad en etapa.",
           },
           {
             id: "c8",
             label: "Re análisis",
-            status: "NO_VINCULADA",
-            note: "Estado de retorno tras suspensión. Split FHA / Banco.",
+            status: "COMPLETA",
+            note:
+              "Desplegado aquí: tratos en Re-análisis por embudo con antigüedad.",
           },
           {
             id: "c9",
             label: "Aprobación",
-            status: "NO_VINCULADA",
-            note: "Split FHA / Banco.",
+            status: "COMPLETA",
+            note:
+              "Desplegado aquí: tratos en Aprobación por embudo con antigüedad. Ojo: el flag 'ganado' de Pipedrive NO significa aprobación ni desembolso.",
           },
         ],
       },
@@ -436,14 +447,16 @@ export const HUD_AREAS: HudArea[] = [
           {
             id: "c10",
             label: "Expediente técnico",
-            status: "NO_VINCULADA",
-            note: "Split FHA / Avalúo Banco.",
+            status: "COMPLETA",
+            note:
+              "Desplegado aquí: Expediente Técnico por embudo. Créditos BLV5 partió la etapa en Ingreso + Aprobación E. Técnico/Avalúo — ambas se muestran.",
           },
           {
             id: "c11",
             label: "Aprobación final",
-            status: "NO_VINCULADA",
-            note: "Sub-pasos: resguardo, resolución bancaria.",
+            status: "COMPLETA",
+            note:
+              "Desplegado aquí: Resguardo / Resolución por embudo (67 abiertos al corte) — la etapa donde en la práctica se detiene el registro.",
           },
         ],
       },
@@ -454,18 +467,23 @@ export const HUD_AREAS: HudArea[] = [
           {
             id: "c12",
             label: "Escrituración",
-            status: "NO_VINCULADA",
-            note: "Incluye facturación.",
+            status: "COMPLETA",
+            note:
+              "Desplegado aquí con 0 tratos: la etapa Escritura existe en Pipedrive pero no se usa operativamente. Facturación (12.1) no existe.",
           },
           {
             id: "c13",
             label: "Entrega",
             status: "NO_VINCULADA",
+            note:
+              "No existe en Pipedrive (verificado 2026-08-05).",
           },
           {
             id: "c14",
             label: "Recaudación de firmas",
             status: "NO_VINCULADA",
+            note:
+              "No existe en Pipedrive (verificado 2026-08-05).",
           },
         ],
       },
@@ -477,27 +495,36 @@ export const HUD_AREAS: HudArea[] = [
             id: "c15",
             label: "Pago de impuestos",
             status: "NO_VINCULADA",
+            note:
+              "No existe en Pipedrive (verificado 2026-08-05).",
           },
           {
             id: "c16",
             label: "Ingreso al registro",
             status: "NO_VINCULADA",
+            note:
+              "No existe en Pipedrive (verificado 2026-08-05).",
           },
           {
             id: "c17",
             label: "Desembolso",
-            status: "NO_VINCULADA",
+            status: "COMPLETA",
+            note:
+              "Desplegado aquí con 0 tratos: la etapa Desembolso existe pero no se usa — el registro se detiene en Resguardo/Resolución.",
           },
           {
             id: "c18",
             label: "Liquidación",
-            status: "NO_VINCULADA",
-            note: "Incluye entrega de testimonio al cliente.",
+            status: "COMPLETA",
+            note:
+              "Desplegado aquí con 0 tratos: la etapa Liquidación existe pero no se usa. Entrega de testimonio (18.1) no existe en Pipedrive.",
           },
           {
             id: "c19",
             label: "Archivado",
             status: "NO_VINCULADA",
+            note:
+              "No existe en Pipedrive (verificado 2026-08-05).",
           },
         ],
       },
@@ -520,7 +547,7 @@ export const HUD_AREAS: HudArea[] = [
             id: "m1",
             label: "Manuales de cumplimiento — status general",
             status: "NO_VINCULADA",
-            note: "La data de cumplimiento se genera desde la data de CRÉDITOS en Pipedrive (sin API) — reporte/resumen solicitado, pendiente de entrega.",
+            note: "HALLAZGO (extracción Pipedrive 2026-08-05): Pipedrive NO contiene ningún campo de cumplimiento (revisados 27 campos custom de personas + 112 de tratos). La data de cumplimiento vive en otro lado — preguntar al equipo dónde generan sus reportes.",
           },
         ],
       },
@@ -532,7 +559,7 @@ export const HUD_AREAS: HudArea[] = [
             id: "m2",
             label: "Desglose de clientes (inventario) — Normal, PEP, CPE",
             status: "NO_VINCULADA",
-            note: "Sin clasificación de riesgo en la app (rv_client_profiles solo tiene demografía). Definición de CPE pendiente del equipo de cumplimiento.",
+            note: "Sin clasificación de riesgo en la app NI en Pipedrive (verificado 2026-08-05: cero campos PEP/CPE/riesgo). Definición de CPE pendiente del equipo de cumplimiento, junto con dónde vive esta clasificación.",
           },
           {
             id: "m3",
@@ -550,7 +577,7 @@ export const HUD_AREAS: HudArea[] = [
             id: "m4",
             label: "Expedientes — status por proyecto",
             status: "NO_VINCULADA",
-            note: "Fuente: reporte derivado de Pipedrive, pendiente de entrega.",
+            note: "El pipeline de CRÉDITOS de Pipedrive ya está vinculado (ver tab CRÉDITOS), pero no contiene status de cumplimiento — solo etapas de crédito. Falta definir qué status de cumplimiento se rastrea y dónde vive.",
           },
           {
             id: "m5",
