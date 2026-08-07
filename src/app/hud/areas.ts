@@ -58,14 +58,14 @@ export const HUD_AREAS: HudArea[] = [
           {
             id: "v2",
             label: "Ventas versus objetivos de proyectos — totales y por asesor",
-            status: "NO_VINCULADA",
-            note: "El Excel de objetivos existe pero aún no ha sido entregado ni importado.",
+            status: "COMPLETA",
+            note: "Desplegado aquí en el HUD: metas del mes por proyecto (meta × asesores activos, migración 068) y tabla por asesor. Regla de conteo: reservas confirmadas y desistidas por fecha de depósito.",
           },
           {
             id: "v3",
             label: "Status de ventas — déficit o excedente versus fecha de cierre, por proyecto y por asesor",
-            status: "NO_VINCULADA",
-            note: "Requiere los objetivos (Excel pendiente). Las fechas de entrega por torre sí existen (towers.delivery_date).",
+            status: "COMPLETA",
+            note: "Desplegado aquí en el HUD: déficit/excedente del mes (ventas − meta) por proyecto y por asesor, con fecha de entrega de torre como contexto.",
           },
         ],
       },

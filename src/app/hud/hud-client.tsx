@@ -300,7 +300,7 @@ function VentasViz({
   data: HudVentasPayload | null;
   error: string | null;
 }) {
-  if (!["canales", "inventario", "desistimientos"].includes(sectionKey)) return null;
+  if (!["objetivos", "canales", "inventario", "desistimientos"].includes(sectionKey)) return null;
   if (error) {
     return <p className="mt-6 text-base text-red-300">No se pudo cargar la data: {error}</p>;
   }
@@ -311,6 +311,100 @@ function VentasViz({
         <div className="h-2 rounded bg-white/10" />
         <div className="h-2 rounded bg-white/10" />
         <div className="h-2 rounded bg-white/10" />
+      </div>
+    );
+  }
+
+  if (sectionKey === "objetivos") {
+    const o = data.objetivos;
+    return (
+      <div className="mt-8 grid gap-6">
+        <div>
+          <h3 className="[font-family:var(--font-hud-display)] text-[9px] font-bold tracking-[0.2em] uppercase text-cyan-400">
+            Metas del mes {o.month} — por proyecto
+          </h3>
+          <p className="mt-1 text-base text-emerald-300/70">
+            Cuentan reservas confirmadas y desistidas por fecha de depósito. Meta del proyecto = meta por
+            asesor × asesores activos.
+          </p>
+          <ul className="mt-3 grid gap-3">
+            {o.proyectos.map((p) => {
+              const pct = p.metaTotal > 0 ? Math.min(100, (p.ventas / p.metaTotal) * 100) : 0;
+              const color = completionColor(pct);
+              return (
+                <li key={p.project} className="grid gap-1">
+                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <span className="text-base text-emerald-100">
+                      {p.project}
+                      <span className="ml-2 text-sm text-emerald-300/60">
+                        {p.asesoresActivos} asesores × {p.metaPorAsesor}
+                        {p.entrega ? ` · entrega ${p.entrega}` : ""}
+                      </span>
+                    </span>
+                    {p.metaTotal > 0 ? (
+                      <span className="text-base tabular-nums">
+                        <span className="text-emerald-100">
+                          {p.ventas} / {p.metaTotal}
+                        </span>
+                        <span className={`ml-2 font-bold ${p.delta >= 0 ? "text-emerald-300" : "text-red-300"}`}>
+                          {p.delta >= 0 ? `+${p.delta} excedente` : `${p.delta} déficit`}
+                        </span>
+                      </span>
+                    ) : (
+                      <span className="text-base tabular-nums text-emerald-300/60">
+                        {p.ventas} ventas · sin meta
+                      </span>
+                    )}
+                  </div>
+                  <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+                    <div className="h-full rounded-full" style={{ width: `${pct}%`, background: color }} />
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="[font-family:var(--font-hud-display)] text-[9px] font-bold tracking-[0.2em] uppercase text-cyan-400">
+            Por asesor
+          </h3>
+          <div className="mt-3 overflow-x-auto rounded-xl border border-white/10">
+            <table className="w-full text-base">
+              <thead>
+                <tr className="text-left text-cyan-400 border-b border-white/10">
+                  <th className="px-3 py-2 font-medium">Asesor</th>
+                  <th className="px-3 py-2 font-medium">Proyecto</th>
+                  <th className="px-3 py-2 font-medium text-right">Meta</th>
+                  <th className="px-3 py-2 font-medium text-right">Ventas</th>
+                  <th className="px-3 py-2 font-medium text-right">Δ</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {o.asesores.map((a, i) => (
+                  <tr key={`${a.asesor}-${a.project}-${i}`} className="text-emerald-100">
+                    <td className="px-3 py-2 whitespace-nowrap">
+                      {a.asesor}
+                      {a.sinAsignacion && (
+                        <span className="ml-2 text-sm text-amber-300/80">sin asignación activa</span>
+                      )}
+                    </td>
+                    <td className="px-3 py-2 whitespace-nowrap">{a.project}</td>
+                    <td className="px-3 py-2 whitespace-nowrap text-right tabular-nums">{a.meta}</td>
+                    <td className="px-3 py-2 whitespace-nowrap text-right tabular-nums">{a.ventas}</td>
+                    <td
+                      className={`px-3 py-2 whitespace-nowrap text-right tabular-nums font-bold ${
+                        a.delta > 0 ? "text-emerald-300" : a.delta < 0 ? "text-red-300" : "text-emerald-100"
+                      }`}
+                    >
+                      {a.delta > 0 ? `+${a.delta}` : a.delta}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     );
   }

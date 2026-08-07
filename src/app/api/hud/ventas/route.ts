@@ -29,6 +29,27 @@ export type HudVentasPayload = {
     estadoActual: string;
     precioLista: number | null;
   }>;
+  /** Monthly targets vs production. Counting rule (Jorge 2026-08-07): CONFIRMED + DESISTED by deposit_date month. */
+  objetivos: {
+    month: string;
+    proyectos: Array<{
+      project: string;
+      metaPorAsesor: number;
+      asesoresActivos: number;
+      metaTotal: number;
+      ventas: number;
+      delta: number;
+      entrega: string | null;
+    }>;
+    asesores: Array<{
+      asesor: string;
+      project: string;
+      meta: number;
+      ventas: number;
+      delta: number;
+      sinAsignacion: boolean;
+    }>;
+  };
 };
 
 export async function GET() {
@@ -158,6 +179,138 @@ export async function GET() {
     };
   });
 
+  // 5. Objetivos — monthly targets (projects.meta_mensual_por_asesor × active assignments) vs production.
+  // Month boundaries in Guatemala time (UTC-6, no DST). Counting rule: CONFIRMED + DESISTED by deposit_date.
+  const nowGt = new Date(Date.now() - 6 * 3600 * 1000);
+  const gtYear = nowGt.getUTCFullYear();
+  const gtMonth = nowGt.getUTCMonth();
+  const monthStart = `${gtYear}-${String(gtMonth + 1).padStart(2, "0")}-01`;
+  const nextStart = `${gtMonth === 11 ? gtYear + 1 : gtYear}-${String((gtMonth === 11 ? 0 : gtMonth + 1) + 1).padStart(2, "0")}-01`;
+
+  const { data: projectMetaRows, error: projectMetaError } = await supabase
+    .from("projects")
+    .select("id, name, meta_mensual_por_asesor");
+  if (projectMetaError) {
+    return jsonError(500, "Error consultando metas de proyectos", projectMetaError.message);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase nested embeds are loosely typed
+  const assignmentResult = await fetchAll<any>((from, to) =>
+    supabase
+      .from("salesperson_project_assignments")
+      .select("salesperson_id, project_id, salespeople(name)")
+      .is("end_date", null)
+      .range(from, to),
+  );
+  if (assignmentResult.error) {
+    return jsonError(500, "Error consultando asignaciones de asesores", assignmentResult.error);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase nested embeds are loosely typed
+  const monthResResult = await fetchAll<any>((from, to) =>
+    supabase
+      .from("reservations")
+      .select("salesperson_id, salespeople(name), rv_units(floors(towers(project_id)))")
+      .in("status", ["CONFIRMED", "DESISTED"])
+      .gte("deposit_date", monthStart)
+      .lt("deposit_date", nextStart)
+      .range(from, to),
+  );
+  if (monthResResult.error) {
+    return jsonError(500, "Error consultando ventas del mes", monthResResult.error);
+  }
+
+  const { data: towerRows, error: towersError } = await supabase
+    .from("towers")
+    .select("project_id, delivery_date");
+  if (towersError) {
+    return jsonError(500, "Error consultando fechas de entrega", towersError.message);
+  }
+  const entregaByProject = new Map<string, string>();
+  for (const t of towerRows ?? []) {
+    if (!t.delivery_date) continue;
+    const current = entregaByProject.get(t.project_id);
+    if (!current || t.delivery_date < current) entregaByProject.set(t.project_id, t.delivery_date);
+  }
+
+  const one = <T,>(v: T | T[] | null | undefined): T | null => (Array.isArray(v) ? (v[0] ?? null) : (v ?? null));
+
+  const ventasByProject = new Map<string, number>();
+  const ventasByAsesorProject = new Map<string, { asesor: string; salespersonId: string; projectId: string; ventas: number }>();
+  for (const r of monthResResult.rows) {
+    const unit = one(r.rv_units);
+    const floor = unit ? one(unit.floors) : null;
+    const tower = floor ? one(floor.towers) : null;
+    const projectId = tower?.project_id as string | undefined;
+    if (!projectId) continue;
+    ventasByProject.set(projectId, (ventasByProject.get(projectId) ?? 0) + 1);
+    const asesor = (one(r.salespeople)?.name as string | undefined) ?? "Sin asesor";
+    const key = `${r.salesperson_id}|${projectId}`;
+    const entry = ventasByAsesorProject.get(key) ?? {
+      asesor,
+      salespersonId: r.salesperson_id as string,
+      projectId,
+      ventas: 0,
+    };
+    entry.ventas += 1;
+    ventasByAsesorProject.set(key, entry);
+  }
+
+  const projectName = new Map((projectMetaRows ?? []).map((p) => [p.id as string, p.name as string]));
+  const metaByProject = new Map((projectMetaRows ?? []).map((p) => [p.id as string, (p.meta_mensual_por_asesor as number) ?? 0]));
+
+  const assignmentsByProject = new Map<string, number>();
+  const assignedKeys = new Set<string>();
+  const asesores: HudVentasPayload["objetivos"]["asesores"] = [];
+  for (const a of assignmentResult.rows) {
+    const projectId = a.project_id as string;
+    assignmentsByProject.set(projectId, (assignmentsByProject.get(projectId) ?? 0) + 1);
+    const key = `${a.salesperson_id}|${projectId}`;
+    assignedKeys.add(key);
+    const meta = metaByProject.get(projectId) ?? 0;
+    const ventas = ventasByAsesorProject.get(key)?.ventas ?? 0;
+    asesores.push({
+      asesor: (one(a.salespeople)?.name as string | undefined) ?? "—",
+      project: projectName.get(projectId) ?? "—",
+      meta,
+      ventas,
+      delta: ventas - meta,
+      sinAsignacion: false,
+    });
+  }
+  // Production by asesores without an active assignment — shown, never dropped
+  for (const [key, entry] of ventasByAsesorProject) {
+    if (assignedKeys.has(key)) continue;
+    const meta = metaByProject.get(entry.projectId) ?? 0;
+    asesores.push({
+      asesor: entry.asesor,
+      project: projectName.get(entry.projectId) ?? "—",
+      meta,
+      ventas: entry.ventas,
+      delta: entry.ventas - meta,
+      sinAsignacion: true,
+    });
+  }
+  asesores.sort((a, b) => a.project.localeCompare(b.project) || b.ventas - a.ventas);
+
+  const proyectos = (projectMetaRows ?? [])
+    .map((p) => {
+      const metaPorAsesor = (p.meta_mensual_por_asesor as number) ?? 0;
+      const asesoresActivos = assignmentsByProject.get(p.id) ?? 0;
+      const metaTotal = metaPorAsesor * asesoresActivos;
+      const ventas = ventasByProject.get(p.id) ?? 0;
+      return {
+        project: p.name as string,
+        metaPorAsesor,
+        asesoresActivos,
+        metaTotal,
+        ventas,
+        delta: ventas - metaTotal,
+        entrega: entregaByProject.get(p.id) ?? null,
+      };
+    })
+    .sort((a, b) => a.project.localeCompare(b.project));
+
   const payload: HudVentasPayload = {
     canales,
     modelos,
@@ -167,6 +320,11 @@ export async function GET() {
       porMoneda,
     },
     desistidos,
+    objetivos: {
+      month: monthStart.slice(0, 7),
+      proyectos,
+      asesores,
+    },
   };
   return jsonOk(payload);
 }
