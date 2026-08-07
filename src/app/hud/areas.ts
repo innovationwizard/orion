@@ -143,10 +143,414 @@ export const HUD_AREAS: HudArea[] = [
       },
     ],
   },
-  { key: "mercadeo", label: "MERCADEO", sections: [] },
-  { key: "cobros", label: "COBROS", sections: [] },
-  { key: "creditos", label: "CRÉDITOS", sections: [] },
-  { key: "cumplimiento", label: "CUMPLIMIENTO", sections: [] },
+  {
+    key: "mercadeo",
+    label: "MERCADEO",
+    sections: [
+      {
+        key: "resumen",
+        label: "Resumen",
+        requirements: [
+          {
+            id: "k1",
+            label: "Reporte maestro",
+            status: "NO_VINCULADA",
+            note: "Jorge subirá un ejemplo del reporte maestro — su forma final (¿overview del área, exportable, o ambos?) se define al verlo. Toda la data de mercadeo vive en Excel/reportes manuales, aún no entregados.",
+          },
+        ],
+      },
+      {
+        key: "leads-metas",
+        label: "Leads y Metas",
+        requirements: [
+          {
+            id: "k2",
+            label: "Meta mensual de lead",
+            status: "NO_VINCULADA",
+            note: "El conteo de leads y sus metas no existen en la app. Vincular esta data también desbloquea el funnel de conversión de VENTAS (v8).",
+          },
+          {
+            id: "k3",
+            label: "Meta diaria de lead",
+            status: "NO_VINCULADA",
+            note: "Misma data que la meta mensual con granularidad diaria — un toggle de período, no una vista aparte.",
+          },
+        ],
+      },
+      {
+        key: "presupuesto",
+        label: "Presupuesto de Pauta",
+        requirements: [
+          {
+            id: "k4",
+            label: "Uso de presupuesto diario de pauta",
+            status: "NO_VINCULADA",
+            note: "El gasto de pauta no existe en la app — fuente: Excel/reportes manuales del equipo de mercadeo.",
+          },
+          {
+            id: "k5",
+            label: "Uso de presupuesto mensual de pauta",
+            status: "NO_VINCULADA",
+          },
+          {
+            id: "k10",
+            label: "Evolución de inversiones en pauta acumulada mensual",
+            status: "NO_VINCULADA",
+            note: "Curva acumulada del mismo gasto de pauta (burn-up vs presupuesto).",
+          },
+        ],
+      },
+      {
+        key: "costos-retorno",
+        label: "Costos y Retorno",
+        requirements: [
+          {
+            id: "k6",
+            label: "ROAS / ROI",
+            status: "NO_VINCULADA",
+            note: "Requiere gasto de pauta (no vinculado) + ingresos por venta (ya en la app).",
+          },
+          {
+            id: "k7",
+            label: "Costo por cierre / medio de venta",
+            status: "NO_VINCULADA",
+            note: "Parcial: los cierres por medio YA existen en la app (reservations.lead_source) — falta el lado del gasto por canal.",
+          },
+          {
+            id: "k9",
+            label: "Evolución de costos por lead de manera mensual",
+            status: "NO_VINCULADA",
+            note: "Requiere conteo de leads + gasto mensual, ninguno vinculado aún.",
+          },
+        ],
+      },
+      {
+        key: "campanas",
+        label: "Campañas",
+        requirements: [
+          {
+            id: "k8",
+            label: "Efectividad de campañas",
+            status: "NO_VINCULADA",
+            note: "No existe registro de campañas en la app — fuente: Excel/reportes del equipo de mercadeo.",
+          },
+        ],
+      },
+      {
+        key: "canales-digitales",
+        label: "Canales Digitales",
+        requirements: [
+          {
+            id: "k11",
+            label: "Operatividad de todos los canales digitales en la aplicación",
+            status: "NO_VINCULADA",
+            note: "Operatividad = salud de la vinculación (confirmado por Jorge): semáforo de si cada canal digital está conectado a la app y reportando data. Hoy ningún canal reporta a la app.",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    key: "cobros",
+    label: "COBROS",
+    sections: [
+      {
+        key: "resumen",
+        label: "Resumen",
+        requirements: [],
+      },
+      {
+        key: "cobros",
+        label: "Cobros",
+        requirements: [
+          {
+            id: "b1",
+            label: "Cobros por proyecto",
+            status: "COMPLETA",
+            note: "Desplegado en el dashboard analítico (/) con filtro por proyecto: KPIs Esperado a la fecha, Cobrado, % Cumplimiento.",
+          },
+          {
+            id: "b2",
+            label: "Cobros acumulados: monto y porcentaje",
+            status: "COMPLETA",
+            note: "Desplegado en el dashboard: KPIs Cobrado y % Cumplimiento (acumulado a la fecha).",
+          },
+          {
+            id: "b3",
+            label: "Cobros del mes: monto y porcentaje",
+            status: "COMPLETA",
+            note: "Desplegado en el dashboard: tendencia mensual esperado vs cobrado con % de cumplimiento por mes.",
+          },
+        ],
+      },
+      {
+        key: "deficit-superavit",
+        label: "Déficit / Superávit",
+        requirements: [
+          {
+            id: "b4",
+            label: "Déficit",
+            status: "COMPLETA",
+            note: "Desplegado en el dashboard: KPI Varianza (negativa = déficit) vs plan de pagos contractual.",
+          },
+          {
+            id: "b5",
+            label: "Superávit",
+            status: "COMPLETA",
+            note: "Desplegado en el dashboard: KPI Varianza (positiva = superávit) vs plan de pagos contractual.",
+          },
+          {
+            id: "b6",
+            label: "Reporte de déficit / superávit",
+            status: "COMPLETA",
+            note: "Desplegado en el dashboard: columna Varianza por unidad en la tabla de cuentas + tendencia de varianza mensual.",
+          },
+        ],
+      },
+      {
+        key: "alertas",
+        label: "Alertas",
+        requirements: [
+          {
+            id: "b7",
+            label: "Reporte de alertas",
+            status: "COMPLETA",
+            note: "Desplegado en el dashboard: KPI Unidades en mora + tabla Cuentas en mora con días de atraso y estado de cumplimiento.",
+          },
+        ],
+      },
+      {
+        key: "desistimientos-decisiones",
+        label: "Decisiones de Desistimiento",
+        requirements: [
+          {
+            id: "b8",
+            label: "Analítica de decisiones de desistimientos",
+            status: "COMPLETA",
+            note: "Desplegado aquí en el HUD: cuentas en mora rankeadas por días de atraso, con esperado, pagado (retención potencial) y cumplimiento.",
+          },
+        ],
+      },
+      {
+        key: "casos-ff",
+        label: "Casos Especiales — F&F",
+        requirements: [
+          {
+            id: "b9",
+            label: "Casos especiales",
+            status: "COMPLETA",
+            note: "Desplegado aquí en el HUD: portafolio F&F (caso_especial) con cumplimiento de pago por cuenta.",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    key: "creditos",
+    label: "CRÉDITOS",
+    sections: [
+      {
+        key: "resumen",
+        label: "Resumen",
+        requirements: [],
+      },
+      {
+        key: "expediente-inicial",
+        label: "Expediente Inicial",
+        requirements: [
+          {
+            id: "c1",
+            label: "Control de expediente inicial — check list de papelería",
+            status: "NO_VINCULADA",
+            note: "Todo el pipeline de expedientes vive en Pipedrive (sin API disponible) — export manual pendiente.",
+          },
+          {
+            id: "c2",
+            label: "Control de scanners de expediente inicial",
+            status: "NO_VINCULADA",
+          },
+          {
+            id: "c3",
+            label: "Control de Promesas de compraventa — físicos, digital, scanner",
+            status: "NO_VINCULADA",
+          },
+          {
+            id: "c4",
+            label: "Armado de expediente",
+            status: "NO_VINCULADA",
+            note: "Sub-pasos: solicitud de papelería, recolección, llenado de formularios, firma de documentos.",
+          },
+        ],
+      },
+      {
+        key: "analisis-aprobacion",
+        label: "Análisis y Aprobación",
+        requirements: [
+          {
+            id: "c5",
+            label: "Autorización de ventas al contado",
+            status: "NO_VINCULADA",
+            note: "Contado corre el mismo pipeline saltando etapas bancarias — el tipo de financiamiento (FHA/Banco/Contado) es un filtro.",
+          },
+          {
+            id: "c6",
+            label: "Envío a análisis",
+            status: "NO_VINCULADA",
+            note: "Split FHA / Banco.",
+          },
+          {
+            id: "c7",
+            label: "Suspendidos",
+            status: "NO_VINCULADA",
+            note: "Estado de excepción (no etapa secuencial). Split FHA / Banco.",
+          },
+          {
+            id: "c8",
+            label: "Re análisis",
+            status: "NO_VINCULADA",
+            note: "Estado de retorno tras suspensión. Split FHA / Banco.",
+          },
+          {
+            id: "c9",
+            label: "Aprobación",
+            status: "NO_VINCULADA",
+            note: "Split FHA / Banco.",
+          },
+        ],
+      },
+      {
+        key: "tramite-tecnico",
+        label: "Trámite Técnico y Resolución",
+        requirements: [
+          {
+            id: "c10",
+            label: "Expediente técnico",
+            status: "NO_VINCULADA",
+            note: "Split FHA / Avalúo Banco.",
+          },
+          {
+            id: "c11",
+            label: "Aprobación final",
+            status: "NO_VINCULADA",
+            note: "Sub-pasos: resguardo, resolución bancaria.",
+          },
+        ],
+      },
+      {
+        key: "escrituracion-entrega",
+        label: "Escrituración y Entrega",
+        requirements: [
+          {
+            id: "c12",
+            label: "Escrituración",
+            status: "NO_VINCULADA",
+            note: "Incluye facturación.",
+          },
+          {
+            id: "c13",
+            label: "Entrega",
+            status: "NO_VINCULADA",
+          },
+          {
+            id: "c14",
+            label: "Recaudación de firmas",
+            status: "NO_VINCULADA",
+          },
+        ],
+      },
+      {
+        key: "cierre-archivo",
+        label: "Cierre y Archivo",
+        requirements: [
+          {
+            id: "c15",
+            label: "Pago de impuestos",
+            status: "NO_VINCULADA",
+          },
+          {
+            id: "c16",
+            label: "Ingreso al registro",
+            status: "NO_VINCULADA",
+          },
+          {
+            id: "c17",
+            label: "Desembolso",
+            status: "NO_VINCULADA",
+          },
+          {
+            id: "c18",
+            label: "Liquidación",
+            status: "NO_VINCULADA",
+            note: "Incluye entrega de testimonio al cliente.",
+          },
+          {
+            id: "c19",
+            label: "Archivado",
+            status: "NO_VINCULADA",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    key: "cumplimiento",
+    label: "CUMPLIMIENTO",
+    sections: [
+      {
+        key: "resumen",
+        label: "Resumen",
+        requirements: [],
+      },
+      {
+        key: "manuales",
+        label: "Manuales",
+        requirements: [
+          {
+            id: "m1",
+            label: "Manuales de cumplimiento — status general",
+            status: "NO_VINCULADA",
+            note: "La data de cumplimiento se genera desde la data de CRÉDITOS en Pipedrive (sin API) — reporte/resumen solicitado, pendiente de entrega.",
+          },
+        ],
+      },
+      {
+        key: "clientes",
+        label: "Clientes",
+        requirements: [
+          {
+            id: "m2",
+            label: "Desglose de clientes (inventario) — Normal, PEP, CPE",
+            status: "NO_VINCULADA",
+            note: "Sin clasificación de riesgo en la app (rv_client_profiles solo tiene demografía). Definición de CPE pendiente del equipo de cumplimiento.",
+          },
+          {
+            id: "m3",
+            label: "Casos específicos",
+            status: "NO_VINCULADA",
+            note: "Definición pendiente del equipo de cumplimiento — puede convertirse en sección propia si resulta ser un workflow independiente.",
+          },
+        ],
+      },
+      {
+        key: "expedientes",
+        label: "Expedientes",
+        requirements: [
+          {
+            id: "m4",
+            label: "Expedientes — status por proyecto",
+            status: "NO_VINCULADA",
+            note: "Fuente: reporte derivado de Pipedrive, pendiente de entrega.",
+          },
+          {
+            id: "m5",
+            label: "Archivado de expedientes",
+            status: "NO_VINCULADA",
+            note: "Estados terminales del ciclo del expediente: aprobado y desistido — segmento del mismo status, no página aparte.",
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 export function areaRequirements(area: HudArea): HudRequirement[] {

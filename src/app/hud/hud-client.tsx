@@ -12,6 +12,7 @@ import {
   type HudSection,
 } from "./areas";
 import type { HudVentasPayload } from "@/app/api/hud/ventas/route";
+import type { HudCobrosPayload } from "@/app/api/hud/cobros/route";
 
 function formatMoney(amount: number, currency: string): string {
   return new Intl.NumberFormat("es-GT", { style: "currency", currency, maximumFractionDigits: 0 }).format(amount);
@@ -391,23 +392,135 @@ function VentasViz({
   );
 }
 
+// ─── Minimalist aggregate views (COBROS) ─────────────────────
+type CobrosAccountRow = HudCobrosPayload["desistCandidates"][number];
+
+function AccountTable({ rows, showDays }: { rows: CobrosAccountRow[]; showDays: boolean }) {
+  return (
+    <div className="mt-3 overflow-x-auto rounded-xl border border-white/10">
+      <table className="w-full text-base">
+        <thead>
+          <tr className="text-left text-cyan-400 border-b border-white/10">
+            <th className="px-3 py-2 font-medium">Cliente</th>
+            <th className="px-3 py-2 font-medium">Proyecto</th>
+            <th className="px-3 py-2 font-medium">Unidad</th>
+            {showDays && <th className="px-3 py-2 font-medium text-right">Días mora</th>}
+            <th className="px-3 py-2 font-medium text-right">Esperado</th>
+            <th className="px-3 py-2 font-medium text-right">Pagado</th>
+            <th className="px-3 py-2 font-medium text-right">Cumplim.</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-white/5">
+          {rows.map((r, i) => (
+            <tr key={`${r.project}-${r.unit}-${i}`} className="text-emerald-100">
+              <td className="px-3 py-2 whitespace-nowrap">
+                {r.client}
+                {r.isFF && (
+                  <span className="ml-2 text-sm font-bold uppercase rounded-full px-1.5 border border-purple-400/70 text-purple-300">
+                    F&F
+                  </span>
+                )}
+              </td>
+              <td className="px-3 py-2 whitespace-nowrap">{r.project}</td>
+              <td className="px-3 py-2 whitespace-nowrap">{r.unit}</td>
+              {showDays && (
+                <td className="px-3 py-2 whitespace-nowrap text-right tabular-nums text-red-300">
+                  {r.daysDelinquent}
+                </td>
+              )}
+              <td className="px-3 py-2 whitespace-nowrap text-right tabular-nums">
+                {formatMoney(r.esperado, r.currency)}
+              </td>
+              <td className="px-3 py-2 whitespace-nowrap text-right tabular-nums">
+                {formatMoney(r.pagado, r.currency)}
+              </td>
+              <td className="px-3 py-2 whitespace-nowrap text-right tabular-nums">
+                {r.compliancePct != null ? `${Math.round(r.compliancePct)}%` : "—"}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function CobrosViz({
+  sectionKey,
+  data,
+  error,
+}: {
+  sectionKey: string;
+  data: HudCobrosPayload | null;
+  error: string | null;
+}) {
+  if (!["desistimientos-decisiones", "casos-ff"].includes(sectionKey)) return null;
+  if (error) {
+    return <p className="mt-6 text-base text-red-300">No se pudo cargar la data: {error}</p>;
+  }
+  if (!data) {
+    return (
+      <div className="mt-6 animate-pulse grid gap-2">
+        <div className="h-3 w-40 rounded bg-white/10" />
+        <div className="h-2 rounded bg-white/10" />
+        <div className="h-2 rounded bg-white/10" />
+        <div className="h-2 rounded bg-white/10" />
+      </div>
+    );
+  }
+
+  if (sectionKey === "desistimientos-decisiones") {
+    return (
+      <div className="mt-8">
+        <h3 className="[font-family:var(--font-hud-display)] text-[9px] font-bold tracking-[0.2em] uppercase text-cyan-400">
+          Candidatos a desistimiento — cuentas en mora, mayor atraso primero
+        </h3>
+        <p className="mt-1 text-base text-emerald-300/70">
+          {data.desistCandidates.length} cuentas en mora. &quot;Pagado&quot; = retención potencial si se
+          desiste (sujeto a política de reembolso).
+        </p>
+        <AccountTable rows={data.desistCandidates} showDays />
+      </div>
+    );
+  }
+
+  // casos-ff
+  return (
+    <div className="mt-8">
+      <h3 className="[font-family:var(--font-hud-display)] text-[9px] font-bold tracking-[0.2em] uppercase text-cyan-400">
+        Portafolio F&F — cumplimiento de pago, menor cumplimiento primero
+      </h3>
+      <p className="mt-1 text-base text-emerald-300/70">
+        {data.ffCases.length} casos especiales (caso_especial) activos con plan de pagos.
+      </p>
+      <AccountTable rows={data.ffCases} showDays={false} />
+    </div>
+  );
+}
+
 // ─── Area view: left side panel + content ────────────────────
 function AreaView({ area }: { area: HudArea }) {
   const [sectionKey, setSectionKey] = useState(area.sections[0]?.key ?? "");
   const [ventasData, setVentasData] = useState<HudVentasPayload | null>(null);
   const [ventasError, setVentasError] = useState<string | null>(null);
+  const [cobrosData, setCobrosData] = useState<HudCobrosPayload | null>(null);
+  const [cobrosError, setCobrosError] = useState<string | null>(null);
   const section = area.sections.find((s) => s.key === sectionKey) ?? area.sections[0];
 
   useEffect(() => {
-    if (area.key !== "ventas") return;
+    if (area.key !== "ventas" && area.key !== "cobros") return;
     let cancelled = false;
-    fetch("/api/hud/ventas")
+    fetch(`/api/hud/${area.key}`)
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
-      .then((d: HudVentasPayload) => {
-        if (!cancelled) setVentasData(d);
+      .then((d: HudVentasPayload | HudCobrosPayload) => {
+        if (cancelled) return;
+        if (area.key === "ventas") setVentasData(d as HudVentasPayload);
+        else setCobrosData(d as HudCobrosPayload);
       })
       .catch((e: Error) => {
-        if (!cancelled) setVentasError(e.message);
+        if (cancelled) return;
+        if (area.key === "ventas") setVentasError(e.message);
+        else setCobrosError(e.message);
       });
     return () => {
       cancelled = true;
@@ -457,6 +570,9 @@ function AreaView({ area }: { area: HudArea }) {
         {section?.key === "resumen" ? <ResumenPane area={area} /> : section && <SectionPane section={section} />}
         {area.key === "ventas" && section && (
           <VentasViz sectionKey={section.key} data={ventasData} error={ventasError} />
+        )}
+        {area.key === "cobros" && section && (
+          <CobrosViz sectionKey={section.key} data={cobrosData} error={cobrosError} />
         )}
       </section>
     </div>
