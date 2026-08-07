@@ -159,7 +159,7 @@ function AreaTab({
   return (
     <button
       onClick={onClick}
-      className={`relative overflow-hidden rounded-full bg-white text-center py-2 px-3 transition-shadow whitespace-nowrap ${
+      className={`relative overflow-hidden rounded-full bg-white text-center py-2 px-3 transition-shadow whitespace-nowrap w-44 shrink-0 ${
         active ? "ring-2 ring-sky-400 shadow-[0_0_14px_rgba(56,189,248,0.45)]" : "ring-1 ring-white/20"
       }`}
       aria-pressed={active}
@@ -599,9 +599,9 @@ export default function HudClient() {
             PAI HUD
           </button>
         </div>
-        <div className="overflow-x-auto pb-3 px-3">
-          {/* Equal columns sized to the longest label (CUMPLIMIENTO); w-max + mx-auto centers the row */}
-          <div className="grid grid-flow-col auto-cols-fr gap-2 w-max mx-auto">
+        <div className="overflow-x-auto">
+          {/* Fixed equal-width pills; min-w-max keeps justify-center from clipping when the row overflows */}
+          <div className="flex justify-center gap-2 min-w-max px-3 pb-3">
             {HUD_AREAS.map((a) => (
               <AreaTab
                 key={a.key}
