@@ -1,0 +1,27 @@
+{
+  "_source": "Extracted from CUMPLIMIENTO/Base de datos Apartamentos - Boulevard 5.xlsx (base del oficial de cumplimiento). Regenerate with scripts/extract-cumplimiento-expedientes.py. Cutoff date for DPI status: 2026-08-07.",
+  "proyectos": [
+    "Boulevard 5"
+  ],
+  "totalExpedientes": 265,
+  "totalCompradores": 327,
+  "dpi": {
+    "VIGENTE": 94,
+    "VENCIDO": 48,
+    "FECHA_ABSURDA": 159,
+    "SIN_FECHA": 26
+  },
+  "rtuPoblado": 193,
+  "conPromesa": 259,
+  "conFuenteIngresos": 60,
+  "conBancoPrecalificacion": 253,
+  "fha": 78,
+  "contado": 3,
+  "conObservaciones": 159,
+  "notas": [
+    "Solo Boulevard 5 — la data de los demás proyectos está completa en xlsx, pendiente de descarga (decisión de Jorge 2026-08-07: marcar completo con esta nota).",
+    "FECHA_ABSURDA = vencimiento de DPI anterior a 2010 (159 compradores) — casi con certeza fechas de nacimiento tecleadas en la columna equivocada. El archivo fuente no puede responder confiablemente cuántos DPI están vencidos.",
+    "Las observaciones del oficial se muestran por expediente pero NO son los 'casos específicos' (m3) — definición pendiente del equipo de cumplimiento.",
+    "Números de DPI NO se extraen (dato sensible innecesario para monitoreo de status)."
+  ]
+}

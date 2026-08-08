@@ -14,6 +14,7 @@ import {
 import type { HudVentasPayload } from "@/app/api/hud/ventas/route";
 import type { HudCobrosPayload } from "@/app/api/hud/cobros/route";
 import type { HudCreditosPayload } from "@/app/api/hud/creditos/route";
+import type { HudCumplimientoPayload } from "@/app/api/hud/cumplimiento/route";
 
 function formatMoney(amount: number, currency: string): string {
   return new Intl.NumberFormat("es-GT", { style: "currency", currency, maximumFractionDigits: 0 }).format(amount);
@@ -800,6 +801,121 @@ function CreditosViz({
   );
 }
 
+// ─── Minimalist aggregate views (CUMPLIMIENTO) ───────────────
+const DPI_UI: Record<string, { label: string; cls: string }> = {
+  VIGENTE: { label: "vigente", cls: "text-emerald-300" },
+  VENCIDO: { label: "vencido", cls: "text-red-300" },
+  FECHA_ABSURDA: { label: "fecha absurda", cls: "text-amber-300" },
+  SIN_FECHA: { label: "sin fecha", cls: "text-slate-400" },
+};
+
+function CumplimientoViz({
+  sectionKey,
+  data,
+  error,
+}: {
+  sectionKey: string;
+  data: HudCumplimientoPayload | null;
+  error: string | null;
+}) {
+  if (!["resumen", "expedientes"].includes(sectionKey)) return null;
+  if (error) {
+    return <p className="mt-6 text-base text-red-300">No se pudo cargar la data: {error}</p>;
+  }
+  if (!data) {
+    return (
+      <div className="mt-6 animate-pulse grid gap-2">
+        <div className="h-3 w-40 rounded bg-white/10" />
+        <div className="h-2 rounded bg-white/10" />
+        <div className="h-2 rounded bg-white/10" />
+      </div>
+    );
+  }
+
+  const kpis = (
+    <div>
+      <h3 className="[font-family:var(--font-hud-display)] text-[9px] font-bold tracking-[0.2em] uppercase text-cyan-400">
+        Expedientes de cumplimiento — {data.proyectos.join(", ")}
+      </h3>
+      <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2">
+        <KpiTile label="Expedientes" value={String(data.totalExpedientes)} />
+        <KpiTile label="Compradores" value={String(data.totalCompradores)} />
+        <KpiTile label="DPI vigentes" value={String(data.dpi.VIGENTE ?? 0)} />
+        <KpiTile label="DPI vencidos" value={String(data.dpi.VENCIDO ?? 0)} />
+        <KpiTile label="DPI con fecha absurda" value={String(data.dpi.FECHA_ABSURDA ?? 0)} />
+        <KpiTile label="Con promesa firmada" value={`${data.conPromesa}/${data.totalExpedientes}`} />
+        <KpiTile label="Con fuente de ingresos" value={`${data.conFuenteIngresos}/${data.totalExpedientes}`} />
+        <KpiTile label="Con observaciones" value={String(data.conObservaciones)} />
+      </div>
+      <ul className="mt-3 grid gap-1">
+        {data.notas.map((n, i) => (
+          <li key={i} className="text-base text-emerald-300/70">
+            • {n}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+
+  if (sectionKey === "resumen") {
+    return <div className="mt-8">{kpis}</div>;
+  }
+
+  return (
+    <div className="mt-8 grid gap-4">
+      {kpis}
+      <div className="overflow-x-auto rounded-xl border border-white/10">
+        <table className="w-full text-base">
+          <thead>
+            <tr className="text-left text-cyan-400 border-b border-white/10">
+              <th className="px-3 py-2 font-medium">Apto</th>
+              <th className="px-3 py-2 font-medium">Compradores — status DPI</th>
+              <th className="px-3 py-2 font-medium">Promesa</th>
+              <th className="px-3 py-2 font-medium">Fuente ingresos</th>
+              <th className="px-3 py-2 font-medium">Precalificación</th>
+              <th className="px-3 py-2 font-medium text-right">Obs</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-white/5">
+            {data.expedientes.map((e, i) => (
+              <tr key={`${e.apto}-${i}`} className="text-emerald-100 align-top">
+                <td className="px-3 py-2 whitespace-nowrap">{e.apto}</td>
+                <td className="px-3 py-2">
+                  {e.clientes.length === 0
+                    ? "—"
+                    : e.clientes.map((c, j) => (
+                        <div key={j} className="whitespace-nowrap">
+                          {c.nombre}{" "}
+                          <span className={`text-sm ${DPI_UI[c.dpiStatus]?.cls ?? ""}`}>
+                            · DPI {DPI_UI[c.dpiStatus]?.label ?? c.dpiStatus}
+                          </span>
+                        </div>
+                      ))}
+                </td>
+                <td className="px-3 py-2 whitespace-nowrap">{e.promesaFecha ?? "—"}</td>
+                <td className="px-3 py-2 whitespace-nowrap">
+                  {e.fuenteIngresos.length > 0 ? e.fuenteIngresos.join(", ") : "—"}
+                </td>
+                <td className="px-3 py-2 whitespace-nowrap">
+                  {e.bancoPrecalificacion ?? "—"}
+                  {e.fha ? " · FHA" : ""}
+                  {e.contado ? " · Contado" : ""}
+                </td>
+                <td
+                  className="px-3 py-2 text-right tabular-nums"
+                  title={e.observaciones.join("\n") || undefined}
+                >
+                  {e.observaciones.length > 0 ? e.observaciones.length : "—"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 // ─── Area view: left side panel + content ────────────────────
 function AreaView({ area }: { area: HudArea }) {
   const [sectionKey, setSectionKey] = useState(area.sections[0]?.key ?? "");
@@ -809,24 +925,30 @@ function AreaView({ area }: { area: HudArea }) {
   const [cobrosError, setCobrosError] = useState<string | null>(null);
   const [creditosData, setCreditosData] = useState<HudCreditosPayload | null>(null);
   const [creditosError, setCreditosError] = useState<string | null>(null);
+  const [cumplimientoData, setCumplimientoData] = useState<HudCumplimientoPayload | null>(null);
+  const [cumplimientoError, setCumplimientoError] = useState<string | null>(null);
   const section = area.sections.find((s) => s.key === sectionKey) ?? area.sections[0];
 
   useEffect(() => {
-    if (!["ventas", "cobros", "creditos"].includes(area.key)) return;
+    if (!["ventas", "cobros", "creditos", "cumplimiento"].includes(area.key)) return;
     let cancelled = false;
     fetch(`/api/hud/${area.key}`)
-      .then((r) => parseJsonResponse<HudVentasPayload | HudCobrosPayload | HudCreditosPayload>(r))
+      .then((r) =>
+        parseJsonResponse<HudVentasPayload | HudCobrosPayload | HudCreditosPayload | HudCumplimientoPayload>(r),
+      )
       .then((d) => {
         if (cancelled) return;
         if (area.key === "ventas") setVentasData(d as HudVentasPayload);
         else if (area.key === "cobros") setCobrosData(d as HudCobrosPayload);
-        else setCreditosData(d as HudCreditosPayload);
+        else if (area.key === "creditos") setCreditosData(d as HudCreditosPayload);
+        else setCumplimientoData(d as HudCumplimientoPayload);
       })
       .catch((e: Error) => {
         if (cancelled) return;
         if (area.key === "ventas") setVentasError(e.message);
         else if (area.key === "cobros") setCobrosError(e.message);
-        else setCreditosError(e.message);
+        else if (area.key === "creditos") setCreditosError(e.message);
+        else setCumplimientoError(e.message);
       });
     return () => {
       cancelled = true;
@@ -882,6 +1004,9 @@ function AreaView({ area }: { area: HudArea }) {
         )}
         {area.key === "creditos" && section && (
           <CreditosViz sectionKey={section.key} data={creditosData} error={creditosError} />
+        )}
+        {area.key === "cumplimiento" && section && (
+          <CumplimientoViz sectionKey={section.key} data={cumplimientoData} error={cumplimientoError} />
         )}
       </section>
     </div>

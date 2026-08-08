@@ -1,0 +1,6140 @@
+{
+  "_source": "Extracted from CUMPLIMIENTO/Base de datos Apartamentos - Boulevard 5.xlsx (base del oficial de cumplimiento). Regenerate with scripts/extract-cumplimiento-expedientes.py. Cutoff date for DPI status: 2026-08-07. CONTAINS PII (client names) — server-side import only.",
+  "expedientes": [
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "101",
+      "modelo": "A7.1",
+      "nivel": "1",
+      "vendedor": "Alexander Franco",
+      "clientes": [
+        {
+          "nombre": "Karla Michelle Abril Valencia de Galicia",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2023-01-20"
+        },
+        {
+          "nombre": "Diana Michelle Galicia Abril",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2023-01-26"
+        }
+      ],
+      "promesaFecha": "2023-03-18",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "103",
+      "modelo": "E1.1",
+      "nivel": "1",
+      "vendedor": "Junta Directiva",
+      "clientes": [
+        {
+          "nombre": "International Coffee Industry, S.A.",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-08-16",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "S.A.",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta documentación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "104",
+      "modelo": "A4.1",
+      "nivel": "1",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Jonathan José Morales Salazar",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2021-04-29"
+        }
+      ],
+      "promesaFecha": "2023-08-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Compro 2 apartamento, Apto. 111",
+        "En la cotización y en el DCI, indica una reserva de Q.100,000.00 pero la transferencia y el recibo indican Q.6,000.00"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "109",
+      "modelo": "E2.1",
+      "nivel": "1",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Laura Elisa Ovalle González",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-01-04"
+        }
+      ],
+      "promesaFecha": "2024-07-24",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "CHN",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "110",
+      "modelo": "A2.1",
+      "nivel": "1",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Karla Suzel Ruiz Sanchinelli de Alonzo",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2022-05-07"
+        },
+        {
+          "nombre": "Pablo Ruben Alonzo de la Roca",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2021-09-09"
+        }
+      ],
+      "promesaFecha": "2023-07-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Posee crédito hipotecario vigente, pero no afecta por la capacidad de pago"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "111",
+      "modelo": "A6.1",
+      "nivel": "1",
+      "vendedor": "Alexander Franco",
+      "clientes": [
+        {
+          "nombre": "Jonathan José Morales Salazar",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2021-04-29"
+        },
+        {
+          "nombre": "Ingrid Liseth Barillas López",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2021-12-03"
+        }
+      ],
+      "promesaFecha": "2023-03-25",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Compro 2 apartamento, Apto. 104"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "112",
+      "modelo": "A3.1",
+      "nivel": "1",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Paula Maria Vasquez Cifuentes",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2023-03-13"
+        },
+        {
+          "nombre": "Herbert Osiel Ramos Alfaro",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-03-08"
+        }
+      ],
+      "promesaFecha": "2023-03-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "x",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "113",
+      "modelo": "C3.1",
+      "nivel": "1",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Rodrigo Rodas Pazos",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        },
+        {
+          "nombre": "Javier Rodas Pazos",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2024-11-29",
+      "fuenteIngresos": [
+        "Relación de dependencia",
+        "Servicios profesionales",
+        "Otros"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación",
+        "solicitar documentos de la herencia adquirida por parte del abuelo"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "114",
+      "modelo": "C2.1",
+      "nivel": "1",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Mauricio Arimany Monzón",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-03-29",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "x",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Pago con acciones"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "202",
+      "modelo": "B2",
+      "nivel": "2",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Bella Rosana Chavaque González",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-03-31",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "204",
+      "modelo": "B1",
+      "nivel": "2",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Leslie Paulette Wauthion Jimenez de Farnes",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2024-11-29",
+      "fuenteIngresos": [
+        "Negocio propio",
+        "Servicios profesionales",
+        "Otros"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "205",
+      "modelo": "D7",
+      "nivel": "2",
+      "vendedor": "Sofia Paredes",
+      "clientes": [
+        {
+          "nombre": "Javier Adolfo Hernández León",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-02-28",
+      "fuenteIngresos": [
+        "Negocio propio",
+        "Servicios profesionales"
+      ],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "209",
+      "modelo": "B4",
+      "nivel": "2",
+      "vendedor": "Laura Molina",
+      "clientes": [
+        {
+          "nombre": "Igor Alejandro Salazar Zamora",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        },
+        {
+          "nombre": "Nataly Magali Molina Jauregui",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-06-27",
+      "fuenteIngresos": [
+        "Relación de dependencia",
+        "Servicios profesionales"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "210",
+      "modelo": "B3",
+      "nivel": "2",
+      "vendedor": "Laura Molina",
+      "clientes": [
+        {
+          "nombre": "Carlos Alejandro De León Samayoa",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-07-27",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "212",
+      "modelo": "A4",
+      "nivel": "2",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Julio Eduardo Farnés Búcaro",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-03-20"
+        }
+      ],
+      "promesaFecha": "2023-11-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "213",
+      "modelo": "A8",
+      "nivel": "2",
+      "vendedor": "Sofia Paredes",
+      "clientes": [
+        {
+          "nombre": "Carlos Humberto Rivera Carrillo",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-02-28",
+      "fuenteIngresos": [
+        "Negocio propio",
+        "Servicios profesionales"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "214",
+      "modelo": "A1",
+      "nivel": "2",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Jorge Daniel Baca Chiroy",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-10-23"
+        }
+      ],
+      "promesaFecha": "2023-11-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Compró 2 apartamentos. Apto. 1211",
+        "Falta precalificación."
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "215",
+      "modelo": "C4",
+      "nivel": "2",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Lidia Elizabeth Pocasangre Rac",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2024-03-20"
+        }
+      ],
+      "promesaFecha": "2024-03-22",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "216",
+      "modelo": "C1",
+      "nivel": "2",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Narvesters Gabriell Moreno Cedeño",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2022-02-17"
+        }
+      ],
+      "promesaFecha": "2024-03-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "301",
+      "modelo": "C3",
+      "nivel": "3",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Jonathan Kiril Thomas Menkos Zeissig",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2024-04-17"
+        }
+      ],
+      "promesaFecha": "2024-07-31",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "CHN",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "303",
+      "modelo": "A6",
+      "nivel": "3",
+      "vendedor": null,
+      "clientes": [],
+      "promesaFecha": null,
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": null,
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "304",
+      "modelo": "A7.3",
+      "nivel": "3",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Ricardo Alberto Vásquez Monterroso",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-03-31",
+      "fuenteIngresos": [
+        "Relación de dependencia",
+        "Negocio propio",
+        "Otros"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "305",
+      "modelo": "B7",
+      "nivel": "3",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Alejandro Josue Arias Perez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-04-15",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "308",
+      "modelo": "B1",
+      "nivel": "3",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Ricardo Alberto Vásquez Monterroso",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-08-31",
+      "fuenteIngresos": [
+        "Relación de dependencia",
+        "Negocio propio",
+        "Otros"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "309",
+      "modelo": "D7",
+      "nivel": "3",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Leonel Bernardo Molina Gramajo",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2024-02-15"
+        }
+      ],
+      "promesaFecha": "2024-08-19",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "CHN",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "311",
+      "modelo": "C9",
+      "nivel": "3",
+      "vendedor": "Diana Alvarez",
+      "clientes": [
+        {
+          "nombre": "Miguel Angel Teletor Riz",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2024-09-30",
+      "fuenteIngresos": [
+        "Negocio propio"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación",
+        "Solicitar la escritura de compraventa del lote"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "312",
+      "modelo": "C8",
+      "nivel": "3",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Freddy Alejandro Chichilla Culajay",
+          "dpiStatus": "VENCIDO",
+          "rtu": null
+        },
+        {
+          "nombre": "Fredy Roberto Chinchilla Gómez",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-01-15",
+      "fuenteIngresos": [
+        "Relación de dependencia",
+        "Negocio propio"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación",
+        "Falta RTU de Fredi Roberto Chinchilla",
+        "Pendiente completar documento de reserva"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "313",
+      "modelo": "B4",
+      "nivel": "3",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Leslly Franzoli Cortéz Ávila de Siney",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2024-05-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "CHN",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "314",
+      "modelo": "B3",
+      "nivel": "3",
+      "vendedor": "Laura Molina",
+      "clientes": [
+        {
+          "nombre": "Aracely Abigail Contreras Zuñiga",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-08-14",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "CHN",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "315",
+      "modelo": "E1",
+      "nivel": "3",
+      "vendedor": "Sofia Paredes",
+      "clientes": [
+        {
+          "nombre": "Jocelyn Michelle Roldan",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-05-02",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación",
+        "Persona del extranjero"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "316",
+      "modelo": "A4",
+      "nivel": "3",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Allan Omar Alvarado Vásquez",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2023-09-12"
+        },
+        {
+          "nombre": "Ivanna Sophia Aguilar Ramos",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2023-09-12"
+        }
+      ],
+      "promesaFecha": "2023-10-25",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "317",
+      "modelo": "A8",
+      "nivel": "3",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Antonio Meneses Hernández",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2023-03-14"
+        },
+        {
+          "nombre": "Rocio Alicia Toledo González",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-02-16"
+        }
+      ],
+      "promesaFecha": "2023-11-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Faltan cartas buró, pendiente precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "318",
+      "modelo": "A1",
+      "nivel": "3",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "José Reynaldo Linares",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2020-12-29"
+        }
+      ],
+      "promesaFecha": "2023-11-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Pendiente precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "319",
+      "modelo": "C4",
+      "nivel": "3",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Aarón Fabrizio Tello Mérida",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2022-09-10"
+        }
+      ],
+      "promesaFecha": "2024-02-29",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "320",
+      "modelo": "C1",
+      "nivel": "3",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Santiago Taracena Puga",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2022-10-08"
+        }
+      ],
+      "promesaFecha": "2023-08-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": null,
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Solicitar estados de cuenta y comprobante de sus inversiones"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "401",
+      "modelo": "C3",
+      "nivel": "4",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Sara Verónica Ortíz de León",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-12-27"
+        }
+      ],
+      "promesaFecha": "2024-01-22",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "402",
+      "modelo": "C2",
+      "nivel": "4",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Guillermo Vinicio Cotto Mux",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-09-28"
+        },
+        {
+          "nombre": "María de los Angeles Baños Ortíz",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2021-01-24"
+        }
+      ],
+      "promesaFecha": "2023-12-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "403",
+      "modelo": "A6",
+      "nivel": "4",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Denis Estuardo Mazariegos Fuentes",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2023-02-19"
+        }
+      ],
+      "promesaFecha": "2023-08-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "404",
+      "modelo": "A3",
+      "nivel": "4",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Gerson Andre Villatoro Urizar",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2023-11-06"
+        }
+      ],
+      "promesaFecha": "2023-11-21",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Pendiente precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "405",
+      "modelo": "B7",
+      "nivel": "4",
+      "vendedor": null,
+      "clientes": [],
+      "promesaFecha": null,
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": null,
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "406",
+      "modelo": "B2",
+      "nivel": "4",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Andrea Joanna Hidalgo Mendizabal",
+          "dpiStatus": "VENCIDO",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-05-30",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "407",
+      "modelo": "B6",
+      "nivel": "4",
+      "vendedor": "Laura Molina",
+      "clientes": [
+        {
+          "nombre": "Alfredo Antonio Arrecis Rosales",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        },
+        {
+          "nombre": "Ana Karla Mariela Santos López de Arrecis",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-08-14",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "CHN",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "408",
+      "modelo": "B1",
+      "nivel": "4",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "María Gabriela Chang Quan de García",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-10-25"
+        }
+      ],
+      "promesaFecha": "2024-02-29",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "409",
+      "modelo": "D7",
+      "nivel": "4",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Rafael Leonidas Tabíc Borja",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2024-07-05"
+        }
+      ],
+      "promesaFecha": "2024-08-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "CHN",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "413",
+      "modelo": "B4",
+      "nivel": "4",
+      "vendedor": "Sofia Paredes",
+      "clientes": [
+        {
+          "nombre": "Cindy Carolina Toscano Mérida",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-01-31",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "414",
+      "modelo": "B3",
+      "nivel": "4",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Carolina Rivas Lé Sage de Alonzo",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-03-01"
+        }
+      ],
+      "promesaFecha": "2024-05-31",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": null,
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "415",
+      "modelo": "E1",
+      "nivel": "4",
+      "vendedor": "Anahí Cisneros",
+      "clientes": [
+        {
+          "nombre": "Kevin Mario Andres Leal Morales",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        },
+        {
+          "nombre": "Flor de María Herrera Reyes de Gil",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-06-15",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "CHN",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "416",
+      "modelo": "A4",
+      "nivel": "4",
+      "vendedor": "Sofia Paredes",
+      "clientes": [
+        {
+          "nombre": "Carlos Humberto Rivera Carrillo",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-09-29",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación",
+        "Solicitar documentación de Negocio Propio, rentas y venta de inmuebles"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "417",
+      "modelo": "A8",
+      "nivel": "4",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Miguel Angel Flores Linares",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2023-10-31"
+        }
+      ],
+      "promesaFecha": "2023-11-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Pendiente precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "418",
+      "modelo": "A1",
+      "nivel": "4",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Antonio Vicente Tzep Tahay",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-05-15",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Documento de reserva incompleto"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "419",
+      "modelo": "C4",
+      "nivel": "4",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Andrea Elizabeth Ortíz Pérez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-05-30"
+        }
+      ],
+      "promesaFecha": "2023-11-21",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "420",
+      "modelo": "C1",
+      "nivel": "4",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Rodriga Virginia Figueroa Pérez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2024-05-09"
+        }
+      ],
+      "promesaFecha": "2024-07-22",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "CHN",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "501",
+      "modelo": "E9",
+      "nivel": "5",
+      "vendedor": "Sofia Paredes",
+      "clientes": [
+        {
+          "nombre": "Erick Guillermo Ruano Gatica",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-01-31",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "502",
+      "modelo": "E10",
+      "nivel": "5",
+      "vendedor": "Erwin Cardona",
+      "clientes": [
+        {
+          "nombre": "Mauricio Adolfo Rodrigue z",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": null,
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Solicitar información negocio propio, jubilación y contrato de arrendamiento"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "503",
+      "modelo": "B4",
+      "nivel": "5",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "David Eduardo Orellana Rivera",
+          "dpiStatus": "VENCIDO",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-05-30",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Cliente del extranjero. Solicitar documentación apostillada"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "504",
+      "modelo": "B3",
+      "nivel": "5",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Jaquelyn Andrea España Siliezar",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-05-15",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "CHN",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Cliente con trabajo en el extranjero. Solicitar constancia laboral apostillada"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "505",
+      "modelo": "D9",
+      "nivel": "5",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Nancy Eugenia Cisneros Sánchez de Dávila",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2024-03-27"
+        }
+      ],
+      "promesaFecha": "2024-07-31",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "CHN",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Pendiente precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "506",
+      "modelo": "D8",
+      "nivel": "5",
+      "vendedor": "Diana Alvarez",
+      "clientes": [
+        {
+          "nombre": "Carlos Eduardo Miranda Morales",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        },
+        {
+          "nombre": "Nancy Patricia Medina Marín",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2024-10-15",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Pendiente precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "507",
+      "modelo": "A12",
+      "nivel": "5",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Osmin Otoniel Oliva Cordova",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2023-07-05"
+        }
+      ],
+      "promesaFecha": "2023-08-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "508",
+      "modelo": "C6",
+      "nivel": "5",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Evelyn Aida Samayoa San José",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2024-01-09"
+        },
+        {
+          "nombre": "Liza Maria Samayoa San José",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2023-02-03"
+        }
+      ],
+      "promesaFecha": "2024-04-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Pendiente precalificación",
+        "Falta declaración licita de ambos compradores"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "509",
+      "modelo": "C5",
+      "nivel": "5",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Anabella Alburez Aja",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2023-08-16"
+        }
+      ],
+      "promesaFecha": "2024-06-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "CHN",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Pendiente precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "510",
+      "modelo": "C6",
+      "nivel": "5",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Francis Ayleen Funes Castellanos",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2024-02-06"
+        },
+        {
+          "nombre": "Jorge Iván Amenabar Funes",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2024-03-22",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "DPI legible",
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "511",
+      "modelo": "C5",
+      "nivel": "5",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Hugo Leonel Roca Morales",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2023-12-18"
+        },
+        {
+          "nombre": "Karen Andrea Guerra Lobos de Roca",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-12-28"
+        }
+      ],
+      "promesaFecha": "2024-06-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "No se completó el documento de reserva"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "512",
+      "modelo": "A8",
+      "nivel": "5",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Oscar Antonio González Hurtarte",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-02-13"
+        }
+      ],
+      "promesaFecha": "2023-07-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Posee crédito hipotecario vigente, y saldos en tarjetas"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "513",
+      "modelo": "A2",
+      "nivel": "5",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "María Fernanda Cabrera Valdéz",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2021-02-25"
+        }
+      ],
+      "promesaFecha": "2023-07-31",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "514",
+      "modelo": "E5",
+      "nivel": "5",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Danya Maribel Callejas Hernández de Herrera",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-03-31",
+      "fuenteIngresos": [
+        "Relación de dependencia",
+        "Otros"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación",
+        "Solicitar contratos de arrendamiento y certificaciones del registro de la propiedad"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "515",
+      "modelo": "A5",
+      "nivel": "5",
+      "vendedor": "Alexander Franco",
+      "clientes": [
+        {
+          "nombre": "Ingrid Vanessa Granados Barnéond",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-04-10"
+        }
+      ],
+      "promesaFecha": "2023-03-24",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "516",
+      "modelo": "B4",
+      "nivel": "5",
+      "vendedor": "Diana Alvarez",
+      "clientes": [
+        {
+          "nombre": "José Javier Saceño Alfaro",
+          "dpiStatus": "VENCIDO",
+          "rtu": null
+        },
+        {
+          "nombre": "María Rosana Rivera Gallardo",
+          "dpiStatus": "VENCIDO",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2024-09-30",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "517",
+      "modelo": "B3",
+      "nivel": "5",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Jorge Estuardo Díaz Durán Baldetti",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2022-05-09"
+        }
+      ],
+      "promesaFecha": "2024-05-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": null,
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "DCI incompleto ingresos, pedir autorizacion a gerencia",
+        "Falta declaración licita pedir autorización a gerencia",
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "518",
+      "modelo": "E9",
+      "nivel": "5",
+      "vendedor": "Diana Alvarez",
+      "clientes": [
+        {
+          "nombre": "Karla Denisse Ariana Méndez Contreras",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2024-10-30",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "601",
+      "modelo": "E9",
+      "nivel": "6",
+      "vendedor": "Diana Alvarez",
+      "clientes": [
+        {
+          "nombre": "Cedric Amilcar Rivera Fajardo",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2024-10-15",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "602",
+      "modelo": "E10",
+      "nivel": "6",
+      "vendedor": "Anahí Cisneros",
+      "clientes": [
+        {
+          "nombre": "Judith Fabiola Arevalo Valdez de Franco",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-06-15",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "603",
+      "modelo": "B4",
+      "nivel": "6",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Mario José Márquez Rivera",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2024-04-10"
+        },
+        {
+          "nombre": "Iveth Beltetón Castellanos de Márquez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-06-02"
+        }
+      ],
+      "promesaFecha": "2024-04-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "604",
+      "modelo": "B3",
+      "nivel": "6",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Lucero Serrano Arriaza de Gaitan",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2024-01-03"
+        },
+        {
+          "nombre": "Juan Sebastian Gaitan Serrano",
+          "dpiStatus": "VENCIDO",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2024-04-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "CHN",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación",
+        "DPI legible"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "605",
+      "modelo": "D9",
+      "nivel": "6",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Mirna Maria Rosas Guerra",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        },
+        {
+          "nombre": "Delio Joel Rosas Guerra",
+          "dpiStatus": "VENCIDO",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2024-09-30",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "DPI vencido",
+        "Pendiente precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "606",
+      "modelo": "D8",
+      "nivel": "6",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Mar Frandi Solly Gramajo Hernández de Calderón",
+          "dpiStatus": "VENCIDO",
+          "rtu": null
+        },
+        {
+          "nombre": "Elder David Calderón Caceres",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2024-03-18"
+        }
+      ],
+      "promesaFecha": "2024-08-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "CHN",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Falta la precalificacion de la esposa"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "607",
+      "modelo": "A12",
+      "nivel": "6",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Antony Williams Sajche Torres",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        },
+        {
+          "nombre": "Madelyn Kristina Sajché Torres",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-08-30",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": null,
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta la precalificacion",
+        "Pendiente RTU de ella",
+        "Solicitar documentos apostillados"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "608",
+      "modelo": "C6",
+      "nivel": "6",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Astrid Marié Valencia Miranda",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2023-08-09"
+        },
+        {
+          "nombre": "Alfonso Videche Rodriguez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-09-12"
+        }
+      ],
+      "promesaFecha": "2024-02-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "documentos de ambos declaración lícita",
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "609",
+      "modelo": "C5",
+      "nivel": "6",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Luis Augusto Franco López",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2023-12-23"
+        }
+      ],
+      "promesaFecha": "2024-05-31",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "CHN",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "610",
+      "modelo": "C6",
+      "nivel": "6",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Andrea Nathalia Molina Méndez de Velásquez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2024-02-20"
+        }
+      ],
+      "promesaFecha": "2024-02-29",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "611",
+      "modelo": "C5",
+      "nivel": "6",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Kenny Estuardo Garay Carias",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-05-15",
+      "fuenteIngresos": [
+        "Negocio propio"
+      ],
+      "bancoPrecalificacion": null,
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta RTU",
+        "Solicitar documentos apostillados",
+        "Documento de reserva en blanco"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "612",
+      "modelo": "A8",
+      "nivel": "6",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Diego José Ortíz Cordero",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2022-11-14"
+        }
+      ],
+      "promesaFecha": "2023-07-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Posee un crédito fiduciario vigente y saldos en tarjetas"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "613",
+      "modelo": "A2",
+      "nivel": "6",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Sergio Oswaldo Velásquez Moreno",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2022-07-29"
+        }
+      ],
+      "promesaFecha": "2023-07-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "la capacidad de pago sale del límite del RCI permitido y posee saldo en una tarjeta"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "614",
+      "modelo": "E5",
+      "nivel": "6",
+      "vendedor": "Erwin Cardona",
+      "clientes": [
+        {
+          "nombre": "Ruben Iván España Marroquín",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2026-04-30",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "615",
+      "modelo": "A5",
+      "nivel": "6",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Maria de los Angeles España Cordón",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2021-08-22"
+        }
+      ],
+      "promesaFecha": "2023-06-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "616",
+      "modelo": "B4",
+      "nivel": "6",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Edwin Estuardo Acevedo Salguero",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-07-13"
+        }
+      ],
+      "promesaFecha": "2024-03-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "617",
+      "modelo": "B3",
+      "nivel": "6",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Hans Christian Beeck Cazali",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2024-01-09"
+        }
+      ],
+      "promesaFecha": "2024-06-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "CHN",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "618",
+      "modelo": "E9",
+      "nivel": "6",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Jaquelin Melisa Barillas Carías de García",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        },
+        {
+          "nombre": "Sergio Adolfo García Velásquez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-04-30",
+      "fuenteIngresos": [
+        "Negocio propio",
+        "Servicios profesionales"
+      ],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "619",
+      "modelo": "E10",
+      "nivel": "6",
+      "vendedor": "Sofia Paredes",
+      "clientes": [
+        {
+          "nombre": "José Estuardo Ordoñez Cancinos",
+          "dpiStatus": "VENCIDO",
+          "rtu": null
+        },
+        {
+          "nombre": "Wendy Paola Rivera Hernández",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-03-31",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Solicitar documentacion apostillada del Sr."
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "701",
+      "modelo": "E9",
+      "nivel": "7",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Luis Francisco Villatoro Quiroa",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2022-08-25"
+        },
+        {
+          "nombre": "Sara Leticia González Sánchez",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2023-01-21"
+        },
+        {
+          "nombre": "Sara Alejandra Velásquez González de Villatoro",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2019-12-16"
+        }
+      ],
+      "promesaFecha": "2023-03-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "DPI legible 2o. Comprador"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "702",
+      "modelo": "E10",
+      "nivel": "7",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Wilson Humberto Félix Reyna",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2022-06-02"
+        }
+      ],
+      "promesaFecha": "2023-04-18",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "703",
+      "modelo": "B4",
+      "nivel": "7",
+      "vendedor": "Erwin Cardona",
+      "clientes": [
+        {
+          "nombre": "Erikson Estuardo de Leon Marroquin",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "1934-03-06"
+        }
+      ],
+      "promesaFecha": "2026-06-26",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "704",
+      "modelo": "B3",
+      "nivel": "7",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Dania Dulcidia Gutiérrez Villeda de Mejía",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2024-01-26"
+        },
+        {
+          "nombre": "María Magdalena Villeda Vanegas de Gutiérrez",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2024-04-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "CHN",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "falta precalificación",
+        "DPI legible"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "705",
+      "modelo": "D9",
+      "nivel": "7",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Ingrid Lisbeth Dubon Garcia de Díaz",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-03-15",
+      "fuenteIngresos": [
+        "Negocio propio"
+      ],
+      "bancoPrecalificacion": "Banrural",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Solicitar documentación legal de la empresa"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "706",
+      "modelo": "D8",
+      "nivel": "7",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Edison Gabriel Ramirez López",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        },
+        {
+          "nombre": "Evelyn Jeaneth Maldonado Mazariegos",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-03-31",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": null,
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "707",
+      "modelo": "A12",
+      "nivel": "7",
+      "vendedor": "Sofia Paredes",
+      "clientes": [
+        {
+          "nombre": "Cristhian Paul Escobar Maldonado",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        },
+        {
+          "nombre": "Carlos Hansver Escobar Maldonado",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-04-24",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "708",
+      "modelo": "C6",
+      "nivel": "7",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Alfonso Videche Rodriguez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-09-12"
+        },
+        {
+          "nombre": "Astrid Marié Valencia Miranda",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2023-08-09"
+        }
+      ],
+      "promesaFecha": "2024-01-31",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "711",
+      "modelo": "C5",
+      "nivel": "7",
+      "vendedor": "Diana Alvarez",
+      "clientes": [
+        {
+          "nombre": "Samuel David Chavez Pérez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2024-01-29",
+      "fuenteIngresos": [
+        "Otros"
+      ],
+      "bancoPrecalificacion": null,
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Ojo Revisar al cliente.",
+        "Solicitar contrato compraventa propiedades para respaldar la compra del apto.",
+        "certificacion registro de la propiedad"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "712",
+      "modelo": "A8",
+      "nivel": "7",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Zoila Isabel Márquez Soza de Sepúlveda",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2019-05-03"
+        },
+        {
+          "nombre": "Edgar Augusto Sepúlveda Barreda",
+          "dpiStatus": "VENCIDO",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-09-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "713",
+      "modelo": "A2",
+      "nivel": "7",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Luis Alejandro Pérez Ibañez",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2022-11-22"
+        }
+      ],
+      "promesaFecha": "2023-06-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "714",
+      "modelo": "E5",
+      "nivel": "7",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "José Carlos Samayoa San José",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2024-04-19"
+        }
+      ],
+      "promesaFecha": "2024-04-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "x",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "715",
+      "modelo": "A5",
+      "nivel": "7",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Cynthia Marisel Coronado Monterroso",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2022-12-05"
+        }
+      ],
+      "promesaFecha": "2023-03-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "BAC",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "716",
+      "modelo": "B4",
+      "nivel": "7",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Lisvet Maricela Sancé Alvarez de Girón",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2024-01-16"
+        },
+        {
+          "nombre": "Cesar Augusto Girón Tortola",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2024-01-31",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "717",
+      "modelo": "B3",
+      "nivel": "7",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "CB Alternativa, S.A. / Jorge Estuardo Díaz Durán Baldetti",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2024-04-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "S.A.",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificacion",
+        "Falta RTU del cliente",
+        "Estados de cuenta de la empresa",
+        "Estados financieros de la empresa"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "801",
+      "modelo": "C4",
+      "nivel": "8",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Pablo José Juárez Pereira",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2023-06-30"
+        }
+      ],
+      "promesaFecha": "2023-07-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "802",
+      "modelo": "C1",
+      "nivel": "8",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Carmen Julia Soto Baechli de Hicks",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-06-13"
+        }
+      ],
+      "promesaFecha": "2023-06-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "803",
+      "modelo": "A8",
+      "nivel": "8",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Mauricio Antonio León Tres",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2022-08-18"
+        }
+      ],
+      "promesaFecha": "2023-03-28",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "804",
+      "modelo": "A1",
+      "nivel": "8",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Victor Hugo Cáceres Morales",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": "2023-01-04"
+        }
+      ],
+      "promesaFecha": "2023-07-31",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "805",
+      "modelo": "B5",
+      "nivel": "8",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Celia Julissa Flores Dávila de González",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-12-23"
+        }
+      ],
+      "promesaFecha": "2024-05-31",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "CHN",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "806",
+      "modelo": "B8",
+      "nivel": "8",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Rodolfo Morales Muñoz",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-04-09",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificacion",
+        "Solicitar documentos apostillados"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "807",
+      "modelo": "B4",
+      "nivel": "8",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Eswin Raúl Morales López",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2023-09-19"
+        }
+      ],
+      "promesaFecha": "2023-11-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "808",
+      "modelo": "B3",
+      "nivel": "8",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Gualberto Alonso Salazar Trejos",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-03-16"
+        }
+      ],
+      "promesaFecha": "2024-03-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificacion"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "809",
+      "modelo": "E1",
+      "nivel": "8",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Mildred Maritza Monterroso Montenegro de Santizo",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2024-02-15"
+        },
+        {
+          "nombre": "Nector René Santizo Ralda",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2024-01-05"
+        }
+      ],
+      "promesaFecha": "2024-03-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificacion"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "810",
+      "modelo": "A4",
+      "nivel": "8",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Sebastián Aristondo Barillas",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2021-11-09"
+        },
+        {
+          "nombre": "Wenddy Sucelly Barillas Alvarez",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2022-07-22"
+        }
+      ],
+      "promesaFecha": "2023-06-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "811",
+      "modelo": "B7",
+      "nivel": "8",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Rosa Gilda Tuchan Valle de Gonzalez",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": "2022-02-26"
+        }
+      ],
+      "promesaFecha": "2024-09-26",
+      "fuenteIngresos": [
+        "Otros"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": true,
+      "observaciones": [
+        "Falta precalificacion",
+        "Ojo - S.A."
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "812",
+      "modelo": "B2",
+      "nivel": "8",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Juan Pablo González Tuchán",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2024-02-06"
+        },
+        {
+          "nombre": "Silvia Patricia Funes López de González",
+          "dpiStatus": "VENCIDO",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2024-08-12",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "CHN",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificacion de ambas personas"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "813",
+      "modelo": "B6",
+      "nivel": "8",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Pedro José Cordón Folgar / Industrias Danico, S.A.",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2024-02-05"
+        }
+      ],
+      "promesaFecha": "2024-05-31",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": null,
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Hace falta la documentación financiera de la empresa",
+        "Pendiente declaración licita"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "814",
+      "modelo": "B1",
+      "nivel": "8",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Enma Suselly López Muy",
+          "dpiStatus": "VENCIDO",
+          "rtu": null
+        },
+        {
+          "nombre": "Josselin Karina Tercero Aceytuno",
+          "dpiStatus": "VENCIDO",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-11-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "815",
+      "modelo": "E2",
+      "nivel": "8",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Leonora Elizabeth Cordón Arrivillaga",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2024-02-29",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "falta precalificacion"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "816",
+      "modelo": "A2",
+      "nivel": "8",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Coasa, Sociedad Anónima / Cesar Augusto Acuña Rogel",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2023-05-23"
+        }
+      ],
+      "promesaFecha": "2023-03-31",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Solicitar nombramiento Rep. Legal vigente",
+        "Estado de cuenta de la empresa",
+        "revisar compraventa reserva vrs. Cotizacion"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "817",
+      "modelo": "A6",
+      "nivel": "8",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Juan Antonio Escobedo del Cid",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2023-02-03"
+        }
+      ],
+      "promesaFecha": "2023-06-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "DPI legible"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "818",
+      "modelo": "A3",
+      "nivel": "8",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Roger Amílcar Letona Cardona",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2023-01-17"
+        },
+        {
+          "nombre": "Astrid Pamela Chew Chávez de Letona",
+          "dpiStatus": "VENCIDO",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-07-31",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Posee saldos en crédito hipotecario, un fiduciario y saldos en tarjetas de crédito"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "819",
+      "modelo": "C3",
+      "nivel": "8",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Edvin Waldemar Sajquim Estacuy",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": null
+        },
+        {
+          "nombre": "Edvin Eduardo Sajquim Sajquim",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2022-12-12"
+        }
+      ],
+      "promesaFecha": "2023-05-29",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "820",
+      "modelo": "C2",
+      "nivel": "8",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "María Eugenia Ortíz Uck",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2022-02-11"
+        }
+      ],
+      "promesaFecha": "2024-02-03",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "El hijo se encuentra en el extranjero y envía fondos"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "901",
+      "modelo": "C4",
+      "nivel": "9",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Monica Arimany Monzón de Estrada",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-03-29",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "902",
+      "modelo": "C1",
+      "nivel": "9",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Waldir Edenilson Contreras Pedroza",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2023-07-13"
+        }
+      ],
+      "promesaFecha": "2024-01-22",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "903",
+      "modelo": "A8",
+      "nivel": "9",
+      "vendedor": "Alexander Franco",
+      "clientes": [
+        {
+          "nombre": "Vivian Arely Carranza León de Acevedo",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-04-18"
+        }
+      ],
+      "promesaFecha": "2023-06-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "904",
+      "modelo": "A1",
+      "nivel": "9",
+      "vendedor": "Alexander Franco",
+      "clientes": [
+        {
+          "nombre": "Juan José Silva Pacheco",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-02-05"
+        },
+        {
+          "nombre": "Dania Rocio Hernández León",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2022-12-06"
+        }
+      ],
+      "promesaFecha": "2023-05-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificacion de la esposa",
+        "compro otro apartamento No.1206"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "905",
+      "modelo": "B5",
+      "nivel": "9",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Roberto Andres Hernandez Benavides",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-05-09"
+        }
+      ],
+      "promesaFecha": "2024-06-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "CHN",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificacion"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "906",
+      "modelo": "B8",
+      "nivel": "9",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "José Juan Barrientos Juárez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-01-15",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificacion"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "907",
+      "modelo": "B4",
+      "nivel": "9",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Stephanie Pamela Herrera Escobar",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2023-01-12"
+        }
+      ],
+      "promesaFecha": "2023-09-13",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "908",
+      "modelo": "B3",
+      "nivel": "9",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Jorge Pablo González Ordóñez",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2023-11-28"
+        }
+      ],
+      "promesaFecha": "2024-01-31",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "909",
+      "modelo": "E8",
+      "nivel": "9",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Alba Lucila Martínez Tovar",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2022-12-02"
+        },
+        {
+          "nombre": "María del Rosario Alvarado Zepeda",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-08-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificacion"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "911",
+      "modelo": "C10",
+      "nivel": "9",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Mario Alberto Maldonado Recinos",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2021-11-26"
+        }
+      ],
+      "promesaFecha": "2023-09-29",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "912",
+      "modelo": "C7",
+      "nivel": "9",
+      "vendedor": "Junta Directiva",
+      "clientes": [
+        {
+          "nombre": "IURIX, S.A.",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": null
+        },
+        {
+          "nombre": "Alexander Fuentes",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-10-25",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "S.A.",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "913",
+      "modelo": "B6",
+      "nivel": "9",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Werner Josué Bailon Campos",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2023-03-31"
+        }
+      ],
+      "promesaFecha": "2024-04-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificacion"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "914",
+      "modelo": "B1",
+      "nivel": "9",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Rebecca González Ordoñez de Alvarez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2022-01-22"
+        }
+      ],
+      "promesaFecha": "2024-01-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Falta recibo y comprobante de pago por la diferencia de la reserva. Solo hay documentos por Q5 mil"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "915",
+      "modelo": "E2",
+      "nivel": "9",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Helberth Edilberto Campos Zabala",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2022-04-12"
+        },
+        {
+          "nombre": "Marcela Alejandra Castro Marcía",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2019-01-23"
+        }
+      ],
+      "promesaFecha": "2023-09-13",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "916",
+      "modelo": "A2",
+      "nivel": "9",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "José Fernando Cordón Almengor",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2022-08-29"
+        }
+      ],
+      "promesaFecha": "2023-05-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "917",
+      "modelo": "A6",
+      "nivel": "9",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Jessica María Ramírez Girard",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-01-11"
+        }
+      ],
+      "promesaFecha": "2023-05-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Industrial",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "revisar crédito con BI y saldos tarjeta crédito"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "918",
+      "modelo": "A3",
+      "nivel": "9",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Astrid Maricel de León Ramírez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2022-12-01"
+        }
+      ],
+      "promesaFecha": "2023-07-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "919",
+      "modelo": "C3",
+      "nivel": "9",
+      "vendedor": "Erwin Cardona",
+      "clientes": [
+        {
+          "nombre": "Edwin Ernesto Ovalle Barrios",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2032-06-30"
+        }
+      ],
+      "promesaFecha": "2026-04-27",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "920",
+      "modelo": "C2",
+      "nivel": "9",
+      "vendedor": "Junta Directiva",
+      "clientes": [
+        {
+          "nombre": "IURIX, S.A.",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": null
+        },
+        {
+          "nombre": "Alexander Fuentes",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-10-25",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "S.A.",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1001",
+      "modelo": "C4",
+      "nivel": "10",
+      "vendedor": "Erwin Cardona",
+      "clientes": [
+        {
+          "nombre": "Carlos Roberto Sandoval Najera",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        },
+        {
+          "nombre": "Carlos Ramon Chajón Aceituno",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2026-04-27",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "pagó la reserva en efectivo"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1002",
+      "modelo": "C1",
+      "nivel": "10",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Evelyn Yadira Orellana Ordoñez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-02-02"
+        }
+      ],
+      "promesaFecha": "2023-03-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "crédito prendario y uno hipotecario + saldos en tarjetas, pero tiene buena capacidad de pago",
+        "se le puede pedir estados de cuenta ya que presta servicios profesionales, no labora para ninguan entidad"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1003",
+      "modelo": "A8",
+      "nivel": "10",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Eduar Reginaldo Colindres Estrada",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2022-05-18"
+        }
+      ],
+      "promesaFecha": "2023-05-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1004",
+      "modelo": "A1",
+      "nivel": "10",
+      "vendedor": "Alexander Franco",
+      "clientes": [
+        {
+          "nombre": "Jorge Silva Sagastume",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2022-07-22"
+        }
+      ],
+      "promesaFecha": "2023-05-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1005",
+      "modelo": "B5",
+      "nivel": "10",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Bárbara Elizabeth Ixmucané Zapeta Albanés",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-07-31",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1006",
+      "modelo": "B8",
+      "nivel": "10",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Diana Marisol Donis Cú",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2024-02-29",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1007",
+      "modelo": "B4",
+      "nivel": "10",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Marcela Alejandra Castro Marcía",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-09-13",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1009",
+      "modelo": "E8",
+      "nivel": "10",
+      "vendedor": "Diana Alvarez",
+      "clientes": [
+        {
+          "nombre": "Yosseline Yanira Moscoso Hidalgo de Salazar",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        },
+        {
+          "nombre": "Augusto Alejandro Salazar Alecio",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2024-11-15",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "BI",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1010",
+      "modelo": "A10",
+      "nivel": "10",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Allan Donaldo Lapop Cárdenas",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2022-10-06"
+        },
+        {
+          "nombre": "Andrea Sofia Villatoro Manzanero",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2022-12-26"
+        }
+      ],
+      "promesaFecha": "2023-08-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificacion"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1011",
+      "modelo": "C10",
+      "nivel": "10",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Sebastián Gutiérrez Ruiz",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2022-09-26"
+        },
+        {
+          "nombre": "Isabel María Alejos Molina",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2020-07-09"
+        }
+      ],
+      "promesaFecha": "2023-03-28",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Sebastian no califica por tener crédito prendario y novia no fue calificada."
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1012",
+      "modelo": "C7",
+      "nivel": "10",
+      "vendedor": "Junta Directiva",
+      "clientes": [
+        {
+          "nombre": "IURIX, S.A.",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": null
+        },
+        {
+          "nombre": "Alexander Fuentes",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-10-25",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "S.A.",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1013",
+      "modelo": "B6",
+      "nivel": "10",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Byron Nehemías Ortega Ruiz",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-06-19"
+        }
+      ],
+      "promesaFecha": "2023-09-13",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificacion"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1014",
+      "modelo": "B1",
+      "nivel": "10",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Jorge Antonio Reyes Ochoa",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-06-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1015",
+      "modelo": "E2",
+      "nivel": "10",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Pedro Luis Artero Bran",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-04-20",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "crédito hipotecario + saldo en 2 tarjetas de crédito"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1016",
+      "modelo": "A2",
+      "nivel": "10",
+      "vendedor": "José Gutierrez",
+      "clientes": [
+        {
+          "nombre": "Diego Alejandro Barreno Gonzalez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2026-04-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1017",
+      "modelo": "A6",
+      "nivel": "10",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Irene Alejandra Reyes Guzmán",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2023-03-13"
+        }
+      ],
+      "promesaFecha": "2023-04-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "no califica, posee saldos en tarjeta de crédito"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1018",
+      "modelo": "A3",
+      "nivel": "10",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Corporación FB, S.A. / Julio Alfonso Aldana Recinos",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-06-02"
+        }
+      ],
+      "promesaFecha": "2023-08-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "S.A.",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "faltan los estados de cuenta y estados financieros de los últimos 2 años"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1019",
+      "modelo": "C3",
+      "nivel": "10",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Byron Orlando Sanchez Romero",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-02-22"
+        },
+        {
+          "nombre": "Marta Haydée Hurtarte Ruano de Sánchez",
+          "dpiStatus": "VENCIDO",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-04-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "El Sr. Byron posee 3 créditos hipotecarios, un prendario y saldo en tarjetas de crédito",
+        "La Sra. Marta posee saldo en tarjetas de crédito y saldo en créditos fiduciarios"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1020",
+      "modelo": "C2",
+      "nivel": "10",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Rolando Edwin Villatoro Hernandez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-03-15",
+      "fuenteIngresos": [
+        "Negocio propio"
+      ],
+      "bancoPrecalificacion": "CHN",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Pedir documentación del negocio propio que indica"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1101",
+      "modelo": "D10",
+      "nivel": "11",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "María Fernanda Contreras López",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-04-19"
+        }
+      ],
+      "promesaFecha": "2024-04-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1102",
+      "modelo": "D11",
+      "nivel": "11",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Luis Alberto López Velásquez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2022-08-29"
+        }
+      ],
+      "promesaFecha": "2023-04-20",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Actualmente posee saldos en tarjetas de crédito"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1103",
+      "modelo": "B4",
+      "nivel": "11",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Samuel Hiram Salazar Say",
+          "dpiStatus": "VENCIDO",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-05-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1104",
+      "modelo": "B3",
+      "nivel": "11",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Denisse Hortencia Alarcón Díaz",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2018-03-20"
+        }
+      ],
+      "promesaFecha": "2024-02-29",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificacion"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1105",
+      "modelo": "A6",
+      "nivel": "11",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Luis Pedro Escobedo del Cid",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2022-10-29"
+        }
+      ],
+      "promesaFecha": "2023-03-28",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Posee 2 créditos hipotecarios",
+        "Actualmente posee saldos en tarjetas de crédito"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1106",
+      "modelo": "A4",
+      "nivel": "11",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Emerson Emanuel Menéndez Rodas",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-04-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Actualmente posee saldos en tarjetas de crédito"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1107",
+      "modelo": "A12",
+      "nivel": "11",
+      "vendedor": "Junta Directiva",
+      "clientes": [
+        {
+          "nombre": "International Coffee Industry, S.A.",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-08-16",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "S.A.",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta documentación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1108",
+      "modelo": "C6",
+      "nivel": "11",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Denis Orlando Coto Zelaya",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2021-10-21"
+        }
+      ],
+      "promesaFecha": "2023-08-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1109",
+      "modelo": "C5",
+      "nivel": "11",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Fausto Norberth Méndez Melgar",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2022-03-08"
+        },
+        {
+          "nombre": "Guerda Dagmara Zuñiga España de Méndez",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-12-11",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1110",
+      "modelo": "C6",
+      "nivel": "11",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Juan Carlos Lantzendorffer",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-07-07"
+        }
+      ],
+      "promesaFecha": "2023-08-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Faltó precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1111",
+      "modelo": "C5",
+      "nivel": "11",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Erika Ruth Castro Juárez",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2020-02-05"
+        }
+      ],
+      "promesaFecha": "2024-02-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Faltó precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1112",
+      "modelo": "A8",
+      "nivel": "11",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Sak y Sak, S.A. / Sara Ileana Abularach Kelly de Orellana",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2020-12-30"
+        }
+      ],
+      "promesaFecha": "2023-06-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "S.A.",
+      "fha": false,
+      "contado": true,
+      "observaciones": [
+        "Escritura de constitucion de la empresa",
+        "Falta comprobante del 1ra. reserva",
+        "Falta comprobante del 2da. reserva y recibo",
+        "Balance General de la empresa de los ultimos 2 años firmada por un contador",
+        "Constancia de pago de impuestos de los ultimos 6 meses",
+        "Estados de cuenta de la S.A. de los ultimos 6 meses sellados y firmados"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1113",
+      "modelo": "A2",
+      "nivel": "11",
+      "vendedor": "Alexander Franco",
+      "clientes": [
+        {
+          "nombre": "Vilma Corina Chávez Saucedo",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2022-08-22"
+        }
+      ],
+      "promesaFecha": "2023-05-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Compró 3 apartamentos Apto. 1213 y Apto. 1313",
+        "El nivel consignado en el contrato no coincide con la cotizacion",
+        "posee saldos en tarjetas de crédito y un crédito hipotecario"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1114",
+      "modelo": "A11",
+      "nivel": "11",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Clara Hilda María Falla Bianchi de Cruz-Gomar",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2024-05-27"
+        }
+      ],
+      "promesaFecha": "2024-05-31",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "X",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1115",
+      "modelo": "B4",
+      "nivel": "11",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Eddy Francisco Mac-Intosh López",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-04-30",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1116",
+      "modelo": "B3",
+      "nivel": "11",
+      "vendedor": "Erwin Cardona",
+      "clientes": [
+        {
+          "nombre": "Ingrid Lissette Robles Villatoro",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2026-05-07",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación",
+        "Se hizo la modificación de la PCV ya que la segunda compradora desistió"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1117",
+      "modelo": "D10",
+      "nivel": "11",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Jerson Leonel Chavez Martínez",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2022-12-07"
+        }
+      ],
+      "promesaFecha": "2023-12-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "BAC",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1118",
+      "modelo": "D11",
+      "nivel": "11",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "José Raúl Velasco Ferrigno",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2022-02-14"
+        },
+        {
+          "nombre": "María Eugenia González Zuleta de Velasco",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2024-01-05"
+        }
+      ],
+      "promesaFecha": "2024-01-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "CHN",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1201",
+      "modelo": "D4",
+      "nivel": "12",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Rogelio Alejandro Ochoa Hernández",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2024-03-01"
+        }
+      ],
+      "promesaFecha": "2024-06-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "CHN",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1202",
+      "modelo": "D1",
+      "nivel": "12",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Edwin Steven Quiroa Sitamul",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2024-02-01"
+        }
+      ],
+      "promesaFecha": "2024-02-29",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1203",
+      "modelo": "B4",
+      "nivel": "12",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Allan Vinicio Velásquez León",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2023-04-11"
+        }
+      ],
+      "promesaFecha": "2023-08-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Ojo: Proveedor del Estado"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1204",
+      "modelo": "B3",
+      "nivel": "12",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Josselin Alejandra Turcios Orantes",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-12-18"
+        }
+      ],
+      "promesaFecha": "2024-02-29",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "X",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1205",
+      "modelo": "A6",
+      "nivel": "12",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Andrea Nicole Mansilla Fuentes",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2022-11-23"
+        }
+      ],
+      "promesaFecha": "2023-03-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Posee saldos en tarjeta de crédito"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1206",
+      "modelo": "A4",
+      "nivel": "12",
+      "vendedor": "Alexander Franco",
+      "clientes": [
+        {
+          "nombre": "Juan José Silva Pacheco",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-02-05"
+        },
+        {
+          "nombre": "Dania Rocío Hernández León",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2022-12-06"
+        }
+      ],
+      "promesaFecha": "2023-05-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1207",
+      "modelo": "A12",
+      "nivel": "12",
+      "vendedor": "Alexander Franco",
+      "clientes": [
+        {
+          "nombre": "David Arimany Monzón",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2022-07-14"
+        }
+      ],
+      "promesaFecha": "2023-03-29",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Actualmente posee un crédito fiduciario que vence en 2028 y saldos en tarjetas de crédito"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1208",
+      "modelo": "C6",
+      "nivel": "12",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Marynes Espino Echeverria / JMX Inversiones, S.A.",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2022-07-07"
+        }
+      ],
+      "promesaFecha": "2023-04-16",
+      "fuenteIngresos": [
+        "Otros"
+      ],
+      "bancoPrecalificacion": "S.A.",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Compró 2 apartamento. Apto.1210",
+        "Falta escritura de constitución, estados de cuenta de los últimos 6 meses, estados financieros",
+        "Cambiar el contrato a nombre de la empresa"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1209",
+      "modelo": "C5",
+      "nivel": "12",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Gilda Elena Siekavizza Castillo",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-02-02"
+        },
+        {
+          "nombre": "José Pablo Pineda Bran",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2022-10-17"
+        }
+      ],
+      "promesaFecha": "2023-03-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1210",
+      "modelo": "C6",
+      "nivel": "12",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Marynes Espino Echeverria / JMX Inversiones, S.A.",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2022-07-07"
+        }
+      ],
+      "promesaFecha": "2023-04-16",
+      "fuenteIngresos": [
+        "Otros"
+      ],
+      "bancoPrecalificacion": "S.A.",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Compró 2 apartamento. Apto.1208",
+        "Falta escritura de constitución, estados de cuenta de los últimos 6 meses, estados financieros",
+        "Cambiar el contrato a nombre de la empresa"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1211",
+      "modelo": "C5",
+      "nivel": "12",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Jorge Daniel Baca Chiroy",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-10-23"
+        }
+      ],
+      "promesaFecha": "2023-11-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Compró 2 apartamentos. Apto. 214",
+        "Falta precalificación."
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1212",
+      "modelo": "A8",
+      "nivel": "12",
+      "vendedor": "Erwin Cardona",
+      "clientes": [
+        {
+          "nombre": "Erick Orlando Barrios Navas",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": null,
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1213",
+      "modelo": "A2",
+      "nivel": "12",
+      "vendedor": "Alexander Franco",
+      "clientes": [
+        {
+          "nombre": "Vilma Corina Chávez Saucedo",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2022-08-22"
+        }
+      ],
+      "promesaFecha": "2023-05-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Compró 3 apartamentos Apto. 1113 y Apto. 1313",
+        "Revisar si será comprado por la sra. o por la empresa Secretos",
+        "posee saldos en tarjetas de crédito y un crédito hipotecario"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1214",
+      "modelo": "A11",
+      "nivel": "12",
+      "vendedor": "Alexander Franco",
+      "clientes": [
+        {
+          "nombre": "Manuel Armando Fletes Ordoñez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-06-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1215",
+      "modelo": "B4",
+      "nivel": "12",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "José Javier Hernández Juarez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2022-11-23"
+        }
+      ],
+      "promesaFecha": "2023-04-17",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1216",
+      "modelo": "B3",
+      "nivel": "12",
+      "vendedor": "Anahí Cisneros",
+      "clientes": [
+        {
+          "nombre": "Alan Richard González Choc",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-07-27",
+      "fuenteIngresos": [
+        "Negocio propio",
+        "Otros"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Pendiente DCI firmado. Se imprimió de nuevo",
+        "Solicitar contrato compraventa propiedades para respaldar la compra del apto."
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1217",
+      "modelo": "D4",
+      "nivel": "12",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Irene Noemy Santisteban Chiguil",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        },
+        {
+          "nombre": "Francisco Javier Estrada Quintanilla",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-07-10"
+        }
+      ],
+      "promesaFecha": "2024-04-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificacion",
+        "DPI legible"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1218",
+      "modelo": "D1",
+      "nivel": "12",
+      "vendedor": "Diana Alvarez",
+      "clientes": [
+        {
+          "nombre": "Héctor Ricardo Echeverria Méndez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2024-11-29",
+      "fuenteIngresos": [
+        "Servicios profesionales"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificacion"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1301",
+      "modelo": "D4",
+      "nivel": "13",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Raúl Eliazar Lemus Garza",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2015-04-16"
+        }
+      ],
+      "promesaFecha": "2024-06-01",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "CHN",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta documentación original",
+        "PCV no legalizada porque el cliente se encuentra en el extranjero",
+        "Falta precalificacion"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1302",
+      "modelo": "D1",
+      "nivel": "13",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Rodolfo Godoy Lemus",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        },
+        {
+          "nombre": "Jackelyn Rossana Godoy Maldonado de Solórzano",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2024-11-29",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificacion"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1303",
+      "modelo": "B4",
+      "nivel": "13",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Ricardo Fernando Linares Pérez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2022-08-19"
+        }
+      ],
+      "promesaFecha": "2023-08-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "CONCEPTOS INNOVADORES CONSTRUCTIVOS DE GUATEMALA,SOCIEDAD ANÓNIMA"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1304",
+      "modelo": "B3",
+      "nivel": "13",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Shirley Hilene Recinos",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-01-09"
+        }
+      ],
+      "promesaFecha": "2023-10-25",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1305",
+      "modelo": "A6",
+      "nivel": "13",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "José Salvador Franco Rosales",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        },
+        {
+          "nombre": "Karina Desiree Rabanales Bravo",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-05-30",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación."
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1306",
+      "modelo": "A4",
+      "nivel": "13",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Barbara Elizabeth Barrientos Valenzuela",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2022-04-26"
+        }
+      ],
+      "promesaFecha": "2023-05-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Posee un crédito hipotecario con un saldo mínimo para poderlo cancelar",
+        "posee saldos en tarjetas de crédito"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1307",
+      "modelo": "A12",
+      "nivel": "13",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Fernando José Franco Jimenez",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2023-02-10"
+        }
+      ],
+      "promesaFecha": "2023-11-21",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "DPI  vencido"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1308",
+      "modelo": "C6",
+      "nivel": "13",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Gerson Alexander Urias Marquez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-05-23"
+        }
+      ],
+      "promesaFecha": "2023-11-21",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Cliente anterior desistido"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1309",
+      "modelo": "C5",
+      "nivel": "13",
+      "vendedor": "Brenda Perez",
+      "clientes": [
+        {
+          "nombre": "Lourdes Aline Salazar Guzman",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "1932-09-28"
+        }
+      ],
+      "promesaFecha": "2026-06-22",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": null,
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1310",
+      "modelo": "C6",
+      "nivel": "13",
+      "vendedor": "Alexander Franco",
+      "clientes": [
+        {
+          "nombre": "Raúl Cabrera Galindo",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-04-28"
+        }
+      ],
+      "promesaFecha": "2023-03-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1311",
+      "modelo": "C5",
+      "nivel": "13",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Luis Gabriel Garrido Blanco",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2023-09-29"
+        }
+      ],
+      "promesaFecha": "2023-10-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1312",
+      "modelo": "A8",
+      "nivel": "13",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Arturo Alfredo Monzón López",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2021-01-15"
+        }
+      ],
+      "promesaFecha": "2023-04-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1313",
+      "modelo": "A2",
+      "nivel": "13",
+      "vendedor": "Alexander Franco",
+      "clientes": [
+        {
+          "nombre": "Vilma Corina Chávez Saucedo",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2022-08-22"
+        }
+      ],
+      "promesaFecha": "2023-05-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Compró 3 apartamentos Apto. 1113 y Apto. 1213",
+        "Revisar si será comprado por la sra. o por la empresa Secretos",
+        "posee saldos en tarjetas de crédito y un crédito hipotecario"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1314",
+      "modelo": "A11",
+      "nivel": "13",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Sidney Alexander Osorio Montúfar",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-03-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1315",
+      "modelo": "B4",
+      "nivel": "13",
+      "vendedor": "Anahí Cisneros",
+      "clientes": [
+        {
+          "nombre": "Alan Richard González Choc",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-07-27",
+      "fuenteIngresos": [
+        "Negocio propio",
+        "Otros"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Pendiente DCI firmado. Se imprimió de nuevo",
+        "Solicitar contrato compraventa propiedades para respaldar la compra del apto."
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1316",
+      "modelo": "B3",
+      "nivel": "13",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Juan Ernesto Vossberg Ordoñez",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2024-01-29"
+        }
+      ],
+      "promesaFecha": "2024-01-31",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "Carta buró pend. Firma, falta precalificación",
+        "tomar recibo y depósito del expediente de la esposa, PCV inicial"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1317",
+      "modelo": "D4",
+      "nivel": "13",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Aristóteles Helenio Rafael Boror Parada",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-11-06"
+        },
+        {
+          "nombre": "Alba Leonor Alpírez Hernández de Boror",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2024-09-14"
+        },
+        {
+          "nombre": "Marcos David Boror Alpírez",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2024-02-20"
+        },
+        {
+          "nombre": "José Rodrigo Boror Alpírez",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2024-02-27"
+        }
+      ],
+      "promesaFecha": "2024-09-16",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1318",
+      "modelo": "D1",
+      "nivel": "13",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Héctor Felipe Alfaro Mancilla",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2024-11-29",
+      "fuenteIngresos": [
+        "Negocio propio"
+      ],
+      "bancoPrecalificacion": "Banrural",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1401",
+      "modelo": "D12",
+      "nivel": "14",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Fernando García Coronado",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2023-05-02"
+        }
+      ],
+      "promesaFecha": "2023-08-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1402",
+      "modelo": "D13",
+      "nivel": "14",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Marlen Fabiola Izaguirre Navas",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": null,
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación."
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1403",
+      "modelo": "B6",
+      "nivel": "14",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "María Mercedes Lizarralde Mc Allister de Irving",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-03-29",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1404",
+      "modelo": "B1",
+      "nivel": "14",
+      "vendedor": "Alexander Franco",
+      "clientes": [
+        {
+          "nombre": "Diego Eduardo Roman Hazard",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2023-04-26"
+        }
+      ],
+      "promesaFecha": "2023-03-29",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1405",
+      "modelo": "E2",
+      "nivel": "14",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Vivian Fabiola Artero Bran",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2020-02-10"
+        },
+        {
+          "nombre": "Victor Leonel Orozco López",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2022-08-31"
+        }
+      ],
+      "promesaFecha": "2023-04-17",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Solicitar DPI legible de la sra."
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1406",
+      "modelo": "A2",
+      "nivel": "14",
+      "vendedor": "Alexander Franco",
+      "clientes": [
+        {
+          "nombre": "Jonatan Hans Donis Montenegro",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2022-12-06"
+        }
+      ],
+      "promesaFecha": "2023-03-25",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Crédito fiduciario, 2 hipotecarios y saldos de tarjetas de crédito"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1407",
+      "modelo": "B5",
+      "nivel": "14",
+      "vendedor": "Junta Directiva",
+      "clientes": [
+        {
+          "nombre": "José Herrera Pérez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-08-16",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "No",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Pendiente DCI, comprobante de pago y recibo, precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1409",
+      "modelo": "B4",
+      "nivel": "14",
+      "vendedor": "Junta Directiva",
+      "clientes": [
+        {
+          "nombre": "International Coffee Industry, S.A.",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-08-16",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "S.A.",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta documentación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1410",
+      "modelo": "B3",
+      "nivel": "14",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Selvin Ramiro Gámez Pérez",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2023-04-17"
+        }
+      ],
+      "promesaFecha": "2024-02-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1411",
+      "modelo": "E8",
+      "nivel": "14",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Julio Cesar Morales Díaz",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2021-09-30"
+        }
+      ],
+      "promesaFecha": "2023-06-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1412",
+      "modelo": "A4",
+      "nivel": "14",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Javier Andres Soto Coronado",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2020-11-13"
+        }
+      ],
+      "promesaFecha": "2023-04-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Compró 2 apartamentos Apto. 1704"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1501",
+      "modelo": "D3",
+      "nivel": "15",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Karla Maria Guerra Figueroa de López",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        },
+        {
+          "nombre": "Paulo Roberto López Velásquez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-04-30",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1502",
+      "modelo": "D2",
+      "nivel": "14",
+      "vendedor": "Diana Alvarez",
+      "clientes": [
+        {
+          "nombre": "Edgar Benjamin Ramírez Masaya",
+          "dpiStatus": "VENCIDO",
+          "rtu": null
+        },
+        {
+          "nombre": "Leslie Maria Ivonne Pivaral Gudiel de Ramirez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": null,
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "faltan precalificaciones de ambos compradores"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1503",
+      "modelo": "B6",
+      "nivel": "15",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Emilia Aracely Larrazabal Melgar de Urbain",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-01-04"
+        }
+      ],
+      "promesaFecha": "2023-03-28",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1504",
+      "modelo": "B1",
+      "nivel": "15",
+      "vendedor": "Alexander Franco",
+      "clientes": [
+        {
+          "nombre": "Berta Eugenia Morales López de Letona",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-01-30"
+        }
+      ],
+      "promesaFecha": "2023-05-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Faltan documentos carta buró, pago y recibo reserva, precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1505",
+      "modelo": "D7",
+      "nivel": "15",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Daniel Alvarez Alvarez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2023-12-20"
+        }
+      ],
+      "promesaFecha": "2024-07-31",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1507",
+      "modelo": "C9",
+      "nivel": "15",
+      "vendedor": "Alexander Franco",
+      "clientes": [
+        {
+          "nombre": "Gabriel Arimany Monzón",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2021-02-18"
+        }
+      ],
+      "promesaFecha": "2023-03-22",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1508",
+      "modelo": "C8",
+      "nivel": "15",
+      "vendedor": "Alexander Franco",
+      "clientes": [
+        {
+          "nombre": "Maria Carolina Arimany Comas",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": "2012-04-01"
+        }
+      ],
+      "promesaFecha": "2023-03-31",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "DCI incompleto"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1509",
+      "modelo": "B4",
+      "nivel": "15",
+      "vendedor": "Anahí Cisneros",
+      "clientes": [
+        {
+          "nombre": "Alan Richard González Choc",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-07-27",
+      "fuenteIngresos": [
+        "Negocio propio",
+        "Otros"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Pendiente DCI firmado. Se imprimió de nuevo",
+        "Solicitar contrato compraventa propiedades para respaldar la compra del apto."
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1510",
+      "modelo": "B3",
+      "nivel": "15",
+      "vendedor": "Alexander Franco",
+      "clientes": [
+        {
+          "nombre": "José Paúl Centeno Valdés",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2022-11-14"
+        }
+      ],
+      "promesaFecha": "2023-09-20",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "reserva en efectivo"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1511",
+      "modelo": "E8",
+      "nivel": "15",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Luis Fernando Velásquez León",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        },
+        {
+          "nombre": "Cristian Eduardo Velásquez León",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-08-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "faltan precalificaciones de ambos compradores"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1601",
+      "modelo": "D3",
+      "nivel": "16",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Fernando García Coronado",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2023-05-02"
+        }
+      ],
+      "promesaFecha": "2023-08-16",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta documentación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1602",
+      "modelo": "D2",
+      "nivel": "16",
+      "vendedor": "Junta Directiva",
+      "clientes": [
+        {
+          "nombre": "International Coffee Industry, S.A.",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-08-16",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "S.A.",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta documentación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1603",
+      "modelo": "B6",
+      "nivel": "16",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Inmobiliaria Quince, S.A. / Federico Javier Franco",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2022-05-03"
+        }
+      ],
+      "promesaFecha": "2023-06-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "S.A.",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "La transferencia de la reserva proviene de otra persona que no compro el apartamento",
+        "No tiene precalificación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1604",
+      "modelo": "B1",
+      "nivel": "16",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Oliver Lenin García Godoy",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2023-03-29"
+        }
+      ],
+      "promesaFecha": "2023-05-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1605",
+      "modelo": "D7",
+      "nivel": "16",
+      "vendedor": null,
+      "clientes": [],
+      "promesaFecha": "2024-11-26",
+      "fuenteIngresos": [
+        "Negocio propio",
+        "Otros"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "revisar promesa inicial novia vrs. novio",
+        "No tiene precalificación",
+        "solicitar documentos del registro de la propiedad de las propiedades y contratos de arrendamientos"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1607",
+      "modelo": "C9",
+      "nivel": "16",
+      "vendedor": null,
+      "clientes": [
+        {
+          "nombre": "Federico Franco / Inmobiliaria Quince, S.A.",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2024-10-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": null,
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Pendiente comprobante de reserva y recibo",
+        "Pendiente comprobante de enganche y recibo",
+        "Pendiente papeleria legal de la S.A.",
+        "Pendiente DCI y documentos según check list"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1608",
+      "modelo": "C8",
+      "nivel": "16",
+      "vendedor": "Alexander Franco",
+      "clientes": [
+        {
+          "nombre": "Maria Carolina Arimany Comas",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": "2012-04-01"
+        }
+      ],
+      "promesaFecha": "2023-03-31",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1609",
+      "modelo": "B4",
+      "nivel": "16",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Christian Josué Colindres Sandoval",
+          "dpiStatus": "VENCIDO",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-03-29",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1610",
+      "modelo": "B3",
+      "nivel": "16",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Sak y Sak, S.A. / Sara Ileana Abularach Kelly de Orellana",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2020-12-30"
+        }
+      ],
+      "promesaFecha": "2023-06-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "S.A.",
+      "fha": false,
+      "contado": true,
+      "observaciones": [
+        "Escritura de constitucion de la empresa",
+        "Falta comprobante del 2da. reserva y recibo"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1611",
+      "modelo": "E8",
+      "nivel": "16",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Marvin Osiel Fuentes Fuentes",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-08-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1701",
+      "modelo": "E6",
+      "nivel": "17",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Ramiro José Muñoz Jordan",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2022-10-19"
+        }
+      ],
+      "promesaFecha": "2023-03-28",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "OJO: El cliente no califica, paga aprox. 14 mil en deudas",
+        "No tiene cotizacion"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1702",
+      "modelo": "A3.1",
+      "nivel": "17",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "David Alejandro Donis López",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2022-10-18"
+        }
+      ],
+      "promesaFecha": "2023-04-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1703",
+      "modelo": "D5",
+      "nivel": "17",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Rolando Antonio Pineda Juárez",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-04-30",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta precalificación."
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1704",
+      "modelo": "A5",
+      "nivel": "17",
+      "vendedor": "Brenda Búcaro",
+      "clientes": [
+        {
+          "nombre": "Javier Andres Soto Coronado",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": "2020-11-13"
+        }
+      ],
+      "promesaFecha": "2023-03-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "BAC",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Compró 2 apartamentos Apto. 1412",
+        "Falta el DCI = imprimirlo, escan si lo tiene"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1705",
+      "modelo": "D6",
+      "nivel": "17",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Maxi Alexander Méndez Moran",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-04-30",
+      "fuenteIngresos": [
+        "Relación de dependencia"
+      ],
+      "bancoPrecalificacion": "CHN",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1706",
+      "modelo": "B4",
+      "nivel": "17",
+      "vendedor": "Erwin Cardona",
+      "clientes": [
+        {
+          "nombre": "David Salomon Chup",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2022-07-14"
+        },
+        {
+          "nombre": "María Isabel Roca Trujillo de García",
+          "dpiStatus": "VENCIDO",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2026-06-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1707",
+      "modelo": "B5",
+      "nivel": "17",
+      "vendedor": "Ronaldo Ogaldez",
+      "clientes": [
+        {
+          "nombre": "Miguel Eduardo Yon Moll",
+          "dpiStatus": "VIGENTE",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2025-03-15",
+      "fuenteIngresos": [
+        "Negocio propio",
+        "Servicios profesionales"
+      ],
+      "bancoPrecalificacion": "X",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1801",
+      "modelo": "E7",
+      "nivel": "18",
+      "vendedor": "Alexander Franco",
+      "clientes": [
+        {
+          "nombre": "Luis Arimany Monzón",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2023-03-29"
+        }
+      ],
+      "promesaFecha": "2023-03-22",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1802",
+      "modelo": "A10",
+      "nivel": "18",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Fredy René Velásquez Quevedo",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2023-01-13"
+        }
+      ],
+      "promesaFecha": "2023-05-30",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Posee un crédito hipotecario y saldos en tarjetas de crédito",
+        "Solicitar DPI legible"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1804",
+      "modelo": "A5",
+      "nivel": "18",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Cynthia Marisel Coronado Monterroso",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2022-12-06"
+        }
+      ],
+      "promesaFecha": "2024-02-29",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": true,
+      "contado": false,
+      "observaciones": [
+        "OJO: El cliente desistió y lo adquirió un familiar."
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1806",
+      "modelo": "B4",
+      "nivel": "18",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Fernando José Valdés Ruano / Business View, S.A.",
+          "dpiStatus": "VENCIDO",
+          "rtu": "2023-03-23"
+        }
+      ],
+      "promesaFecha": "2023-03-29",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "BAC",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "OJO: El cliente no califica, posee 3 créditos hipotecarios vigentes con cancelación a largo plazo",
+        "confirmar si la empresa Business View será quien compre la propiedad de ser así debe de completar más papelería"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1807",
+      "modelo": "C11",
+      "nivel": "18",
+      "vendedor": "Alexander Franco",
+      "clientes": [
+        {
+          "nombre": "Yuly Marisol Rodríguez Ordóñez de Arimany",
+          "dpiStatus": "VIGENTE",
+          "rtu": "2021-09-02"
+        }
+      ],
+      "promesaFecha": "2023-03-29",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "G&T",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1808",
+      "modelo": "E3",
+      "nivel": "18",
+      "vendedor": "Antonio Rada",
+      "clientes": [
+        {
+          "nombre": "Mónica Cecilia Rodríguez Villalta",
+          "dpiStatus": "FECHA_ABSURDA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-10-15",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "Banrural",
+      "fha": false,
+      "contado": false,
+      "observaciones": []
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1901",
+      "modelo": "A11",
+      "nivel": "19",
+      "vendedor": "Junta Directiva",
+      "clientes": [
+        {
+          "nombre": "International Coffee Industry, S.A.",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2024-07-22",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "S.A.",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta documentación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1902",
+      "modelo": "D5",
+      "nivel": "19",
+      "vendedor": "Junta Directiva",
+      "clientes": [
+        {
+          "nombre": "International Coffee Industry, S.A.",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-08-16",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "S.A.",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta documentación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1903",
+      "modelo": "D6",
+      "nivel": "19",
+      "vendedor": "Junta Directiva",
+      "clientes": [
+        {
+          "nombre": "International Coffee Industry, S.A.",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-08-16",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "S.A.",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta documentación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1904",
+      "modelo": "D5",
+      "nivel": "19",
+      "vendedor": "Junta Directiva",
+      "clientes": [
+        {
+          "nombre": "International Coffee Industry, S.A.",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-08-16",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "S.A.",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta documentación"
+      ]
+    },
+    {
+      "proyecto": "Boulevard 5",
+      "apto": "1905",
+      "modelo": "D8",
+      "nivel": "19",
+      "vendedor": "Junta Directiva",
+      "clientes": [
+        {
+          "nombre": "International Coffee Industry, S.A.",
+          "dpiStatus": "SIN_FECHA",
+          "rtu": null
+        }
+      ],
+      "promesaFecha": "2023-08-16",
+      "fuenteIngresos": [],
+      "bancoPrecalificacion": "S.A.",
+      "fha": false,
+      "contado": false,
+      "observaciones": [
+        "Falta documentación"
+      ]
+    }
+  ]
+}

@@ -565,7 +565,7 @@ export const HUD_AREAS: HudArea[] = [
             id: "m3",
             label: "Casos específicos",
             status: "NO_VINCULADA",
-            note: "Definición pendiente del equipo de cumplimiento — puede convertirse en sección propia si resulta ser un workflow independiente.",
+            note: "Definición pendiente: Jorge confirmó (2026-08-07) que NO son las observaciones del oficial (esas se muestran en Expedientes). Qué son los casos específicos sigue sin definirse.",
           },
         ],
       },
@@ -576,8 +576,8 @@ export const HUD_AREAS: HudArea[] = [
           {
             id: "m4",
             label: "Expedientes — status por proyecto",
-            status: "NO_VINCULADA",
-            note: "El pipeline de CRÉDITOS de Pipedrive ya está vinculado (ver tab CRÉDITOS), pero no contiene status de cumplimiento — solo etapas de crédito. Falta definir qué status de cumplimiento se rastrea y dónde vive.",
+            status: "COMPLETA",
+            note: "Desplegado aquí: base del oficial de cumplimiento — 265 expedientes B5, 327 compradores, status de DPI (vigente/vencido/fecha absurda/sin fecha), RTU, promesa, fuente de ingresos y precalificación. La data de todos los proyectos está completa en xlsx, pendiente de descarga — B5 primero.",
           },
           {
             id: "m5",
