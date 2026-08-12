@@ -289,8 +289,9 @@ export const HUD_AREAS: HudArea[] = [
           {
             id: "v10",
             label: "Control de descuentos",
-            status: "NO_VINCULADA",
-            note: "Los descuentos son rebajas de precio distintas a los vales (v11). Su data existe únicamente en PDFs escaneados — no se mantiene ningún reporte. Vincularla requiere digitalización (ej. OCR, como el flujo de boletas) o captura manual.",
+            status: "COMPLETA",
+            note: "Desplegado en /descuentos: 52 expedientes B5 con descuento plausible extraídos por OCR de los PDFs escaneados (snapshot 2026-08-12) — exposición máx. Q1,359,642, tipos y evidencia por expediente, ruido (recibos EEGSA, montos implausibles) descartado y contabilizado. Cobertura solo B5 — demás proyectos pendientes de extracción. Los descuentos son rebajas de precio distintas a los vales (v11).",
+            proof: [{ href: "/descuentos", label: "Control de descuentos — B5" }],
           },
           {
             id: "v11",

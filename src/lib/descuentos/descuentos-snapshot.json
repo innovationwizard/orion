@@ -1,0 +1,1489 @@
+{
+ "scope": "Boulevard 5 únicamente — extracción OCR de los expedientes escaneados (PDF)",
+ "extractedAt": "2026-08-12",
+ "sources": [
+  "descuentos_b5.csv (135 hits de línea, 87 expedientes)",
+  "descuentos_por_folder.csv (52 expedientes con descuento plausible)"
+ ],
+ "totals": {
+  "expedientes": 52,
+  "exposicionMaxGtq": 1359642.3,
+  "expedientesDescartados": 35,
+  "hitsTotales": 135,
+  "hitsDescartados": 36
+ },
+ "tipos": {
+  "generico": 34,
+  "family_friends": 9,
+  "pago_contado": 6,
+  "volumen": 5,
+  "especial": 3,
+  "cliente_directo": 3,
+  "promocion": 1
+ },
+ "flagCounts": {
+  "eegsa_bill": 24,
+  "no_amount_found": 22,
+  "implausible_vs_total": 15,
+  "percent_only": 11,
+  "low_conf": 10,
+  "legal_prose": 6
+ },
+ "folders": [
+  {
+   "partnerId": "23659",
+   "unidad": "1216",
+   "cliente": "Alan Gonzalez Choc",
+   "folder": "23659__02-1216-B3-24--Alan-Gonzalez-Choc",
+   "types": [
+    "especial"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 240944.0,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "344800__B5 Apto. 1216.pdf",
+     "page": 12,
+     "label": "Descuento especial",
+     "conf": 99.6,
+     "amountGtq": 240944.0,
+     "tipo": "especial",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23444",
+   "unidad": "0106",
+   "cliente": "Claudia Ruth Marianella Paiz Herrera de Alvarez",
+   "folder": "23444__02-0106-B2.1---Claudia-Ruth-Marianella-Paiz-Herrera-de-Alvarez",
+   "types": [
+    "promocion"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 100000.0,
+   "percents": "",
+   "reviewFlags": "low_conf:88.0",
+   "evidencia": [
+    {
+     "pdf": "386268__Claudia Ruth Marianella Paiz Herrera de Alvarez  Jose Eduardo Alvarez Martínez  Apto. 106 B5.pdf",
+     "page": 11,
+     "label": "Descuento de Q100,000",
+     "conf": 88.0,
+     "amountGtq": 100000.0,
+     "tipo": "promocion",
+     "flags": "low_conf:88.0"
+    }
+   ]
+  },
+  {
+   "partnerId": "67698",
+   "unidad": "0102",
+   "cliente": "IRMA LETICIA VILLATORO BUCARO",
+   "folder": "67698__02-0102-B4.1-IRMA-LETICIA-VILLATORO-BUCARO",
+   "types": [
+    "generico"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 100000.0,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "386267__Irma Leticia Villatoro Bucaro  Apto. 102 B5.pdf",
+     "page": 11,
+     "label": "Descuento de Q 100,000",
+     "conf": 95.8,
+     "amountGtq": 100000.0,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "71634",
+   "unidad": "0614",
+   "cliente": "Ruben Ivan Espa a Marroqu n",
+   "folder": "71634__02-0614-E5-Ruben-Ivan-Espa-a-Marroqu-n",
+   "types": [
+    "generico"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 100000.0,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "405283__Ruben Ivan España Marroquín Apto 614 B-5.pdf",
+     "page": 28,
+     "label": "Descuento",
+     "conf": 99.6,
+     "amountGtq": 100000.0,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23576",
+   "unidad": "0811",
+   "cliente": "ROSA GILDA TUCHAN VALLE DE GONZALEZ",
+   "folder": "23576__02-0811-B7-05--ROSA-GILDA-TUCHAN-VALLE-DE-GONZALEZ",
+   "types": [
+    "generico"
+   ],
+   "instances": 2,
+   "maxAmountGtq": 87053.98,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "235521__Apto.811.pdf",
+     "page": 15,
+     "label": "Descuento",
+     "conf": 99.3,
+     "amountGtq": 87053.98,
+     "tipo": "generico",
+     "flags": ""
+    },
+    {
+     "pdf": "252234__Apto. 811 inversiones JJK.pdf",
+     "page": 15,
+     "label": "Descuento",
+     "conf": 99.4,
+     "amountGtq": 87053.98,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23447",
+   "unidad": "0109",
+   "cliente": "LAURA ELISA OVALLE GONZ LEZ",
+   "folder": "23447__02-0109-E2.1-05-LAURA-ELISA-OVALLE-GONZ-LEZ",
+   "types": [
+    "pago_contado"
+   ],
+   "instances": 2,
+   "maxAmountGtq": 80274.0,
+   "percents": "6",
+   "reviewFlags": "legal_prose",
+   "evidencia": [
+    {
+     "pdf": "407075__Laura Eliza Ovalle Adenda B-5.pdf",
+     "page": 2,
+     "label": "descuento equivalente al seis por ciento (6%) sobre el precio total pactado.",
+     "conf": 99.2,
+     "amountGtq": 80274.0,
+     "tipo": "pago_contado",
+     "flags": "legal_prose"
+    },
+    {
+     "pdf": "407075__Laura Eliza Ovalle Adenda B-5.pdf",
+     "page": 2,
+     "label": "En consecuencia, el monto del descuento asciende a la cantidad de OCHENTA MIL DOSCIENTOS",
+     "conf": 98.8,
+     "amountGtq": 80274.0,
+     "tipo": "pago_contado",
+     "flags": "legal_prose"
+    }
+   ]
+  },
+  {
+   "partnerId": "71535",
+   "unidad": "1001",
+   "cliente": "Carlos Ram n Chaj n Aceituno",
+   "folder": "71535__02-1001-C4--Carlos-Ram-n-Chaj-n-Aceituno",
+   "types": [
+    "especial"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 80000.0,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "405285__Carlos Roberto Sandoval Najera  Carlos Ramón Chajón Aceituno Apto.1001 B5.pdf",
+     "page": 11,
+     "label": "(-) descuento especial",
+     "conf": 97.5,
+     "amountGtq": 80000.0,
+     "tipo": "especial",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23722",
+   "unidad": "1707",
+   "cliente": "GV MIGUEL EDUARDO YON MOLL",
+   "folder": "23722__02-1707-B5-GV-MIGUEL-EDUARDO-YON-MOLL",
+   "types": [
+    "generico",
+    "pago_contado"
+   ],
+   "instances": 2,
+   "maxAmountGtq": 72300.0,
+   "percents": "",
+   "reviewFlags": "low_conf:83.0",
+   "evidencia": [
+    {
+     "pdf": "310113__Apto. 1707.pdf",
+     "page": 1,
+     "label": "Comentarios: Descuento Q.72,300",
+     "conf": 83.0,
+     "amountGtq": 72300.0,
+     "tipo": "pago_contado",
+     "flags": "low_conf:83.0"
+    },
+    {
+     "pdf": "310113__Apto. 1707.pdf",
+     "page": 18,
+     "label": "Descuento",
+     "conf": 99.5,
+     "amountGtq": 72300.0,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23463",
+   "unidad": "0211",
+   "cliente": "5 NERY AROLDO CASTA EDA CERNA SARA BEATRIZ CASTRO TABALAN DE CASTA",
+   "folder": "23463__02-0211-E1-025-NERY-AROLDO-CASTA-EDA-CERNA-SARA-BEATRIZ-CASTRO-TABALAN-DE-CASTA",
+   "types": [
+    "generico"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 70000.0,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "395970__Nery Aroldo Castañeda Cerna y Sara Beatriz Castro Tebalán de Castañeda Apto 211 B-5.pdf",
+     "page": 13,
+     "label": "Descuento",
+     "conf": 99.7,
+     "amountGtq": 70000.0,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23624",
+   "unidad": "1019",
+   "cliente": "GLORIA FERNANDA MOR N GUEVARA",
+   "folder": "23624__02-1019-C3-05-GLORIA-FERNANDA-MOR-N-GUEVARA",
+   "types": [
+    "generico",
+    "pago_contado"
+   ],
+   "instances": 2,
+   "maxAmountGtq": 30000.0,
+   "percents": "1",
+   "reviewFlags": "low_conf:64.8",
+   "evidencia": [
+    {
+     "pdf": "372882__Gloria Morán Apto 1019 MC3 B5.pdf",
+     "page": 1,
+     "label": "Comentarios: Descuento 30,000 Pago de enganche",
+     "conf": 96.9,
+     "amountGtq": 30000.0,
+     "tipo": "pago_contado",
+     "flags": ""
+    },
+    {
+     "pdf": "83433__Apartamento 1019 (4).pdf",
+     "page": 12,
+     "label": "Descuents Friends a Fam",
+     "conf": 64.8,
+     "amountGtq": 8431.08,
+     "tipo": "generico",
+     "flags": "low_conf:64.8"
+    }
+   ]
+  },
+  {
+   "partnerId": "23600",
+   "unidad": "0915",
+   "cliente": "Marcela Alejandra Castro Marc a",
+   "folder": "23600__02-0915-E2-06-Marcela-Alejandra-Castro-Marc-a",
+   "types": [
+    "generico"
+   ],
+   "instances": 2,
+   "maxAmountGtq": 24402.56,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "127476__APTO 915 LEGAL.PDF",
+     "page": 16,
+     "label": "Descuento",
+     "conf": 99.4,
+     "amountGtq": 24402.56,
+     "tipo": "generico",
+     "flags": ""
+    },
+    {
+     "pdf": "127476__APTO 915 LEGAL.PDF",
+     "page": 23,
+     "label": "Descuento",
+     "conf": 99.3,
+     "amountGtq": 24402.56,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23557",
+   "unidad": "0711",
+   "cliente": "Samuel David Ch vez P rez",
+   "folder": "23557__02-0711-C5-14-Samuel-David-Ch-vez-P-rez",
+   "types": [
+    "pago_contado"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 24084.25,
+   "percents": "2",
+   "reviewFlags": "low_conf:83.5",
+   "evidencia": [
+    {
+     "pdf": "288523__Apto. 711.pdf",
+     "page": 1,
+     "label": "Comentarios: Descuento Q24,084.25 2% por pago de Contado",
+     "conf": 83.5,
+     "amountGtq": 24084.25,
+     "tipo": "pago_contado",
+     "flags": "low_conf:83.5"
+    }
+   ]
+  },
+  {
+   "partnerId": "23639",
+   "unidad": "1114",
+   "cliente": "CLARA HILDA MARIA FALLA BIANCHI DE CRUZ GOMAR",
+   "folder": "23639__02-1114-A11-05-CLARA-HILDA-MARIA-FALLA-BIANCHI-DE-CRUZ-GOMAR",
+   "types": [
+    "family_friends",
+    "generico"
+   ],
+   "instances": 3,
+   "maxAmountGtq": 22007.15,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "109922__EXPEDIENTE COMPLETO 1114.pdf",
+     "page": 11,
+     "label": "Descuento F&F",
+     "conf": 98.0,
+     "amountGtq": 6907.59,
+     "tipo": "family_friends",
+     "flags": ""
+    },
+    {
+     "pdf": "109922__EXPEDIENTE COMPLETO 1114.pdf",
+     "page": 14,
+     "label": "Descuento F&F",
+     "conf": 99.4,
+     "amountGtq": 6907.59,
+     "tipo": "family_friends",
+     "flags": ""
+    },
+    {
+     "pdf": "214995__Clara Falla Apto. 1114.PDF",
+     "page": 20,
+     "label": "Descuento",
+     "conf": 99.4,
+     "amountGtq": 22007.15,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23461",
+   "unidad": "0209",
+   "cliente": "IGOR ALEJANDRO SALAZAR ZAMORA",
+   "folder": "23461__02-0209-B4-26-IGOR-ALEJANDRO-SALAZAR-ZAMORA",
+   "types": [
+    "generico"
+   ],
+   "instances": 4,
+   "maxAmountGtq": 18303.4,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "336883__Apto. 209.pdf",
+     "page": 10,
+     "label": "Descuento",
+     "conf": 99.8,
+     "amountGtq": 18303.4,
+     "tipo": "generico",
+     "flags": ""
+    },
+    {
+     "pdf": "336883__Apto. 209.pdf",
+     "page": 22,
+     "label": "Descuento",
+     "conf": 99.2,
+     "amountGtq": 18303.4,
+     "tipo": "generico",
+     "flags": ""
+    },
+    {
+     "pdf": "337102__Apto. 209.pdf",
+     "page": 10,
+     "label": "Descuento",
+     "conf": 99.8,
+     "amountGtq": 18303.4,
+     "tipo": "generico",
+     "flags": ""
+    },
+    {
+     "pdf": "337102__Apto. 209.pdf",
+     "page": 22,
+     "label": "Descuento",
+     "conf": 99.6,
+     "amountGtq": 18303.4,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23525",
+   "unidad": "0517",
+   "cliente": "JORGE ESTUARDO DIAZ DURAN BALDETTI",
+   "folder": "23525__02-0517-B3-05-JORGE-ESTUARDO-DIAZ-DURAN-BALDETTI",
+   "types": [
+    "generico"
+   ],
+   "instances": 2,
+   "maxAmountGtq": 16237.88,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "207155__Jorge Díaz-Duran Apto. 517.PDF",
+     "page": 11,
+     "label": "Descuento por compra 717 y 517",
+     "conf": 96.0,
+     "amountGtq": 4166.0,
+     "tipo": "generico",
+     "flags": ""
+    },
+    {
+     "pdf": "207155__Jorge Díaz-Duran Apto. 517.PDF",
+     "page": 14,
+     "label": "Descuento",
+     "conf": 99.6,
+     "amountGtq": 16237.88,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23482",
+   "unidad": "0314",
+   "cliente": "Arcely Contreras",
+   "folder": "23482__02-0314-B3-26-Arcely-Contreras",
+   "types": [
+    "generico"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 15000.0,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "347937__Apto. 314 B5.pdf",
+     "page": 11,
+     "label": "Descuento",
+     "conf": 99.7,
+     "amountGtq": 15000.0,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23731",
+   "unidad": "1808",
+   "cliente": "MONICA CECILIA RODRIGUEZ VILLALTA",
+   "folder": "23731__02-1808-E3-05-MONICA-CECILIA-RODRIGUEZ-VILLALTA",
+   "types": [
+    "especial"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 13091.49,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "129249__Apartamento 1808.PDF",
+     "page": 22,
+     "label": "Descuento especial",
+     "conf": 99.5,
+     "amountGtq": 13091.49,
+     "tipo": "especial",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23451",
+   "unidad": "0113",
+   "cliente": "RODRIGO RODAS PAZOS",
+   "folder": "23451__02-0113-C3.1-05-RODRIGO-RODAS-PAZOS",
+   "types": [
+    "generico"
+   ],
+   "instances": 2,
+   "maxAmountGtq": 12992.99,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "275403__Apto. 113.pdf",
+     "page": 11,
+     "label": "Descuento",
+     "conf": 99.5,
+     "amountGtq": 12992.99,
+     "tipo": "generico",
+     "flags": ""
+    },
+    {
+     "pdf": "275403__Apto. 113.pdf",
+     "page": 22,
+     "label": "Descuento",
+     "conf": 99.5,
+     "amountGtq": 12992.99,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23623",
+   "unidad": "1018",
+   "cliente": "CORPORACI N FB SOCIEDAD AN NIMA",
+   "folder": "23623__02-1018-A3-05-CORPORACI-N-FB-SOCIEDAD-AN-NIMA",
+   "types": [
+    "generico"
+   ],
+   "instances": 2,
+   "maxAmountGtq": 12872.83,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "120260__Apto. 1018.PDF",
+     "page": 18,
+     "label": "Descuento",
+     "conf": 97.3,
+     "amountGtq": 12872.83,
+     "tipo": "generico",
+     "flags": ""
+    },
+    {
+     "pdf": "120260__Apto. 1018.PDF",
+     "page": 22,
+     "label": "Descuento",
+     "conf": 99.2,
+     "amountGtq": 12872.83,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23637",
+   "unidad": "1112",
+   "cliente": "GRUPO SAK Y SAK SOCIEDAD ANONIMA",
+   "folder": "23637__02-1112-A8-05-GRUPO-SAK-Y-SAK-SOCIEDAD-ANONIMA",
+   "types": [
+    "generico",
+    "pago_contado"
+   ],
+   "instances": 2,
+   "maxAmountGtq": 12872.83,
+   "percents": "1;2",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "101662__PAPELERIA COMPLETA 1112.pdf",
+     "page": 17,
+     "label": "Descuento contado 1%",
+     "conf": 96.2,
+     "amountGtq": 12872.83,
+     "tipo": "pago_contado",
+     "flags": ""
+    },
+    {
+     "pdf": "101662__PAPELERIA COMPLETA 1112.pdf",
+     "page": 25,
+     "label": "Descuento 2%",
+     "conf": 98.1,
+     "amountGtq": 12872.83,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23724",
+   "unidad": "1801",
+   "cliente": "Luis Arimany Monz n",
+   "folder": "23724__02-1801-E7-04-Luis-Arimany-Monz-n",
+   "types": [
+    "family_friends"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 12848.0,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "84972__Apto 1801.pdf",
+     "page": 11,
+     "label": "Descuento Family",
+     "conf": 96.7,
+     "amountGtq": 12848.0,
+     "tipo": "family_friends",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23634",
+   "unidad": "1109",
+   "cliente": "FAUSTO NORBERTH M NDEZ MELGAR",
+   "folder": "23634__02-1109-C5-05-FAUSTO-NORBERTH-M-NDEZ-MELGAR",
+   "types": [
+    "cliente_directo",
+    "generico"
+   ],
+   "instances": 2,
+   "maxAmountGtq": 10916.77,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "149574__Fausto y Guerda Apto. 1109.PDF",
+     "page": 19,
+     "label": "Descuento",
+     "conf": 99.5,
+     "amountGtq": 10916.77,
+     "tipo": "generico",
+     "flags": ""
+    },
+    {
+     "pdf": "149574__Fausto y Guerda Apto. 1109.PDF",
+     "page": 23,
+     "label": "Descuento C. Directo",
+     "conf": 92.9,
+     "amountGtq": 10916.77,
+     "tipo": "cliente_directo",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23642",
+   "unidad": "1117",
+   "cliente": "JERSON LEONEL CHAVEZ MARTINEZ",
+   "folder": "23642__02-1117-D10-05-JERSON-LEONEL-CHAVEZ-MARTINEZ",
+   "types": [
+    "generico"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 10765.78,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "153430__Jerson Chavez Apto. 1117.PDF",
+     "page": 19,
+     "label": "Descuento",
+     "conf": 99.1,
+     "amountGtq": 10765.78,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23711",
+   "unidad": "1608",
+   "cliente": "Mar a Carolina Arimany Comas",
+   "folder": "23711__02-1608-C8-04-Mar-a-Carolina-Arimany-Comas",
+   "types": [
+    "volumen"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 10652.0,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "85116__Apto 1608 Carolina.pdf",
+     "page": 11,
+     "label": "Descuento Volumen",
+     "conf": 98.9,
+     "amountGtq": 10652.0,
+     "tipo": "volumen",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23490",
+   "unidad": "0402",
+   "cliente": "GUILLERMO VINICIO COTTO MUX",
+   "folder": "23490__02-0402-C2-05-GUILLERMO-VINICIO-COTTO-MUX",
+   "types": [
+    "generico"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 10628.55,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "153431__Guillermo Cotto Apto. 402.PDF",
+     "page": 15,
+     "label": "Descuento",
+     "conf": 99.2,
+     "amountGtq": 10628.55,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23699",
+   "unidad": "1508",
+   "cliente": "Mar a Carolina Arimany Comas",
+   "folder": "23699__02-1508-C8-04-Mar-a-Carolina-Arimany-Comas",
+   "types": [
+    "volumen"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 10540.0,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "85115__Apto 1508.pdf",
+     "page": 11,
+     "label": "Descuento Volumen",
+     "conf": 99.1,
+     "amountGtq": 10540.0,
+     "tipo": "volumen",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23698",
+   "unidad": "1507",
+   "cliente": "Gabriel Arimany Monz n",
+   "folder": "23698__02-1507-C9-04-Gabriel-Arimany-Monz-n",
+   "types": [
+    "generico"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 10539.0,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "84843__Apartamento 1507 (2).pdf",
+     "page": 10,
+     "label": "Descuento",
+     "conf": 99.4,
+     "amountGtq": 10539.0,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23730",
+   "unidad": "1807",
+   "cliente": "Yuly Marisol Rodr guez Ordo ez de Arimany",
+   "folder": "23730__02-1807-C11-04-Yuly-Marisol-Rodr-guez-Ordo-ez-de-Arimany",
+   "types": [
+    "family_friends"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 10444.0,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "126425__Julie de Arimany 1807.PDF",
+     "page": 16,
+     "label": "Descuento Family",
+     "conf": 99.5,
+     "amountGtq": 10444.0,
+     "tipo": "family_friends",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23633",
+   "unidad": "1108",
+   "cliente": "Denis Orlando Coto Zelaya",
+   "folder": "23633__02-1108-C6-06-Denis-Orlando-Coto-Zelaya",
+   "types": [
+    "family_friends"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 10161.02,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "149959__Denis Coto Apto. 1108.PDF",
+     "page": 21,
+     "label": "Descuento F&F",
+     "conf": 99.1,
+     "amountGtq": 10161.02,
+     "tipo": "family_friends",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23578",
+   "unidad": "0813",
+   "cliente": "INDUSTRIAS DANICO S.A",
+   "folder": "23578__02-0813-B6-05-INDUSTRIAS-DANICO-S.A",
+   "types": [
+    "cliente_directo",
+    "generico"
+   ],
+   "instances": 2,
+   "maxAmountGtq": 8267.15,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "214993__Pedro Cordón Apto. 813.PDF",
+     "page": 1,
+     "label": "Comentarios: Descuento por credito directo",
+     "conf": 91.7,
+     "amountGtq": 8267.15,
+     "tipo": "cliente_directo",
+     "flags": ""
+    },
+    {
+     "pdf": "214993__Pedro Cordón Apto. 813.PDF",
+     "page": 57,
+     "label": "Descuento",
+     "conf": 99.1,
+     "amountGtq": 8267.15,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23713",
+   "unidad": "1610",
+   "cliente": "GRUPO SAK Y SAK SOCIEDAD ANONIMA",
+   "folder": "23713__02-1610-B3-05-GRUPO-SAK-Y-SAK-SOCIEDAD-ANONIMA",
+   "types": [
+    "generico",
+    "pago_contado"
+   ],
+   "instances": 2,
+   "maxAmountGtq": 8218.66,
+   "percents": "1",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "101678__PAPELERIA COMPLETA 1610.pdf",
+     "page": 13,
+     "label": "Descuento 1%",
+     "conf": 98.0,
+     "amountGtq": 8218.66,
+     "tipo": "generico",
+     "flags": ""
+    },
+    {
+     "pdf": "101678__PAPELERIA COMPLETA 1610.pdf",
+     "page": 20,
+     "label": "Descuento contado 1%",
+     "conf": 96.0,
+     "amountGtq": 8218.66,
+     "tipo": "pago_contado",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23665",
+   "unidad": "1304",
+   "cliente": "SHIRLEY HILENE RECINOS",
+   "folder": "23665__02-1304-B3-05-SHIRLEY-HILENE-RECINOS",
+   "types": [
+    "generico"
+   ],
+   "instances": 2,
+   "maxAmountGtq": 8118.94,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "137150__SCAN0007.PDF",
+     "page": 16,
+     "label": "Descuento",
+     "conf": 99.3,
+     "amountGtq": 8118.94,
+     "tipo": "generico",
+     "flags": ""
+    },
+    {
+     "pdf": "137150__SCAN0007.PDF",
+     "page": 20,
+     "label": "Descuento (Crédito",
+     "conf": 98.6,
+     "amountGtq": 8118.94,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23677",
+   "unidad": "1316",
+   "cliente": "JUAN ERNESTO VOSSBERG ORD EZ",
+   "folder": "23677__02-1316-B3-05-JUAN-ERNESTO-VOSSBERG-ORD-EZ",
+   "types": [
+    "cliente_directo",
+    "generico"
+   ],
+   "instances": 2,
+   "maxAmountGtq": 8118.94,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "175284__Juan Vossberg Apto. 1316.PDF",
+     "page": 10,
+     "label": "Descuento C. Directo",
+     "conf": 95.7,
+     "amountGtq": 8118.94,
+     "tipo": "cliente_directo",
+     "flags": ""
+    },
+    {
+     "pdf": "175284__Juan Vossberg Apto. 1316.PDF",
+     "page": 19,
+     "label": "Descuento",
+     "conf": 99.6,
+     "amountGtq": 8118.94,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23706",
+   "unidad": "1603",
+   "cliente": "INMOBILIARIA QUINCE SOCIEDAD ANONIMA",
+   "folder": "23706__02-1603-B6-05-INMOBILIARIA-QUINCE-SOCIEDAD-ANONIMA",
+   "types": [
+    "family_friends"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 7969.39,
+   "percents": "1",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "101685__apartamento 1603 (2).pdf",
+     "page": 29,
+     "label": "Descuento Family & Friends 1%",
+     "conf": 92.9,
+     "amountGtq": 7969.39,
+     "tipo": "family_friends",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23683",
+   "unidad": "1404",
+   "cliente": "Diego Eduardo Roman Hazard",
+   "folder": "23683__02-1404-B1-04-Diego-Eduardo-Roman-Hazard",
+   "types": [
+    "family_friends",
+    "generico"
+   ],
+   "instances": 2,
+   "maxAmountGtq": 7910.0,
+   "percents": "1",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "84863__Apartamento 1404.pdf",
+     "page": 11,
+     "label": "Descuento Family",
+     "conf": 99.0,
+     "amountGtq": 7910.0,
+     "tipo": "family_friends",
+     "flags": ""
+    },
+    {
+     "pdf": "84863__Apartamento 1404.pdf",
+     "page": 11,
+     "label": "Descuento FHA",
+     "conf": 99.2,
+     "amountGtq": 7119.0,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23700",
+   "unidad": "1509",
+   "cliente": "Alan Gonzalez Choc",
+   "folder": "23700__02-1509-B4-24-Alan-Gonzalez-Choc",
+   "types": [
+    "generico"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 7852.99,
+   "percents": "1",
+   "reviewFlags": "low_conf:64.3",
+   "evidencia": [
+    {
+     "pdf": "83116__Apartamento 1509 (1).pdf",
+     "page": 11,
+     "label": "Descuents Friends & Fam",
+     "conf": 64.3,
+     "amountGtq": 7852.99,
+     "tipo": "generico",
+     "flags": "low_conf:64.3"
+    }
+   ]
+  },
+  {
+   "partnerId": "23495",
+   "unidad": "0407",
+   "cliente": "Alberto Arrecis",
+   "folder": "23495__02-0407-B6-26-Alberto-Arrecis",
+   "types": [
+    "generico"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 7041.47,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "347544__Apto. 407 B5.pdf",
+     "page": 11,
+     "label": "Descuento",
+     "conf": 99.6,
+     "amountGtq": 7041.47,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23732",
+   "unidad": "1901",
+   "cliente": "GV1 INTERNATIONAL COFFEE INDUSTRY S.ACid",
+   "folder": "23732__02-1901-A11-GV1-INTERNATIONAL-COFFEE-INDUSTRY-S.ACid",
+   "types": [
+    "family_friends"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 6818.0,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "149051__apto. 1901.pdf",
+     "page": 11,
+     "label": "Descuento F&F",
+     "conf": 97.6,
+     "amountGtq": 6818.0,
+     "tipo": "family_friends",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23484",
+   "unidad": "0316",
+   "cliente": "ALLAN OMAR ALVARADO V SQUEZ",
+   "folder": "23484__02-0316-A4-05-ALLAN-OMAR-ALVARADO-V-SQUEZ",
+   "types": [
+    "generico"
+   ],
+   "instances": 3,
+   "maxAmountGtq": 6541.06,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "137146__SCAN0008.PDF",
+     "page": 21,
+     "label": "Descuento",
+     "conf": 99.2,
+     "amountGtq": 6541.06,
+     "tipo": "generico",
+     "flags": ""
+    },
+    {
+     "pdf": "137146__SCAN0008.PDF",
+     "page": 25,
+     "label": "Descuento",
+     "conf": 99.5,
+     "amountGtq": 6541.06,
+     "tipo": "generico",
+     "flags": ""
+    },
+    {
+     "pdf": "393297__ALLAN OMAR ALVARADO VÁSQUEZ Apto 316 B5.pdf",
+     "page": 10,
+     "label": "Descuento",
+     "conf": 99.7,
+     "amountGtq": 6541.06,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23649",
+   "unidad": "1206",
+   "cliente": "Juan Jos Silva Pacheco",
+   "folder": "23649__02-1206-A4-04-Juan-Jos-Silva-Pacheco",
+   "types": [
+    "generico"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 6381.51,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "94267__apartamento 1206.pdf",
+     "page": 22,
+     "label": "Descuento",
+     "conf": 90.9,
+     "amountGtq": 6381.51,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23650",
+   "unidad": "1207",
+   "cliente": "David Arimany Monz n",
+   "folder": "23650__02-1207-A12-04-David-Arimany-Monz-n",
+   "types": [
+    "family_friends"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 6268.0,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "84757__apartamento 1207.pdf",
+     "page": 11,
+     "label": "Descuento Family",
+     "conf": 99.2,
+     "amountGtq": 6268.0,
+     "tipo": "family_friends",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23668",
+   "unidad": "1307",
+   "cliente": "Fernando Jos Franco Jim nez",
+   "folder": "23668__02-1307-A12-04-Fernando-Jos-Franco-Jim-nez",
+   "types": [
+    "generico"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 6268.0,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "145025__Apto. 1307 Fernando Franco.PDF",
+     "page": 21,
+     "label": "Descuento",
+     "conf": 99.5,
+     "amountGtq": 6268.0,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23582",
+   "unidad": "0817",
+   "cliente": "Juan Antonio Escobedo Del Cid",
+   "folder": "23582__02-0817-A6-06-Juan-Antonio-Escobedo-Del-Cid",
+   "types": [
+    "generico"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 6067.7,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "101923__apartamento 817 LEGAL.pdf",
+     "page": 18,
+     "label": "Descuento",
+     "conf": 96.3,
+     "amountGtq": 6067.7,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23638",
+   "unidad": "1113",
+   "cliente": "Marcas Secretos S.A.",
+   "folder": "23638__02-1113-A2-04-Marcas-Secretos-S.A.",
+   "types": [
+    "volumen"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 5961.0,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "90910__apartamento 1113.pdf",
+     "page": 11,
+     "label": "Descuento Volumen",
+     "conf": 98.5,
+     "amountGtq": 5961.0,
+     "tipo": "volumen",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23674",
+   "unidad": "1313",
+   "cliente": "Marcas Secretos S.A.",
+   "folder": "23674__02-1313-A2-04-Marcas-Secretos-S.A.",
+   "types": [
+    "volumen"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 5961.0,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "90911__apartamento 1313.pdf",
+     "page": 11,
+     "label": "Descuento Volumen",
+     "conf": 98.9,
+     "amountGtq": 5961.0,
+     "tipo": "volumen",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23542",
+   "unidad": "0615",
+   "cliente": "MARIA DE LOS ANGELES ESPA A CORD N",
+   "folder": "23542__02-0615-A5-05-MARIA-DE-LOS-ANGELES-ESPA-A-CORD-N",
+   "types": [
+    "generico"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 5649.99,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "102313__PAPELERIA COMPLETA 615.pdf",
+     "page": 25,
+     "label": "Descuento Referido",
+     "conf": 97.9,
+     "amountGtq": 5649.99,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23614",
+   "unidad": "1009",
+   "cliente": "Augusto Alejandro Salazar Alecio y Yosseline Yanira Moscoso Hidalg",
+   "folder": "23614__02-1009-E8-14-Augusto-Alejandro-Salazar-Alecio-y-Yosseline-Yanira-Moscoso-Hidalg",
+   "types": [
+    "volumen"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 3000.0,
+   "percents": "",
+   "reviewFlags": "low_conf:88.1",
+   "evidencia": [
+    {
+     "pdf": "90904__apartamento 1009.pdf",
+     "page": 11,
+     "label": "Descuente Volumen",
+     "conf": 88.1,
+     "amountGtq": 3000.0,
+     "tipo": "volumen",
+     "flags": "low_conf:88.1"
+    }
+   ]
+  },
+  {
+   "partnerId": "23671",
+   "unidad": "1310",
+   "cliente": "Ra l Cabrera Galindo",
+   "folder": "23671__02-1310-C6-04-Ra-l-Cabrera-Galindo",
+   "types": [
+    "family_friends"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 3000.0,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "85085__Apto 1310.pdf",
+     "page": 23,
+     "label": "Descuento Family",
+     "conf": 99.3,
+     "amountGtq": 3000.0,
+     "tipo": "family_friends",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23685",
+   "unidad": "1406",
+   "cliente": "Jonatan Hans Donis Montenegro",
+   "folder": "23685__02-1406-A2-04-Jonatan-Hans-Donis-Montenegro",
+   "types": [
+    "generico"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 1690.0,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "84831__Apartamento 1406 (2).pdf",
+     "page": 11,
+     "label": "Descuento",
+     "conf": 99.3,
+     "amountGtq": 1690.0,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23720",
+   "unidad": "1705",
+   "cliente": "MAXI ALEXANDER MENDEZ MORAN",
+   "folder": "23720__02-1705-D6-05-MAXI-ALEXANDER-MENDEZ-MORAN",
+   "types": [
+    "generico"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 1450.32,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "322271__Apto. 1705.pdf",
+     "page": 22,
+     "label": "Descuento",
+     "conf": 99.6,
+     "amountGtq": 1450.32,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23449",
+   "unidad": "0111",
+   "cliente": "Ingrid Liseth Barillas L pez",
+   "folder": "23449__02-0111-A6.1-04-Ingrid-Liseth-Barillas-L-pez",
+   "types": [
+    "generico"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 1000.0,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "84753__Apartamento 111.pdf",
+     "page": 12,
+     "label": "Descuento",
+     "conf": 99.1,
+     "amountGtq": 1000.0,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  },
+  {
+   "partnerId": "23669",
+   "unidad": "1308",
+   "cliente": "Gerson Alexander Urias Marquez",
+   "folder": "23669__02-1308-C6-05-Gerson-Alexander-Urias-Marquez",
+   "types": [
+    "generico"
+   ],
+   "instances": 1,
+   "maxAmountGtq": 155.7,
+   "percents": "",
+   "reviewFlags": "",
+   "evidencia": [
+    {
+     "pdf": "146715__Apto. 1308 Alex Urias.PDF",
+     "page": 14,
+     "label": "DESCUENTO",
+     "conf": 99.8,
+     "amountGtq": 155.7,
+     "tipo": "generico",
+     "flags": ""
+    }
+   ]
+  }
+ ]
+}

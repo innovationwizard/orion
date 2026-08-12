@@ -24,6 +24,7 @@ const NON_VENTAS_LINKS: (NavLink | "divider")[] = [
   { href: "/cumplimiento", label: "Cumplimiento", roles: DATA_VIEWER_ROLES },
   { href: "/mercadeo", label: "Mercadeo", roles: DATA_VIEWER_ROLES },
   { href: "/promociones", label: "Promociones", roles: DATA_VIEWER_ROLES },
+  { href: "/descuentos", label: "Descuentos", roles: DATA_VIEWER_ROLES },
   "divider",
   { href: "/cesion", label: "Cesion", roles: ADMIN_ROLES },
   { href: "/admin/asesores", label: "Asesores", roles: ADMIN_ROLES },
