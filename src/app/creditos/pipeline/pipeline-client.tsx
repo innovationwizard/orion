@@ -1,11 +1,35 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import NavBar from "@/components/nav-bar";
 import KpiCard from "@/components/kpi-card";
 import type { CreditosPipelinePayload, PipelineDeal } from "@/app/api/creditos/pipeline/route";
+import { useScrollToHash } from "@/hooks/use-scroll-to-hash";
 
 const nf = new Intl.NumberFormat("es-GT");
+
+/**
+ * Catálogo completo de etapas del Pipedrive (verificado contra la extracción 2026-08-05).
+ * Los agregados del snapshot omiten etapas con cero tratos, así que las etapas sin uso
+ * (Expediente Técnico, Aprobación E. Técnico / Avalúo, Escritura, Desembolso, Liquidación)
+ * se rellenan con 0 aquí — existen en Pipedrive pero no se usan operativamente.
+ */
+const ETAPAS_CATALOGO = [
+  "Promesa",
+  "Armado de Expediente",
+  "Análisis",
+  "Suspendido",
+  "Re-análisis",
+  "Aprobación",
+  "Expediente Técnico",
+  "Ingreso E. Técnico / Avalúo",
+  "Aprobación E. Técnico / Avalúo",
+  "Resguardo / Resolución",
+  "Escritura",
+  "Desembolso",
+  "Liquidación",
+];
 
 function BarBlock({ title, items }: { title: string; items: Array<{ label: string; count: number }> }) {
   const max = items.reduce((m, i) => Math.max(m, i.count), 0);
@@ -35,11 +59,14 @@ function BarBlock({ title, items }: { title: string; items: Array<{ label: strin
 const ESTADO_LABELS: Record<string, string> = { open: "Abiertos", lost: "Perdidos", won: "Ganados" };
 
 export default function PipelineClient() {
+  const searchParams = useSearchParams();
   const [data, setData] = useState<CreditosPipelinePayload | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [embudo, setEmbudo] = useState<string>("todos");
-  const [estado, setEstado] = useState<string>("open");
-  const [search, setSearch] = useState("");
+  const [embudo, setEmbudo] = useState<string>(searchParams.get("embudo") ?? "todos");
+  const [etapa, setEtapa] = useState<string>(searchParams.get("etapa") ?? "todas");
+  const [estado, setEstado] = useState<string>(searchParams.get("estado") ?? "open");
+  const [search, setSearch] = useState(searchParams.get("q") ?? "");
+  useScrollToHash(data != null);
 
   useEffect(() => {
     let cancelled = false;
@@ -71,6 +98,7 @@ export default function PipelineClient() {
     return data.deals.filter(
       (d) =>
         (embudo === "todos" || d.embudo === embudo) &&
+        (etapa === "todas" || d.etapa === etapa) &&
         (estado === "todos" || d.estado === estado) &&
         (q === "" ||
           d.titulo.toLowerCase().includes(q) ||
@@ -78,7 +106,7 @@ export default function PipelineClient() {
           (d.banco ?? "").toLowerCase().includes(q) ||
           (d.propietario ?? "").toLowerCase().includes(q)),
     );
-  }, [data, embudo, estado, search]);
+  }, [data, embudo, etapa, estado, search]);
 
   if (error) {
     return (
@@ -131,7 +159,10 @@ export default function PipelineClient() {
             <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
               <BarBlock
                 title="Tratos abiertos por etapa"
-                items={data.etapasGlobal.map((e) => ({ label: e.etapa, count: e.open }))}
+                items={ETAPAS_CATALOGO.map((etapaNombre) => ({
+                  label: etapaNombre,
+                  count: data.etapasGlobal.find((e) => e.etapa === etapaNombre)?.open ?? 0,
+                }))}
               />
               <BarBlock
                 title="Tipo de crédito (todos los tratos)"
@@ -147,7 +178,7 @@ export default function PipelineClient() {
               />
             </div>
 
-            <div className="bg-card rounded-2xl border border-border overflow-hidden">
+            <div id="etapas" className="bg-card rounded-2xl border border-border overflow-hidden scroll-mt-4">
               <div className="px-4 py-3 border-b border-border">
                 <h2 className="text-sm font-medium text-text-primary">
                   Etapas por embudo — abiertos, perdidos y mediana de días en etapa
@@ -183,6 +214,25 @@ export default function PipelineClient() {
               </div>
             </div>
 
+            <div id="sin-uso" className="bg-card rounded-2xl border border-border p-4 scroll-mt-4">
+              <h2 className="text-sm font-medium text-text-primary">Etapas sin uso operativo</h2>
+              <p className="text-sm text-muted mt-1">
+                Estas etapas existen en la configuración de Pipedrive pero registran 0 tratos — el
+                registro operativo se detiene en Resguardo / Resolución.
+              </p>
+              <ul className="mt-2 grid gap-1">
+                {ETAPAS_CATALOGO.filter(
+                  (etapaNombre) =>
+                    !data.etapasGlobal.some((e) => e.etapa === etapaNombre) &&
+                    !data.etapasPorEmbudo.some((e) => e.etapa === etapaNombre),
+                ).map((etapaNombre) => (
+                  <li key={etapaNombre} className="text-sm text-text-primary flex items-baseline gap-2">
+                    <span className="font-semibold tabular-nums text-muted">0</span> {etapaNombre}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
             <div className="bg-warning/10 border border-warning/40 rounded-2xl p-4">
               <h2 className="text-sm font-semibold text-text-primary">Advertencias del origen</h2>
               <ul className="mt-2 grid gap-1">
@@ -194,7 +244,7 @@ export default function PipelineClient() {
               </ul>
             </div>
 
-            <div className="bg-card rounded-2xl border border-border overflow-hidden">
+            <div id="tratos" className="bg-card rounded-2xl border border-border overflow-hidden scroll-mt-4">
               <div className="px-4 py-3 border-b border-border flex flex-wrap items-center gap-3">
                 <h2 className="text-sm font-medium text-text-primary">
                   Tratos ({nf.format(filteredDeals.length)})
@@ -207,6 +257,19 @@ export default function PipelineClient() {
                 >
                   <option value="todos">Todos los embudos</option>
                   {embudos.map((e) => (
+                    <option key={e} value={e}>
+                      {e}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={etapa}
+                  onChange={(e) => setEtapa(e.target.value)}
+                  className="text-sm border border-border rounded-lg px-2 py-1 bg-card"
+                  aria-label="Filtrar por etapa"
+                >
+                  <option value="todas">Todas las etapas</option>
+                  {ETAPAS_CATALOGO.map((e) => (
                     <option key={e} value={e}>
                       {e}
                     </option>

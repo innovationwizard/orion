@@ -14,114 +14,6 @@ import type { HudArea } from "../hud/areas";
  */
 export const ODOO_HUD_AREAS: HudArea[] = [
   {
-    key: "ventas",
-    label: "VENTAS",
-    sections: [
-      {
-        key: "resumen",
-        label: "Resumen",
-        requirements: [
-          {
-            id: "v1",
-            label: "Ventas totales",
-            status: "COMPLETA",
-            note: "[APP] RESUELVE la alerta #1 de ambos agentes ('no reserva object exists'): Orion ES el sistema de registro de reservas — DB master desde 2026-03-01, 646 CONFIRMED + 74 DESISTED, más tabla sales (2021→2026) con fechas de promesa. [PIPEDRIVE] 140 deals en etapa Reserva y 55 won NO son el ledger (94.4% de 81,441 deals son leads muertos). [ODOO15] facturas ≠ ventas (cuotas, ~19× overcount). ETL de ventas parte de Orion.",
-          },
-        ],
-      },
-      {
-        key: "objetivos",
-        label: "Objetivos",
-        requirements: [
-          {
-            id: "v2",
-            label: "Ventas versus objetivos — totales y por asesor",
-            status: "COMPLETA",
-            note: "[APP] Metas vigentes en projects.meta_mensual_por_asesor (migración 068) + asesores unificados (33, salespeople) + atribución por reserva. [PIPEDRIVE] Goals endpoint vacío; owner_id completo (18 owners) como corroboración. [ODOO15] nada (0.05% de partners con vendedor). Caveat: solo metas ACTUALES — no existe serie histórica de metas en ningún sistema.",
-          },
-          {
-            id: "v3",
-            label: "Status de ventas — déficit/excedente vs fecha de cierre",
-            status: "COMPLETA",
-            note: "[APP] Computable hoy: metas + towers.delivery_date + producción mensual. [PIPEDRIVE]/[ODOO15] sin fechas de entrega por proyecto/torre — Orion es la única fuente.",
-          },
-        ],
-      },
-      {
-        key: "canales",
-        label: "Canales y Conversión",
-        requirements: [
-          {
-            id: "v4",
-            label: "Ventas por canales",
-            status: "COMPLETA",
-            note: "[APP] reservations.lead_source + catálogo lead_sources (free-text sucio: 29 variantes, 343 nulls históricos). [PIPEDRIVE] catálogo Fuente limpio de 16 opciones en 60.2% de deals — PERO es multi-valor (set): 'Meta Ads|Formulario Meta' — el conteo ingenuo duplica. Migración: normalizar ambos catálogos a uno solo en v19.",
-          },
-          {
-            id: "v8",
-            label: "Funnel Leads → Reserva → PCV firmada",
-            status: "SIN_VISTA",
-            note: "Cada etapa tiene fuente asegurada: leads [PIPEDRIVE] 81,441 deals con add_time + [APP] snapshot Meta 59,504; reservas [APP]; PCV [APP] sales.promise_signed_date + escaneadas [ODOO15]. LO NO RESUELTO: el vínculo lead→reserva entre sistemas (deal↔reserva no comparten llave; el match por persona es fuzzy nombre/teléfono). El funnel agregado es computable; la trazabilidad individual no.",
-          },
-        ],
-      },
-      {
-        key: "inventario",
-        label: "Inventario",
-        requirements: [
-          {
-            id: "v6",
-            label: "Inventario general: vendido, congelado, disponible",
-            status: "COMPLETA",
-            note: "[APP] es el unit master canónico para v19: 901 unidades × 5 proyectos con FK reales + unit_status_log (585 cambios de status desde mar-2026). [PIPEDRIVE] 931 unidades pero solo 3/6 proyectos, sin historia, y su Estatus (475 PCV/Reservado) discrepa de sus 140 reservas — conciliar contra Orion. [ODOO15] su 'inventario' son AUTOPARTES (no mapear). Torre Cobán: en NINGÚN sistema hay unidades.",
-          },
-          {
-            id: "v5",
-            label: "Split de ventas por modelo",
-            status: "COMPLETA",
-            note: "[APP] rv_units.unit_type poblado al 100%. [PIPEDRIVE] Modelo 0/931 (campo vacío). [ODOO15] modelo embebido en el NOMBRE del partner (parseable, frágil). Orion manda.",
-          },
-        ],
-      },
-      {
-        key: "desistimientos",
-        label: "Desistimientos y Valor",
-        requirements: [
-          {
-            id: "v9",
-            label: "Desistimientos — reembolsos, retención y valorización",
-            status: "COMPLETA",
-            note: "[APP] 74 DESISTED con fecha+motivo obligatorios (constraint) + payments type='reimbursement' + retención computable (Q2.17M verificado). [PIPEDRIVE] complemento: ~150 casos con Monto de Penalización/Devolución (inferidos por heurística, no flag). [ODOO15] pagos anulados ≠ desistimientos (no conflar).",
-          },
-          {
-            id: "v7",
-            label: "Valor de proyecto — trazabilidad por desistimientos",
-            status: "COMPLETA",
-            note: "[APP] rv_price_history + unit_status_log + vínculo unidad desistida→estado actual. [PIPEDRIVE] precio único sin historia. [ODOO15] snapshot único B5. La historia de precios pre-Orion no existe en ningún sistema — la serie empieza donde empieza Orion.",
-          },
-        ],
-      },
-      {
-        key: "descuentos",
-        label: "Descuentos y Promociones",
-        requirements: [
-          {
-            id: "v10",
-            label: "Control de descuentos",
-            status: "NO_VINCULADA",
-            note: "Sin fuente estructurada en NINGÚN sistema. [PIPEDRIVE] ~1,037 PDFs de cotización/plan de pago (pixeles). [ODOO15] cotizaciones escaneadas B5. Ruta: OCR (la app ya tiene infra Claude Vision) — produce data no verificada que requiere revisión humana.",
-          },
-          {
-            id: "v11",
-            label: "Control de promociones (vales)",
-            status: "COMPLETA",
-            note: "[PIPEDRIVE] es la fuente completa y project-agnostic: 168 deals con promoción, Valor Vale (monetary, 98) — MÁS que el CSV B5 de Orion (27). TRAMPA: 'Valor Promoción' es un enum de strings de moneda — migrar Valor Vale, tratar el enum como etiqueta, jamás parsear moneda de labels.",
-          },
-        ],
-      },
-    ],
-  },
-  {
     key: "mercadeo",
     label: "MERCADEO",
     sections: [
@@ -224,6 +116,114 @@ export const ODOO_HUD_AREAS: HudArea[] = [
             label: "Operatividad de canales digitales",
             status: "COMPLETA",
             note: "[PIPEDRIVE] catálogo + flujos observados: Meta dominante (~30K), Wati WhatsApp (12K en combinación), web (6.9K), TikTok marginal (330). Google Ads AUSENTE en toda fuente — pregunta abierta. La visibilidad operativa en vivo sigue en la herramienta de mercadeo (decisión previa de Jorge).",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    key: "ventas",
+    label: "VENTAS",
+    sections: [
+      {
+        key: "resumen",
+        label: "Resumen",
+        requirements: [
+          {
+            id: "v1",
+            label: "Ventas totales",
+            status: "COMPLETA",
+            note: "[APP] RESUELVE la alerta #1 de ambos agentes ('no reserva object exists'): Orion ES el sistema de registro de reservas — DB master desde 2026-03-01, 646 CONFIRMED + 74 DESISTED, más tabla sales (2021→2026) con fechas de promesa. [PIPEDRIVE] 140 deals en etapa Reserva y 55 won NO son el ledger (94.4% de 81,441 deals son leads muertos). [ODOO15] facturas ≠ ventas (cuotas, ~19× overcount). ETL de ventas parte de Orion.",
+          },
+        ],
+      },
+      {
+        key: "objetivos",
+        label: "Objetivos",
+        requirements: [
+          {
+            id: "v2",
+            label: "Ventas versus objetivos — totales y por asesor",
+            status: "COMPLETA",
+            note: "[APP] Metas vigentes en projects.meta_mensual_por_asesor (migración 068) + asesores unificados (33, salespeople) + atribución por reserva. [PIPEDRIVE] Goals endpoint vacío; owner_id completo (18 owners) como corroboración. [ODOO15] nada (0.05% de partners con vendedor). Caveat: solo metas ACTUALES — no existe serie histórica de metas en ningún sistema.",
+          },
+          {
+            id: "v3",
+            label: "Status de ventas — déficit/excedente vs fecha de cierre",
+            status: "COMPLETA",
+            note: "[APP] Computable hoy: metas + towers.delivery_date + producción mensual. [PIPEDRIVE]/[ODOO15] sin fechas de entrega por proyecto/torre — Orion es la única fuente.",
+          },
+        ],
+      },
+      {
+        key: "canales",
+        label: "Canales y Conversión",
+        requirements: [
+          {
+            id: "v4",
+            label: "Ventas por canales",
+            status: "COMPLETA",
+            note: "[APP] reservations.lead_source + catálogo lead_sources (free-text sucio: 29 variantes, 343 nulls históricos). [PIPEDRIVE] catálogo Fuente limpio de 16 opciones en 60.2% de deals — PERO es multi-valor (set): 'Meta Ads|Formulario Meta' — el conteo ingenuo duplica. Migración: normalizar ambos catálogos a uno solo en v19.",
+          },
+          {
+            id: "v8",
+            label: "Funnel Leads → Reserva → PCV firmada",
+            status: "SIN_VISTA",
+            note: "Cada etapa tiene fuente asegurada: leads [PIPEDRIVE] 81,441 deals con add_time + [APP] snapshot Meta 59,504; reservas [APP]; PCV [APP] sales.promise_signed_date + escaneadas [ODOO15]. LO NO RESUELTO: el vínculo lead→reserva entre sistemas (deal↔reserva no comparten llave; el match por persona es fuzzy nombre/teléfono). El funnel agregado es computable; la trazabilidad individual no.",
+          },
+        ],
+      },
+      {
+        key: "inventario",
+        label: "Inventario",
+        requirements: [
+          {
+            id: "v6",
+            label: "Inventario general: vendido, congelado, disponible",
+            status: "COMPLETA",
+            note: "[APP] es el unit master canónico para v19: 901 unidades × 5 proyectos con FK reales + unit_status_log (585 cambios de status desde mar-2026). [PIPEDRIVE] 931 unidades pero solo 3/6 proyectos, sin historia, y su Estatus (475 PCV/Reservado) discrepa de sus 140 reservas — conciliar contra Orion. [ODOO15] su 'inventario' son AUTOPARTES (no mapear). Torre Cobán: en NINGÚN sistema hay unidades.",
+          },
+          {
+            id: "v5",
+            label: "Split de ventas por modelo",
+            status: "COMPLETA",
+            note: "[APP] rv_units.unit_type poblado al 100%. [PIPEDRIVE] Modelo 0/931 (campo vacío). [ODOO15] modelo embebido en el NOMBRE del partner (parseable, frágil). Orion manda.",
+          },
+        ],
+      },
+      {
+        key: "desistimientos",
+        label: "Desistimientos y Valor",
+        requirements: [
+          {
+            id: "v9",
+            label: "Desistimientos — reembolsos, retención y valorización",
+            status: "COMPLETA",
+            note: "[APP] 74 DESISTED con fecha+motivo obligatorios (constraint) + payments type='reimbursement' + retención computable (Q2.17M verificado). [PIPEDRIVE] complemento: ~150 casos con Monto de Penalización/Devolución (inferidos por heurística, no flag). [ODOO15] pagos anulados ≠ desistimientos (no conflar).",
+          },
+          {
+            id: "v7",
+            label: "Valor de proyecto — trazabilidad por desistimientos",
+            status: "COMPLETA",
+            note: "[APP] rv_price_history + unit_status_log + vínculo unidad desistida→estado actual. [PIPEDRIVE] precio único sin historia. [ODOO15] snapshot único B5. La historia de precios pre-Orion no existe en ningún sistema — la serie empieza donde empieza Orion.",
+          },
+        ],
+      },
+      {
+        key: "descuentos",
+        label: "Descuentos y Promociones",
+        requirements: [
+          {
+            id: "v10",
+            label: "Control de descuentos",
+            status: "NO_VINCULADA",
+            note: "Sin fuente estructurada en NINGÚN sistema. [PIPEDRIVE] ~1,037 PDFs de cotización/plan de pago (pixeles). [ODOO15] cotizaciones escaneadas B5. Ruta: OCR (la app ya tiene infra Claude Vision) — produce data no verificada que requiere revisión humana.",
+          },
+          {
+            id: "v11",
+            label: "Control de promociones (vales)",
+            status: "COMPLETA",
+            note: "[PIPEDRIVE] es la fuente completa y project-agnostic: 168 deals con promoción, Valor Vale (monetary, 98) — MÁS que el CSV B5 de Orion (27). TRAMPA: 'Valor Promoción' es un enum de strings de moneda — migrar Valor Vale, tratar el enum como etiqueta, jamás parsear moneda de labels.",
           },
         ],
       },

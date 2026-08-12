@@ -7,6 +7,7 @@ import KpiCard from "@/components/kpi-card";
 import NavBar from "@/components/nav-bar";
 import MonthlyChart from "./monthly-chart";
 import CumulativeChart from "./cumulative-chart";
+import VentasAnalitica from "./ventas-analitica";
 
 export default function VentasClient() {
   const router = useRouter();
@@ -115,6 +116,9 @@ export default function VentasClient() {
           </table>
         </section>
       )}
+
+      {/* Objetivos, canales y modelos — todos los proyectos */}
+      <VentasAnalitica />
     </div>
   );
 }

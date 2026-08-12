@@ -10,6 +10,7 @@ import BulletChart from "@/components/bullet-chart";
 import CashFlowChart, { type MonthlyData } from "@/components/cash-flow-chart";
 import CommissionBars, { type CommissionBarItem } from "@/components/commission-bars";
 import PaymentDetailModal from "@/components/payment-detail-modal";
+import CobrosDecisiones from "@/components/cobros-decisiones";
 import type { PaymentAnalyticsUnit } from "@/components/payment-treemap";
 import { DATE_PRESETS } from "@/lib/date-presets";
 import NavBar from "@/components/nav-bar";
@@ -663,6 +664,9 @@ export default function DashboardClient({ role }: { role?: string }) {
               </div>
             )}
           </section>
+
+          {/* Decisiones de desistimiento + portafolio F&F — sin filtros */}
+          <CobrosDecisiones />
         </>
       )}
 

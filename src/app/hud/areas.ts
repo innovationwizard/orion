@@ -13,12 +13,24 @@ export type HudAreaKey =
  */
 export type RequirementStatus = "COMPLETA" | "SIN_VISTA" | "NO_VINCULADA";
 
+export interface HudProofLink {
+  /** App route (always outside the HUD) that displays the data. */
+  href: string;
+  /** Where to look on the target page. */
+  label: string;
+}
+
 export interface HudRequirement {
   id: string;
   label: string;
   status: RequirementStatus;
   /** Provenance for COMPLETA (which routes display it) or why it's not complete. */
   note?: string;
+  /**
+   * "Ver →" targets. Every COMPLETA claim must be provable on a page outside the HUD —
+   * the HUD itself displays no data, only gap status. Absent only for decision-based items.
+   */
+  proof?: HudProofLink[];
 }
 
 export interface HudSection {
@@ -36,6 +48,133 @@ export interface HudArea {
 
 export const HUD_AREAS: HudArea[] = [
   {
+    key: "mercadeo",
+    label: "MERCADEO",
+    sections: [
+      {
+        key: "resumen",
+        label: "Resumen",
+        requirements: [
+          {
+            id: "k1",
+            label: "Reporte maestro",
+            status: "COMPLETA",
+            note:
+              "Desplegado en /mercadeo (reporte maestro Power BI reconstruido). Snapshot al 2026-08-04 — actualización manual reemplazando public/mercadeo/performance.html.",
+            proof: [{ href: "/mercadeo", label: "Reporte maestro (página completa)" }],
+          },
+        ],
+      },
+      {
+        key: "leads-metas",
+        label: "Leads y Metas",
+        requirements: [
+          {
+            id: "k2",
+            label: "Meta mensual de lead",
+            status: "COMPLETA",
+            note:
+              "Desplegado en /mercadeo — rangos mensuales por proyecto (migración 069: BEN 350–400, BLT 250–300, B5 150–200, SE 50–100; CE sin meta) vs leads reales del último mes completo del snapshot. Rangos confirmados como MENSUALES contra la propia data de mercadeo.",
+            proof: [{ href: "/mercadeo", label: "Franja de metas de leads" }],
+          },
+          {
+            id: "k3",
+            label: "Meta diaria de lead",
+            status: "COMPLETA",
+            note:
+              "Desplegado en /mercadeo — equivalente diario derivado (rango ÷ días del mes) junto al promedio diario real, en la misma franja de metas.",
+            proof: [{ href: "/mercadeo", label: "Franja de metas — equivalente diario" }],
+          },
+        ],
+      },
+      {
+        key: "presupuesto",
+        label: "Presupuesto de Pauta",
+        requirements: [
+          {
+            id: "k4",
+            label: "Uso de presupuesto diario de pauta",
+            status: "COMPLETA",
+            note:
+              "Desplegado en /mercadeo — gasto diario de pauta (Meta Ads) en Performance Ads. Snapshot al 2026-08-04 — actualización manual reemplazando public/mercadeo/performance.html.",
+            proof: [{ href: "/mercadeo", label: "Reporte — sección Performance Ads" }],
+          },
+          {
+            id: "k5",
+            label: "Uso de presupuesto mensual de pauta",
+            status: "COMPLETA",
+            note:
+              "Desplegado en /mercadeo — gasto mensual y presupuestos en Performance Ads y Presupuesto. Snapshot al 2026-08-04 — actualización manual reemplazando public/mercadeo/performance.html.",
+            proof: [{ href: "/mercadeo", label: "Reporte — Performance Ads y Presupuesto" }],
+          },
+          {
+            id: "k10",
+            label: "Evolución de inversiones en pauta acumulada mensual",
+            status: "COMPLETA",
+            note:
+              "Desplegado en /mercadeo — inversión acumulada en Inversión/Reservas. Snapshot al 2026-08-04 — actualización manual reemplazando public/mercadeo/performance.html.",
+            proof: [{ href: "/mercadeo", label: "Reporte — Inversión/Reservas" }],
+          },
+        ],
+      },
+      {
+        key: "costos-retorno",
+        label: "Costos y Retorno",
+        requirements: [
+          {
+            id: "k6",
+            label: "ROAS / ROI",
+            status: "COMPLETA",
+            note: "Desplegado en /mercadeo — ROAS amplio y atribuido por proyecto: gasto Meta Ads en su divisa real (columna Divisa del Excel fuente; el Power BI mezclaba GTQ/USD) vs ventas no canceladas de la DB. Conversión fija Q7.75/USD.",
+            proof: [{ href: "/mercadeo", label: "Franja ROAS/ROI por proyecto" }],
+          },
+          {
+            id: "k7",
+            label: "Costo por cierre / medio de venta",
+            status: "COMPLETA",
+            note:
+              "Desplegado en /mercadeo — Costo por Cierre por fuente (medida DAX reproducida) en Inversión/Reservas. Snapshot al 2026-08-04 — actualización manual reemplazando public/mercadeo/performance.html.",
+            proof: [{ href: "/mercadeo", label: "Reporte — Inversión/Reservas, costo por cierre" }],
+          },
+          {
+            id: "k9",
+            label: "Evolución de costos por lead de manera mensual",
+            status: "COMPLETA",
+            note:
+              "Desplegado en /mercadeo — evolución de CPL en Performance Ads. Snapshot al 2026-08-04 — actualización manual reemplazando public/mercadeo/performance.html.",
+            proof: [{ href: "/mercadeo", label: "Reporte — Performance Ads, evolución CPL" }],
+          },
+        ],
+      },
+      {
+        key: "campanas",
+        label: "Campañas",
+        requirements: [
+          {
+            id: "k8",
+            label: "Efectividad de campañas",
+            status: "COMPLETA",
+            note:
+              "Desplegado en /mercadeo — treemap y tabla de campañas. Snapshot al 2026-08-04 — actualización manual reemplazando public/mercadeo/performance.html.",
+            proof: [{ href: "/mercadeo", label: "Reporte — treemap y tabla de campañas" }],
+          },
+        ],
+      },
+      {
+        key: "canales-digitales",
+        label: "Canales Digitales",
+        requirements: [
+          {
+            id: "k11",
+            label: "Operatividad de todos los canales digitales en la aplicación",
+            status: "COMPLETA",
+            note: "Completo por decisión de Jorge (2026-08-07): la app de seguimiento que usa mercadeo se actualiza en vivo con visibilidad total de los canales. Nuestra app no lo extrae en vivo — la visibilidad operativa vive en la herramienta de mercadeo.",
+          },
+        ],
+      },
+    ],
+  },
+  {
     key: "ventas",
     label: "VENTAS",
     sections: [
@@ -48,6 +187,10 @@ export const HUD_AREAS: HudArea[] = [
             label: "Ventas totales",
             status: "COMPLETA",
             note: "Desplegado en /ventas (gráficas mensual y acumulada) y en el dashboard analítico.",
+            proof: [
+              { href: "/ventas", label: "Gráficas mensual y acumulada" },
+              { href: "/", label: "Dashboard analítico" },
+            ],
           },
         ],
       },
@@ -59,13 +202,15 @@ export const HUD_AREAS: HudArea[] = [
             id: "v2",
             label: "Ventas versus objetivos de proyectos — totales y por asesor",
             status: "COMPLETA",
-            note: "Desplegado aquí en el HUD: metas del mes por proyecto (meta × asesores activos, migración 068) y tabla por asesor. Regla de conteo: reservas confirmadas y desistidas por fecha de depósito.",
+            note: "Desplegado en /ventas (sección Objetivos): metas del mes por proyecto (meta × asesores activos, migración 068) y tabla por asesor. Regla de conteo: reservas confirmadas y desistidas por fecha de depósito.",
+            proof: [{ href: "/ventas#objetivos", label: "Ventas — metas del mes y tabla por asesor" }],
           },
           {
             id: "v3",
             label: "Status de ventas — déficit o excedente versus fecha de cierre, por proyecto y por asesor",
             status: "COMPLETA",
-            note: "Desplegado aquí en el HUD: déficit/excedente del mes (ventas − meta) por proyecto y por asesor, con fecha de entrega de torre como contexto.",
+            note: "Desplegado en /ventas (sección Objetivos): déficit/excedente del mes (ventas − meta) por proyecto y por asesor, con fecha de entrega de torre como contexto.",
+            proof: [{ href: "/ventas#objetivos", label: "Ventas — déficit/excedente vs meta" }],
           },
         ],
       },
@@ -77,7 +222,8 @@ export const HUD_AREAS: HudArea[] = [
             id: "v4",
             label: "Ventas por canales",
             status: "COMPLETA",
-            note: "Desplegado aquí en el HUD: ventas por canal (reservas confirmadas por lead_source), abajo en esta sección.",
+            note: "Desplegado en /ventas (sección Canales): ventas por canal (reservas confirmadas por lead_source).",
+            proof: [{ href: "/ventas#canales", label: "Ventas — por canal" }],
           },
           {
             id: "v8",
@@ -85,6 +231,7 @@ export const HUD_AREAS: HudArea[] = [
             status: "COMPLETA",
             note:
               "Desplegado en /mercadeo — funnel del período del snapshot: leads de pauta Meta (netos de campaña mal mapeada) → reservas → PCV firmadas, con tasas de conversión. Leads snapshot al 2026-08-04; reservas y PCV en vivo desde la DB.",
+            proof: [{ href: "/mercadeo", label: "Franja de funnel — Leads → Reserva → PCV" }],
           },
         ],
       },
@@ -97,12 +244,17 @@ export const HUD_AREAS: HudArea[] = [
             label: "Inventario general: vendido, congelado, disponible",
             status: "COMPLETA",
             note: "Desplegado en /disponibilidad (grid por estado), /integracion y el inventario del portal de ventas.",
+            proof: [
+              { href: "/disponibilidad", label: "Grid por estado" },
+              { href: "/integracion", label: "Integración de inventario" },
+            ],
           },
           {
             id: "v5",
             label: "Análisis de inventario: split de ventas por modelo",
             status: "COMPLETA",
-            note: "Desplegado aquí en el HUD: unidades reservadas y vendidas por proyecto y modelo, abajo en esta sección.",
+            note: "Desplegado en /ventas (sección Modelos): unidades reservadas y vendidas por proyecto y modelo.",
+            proof: [{ href: "/ventas#modelos", label: "Ventas — split por modelo" }],
           },
         ],
       },
@@ -114,13 +266,18 @@ export const HUD_AREAS: HudArea[] = [
             id: "v9",
             label: "Desistimientos — reembolsos, retención de reembolso y valorización de proyectos",
             status: "COMPLETA",
-            note: "Desplegado aquí en el HUD: pagado antes de desistir, reembolsado y retención por moneda, abajo en esta sección.",
+            note: "Desplegado en /valorizacion (sección Desistimientos): pagado antes de desistir, reembolsado y retención por moneda.",
+            proof: [{ href: "/valorizacion#desistimientos", label: "Valorización — reembolsos y retención" }],
           },
           {
             id: "v7",
             label: "Valor de proyecto — trazabilidad y valorización por desistimientos",
             status: "COMPLETA",
-            note: "Desplegado aquí en el HUD: trazabilidad de unidades desistidas (estado actual + precio lista). La evolución de precios vive en /valorizacion.",
+            note: "Desplegado en /valorizacion: trazabilidad de unidades desistidas (estado actual + precio lista) y evolución de precios por proyecto.",
+            proof: [
+              { href: "/valorizacion#trazabilidad", label: "Trazabilidad de unidades desistidas" },
+              { href: "/valorizacion", label: "Evolución de precios" },
+            ],
           },
         ],
       },
@@ -138,124 +295,8 @@ export const HUD_AREAS: HudArea[] = [
             id: "v11",
             label: "Control de promociones",
             status: "COMPLETA",
-            note: "Desplegado aquí en el HUD: vales activos desde el export de Pipedrive (snapshot 2026-08-07, B5). La data de todos los proyectos está completa en Pipedrive — pendiente de descarga para ampliar el snapshot.",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    key: "mercadeo",
-    label: "MERCADEO",
-    sections: [
-      {
-        key: "resumen",
-        label: "Resumen",
-        requirements: [
-          {
-            id: "k1",
-            label: "Reporte maestro",
-            status: "COMPLETA",
-            note:
-              "Desplegado en /mercadeo (reporte maestro Power BI reconstruido). Snapshot al 2026-08-04 — actualización manual reemplazando public/mercadeo/performance.html.",
-          },
-        ],
-      },
-      {
-        key: "leads-metas",
-        label: "Leads y Metas",
-        requirements: [
-          {
-            id: "k2",
-            label: "Meta mensual de lead",
-            status: "COMPLETA",
-            note:
-              "Desplegado en /mercadeo — rangos mensuales por proyecto (migración 069: BEN 350–400, BLT 250–300, B5 150–200, SE 50–100; CE sin meta) vs leads reales del último mes completo del snapshot. Rangos confirmados como MENSUALES contra la propia data de mercadeo.",
-          },
-          {
-            id: "k3",
-            label: "Meta diaria de lead",
-            status: "COMPLETA",
-            note:
-              "Desplegado en /mercadeo — equivalente diario derivado (rango ÷ días del mes) junto al promedio diario real, en la misma franja de metas.",
-          },
-        ],
-      },
-      {
-        key: "presupuesto",
-        label: "Presupuesto de Pauta",
-        requirements: [
-          {
-            id: "k4",
-            label: "Uso de presupuesto diario de pauta",
-            status: "COMPLETA",
-            note:
-              "Desplegado en /mercadeo — gasto diario de pauta (Meta Ads) en Performance Ads. Snapshot al 2026-08-04 — actualización manual reemplazando public/mercadeo/performance.html.",
-          },
-          {
-            id: "k5",
-            label: "Uso de presupuesto mensual de pauta",
-            status: "COMPLETA",
-            note:
-              "Desplegado en /mercadeo — gasto mensual y presupuestos en Performance Ads y Presupuesto. Snapshot al 2026-08-04 — actualización manual reemplazando public/mercadeo/performance.html.",
-          },
-          {
-            id: "k10",
-            label: "Evolución de inversiones en pauta acumulada mensual",
-            status: "COMPLETA",
-            note:
-              "Desplegado en /mercadeo — inversión acumulada en Inversión/Reservas. Snapshot al 2026-08-04 — actualización manual reemplazando public/mercadeo/performance.html.",
-          },
-        ],
-      },
-      {
-        key: "costos-retorno",
-        label: "Costos y Retorno",
-        requirements: [
-          {
-            id: "k6",
-            label: "ROAS / ROI",
-            status: "COMPLETA",
-            note: "Desplegado en /mercadeo — ROAS amplio y atribuido por proyecto: gasto Meta Ads en su divisa real (columna Divisa del Excel fuente; el Power BI mezclaba GTQ/USD) vs ventas no canceladas de la DB. Conversión fija Q7.75/USD.",
-          },
-          {
-            id: "k7",
-            label: "Costo por cierre / medio de venta",
-            status: "COMPLETA",
-            note:
-              "Desplegado en /mercadeo — Costo por Cierre por fuente (medida DAX reproducida) en Inversión/Reservas. Snapshot al 2026-08-04 — actualización manual reemplazando public/mercadeo/performance.html.",
-          },
-          {
-            id: "k9",
-            label: "Evolución de costos por lead de manera mensual",
-            status: "COMPLETA",
-            note:
-              "Desplegado en /mercadeo — evolución de CPL en Performance Ads. Snapshot al 2026-08-04 — actualización manual reemplazando public/mercadeo/performance.html.",
-          },
-        ],
-      },
-      {
-        key: "campanas",
-        label: "Campañas",
-        requirements: [
-          {
-            id: "k8",
-            label: "Efectividad de campañas",
-            status: "COMPLETA",
-            note:
-              "Desplegado en /mercadeo — treemap y tabla de campañas. Snapshot al 2026-08-04 — actualización manual reemplazando public/mercadeo/performance.html.",
-          },
-        ],
-      },
-      {
-        key: "canales-digitales",
-        label: "Canales Digitales",
-        requirements: [
-          {
-            id: "k11",
-            label: "Operatividad de todos los canales digitales en la aplicación",
-            status: "COMPLETA",
-            note: "Completo por decisión de Jorge (2026-08-07): la app de seguimiento que usa mercadeo se actualiza en vivo con visibilidad total de los canales. Nuestra app no lo extrae en vivo — la visibilidad operativa vive en la herramienta de mercadeo.",
+            note: "Desplegado en /promociones: vales activos desde el export de Pipedrive (snapshot 2026-08-07, B5). La data de todos los proyectos está completa en Pipedrive — pendiente de descarga para ampliar el snapshot.",
+            proof: [{ href: "/promociones", label: "Promociones — vales activos" }],
           },
         ],
       },
@@ -279,18 +320,21 @@ export const HUD_AREAS: HudArea[] = [
             label: "Cobros por proyecto",
             status: "COMPLETA",
             note: "Desplegado en el dashboard analítico (/) con filtro por proyecto: KPIs Esperado a la fecha, Cobrado, % Cumplimiento.",
+            proof: [{ href: "/", label: "Dashboard — KPIs con filtro por proyecto" }],
           },
           {
             id: "b2",
             label: "Cobros acumulados: monto y porcentaje",
             status: "COMPLETA",
             note: "Desplegado en el dashboard: KPIs Cobrado y % Cumplimiento (acumulado a la fecha).",
+            proof: [{ href: "/", label: "Dashboard — KPIs Cobrado y % Cumplimiento" }],
           },
           {
             id: "b3",
             label: "Cobros del mes: monto y porcentaje",
             status: "COMPLETA",
-            note: "Desplegado en el dashboard: tendencia mensual esperado vs cobrado con % de cumplimiento por mes.",
+            note: "Desplegado en el dashboard (pestaña Flujo de Caja): tendencia mensual esperado vs cobrado con % de cumplimiento por mes.",
+            proof: [{ href: "/?tab=cash-flow", label: "Dashboard — tendencia mensual" }],
           },
         ],
       },
@@ -303,18 +347,21 @@ export const HUD_AREAS: HudArea[] = [
             label: "Déficit",
             status: "COMPLETA",
             note: "Desplegado en el dashboard: KPI Varianza (negativa = déficit) vs plan de pagos contractual.",
+            proof: [{ href: "/", label: "Dashboard — KPI Varianza" }],
           },
           {
             id: "b5",
             label: "Superávit",
             status: "COMPLETA",
             note: "Desplegado en el dashboard: KPI Varianza (positiva = superávit) vs plan de pagos contractual.",
+            proof: [{ href: "/", label: "Dashboard — KPI Varianza" }],
           },
           {
             id: "b6",
             label: "Reporte de déficit / superávit",
             status: "COMPLETA",
-            note: "Desplegado en el dashboard: columna Varianza por unidad en la tabla de cuentas + tendencia de varianza mensual.",
+            note: "Desplegado en el dashboard (pestaña Pagos): columna Varianza por unidad en la tabla de cuentas + tendencia de varianza mensual.",
+            proof: [{ href: "/?tab=payments", label: "Dashboard — Pagos, varianza por unidad" }],
           },
         ],
       },
@@ -326,7 +373,8 @@ export const HUD_AREAS: HudArea[] = [
             id: "b7",
             label: "Reporte de alertas",
             status: "COMPLETA",
-            note: "Desplegado en el dashboard: KPI Unidades en mora + tabla Cuentas en mora con días de atraso y estado de cumplimiento.",
+            note: "Desplegado en el dashboard (pestaña Pagos): KPI Unidades en mora + tabla Cuentas en mora con días de atraso y estado de cumplimiento.",
+            proof: [{ href: "/?tab=payments", label: "Dashboard — Pagos, cuentas en mora" }],
           },
         ],
       },
@@ -338,7 +386,8 @@ export const HUD_AREAS: HudArea[] = [
             id: "b8",
             label: "Analítica de decisiones de desistimientos",
             status: "COMPLETA",
-            note: "Desplegado aquí en el HUD: cuentas en mora rankeadas por días de atraso, con esperado, pagado (retención potencial) y cumplimiento.",
+            note: "Desplegado en el dashboard (pestaña Pagos): cuentas en mora rankeadas por días de atraso, con esperado, pagado (retención potencial) y cumplimiento.",
+            proof: [{ href: "/?tab=payments#decisiones-desistimiento", label: "Dashboard — candidatos a desistimiento" }],
           },
         ],
       },
@@ -350,7 +399,8 @@ export const HUD_AREAS: HudArea[] = [
             id: "b9",
             label: "Casos especiales",
             status: "COMPLETA",
-            note: "Desplegado aquí en el HUD: portafolio F&F (caso_especial) con cumplimiento de pago por cuenta.",
+            note: "Desplegado en el dashboard (pestaña Pagos): portafolio F&F (caso_especial) con cumplimiento de pago por cuenta.",
+            proof: [{ href: "/?tab=payments#casos-ff", label: "Dashboard — portafolio F&F" }],
           },
         ],
       },
@@ -395,7 +445,10 @@ export const HUD_AREAS: HudArea[] = [
             label: "Armado de expediente",
             status: "COMPLETA",
             note:
-              "Desplegado aquí: tratos en Armado de Expediente por embudo, con antigüedad. Los sub-pasos 4.1–4.4 no existen en Pipedrive (solo flag armado sí/no + fecha).",
+              "Desplegado en /creditos/pipeline: tratos en Armado de Expediente por embudo, con antigüedad. Los sub-pasos 4.1–4.4 no existen en Pipedrive (solo flag armado sí/no + fecha).",
+            proof: [
+              { href: "/creditos/pipeline?etapa=Armado%20de%20Expediente#tratos", label: "Pipeline — tratos en Armado de Expediente" },
+            ],
           },
         ],
       },
@@ -415,28 +468,32 @@ export const HUD_AREAS: HudArea[] = [
             label: "Envío a análisis",
             status: "COMPLETA",
             note:
-              "Desplegado aquí: tratos en Análisis por embudo. El split FHA/Banco vive en campos custom duplicados (~52% sin dato) — mostrado como split de tipo de crédito.",
+              "Desplegado en /creditos/pipeline: tratos en Análisis por embudo. El split FHA/Banco vive en campos custom duplicados (~52% sin dato) — mostrado como split de tipo de crédito.",
+            proof: [{ href: "/creditos/pipeline?etapa=Análisis#tratos", label: "Pipeline — tratos en Análisis" }],
           },
           {
             id: "c7",
             label: "Suspendidos",
             status: "COMPLETA",
             note:
-              "Desplegado aquí: suspendidos por embudo (27 abiertos al corte) con antigüedad en etapa.",
+              "Desplegado en /creditos/pipeline: suspendidos por embudo (27 abiertos al corte) con antigüedad en etapa.",
+            proof: [{ href: "/creditos/pipeline?etapa=Suspendido#tratos", label: "Pipeline — tratos suspendidos" }],
           },
           {
             id: "c8",
             label: "Re análisis",
             status: "COMPLETA",
             note:
-              "Desplegado aquí: tratos en Re-análisis por embudo con antigüedad.",
+              "Desplegado en /creditos/pipeline: tratos en Re-análisis por embudo con antigüedad.",
+            proof: [{ href: "/creditos/pipeline?etapa=Re-análisis#tratos", label: "Pipeline — tratos en Re-análisis" }],
           },
           {
             id: "c9",
             label: "Aprobación",
             status: "COMPLETA",
             note:
-              "Desplegado aquí: tratos en Aprobación por embudo con antigüedad. Ojo: el flag 'ganado' de Pipedrive NO significa aprobación ni desembolso.",
+              "Desplegado en /creditos/pipeline: tratos en Aprobación por embudo con antigüedad. Ojo: el flag 'ganado' de Pipedrive NO significa aprobación ni desembolso.",
+            proof: [{ href: "/creditos/pipeline?etapa=Aprobación#tratos", label: "Pipeline — tratos en Aprobación" }],
           },
         ],
       },
@@ -449,14 +506,18 @@ export const HUD_AREAS: HudArea[] = [
             label: "Expediente técnico",
             status: "COMPLETA",
             note:
-              "Desplegado aquí: Expediente Técnico por embudo. Créditos BLV5 partió la etapa en Ingreso + Aprobación E. Técnico/Avalúo — ambas se muestran.",
+              "Desplegado en /creditos/pipeline: Expediente Técnico por embudo. Créditos BLV5 partió la etapa en Ingreso + Aprobación E. Técnico/Avalúo — ambas se muestran.",
+            proof: [{ href: "/creditos/pipeline#etapas", label: "Pipeline — etapas por embudo (E. Técnico / Avalúo)" }],
           },
           {
             id: "c11",
             label: "Aprobación final",
             status: "COMPLETA",
             note:
-              "Desplegado aquí: Resguardo / Resolución por embudo (67 abiertos al corte) — la etapa donde en la práctica se detiene el registro.",
+              "Desplegado en /creditos/pipeline: Resguardo / Resolución por embudo (67 abiertos al corte) — la etapa donde en la práctica se detiene el registro.",
+            proof: [
+              { href: "/creditos/pipeline?etapa=Resguardo%20/%20Resolución#tratos", label: "Pipeline — tratos en Resguardo / Resolución" },
+            ],
           },
         ],
       },
@@ -469,7 +530,8 @@ export const HUD_AREAS: HudArea[] = [
             label: "Escrituración",
             status: "COMPLETA",
             note:
-              "Desplegado aquí con 0 tratos: la etapa Escritura existe en Pipedrive pero no se usa operativamente. Facturación (12.1) no existe.",
+              "Desplegado en /creditos/pipeline (Etapas sin uso operativo) con 0 tratos: la etapa Escritura existe en Pipedrive pero no se usa operativamente. Facturación (12.1) no existe.",
+            proof: [{ href: "/creditos/pipeline#sin-uso", label: "Pipeline — etapas sin uso operativo" }],
           },
           {
             id: "c13",
@@ -510,14 +572,16 @@ export const HUD_AREAS: HudArea[] = [
             label: "Desembolso",
             status: "COMPLETA",
             note:
-              "Desplegado aquí con 0 tratos: la etapa Desembolso existe pero no se usa — el registro se detiene en Resguardo/Resolución.",
+              "Desplegado en /creditos/pipeline (Etapas sin uso operativo) con 0 tratos: la etapa Desembolso existe pero no se usa — el registro se detiene en Resguardo/Resolución.",
+            proof: [{ href: "/creditos/pipeline#sin-uso", label: "Pipeline — etapas sin uso operativo" }],
           },
           {
             id: "c18",
             label: "Liquidación",
             status: "COMPLETA",
             note:
-              "Desplegado aquí con 0 tratos: la etapa Liquidación existe pero no se usa. Entrega de testimonio (18.1) no existe en Pipedrive.",
+              "Desplegado en /creditos/pipeline (Etapas sin uso operativo) con 0 tratos: la etapa Liquidación existe pero no se usa. Entrega de testimonio (18.1) no existe en Pipedrive.",
+            proof: [{ href: "/creditos/pipeline#sin-uso", label: "Pipeline — etapas sin uso operativo" }],
           },
           {
             id: "c19",
@@ -577,7 +641,8 @@ export const HUD_AREAS: HudArea[] = [
             id: "m4",
             label: "Expedientes — status por proyecto",
             status: "COMPLETA",
-            note: "Desplegado aquí: base del oficial de cumplimiento — 265 expedientes B5, 327 compradores, status de DPI (vigente/vencido/fecha absurda/sin fecha), RTU, promesa, fuente de ingresos y precalificación. La data de todos los proyectos está completa en xlsx, pendiente de descarga — B5 primero.",
+            note: "Desplegado en /cumplimiento: base del oficial de cumplimiento — 265 expedientes B5, 327 compradores, status de DPI (vigente/vencido/fecha absurda/sin fecha), RTU, promesa, fuente de ingresos y precalificación. La data de todos los proyectos está completa en xlsx, pendiente de descarga — B5 primero.",
+            proof: [{ href: "/cumplimiento", label: "Expedientes de cumplimiento" }],
           },
           {
             id: "m5",

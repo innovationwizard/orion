@@ -9,6 +9,7 @@ import NavBar from "@/components/nav-bar";
 import PriceHistoryTable from "./price-history-table";
 import AppreciationChart from "./appreciation-chart";
 import EntryForm from "./entry-form";
+import DesistimientosSections from "./desistimientos-sections";
 
 export default function ValorizacionClient() {
   const router = useRouter();
@@ -105,6 +106,9 @@ export default function ValorizacionClient() {
           )}
         </>
       )}
+
+      {/* Desistimientos y trazabilidad — todos los proyectos */}
+      <DesistimientosSections />
 
       {showForm && (
         <EntryForm
