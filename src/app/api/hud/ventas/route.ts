@@ -227,6 +227,20 @@ export async function GET() {
     return jsonError(500, "Error consultando asignaciones de asesores", assignmentResult.error);
   }
 
+  // Active GC/Supervisor role-holders don't carry personal sales metas (migration 070):
+  // their project assignments are excluded from asesoresActivos and the per-asesor table.
+  const todayGt = nowGt.toISOString().slice(0, 10);
+  const { data: mgmtRows, error: mgmtError } = await supabase
+    .from("commission_gerencia_assignments")
+    .select("salesperson_id")
+    .not("salesperson_id", "is", null)
+    .lte("start_date", todayGt)
+    .or(`end_date.is.null,end_date.gte.${todayGt}`);
+  if (mgmtError) {
+    return jsonError(500, "Error consultando roles de gerencia", mgmtError.message);
+  }
+  const managementIds = new Set((mgmtRows ?? []).map((r) => r.salesperson_id as string));
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase nested embeds are loosely typed
   const monthResResult = await fetchAll<any>((from, to) =>
     supabase
@@ -284,6 +298,7 @@ export async function GET() {
   const assignedKeys = new Set<string>();
   const asesores: HudVentasPayload["objetivos"]["asesores"] = [];
   for (const a of assignmentResult.rows) {
+    if (managementIds.has(a.salesperson_id as string)) continue;
     const projectId = a.project_id as string;
     assignmentsByProject.set(projectId, (assignmentsByProject.get(projectId) ?? 0) + 1);
     const key = `${a.salesperson_id}|${projectId}`;
@@ -299,17 +314,19 @@ export async function GET() {
       sinAsignacion: false,
     });
   }
-  // Production by asesores without an active assignment — shown, never dropped
+  // Production by asesores without an active assignment — shown, never dropped.
+  // Management (GC/Supervisor) sales land here too: shown with meta 0, no flag.
   for (const [key, entry] of ventasByAsesorProject) {
     if (assignedKeys.has(key)) continue;
-    const meta = metaByProject.get(entry.projectId) ?? 0;
+    const isManagement = managementIds.has(entry.salespersonId);
+    const meta = isManagement ? 0 : (metaByProject.get(entry.projectId) ?? 0);
     asesores.push({
       asesor: entry.asesor,
       project: projectName.get(entry.projectId) ?? "—",
       meta,
       ventas: entry.ventas,
       delta: entry.ventas - meta,
-      sinAsignacion: true,
+      sinAsignacion: !isManagement,
     });
   }
   asesores.sort((a, b) => a.project.localeCompare(b.project) || b.ventas - a.ventas);

@@ -203,7 +203,7 @@ export const HUD_AREAS: HudArea[] = [
             id: "v2",
             label: "Ventas versus objetivos de proyectos — totales y por asesor",
             status: "COMPLETA",
-            note: "Desplegado en /ventas (sección Objetivos): metas del mes por proyecto (meta × asesores activos, migración 068) y tabla por asesor. Regla de conteo: reservas confirmadas y desistidas por fecha de depósito.",
+            note: "Desplegado en /ventas (sección Objetivos): metas del mes por proyecto (meta × asesores activos, migración 068; excluye roles GC/Supervisor, migración 070) y tabla por asesor. Regla de conteo: reservas confirmadas y desistidas por fecha de depósito.",
             proof: [{ href: "/ventas#objetivos", label: "Ventas — metas del mes y tabla por asesor" }],
           },
           {

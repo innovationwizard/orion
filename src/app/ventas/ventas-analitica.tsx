@@ -107,7 +107,8 @@ export default function VentasAnalitica() {
           <h2 className="text-base font-semibold text-text-primary">Metas del mes {o.month} — por proyecto</h2>
           <p className="text-sm text-muted m-0">
             Cuentan reservas confirmadas y desistidas por fecha de depósito. Meta del proyecto = meta por
-            asesor × asesores activos. Todos los proyectos — el filtro de la página no aplica aquí.
+            asesor × asesores activos (sin roles de gerencia). Todos los proyectos — el filtro de la página
+            no aplica aquí.
           </p>
         </div>
         <ul className="grid gap-3 list-none p-0 m-0">
