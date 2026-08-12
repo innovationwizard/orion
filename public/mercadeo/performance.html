@@ -1646,7 +1646,8 @@ function buildTopbar() {
   });
   bar.appendChild(cmpSel);
 
-  // data-quality exclusion
+  /* data-quality exclusion — control hidden for now (Jorge 2026-08-12); the
+     exclusion itself stays active via state.exclCmp = true.
   const ex = el('<div class="ctl"><label>Calidad de datos</label><div class="chips"></div></div>');
   const exc = el(`<button type="button" class="chip brass ${state.exclCmp ? "on" : ""}">excluir campaña anómala</button>`);
   exc.title = EXCLUDED_CMP + " — 104.290 leads contra $323 de inversión";
@@ -1656,6 +1657,7 @@ function buildTopbar() {
   });
   ex.querySelector(".chips").appendChild(exc);
   bar.appendChild(ex);
+  */
 }
 
 function renderXFBar() {
