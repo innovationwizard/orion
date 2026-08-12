@@ -480,7 +480,7 @@ const colorFor = (i) => SERIES[i % SERIES.length];
 const FIRST_SPEND_M = MONTHS.indexOf(DAILY.map((r) => r.ym).sort()[0]);
 
 const state = {
-  page: "ads",
+  page: "resumen",
   m0: Math.max(FIRST_SPEND_M, 0),
   m1: MONTHS.length - 1,
   accs: new Set(ACCOUNTS),
@@ -857,6 +857,7 @@ function renderTable(host, cols, rows, opts = {}) {
    =========================================================================== */
 
 const PAGES = [
+  { id: "resumen", label: "Resumen", src: "en vivo — APIs de Orion" },
   { id: "ads", label: "Performance Ads", src: "Performance Ads" },
   { id: "combo", label: "Inversión / Reservas", src: "Performance S" },
   { id: "reservas", label: "Reporte Reservas", src: "Reporte Reservas" },
@@ -1374,7 +1375,176 @@ function pageAuditoria(root) {
   ], MEAS, { limit: 10 });
 }
 
+/* ------------------------------------------------- page: resumen (live) ---
+   Added by Orion (2026-08-12), NOT part of the .pbix reconstruction. Fetches
+   the app's live APIs same-origin (auth cookies flow): /api/mercadeo/funnel,
+   /api/mercadeo/leads-metas, /api/mercadeo/roas. The month/project slicers of
+   the snapshot pages do NOT apply here. Keep this block when refreshing the
+   snapshot data. */
+
+let RESUMEN = { status: "idle", funnel: null, metas: null, roas: null, error: null };
+
+function loadResumen() {
+  if (RESUMEN.status === "loading" || RESUMEN.status === "ok") return;
+  RESUMEN.status = "loading";
+  const j = async (r) => {
+    if (!r.ok) {
+      const b = await r.json().catch(() => null);
+      throw new Error((b && b.error) || "HTTP " + r.status);
+    }
+    return r.json();
+  };
+  Promise.all([
+    fetch("/api/mercadeo/funnel").then(j),
+    fetch("/api/mercadeo/leads-metas").then(j),
+    fetch("/api/mercadeo/roas").then(j),
+  ])
+    .then(([funnel, metas, roas]) => {
+      RESUMEN = { status: "ok", funnel, metas, roas, error: null };
+      if (state.page === "resumen") render();
+    })
+    .catch((e) => {
+      RESUMEN = { status: "error", funnel: null, metas: null, roas: null, error: e.message };
+      if (state.page === "resumen") render();
+    });
+}
+
+const METAS_STATUS = {
+  debajo: { label: "Debajo del rango", color: "var(--neg)" },
+  dentro: { label: "Dentro del rango", color: "var(--pos)" },
+  encima: { label: "Encima del rango", color: "var(--brass)" },
+  sin_meta: { label: "Sin meta", color: "var(--ink-4)" },
+};
+
+function pageResumen(root) {
+  head(root, "Resumen", "en vivo — APIs de Orion");
+  loadResumen();
+
+  if (RESUMEN.status !== "ok" && RESUMEN.status !== "error") {
+    root.appendChild(el('<p style="color:var(--ink-3);font-size:13px">Cargando datos en vivo…</p>'));
+    return;
+  }
+  if (RESUMEN.status === "error") {
+    root.appendChild(
+      el(`<p style="color:var(--neg);font-size:13px">No se pudo cargar el resumen: ${esc(RESUMEN.error)}</p>`)
+    );
+    RESUMEN.status = "idle"; // retry on next visit
+    return;
+  }
+
+  const gtq = (n) => (n == null || !isFinite(n) ? "—" : "Q " + nf(Math.round(n)));
+  const xx = (n) => (n == null || !isFinite(n) ? "—" : (n >= 100 ? nf(Math.round(n)) : n.toFixed(1)) + "x");
+  const pctf = (n) => (n >= 10 ? Math.round(n) : n.toFixed(n >= 1 ? 1 : 2)) + "%";
+
+  const g = grid();
+  root.appendChild(g);
+
+  g.appendChild(
+    el(
+      `<p class="c12" style="color:var(--ink-3);font-size:12px;margin:0">
+         Data en vivo de Orion (reservas, PCV y ventas desde la base; leads y gasto desde los snapshots).
+         Los filtros de rango de meses y proyecto de arriba no aplican a esta página.</p>`
+    )
+  );
+
+  // --- Funnel de conversión ---
+  const f = RESUMEN.funnel;
+  g.appendChild(kpi("c4", "Leads (pauta Meta)", nf(f.leads), "snapshot, excluye campaña con columna mal mapeada"));
+  g.appendChild(kpi("c4", "Reservas", nf(f.reservas), "→ " + pctf(f.tasaLeadReserva) + " de leads", true));
+  g.appendChild(kpi("c4", "PCV firmadas", nf(f.pcvFirmadas), "→ " + pctf(f.tasaReservaPcv) + " de reservas", true));
+  g.appendChild(
+    el(
+      `<p class="c12" style="color:var(--ink-3);font-size:12px;margin:0">
+         Funnel de conversión — período ${esc(f.period.from)} → ${esc(f.period.to)}.
+         Reservas y PCV = todas las fuentes, desde la base de datos.</p>`
+    )
+  );
+
+  // --- Metas de leads ---
+  const m = RESUMEN.metas;
+  const mt = card("c12", "Metas de leads", m.month);
+  g.appendChild(mt.card);
+  renderTable(
+    mt.body,
+    [
+      { h: "Proyecto", f: (r) => `<b>${esc(r.project)}</b>` },
+      { h: "Leads (mes)", n: 1, f: (r) => nf(r.leads) },
+      { h: "Rango mensual", n: 1, f: (r) => (r.min != null && r.max != null ? nf(r.min) + "–" + nf(r.max) : "—") },
+      { h: "≈/día", n: 1, f: (r) => nf(Math.round(r.leadsPorDia)) },
+      {
+        h: "Meta ≈/día",
+        n: 1,
+        f: (r) =>
+          r.minPorDia != null && r.maxPorDia != null
+            ? nf(Math.round(r.minPorDia)) + "–" + nf(Math.round(r.maxPorDia))
+            : "—",
+      },
+      {
+        h: "Estado",
+        f: (r) => {
+          const s = METAS_STATUS[r.status] || METAS_STATUS.sin_meta;
+          return `<span style="color:${s.color};font-weight:600">${esc(s.label)}</span>`;
+        },
+      },
+    ],
+    m.proyectos
+  );
+  mt.body.appendChild(
+    el(
+      `<p style="color:var(--ink-3);font-size:12px;margin:8px 0 0">
+         Rangos mensuales "saludables" del equipo de mercadeo (2026-08-07). Leads del último mes
+         completo del snapshot, netos de la campaña excluida por auditoría.</p>`
+    )
+  );
+
+  // --- ROAS / ROI ---
+  const r = RESUMEN.roas;
+  g.appendChild(kpi("c3", "Inversión en pauta", gtq(r.global.spendGtq), "todas las cuentas, en GTQ"));
+  g.appendChild(kpi("c3", "Ventas (revenue)", gtq(r.global.revenueGtq), "ventas no canceladas"));
+  g.appendChild(kpi("c3", "ROAS amplio", xx(r.global.roasAmplio), "todas las ventas", true));
+  g.appendChild(kpi("c3", "ROAS atribuido", xx(r.global.roasAtribuido), "fuentes digitales", true));
+
+  const rt = card("c12", "ROAS / ROI por proyecto", "gasto en divisa real");
+  g.appendChild(rt.card);
+  renderTable(
+    rt.body,
+    [
+      {
+        h: "Proyecto",
+        f: (p) => `<b>${esc(p.project)}</b>` + (p.flag ? ` <span title="${esc(p.flag)}" style="color:var(--brass)">⚠</span>` : ""),
+      },
+      {
+        h: "Inversión",
+        n: 1,
+        f: (p) =>
+          p.spendCurrency === "USD"
+            ? usd(p.spendNative) + ` <span style="color:var(--ink-4)">(${gtq(p.spendGtq)})</span>`
+            : gtq(p.spendNative),
+      },
+      {
+        h: "Ventas (#)",
+        n: 1,
+        f: (p) => nf(p.ventas) + (p.ventasAtribuidas > 0 ? ` <span style="color:var(--ink-4)">(${nf(p.ventasAtribuidas)} dig.)</span>` : ""),
+      },
+      { h: "Revenue", n: 1, f: (p) => gtq(p.revenueGtq) },
+      { h: "ROAS amplio", n: 1, f: (p) => xx(p.roasAmplio) },
+      { h: "ROAS atribuido", n: 1, f: (p) => xx(p.roasAtribuido) },
+    ],
+    r.proyectos
+  );
+  rt.body.appendChild(
+    el(
+      `<p style="color:var(--ink-3);font-size:12px;margin:8px 0 0">
+         Período ${esc(r.period.from)} → ${esc(r.period.to)}. Gasto por cuenta en su divisa real
+         (columna Divisa del export — el reporte Power BI mezcla GTQ y USD). Conversión fija
+         Q${esc(String(r.gtqPerUsd))}/USD. Revenue = ventas no canceladas (sales). Atribuido =
+         unidades cuya reserva tiene fuente digital.</p>`
+    )
+  );
+}
+
 const RENDER = {
+  resumen: pageResumen,
   ads: pageAds, combo: pageCombo, reservas: pageReservas,
   inventario: pageInventario, presupuesto: pagePresupuesto, auditoria: pageAuditoria,
 };

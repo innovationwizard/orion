@@ -75,15 +75,15 @@ export const HUD_AREAS: HudArea[] = [
             status: "COMPLETA",
             note:
               "Desplegado en /mercadeo — rangos mensuales por proyecto (migración 069: BEN 350–400, BLT 250–300, B5 150–200, SE 50–100; CE sin meta) vs leads reales del último mes completo del snapshot. Rangos confirmados como MENSUALES contra la propia data de mercadeo.",
-            proof: [{ href: "/mercadeo", label: "Franja de metas de leads" }],
+            proof: [{ href: "/mercadeo", label: "Reporte — Resumen, metas de leads" }],
           },
           {
             id: "k3",
             label: "Meta diaria de lead",
             status: "COMPLETA",
             note:
-              "Desplegado en /mercadeo — equivalente diario derivado (rango ÷ días del mes) junto al promedio diario real, en la misma franja de metas.",
-            proof: [{ href: "/mercadeo", label: "Franja de metas — equivalente diario" }],
+              "Desplegado en /mercadeo — equivalente diario derivado (rango ÷ días del mes) junto al promedio diario real, en la misma tabla de metas (sección Resumen).",
+            proof: [{ href: "/mercadeo", label: "Reporte — Resumen, metas ≈/día" }],
           },
         ],
       },
@@ -126,7 +126,7 @@ export const HUD_AREAS: HudArea[] = [
             label: "ROAS / ROI",
             status: "COMPLETA",
             note: "Desplegado en /mercadeo — ROAS amplio y atribuido por proyecto: gasto Meta Ads en su divisa real (columna Divisa del Excel fuente; el Power BI mezclaba GTQ/USD) vs ventas no canceladas de la DB. Conversión fija Q7.75/USD.",
-            proof: [{ href: "/mercadeo", label: "Franja ROAS/ROI por proyecto" }],
+            proof: [{ href: "/mercadeo", label: "Reporte — Resumen, ROAS/ROI por proyecto" }],
           },
           {
             id: "k7",
@@ -231,7 +231,7 @@ export const HUD_AREAS: HudArea[] = [
             status: "COMPLETA",
             note:
               "Desplegado en /mercadeo — funnel del período del snapshot: leads de pauta Meta (netos de campaña mal mapeada) → reservas → PCV firmadas, con tasas de conversión. Leads snapshot al 2026-08-04; reservas y PCV en vivo desde la DB.",
-            proof: [{ href: "/mercadeo", label: "Franja de funnel — Leads → Reserva → PCV" }],
+            proof: [{ href: "/mercadeo", label: "Reporte — Resumen, funnel Leads → Reserva → PCV" }],
           },
         ],
       },
