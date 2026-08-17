@@ -94,6 +94,7 @@ export async function middleware(request: NextRequest) {
     // Redirect logged-in users from /login to their home page
     if (isLoginRoute) {
       if (role === "ventas") return redirectTo("/ventas/dashboard");
+      if (role === "entregas_viewer") return redirectTo("/entregas");
       if (role && [...ADMIN_PAGE_ROLES, ...DATA_PAGE_ROLES, "marketing"].includes(role)) {
         return redirectTo("/");
       }
@@ -122,6 +123,12 @@ export async function middleware(request: NextRequest) {
       ];
       if (!allowedPrefixes.some((prefix) => pathname.startsWith(prefix))) {
         return redirectTo("/ventas/dashboard");
+      }
+    } else if (role === "entregas_viewer") {
+      // Single-purpose role: the entregas board and nothing else.
+      const allowedPrefixes = ["/entregas", "/auth", "/login"];
+      if (!allowedPrefixes.some((prefix) => pathname.startsWith(prefix))) {
+        return redirectTo("/entregas");
       }
     } else if (ADMIN_PAGE_ROLES.includes(role ?? "")) {
       // Full admin access — no page restrictions

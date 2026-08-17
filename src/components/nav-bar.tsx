@@ -25,6 +25,7 @@ const NON_VENTAS_LINKS: (NavLink | "divider")[] = [
   { href: "/mercadeo", label: "Mercadeo", roles: DATA_VIEWER_ROLES },
   { href: "/promociones", label: "Promociones", roles: DATA_VIEWER_ROLES },
   { href: "/descuentos", label: "Descuentos", roles: DATA_VIEWER_ROLES },
+  { href: "/entregas", label: "Entregas", roles: [...DATA_VIEWER_ROLES, "entregas_viewer"] },
   "divider",
   { href: "/cesion", label: "Cesion", roles: ADMIN_ROLES },
   { href: "/admin/asesores", label: "Asesores", roles: ADMIN_ROLES },
@@ -45,6 +46,14 @@ const VENTAS_LINKS: (NavLink | "divider")[] = [
   { href: "/cotizador", label: "Cotizador" },
 ];
 
+/**
+ * entregas_viewer is a single-purpose, read-only role. Everything else is
+ * blocked in middleware, so the nav must not advertise links it cannot open.
+ */
+const ENTREGAS_VIEWER_LINKS: (NavLink | "divider")[] = [
+  { href: "/entregas", label: "Entregas" },
+];
+
 const linkClass =
   "text-muted no-underline px-2.5 py-1.5 rounded-full border border-transparent transition-colors hover:text-text-primary hover:border-border hover:bg-[#f8fafc]";
 
@@ -57,6 +66,7 @@ const ROLE_LABELS: Record<string, string> = {
   inventario: "Inventario",
   marketing: "Marketing",
   ventas: "Ventas",
+  entregas_viewer: "Entregas",
 };
 
 const ROLE_COLORS: Record<string, string> = {
@@ -68,6 +78,7 @@ const ROLE_COLORS: Record<string, string> = {
   inventario: "#f59e0b",
   marketing: "#ec4899",
   ventas: "#2563eb",
+  entregas_viewer: "#0573b0",
 };
 
 function getInitials(name: string): string {
@@ -168,6 +179,8 @@ export default function NavBar() {
 
   if (role === "ventas") {
     links = VENTAS_LINKS;
+  } else if (role === "entregas_viewer") {
+    links = ENTREGAS_VIEWER_LINKS;
   } else {
     // Filter non-ventas links by role
     const filtered = NON_VENTAS_LINKS.filter(

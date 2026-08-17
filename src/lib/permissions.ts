@@ -29,6 +29,7 @@ export type Resource =
   | "analytics"
   | "lead_sources"
   | "cotizador_config"
+  | "entregas"
   | "sync";
 
 export type Action =
@@ -62,6 +63,8 @@ const D = DATA_VIEWER_ROLES;
 const M: Role[] = ["master"]; // Master only
 const MF: Role[] = ["master", "financiero"]; // Master + financiero
 const MK: Role[] = ["master", "torredecontrol", "marketing"]; // Admin + marketing
+/** Data viewers + the single-purpose entregas_viewer role. Read-only board audience. */
+const DE: Role[] = [...DATA_VIEWER_ROLES, "entregas_viewer"];
 
 // ────────────────────────────────────────────────────────────────
 // Permission matrix — single source of truth
@@ -180,6 +183,13 @@ export const PERMISSIONS: Record<Resource, Partial<Record<Action, Role[]>>> = {
   },
   cotizador_config: {
     view: A,
+    create: A,
+    update: A,
+    delete: A,
+  },
+  entregas: {
+    // Board is readable by data viewers + entregas_viewer; only admins schedule.
+    view: DE,
     create: A,
     update: A,
     delete: A,

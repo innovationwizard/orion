@@ -31,6 +31,7 @@ export default async function DashboardPage() {
 
   const role = user.app_metadata?.role as string | undefined;
   if (role === "ventas") redirect("/ventas/dashboard");
+  if (role === "entregas_viewer") redirect("/entregas");
   if (!role || !(DATA_VIEWER_ROLES as string[]).includes(role)) redirect("/login");
 
   return (
