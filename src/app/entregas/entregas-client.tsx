@@ -819,9 +819,6 @@ export default function EntregasClient({ canEdit }: Props) {
               style={{ height: 24, width: "auto", filter: "brightness(0) invert(1)", opacity: 0.6 }}
             />
           </div>
-          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.34)", maxWidth: 460 }}>
-            Los datos viven en Orion. Esta vista es la fuente de verdad del cronograma de entregas.
-          </div>
         </footer>
       </div>
 
