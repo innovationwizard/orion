@@ -38,3 +38,19 @@ body {
   outline-offset: 2px;
   border-radius: 4px;
 }
+
+/*
+ * Dark <select> option lists on the /entregas board.
+ *
+ * macOS draws the option list as a native menu that ignores the control's CSS
+ * and follows `color-scheme`, so the dark styling looks right there. Chrome on
+ * Windows/Linux paints the list itself from the select's own background and
+ * color — a translucent white background composited over the popup's white
+ * canvas, plus white text, leaves the options unreadable. Opaque values fix
+ * that and are simply ignored where the native menu wins.
+ */
+.dark-select option,
+.dark-select optgroup {
+  background-color: #0c0a30;
+  color: #f8fafc;
+}

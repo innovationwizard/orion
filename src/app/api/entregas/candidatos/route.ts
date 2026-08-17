@@ -62,6 +62,15 @@ function buildSuggestions(): Map<string, { tipo_pago: EntregaTipoPago | null; ba
 }
 
 /**
+ * `rv_units.unit_number` is text, so Postgres orders it lexicographically and
+ * interleaves the floors: 1001, 1002, … 1009, 101, 1010, 102, 103. Natural
+ * ordering is applied here so the picker reads like a building.
+ */
+function compareUnitNumber(a: string, b: string): number {
+  return a.localeCompare(b, "es", { numeric: true, sensitivity: "base" });
+}
+
+/**
  * GET /api/entregas/candidatos
  *
  * Units that can receive an entrega: SOLD, with a CONFIRMED reservation.
@@ -184,6 +193,8 @@ export async function GET() {
       sugerencia: suggestions.get(unit.unit_number) ?? null,
     });
   }
+
+  candidatos.sort((a, b) => compareUnitNumber(a.unit_number, b.unit_number));
 
   return jsonOk({ candidatos });
 }

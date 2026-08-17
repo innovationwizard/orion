@@ -510,6 +510,7 @@ export default function EntregasClient({ canEdit }: Props) {
             style={{ ...inputStyle, flex: "1 1 240px", width: "auto" }}
           />
           <select
+            className="dark-select"
             value={filters.milestone}
             onChange={(e) =>
               setFilters((f) => ({ ...f, milestone: e.target.value as Filters["milestone"] }))
@@ -525,6 +526,7 @@ export default function EntregasClient({ canEdit }: Props) {
             ))}
           </select>
           <select
+            className="dark-select"
             value={filters.estado}
             onChange={(e) =>
               setFilters((f) => ({ ...f, estado: e.target.value as Filters["estado"] }))
@@ -1130,6 +1132,7 @@ function DetalleModal({
               Estado
             </label>
             <select
+              className="dark-select"
               id="edit-estado"
               value={estado}
               onChange={(e) => setEstado(e.target.value as EntregaEstado)}
@@ -1165,6 +1168,7 @@ function DetalleModal({
                 Tipo de pago
               </label>
               <select
+                className="dark-select"
                 id="edit-tipo"
                 value={tipoPago}
                 onChange={(e) => setTipoPago(e.target.value as "" | EntregaTipoPago)}
@@ -1292,16 +1296,19 @@ function AgendarModal({
     };
   }, []);
 
+  /** Every pending unit, never truncated — the list scrolls instead. */
+  const pendientes = useMemo(
+    () => candidatos.filter((c) => c.milestones_agendados.length < MILESTONES.length),
+    [candidatos],
+  );
+
   const matches = useMemo(() => {
     const needle = q.trim().toLowerCase();
-    const pool = candidatos.filter((c) => c.milestones_agendados.length < MILESTONES.length);
-    if (!needle) return pool.slice(0, 30);
-    return pool
-      .filter((c) =>
-        `${c.unit_number} ${c.unit_code ?? ""} ${c.cliente ?? ""}`.toLowerCase().includes(needle),
-      )
-      .slice(0, 30);
-  }, [candidatos, q]);
+    if (!needle) return pendientes;
+    return pendientes.filter((c) =>
+      `${c.unit_number} ${c.unit_code ?? ""} ${c.cliente ?? ""}`.toLowerCase().includes(needle),
+    );
+  }, [pendientes, q]);
 
   const milestonesDisponibles = useMemo(
     () =>
@@ -1393,7 +1400,15 @@ function AgendarModal({
             </div>
           )}
 
-          <div style={{ display: "grid", gap: 7, maxHeight: 320, overflowY: "auto" }}>
+          {!loading && !err && matches.length > 0 && (
+            <div style={{ fontSize: 11.5, color: "rgba(255,255,255,0.42)" }}>
+              {q.trim()
+                ? `${matches.length} de ${pendientes.length} unidades pendientes`
+                : `${pendientes.length} unidades pendientes`}
+            </div>
+          )}
+
+          <div style={{ display: "grid", gap: 7, maxHeight: 340, overflowY: "auto" }}>
             {matches.map((c) => (
               <button
                 key={c.unit_id}
@@ -1463,6 +1478,7 @@ function AgendarModal({
               Hito
             </label>
             <select
+              className="dark-select"
               id="agendar-hito"
               value={milestone}
               onChange={(e) => setMilestone(e.target.value as EntregaMilestone)}
@@ -1515,6 +1531,7 @@ function AgendarModal({
                 Tipo de pago
               </label>
               <select
+                className="dark-select"
                 id="agendar-tipo"
                 value={tipoPago}
                 onChange={(e) => setTipoPago(e.target.value as "" | EntregaTipoPago)}

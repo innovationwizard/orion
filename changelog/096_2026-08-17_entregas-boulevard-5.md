@@ -101,6 +101,9 @@ events `entrega.agendada` / `entrega.reprogramada` / `entrega.estado_cambiado` /
   sharing an hour. Neither is enforced in the DB — an exceptional fifth cita is always
   possible, it is just visible.
 - ISO dates are parsed by parts, not `new Date(iso)`, which shifts the day in GMT-6.
+- The agendar picker lists all pending units with a visible count and no truncation.
+  `unit_number` is `text`, so Postgres orders it lexicographically and interleaves the
+  floors (1001, 1002, … 1009, 101, 1010, 102); the API applies natural ordering.
 
 ## Verification
 
