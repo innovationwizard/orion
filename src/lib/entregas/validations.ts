@@ -19,12 +19,21 @@ const optionalText = z
   .default(null);
 
 // ---------------------------------------------------------------------------
-// Agendar una cita — creates the expediente on first use, then adds the cita
+// Agendar una cita — creates the expediente on first use, then adds the citas
 // ---------------------------------------------------------------------------
 
 export const agendarCitaSchema = z.object({
   unit_id: z.string().uuid("ID de unidad inválido"),
-  milestone: z.enum(MILESTONES as [string, ...string[]]),
+  /**
+   * One or both milestones. Two milestones in a single request are two citas in
+   * the same slot — the client comes once, firma y recibe llaves — and they are
+   * created together so the pair can never land half-scheduled.
+   */
+  milestones: z
+    .array(z.enum(MILESTONES as [string, ...string[]]))
+    .min(1, "Seleccione al menos un hito")
+    .max(MILESTONES.length, "Hay más hitos de los que existen")
+    .refine((m) => new Set(m).size === m.length, { message: "Hito repetido" }),
   fecha: isoDate,
   hora: isoTime,
   tipo_pago: z.enum(TIPOS_PAGO as [string, ...string[]]).nullable().default(null),

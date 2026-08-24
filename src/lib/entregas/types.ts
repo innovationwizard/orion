@@ -4,6 +4,11 @@
  * Mirrors migration 071. Two milestones (ESCRITURA, LLAVES) are scheduled
  * independently per unit; the expediente (`entregas`) holds what belongs to
  * the sale rather than to a single appointment.
+ *
+ * Both milestones may share a date and hour — the client comes once, firma y
+ * recibe llaves. That is not a separate kind of record: it is two citas in the
+ * same slot, each keeping its own estado, so a day that goes half-right
+ * (escritura firmada, llaves pendientes) is still representable.
  */
 
 export type EntregaMilestone = "ESCRITURA" | "LLAVES";
@@ -44,6 +49,13 @@ export interface EntregaCitaFull {
   titulares_count: number;
 }
 
+/** A milestone already in the cronograma for a candidate unit. */
+export interface EntregaCitaAgendada {
+  milestone: EntregaMilestone;
+  /** ISO date, YYYY-MM-DD. */
+  fecha: string;
+}
+
 /**
  * A unit that can receive an entrega: sold, with a confirmed reservation,
  * and not yet in the cronograma for the milestone being scheduled.
@@ -60,8 +72,8 @@ export interface EntregaCandidato {
   entrega_id: string | null;
   tipo_pago: EntregaTipoPago | null;
   banco: string | null;
-  /** Milestones already scheduled for this unit. */
-  milestones_agendados: EntregaMilestone[];
+  /** Milestones already scheduled for this unit, with the date each one landed on. */
+  citas_agendadas: EntregaCitaAgendada[];
   /**
    * Suggestion from the Pipedrive créditos snapshot (boundary 2026-08-05).
    * Never authoritative — Torre de Control confirms or overrides it.

@@ -6,6 +6,7 @@ import dealsSnapshot from "@/lib/creditos/deals-snapshot.json";
 import { ENTREGAS_PROJECT_SLUG } from "@/lib/entregas/constants";
 import type {
   EntregaCandidato,
+  EntregaCitaAgendada,
   EntregaMilestone,
   EntregaTipoPago,
 } from "@/lib/entregas/types";
@@ -74,9 +75,9 @@ function compareUnitNumber(a: string, b: string): number {
  * GET /api/entregas/candidatos
  *
  * Units that can receive an entrega: SOLD, with a CONFIRMED reservation.
- * Each carries the milestones already scheduled so the UI can offer only what
- * is still missing, plus a non-authoritative suggestion from the créditos
- * snapshot.
+ * Each carries the milestones already scheduled — with their dates — so the UI
+ * can offer what is still missing and show what is already booked, plus a
+ * non-authoritative suggestion from the créditos snapshot.
  *
  * Auth: admins only — this is the scheduling picker, and it exposes the full
  * sold-unit roster with client names.
@@ -110,7 +111,7 @@ export async function GET() {
       .eq("status", "CONFIRMED"),
     supabase
       .from("entregas")
-      .select("id, unit_id, tipo_pago, banco, entrega_citas(milestone)")
+      .select("id, unit_id, tipo_pago, banco, entrega_citas(milestone, fecha)")
       .in("unit_id", unitIds),
   ]);
 
@@ -133,7 +134,7 @@ export async function GET() {
     unit_id: string;
     tipo_pago: EntregaTipoPago | null;
     banco: string | null;
-    entrega_citas: { milestone: EntregaMilestone }[] | null;
+    entrega_citas: { milestone: EntregaMilestone; fecha: string }[] | null;
   };
   const entregaByUnit = new Map<string, EntregaRow>();
   for (const e of (entregasRes.data ?? []) as unknown as EntregaRow[]) {
@@ -176,7 +177,12 @@ export async function GET() {
     if (!reservationId) continue;
 
     const entrega = entregaByUnit.get(unit.id) ?? null;
-    const milestones = (entrega?.entrega_citas ?? []).map((c) => c.milestone);
+    // The date travels with each scheduled milestone so the picker can say
+    // "ya agendada, 12 sep" instead of silently dropping the option.
+    const agendadas: EntregaCitaAgendada[] = (entrega?.entrega_citas ?? []).map((c) => ({
+      milestone: c.milestone,
+      fecha: c.fecha,
+    }));
 
     candidatos.push({
       unit_id: unit.id,
@@ -189,7 +195,7 @@ export async function GET() {
       entrega_id: entrega?.id ?? null,
       tipo_pago: entrega?.tipo_pago ?? null,
       banco: entrega?.banco ?? null,
-      milestones_agendados: milestones,
+      citas_agendadas: agendadas,
       sugerencia: suggestions.get(unit.unit_number) ?? null,
     });
   }

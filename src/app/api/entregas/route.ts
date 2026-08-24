@@ -4,7 +4,7 @@ import { logAudit } from "@/lib/audit";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonOk, jsonError, parseJson, parseQuery } from "@/lib/api";
 import { agendarCitaSchema, entregasQuerySchema } from "@/lib/entregas/validations";
-import { ENTREGAS_PROJECT_SLUG, MILESTONE_LABELS } from "@/lib/entregas/constants";
+import { ENTREGAS_PROJECT_SLUG, MILESTONE_LABELS, MILESTONES } from "@/lib/entregas/constants";
 import type { EntregaCitaFull, EntregaMilestone } from "@/lib/entregas/types";
 
 /**
@@ -47,9 +47,15 @@ export async function GET(request: Request) {
 /**
  * POST /api/entregas
  *
- * Schedules one milestone (ESCRITURA or LLAVES) for a unit. The expediente is
- * created on first use and reused for the second milestone, so tipo de pago and
- * banco are captured once per unit rather than once per cita.
+ * Schedules one or both milestones (ESCRITURA, LLAVES) for a unit. Two
+ * milestones in a single request share the date and hour: the client comes
+ * once, firma y recibe llaves. They stay two rows so each keeps its own estado
+ * — a day where the escritura is signed but the keys are held back is a real
+ * outcome — and they are inserted in one statement so the pair can never land
+ * half-scheduled.
+ *
+ * The expediente is created on first use and reused afterwards, so tipo de pago
+ * and banco are captured once per unit rather than once per cita.
  *
  * Auth: admins only.
  */
@@ -61,7 +67,14 @@ export async function POST(request: Request) {
   if (pErr) return jsonError(400, pErr.error, pErr.details);
 
   const supabase = createAdminClient();
-  const milestone = input.milestone as EntregaMilestone;
+
+  // Canonical order (escritura before llaves) so the response, the audit trail
+  // and the board all read the milestones the same way.
+  const milestones = (input.milestones as EntregaMilestone[])
+    .slice()
+    .sort((a, b) => MILESTONES.indexOf(a) - MILESTONES.indexOf(b));
+
+  const etiquetaHitos = milestones.map((m) => MILESTONE_LABELS[m].toLowerCase()).join(" y ");
 
   // ---- Resolve the unit and its confirmed reservation ---------------------
   // A unit that changed hands carries DESISTED reservations too; only the
@@ -102,10 +115,10 @@ export async function POST(request: Request) {
     );
   }
 
-  // ---- Expediente: reuse if the other milestone is already scheduled ------
+  // ---- Expediente: reuse if the unit already has one ----------------------
   const { data: existing, error: existingErr } = await supabase
     .from("entregas")
-    .select("id, tipo_pago, banco")
+    .select("id, tipo_pago, banco, entrega_citas(milestone)")
     .eq("unit_id", input.unit_id)
     .maybeSingle();
 
@@ -117,6 +130,21 @@ export async function POST(request: Request) {
   let entregaId: string;
 
   if (existing) {
+    // Reject before inserting so the message names the milestone that clashes
+    // rather than surfacing a bare unique-constraint violation.
+    const yaAgendados = (
+      (existing.entrega_citas ?? []) as unknown as { milestone: EntregaMilestone }[]
+    ).map((c) => c.milestone);
+    const choques = milestones.filter((m) => yaAgendados.includes(m));
+    if (choques.length > 0) {
+      return jsonError(
+        409,
+        `La unidad ${unit.unit_number} ya tiene agendada su ${choques
+          .map((m) => MILESTONE_LABELS[m].toLowerCase())
+          .join(" y su ")}.`
+      );
+    }
+
     entregaId = existing.id;
     // Late-arriving tipo de pago / banco enrich the expediente; a value already
     // captured is never silently overwritten by a null.
@@ -160,59 +188,76 @@ export async function POST(request: Request) {
     entregaId = created.id;
   }
 
-  // ---- Cita ---------------------------------------------------------------
-  const { data: cita, error: citaErr } = await supabase
+  // ---- Citas --------------------------------------------------------------
+  // One statement: if the second row violates the unique constraint, neither
+  // row is written and the caller retries a coherent request.
+  const { data: nuevas, error: citaErr } = await supabase
     .from("entrega_citas")
-    .insert({
-      entrega_id: entregaId,
-      milestone,
-      fecha: input.fecha,
-      hora: input.hora,
-      notas: input.notas,
-      created_by: auth.user!.id,
-      updated_by: auth.user!.id,
-    })
-    .select("id")
-    .single();
+    .insert(
+      milestones.map((milestone) => ({
+        entrega_id: entregaId,
+        milestone,
+        fecha: input.fecha,
+        hora: input.hora,
+        notas: input.notas,
+        created_by: auth.user!.id,
+        updated_by: auth.user!.id,
+      }))
+    )
+    .select("id, milestone");
 
   if (citaErr) {
+    // The pre-check above catches the ordinary case; this covers a concurrent
+    // insert between the check and the write.
     if (citaErr.code === "23505") {
       return jsonError(
         409,
-        `La unidad ${unit.unit_number} ya tiene agendada su ${MILESTONE_LABELS[milestone].toLowerCase()}.`
+        `La unidad ${unit.unit_number} ya tiene agendada su ${etiquetaHitos}.`
       );
     }
     console.error("[POST /api/entregas] cita insert", citaErr);
     return jsonError(500, citaErr.message);
   }
 
-  await logAudit(auth.user!, {
-    eventType: "entrega.agendada",
-    resourceType: "entrega_cita",
-    resourceId: cita.id,
-    resourceLabel: `${unit.unit_number} · ${MILESTONE_LABELS[milestone]}`,
-    details: {
-      unit_id: input.unit_id,
-      unit_number: unit.unit_number,
-      entrega_id: entregaId,
-      milestone,
-      fecha: input.fecha,
-      hora: input.hora,
-    },
-    request,
-  });
+  const creadas = (nuevas ?? []) as { id: string; milestone: EntregaMilestone }[];
 
-  // Return the board-shaped row so the client can insert without a refetch.
+  for (const cita of creadas) {
+    await logAudit(auth.user!, {
+      eventType: "entrega.agendada",
+      resourceType: "entrega_cita",
+      resourceId: cita.id,
+      resourceLabel: `${unit.unit_number} · ${MILESTONE_LABELS[cita.milestone]}`,
+      details: {
+        unit_id: input.unit_id,
+        unit_number: unit.unit_number,
+        entrega_id: entregaId,
+        milestone: cita.milestone,
+        fecha: input.fecha,
+        hora: input.hora,
+        // Both milestones scheduled together into the same slot.
+        agendada_con: milestones.filter((m) => m !== cita.milestone),
+      },
+      request,
+    });
+  }
+
+  // Return the board-shaped rows so the client can insert without a refetch.
   const { data: full, error: fullErr } = await supabase
     .from("v_entregas_full")
     .select("*")
-    .eq("cita_id", cita.id)
-    .single();
+    .in(
+      "cita_id",
+      creadas.map((c) => c.id)
+    );
 
   if (fullErr) {
     console.error("[POST /api/entregas] view read-back", fullErr);
     return jsonError(500, fullErr.message);
   }
 
-  return jsonOk({ cita: full as EntregaCitaFull }, { status: 201 });
+  const citas = ((full ?? []) as EntregaCitaFull[]).sort(
+    (a, b) => MILESTONES.indexOf(a.milestone) - MILESTONES.indexOf(b.milestone)
+  );
+
+  return jsonOk({ citas }, { status: 201 });
 }
