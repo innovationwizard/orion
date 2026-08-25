@@ -54,3 +54,7 @@ tsconfig.tsbuildinfo
 ComisionesFebrero/
 ComisionesMarzo/
 scripts/output/
+
+# Material de trabajo local. Contiene credenciales en texto plano de cuentas
+# reales (alta masiva de entregas_viewer, 2026-08-25) — nunca debe versionarse.
+scratchpad/

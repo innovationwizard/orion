@@ -63,8 +63,12 @@ const D = DATA_VIEWER_ROLES;
 const M: Role[] = ["master"]; // Master only
 const MF: Role[] = ["master", "financiero"]; // Master + financiero
 const MK: Role[] = ["master", "torredecontrol", "marketing"]; // Admin + marketing
-/** Data viewers + the single-purpose entregas_viewer role. Read-only board audience. */
-const DE: Role[] = [...DATA_VIEWER_ROLES, "entregas_viewer"];
+/** Data viewers + the single-purpose entregas roles. Board read audience. */
+const DE: Role[] = [...DATA_VIEWER_ROLES, "entregas_viewer", "entregas_editor"];
+/** Roles that may schedule/reschedule/cancel entregas. Deliberately excludes
+ *  torredecontrol: the entregas board is scheduled by master + entregas_editor
+ *  only, while torredecontrol retains read access through DE. */
+const EW: Role[] = ["master", "entregas_editor"];
 
 // ────────────────────────────────────────────────────────────────
 // Permission matrix — single source of truth
@@ -188,11 +192,12 @@ export const PERMISSIONS: Record<Resource, Partial<Record<Action, Role[]>>> = {
     delete: A,
   },
   entregas: {
-    // Board is readable by data viewers + entregas_viewer; only admins schedule.
+    // Board is readable by data viewers + both entregas roles;
+    // only master + entregas_editor schedule.
     view: DE,
-    create: A,
-    update: A,
-    delete: A,
+    create: EW,
+    update: EW,
+    delete: EW,
   },
   sync: {
     view: M,

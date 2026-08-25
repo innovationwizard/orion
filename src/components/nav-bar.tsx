@@ -25,7 +25,7 @@ const NON_VENTAS_LINKS: (NavLink | "divider")[] = [
   { href: "/mercadeo", label: "Mercadeo", roles: DATA_VIEWER_ROLES },
   { href: "/promociones", label: "Promociones", roles: DATA_VIEWER_ROLES },
   { href: "/descuentos", label: "Descuentos", roles: DATA_VIEWER_ROLES },
-  { href: "/entregas", label: "Entregas", roles: [...DATA_VIEWER_ROLES, "entregas_viewer"] },
+  { href: "/entregas", label: "Entregas", roles: [...DATA_VIEWER_ROLES, "entregas_viewer", "entregas_editor"] },
   "divider",
   { href: "/cesion", label: "Cesion", roles: ADMIN_ROLES },
   { href: "/admin/asesores", label: "Asesores", roles: ADMIN_ROLES },
@@ -47,10 +47,11 @@ const VENTAS_LINKS: (NavLink | "divider")[] = [
 ];
 
 /**
- * entregas_viewer is a single-purpose, read-only role. Everything else is
- * blocked in middleware, so the nav must not advertise links it cannot open.
+ * entregas_viewer and entregas_editor are single-purpose roles scoped to the
+ * entregas board. Everything else is blocked in middleware, so the nav must not
+ * advertise links they cannot open.
  */
-const ENTREGAS_VIEWER_LINKS: (NavLink | "divider")[] = [
+const ENTREGAS_ONLY_LINKS: (NavLink | "divider")[] = [
   { href: "/entregas", label: "Entregas" },
 ];
 
@@ -67,6 +68,7 @@ const ROLE_LABELS: Record<string, string> = {
   marketing: "Marketing",
   ventas: "Ventas",
   entregas_viewer: "Entregas",
+  entregas_editor: "Entregas (edición)",
 };
 
 const ROLE_COLORS: Record<string, string> = {
@@ -79,6 +81,7 @@ const ROLE_COLORS: Record<string, string> = {
   marketing: "#ec4899",
   ventas: "#2563eb",
   entregas_viewer: "#0573b0",
+  entregas_editor: "#0573b0",
 };
 
 function getInitials(name: string): string {
@@ -179,8 +182,8 @@ export default function NavBar() {
 
   if (role === "ventas") {
     links = VENTAS_LINKS;
-  } else if (role === "entregas_viewer") {
-    links = ENTREGAS_VIEWER_LINKS;
+  } else if (role === "entregas_viewer" || role === "entregas_editor") {
+    links = ENTREGAS_ONLY_LINKS;
   } else {
     // Filter non-ventas links by role
     const filtered = NON_VENTAS_LINKS.filter(

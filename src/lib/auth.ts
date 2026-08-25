@@ -49,15 +49,17 @@ export type Role =
   | "ventas"
   | "inventario"
   | "entregas_viewer"
+  | "entregas_editor"
   | "torredecontrol";
 
-// Note: entregas_viewer is single-purpose (read-only access to /entregas and
-// nothing else), so its level carries no hierarchical meaning — it is listed
-// only to satisfy the Record<Role, number> contract. Never grant access by
-// comparing against it.
+// Note: entregas_viewer and entregas_editor are single-purpose (access to
+// /entregas and nothing else), so their levels carry no hierarchical meaning —
+// they are listed only to satisfy the Record<Role, number> contract. Never
+// grant access by comparing against them.
 const ROLE_LEVEL: Record<Role, number> = {
   ventas: 10,
   entregas_viewer: 15,
+  entregas_editor: 16,
   inventario: 20,
   marketing: 25,
   contabilidad: 30,

@@ -23,6 +23,7 @@ const ALL_ROLES: Role[] = [
   "inventario",
   "ventas",
   "entregas_viewer",
+  "entregas_editor",
 ];
 
 const lines: string[] = [];

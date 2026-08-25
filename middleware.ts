@@ -94,7 +94,7 @@ export async function middleware(request: NextRequest) {
     // Redirect logged-in users from /login to their home page
     if (isLoginRoute) {
       if (role === "ventas") return redirectTo("/ventas/dashboard");
-      if (role === "entregas_viewer") return redirectTo("/entregas");
+      if (role === "entregas_viewer" || role === "entregas_editor") return redirectTo("/entregas");
       if (role && [...ADMIN_PAGE_ROLES, ...DATA_PAGE_ROLES, "marketing"].includes(role)) {
         return redirectTo("/");
       }
@@ -124,8 +124,10 @@ export async function middleware(request: NextRequest) {
       if (!allowedPrefixes.some((prefix) => pathname.startsWith(prefix))) {
         return redirectTo("/ventas/dashboard");
       }
-    } else if (role === "entregas_viewer") {
-      // Single-purpose role: the entregas board and nothing else.
+    } else if (role === "entregas_viewer" || role === "entregas_editor") {
+      // Single-purpose roles: the entregas board and nothing else.
+      // entregas_editor differs from entregas_viewer only in write permissions
+      // (see PERMISSIONS.entregas), not in which pages it may open.
       const allowedPrefixes = ["/entregas", "/auth", "/login"];
       if (!allowedPrefixes.some((prefix) => pathname.startsWith(prefix))) {
         return redirectTo("/entregas");

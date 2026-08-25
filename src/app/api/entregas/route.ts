@@ -13,7 +13,7 @@ import type { EntregaCitaFull, EntregaMilestone } from "@/lib/entregas/types";
  * Returns every cita of the cronograma, newest state included. Date bounds are
  * optional — the board loads the full cronograma so week navigation is instant.
  *
- * Auth: data viewers + entregas_viewer.
+ * Auth: data viewers + entregas_viewer + entregas_editor.
  */
 export async function GET(request: Request) {
   const auth = await requireRole(rolesFor("entregas", "view"));
@@ -57,7 +57,7 @@ export async function GET(request: Request) {
  * The expediente is created on first use and reused afterwards, so tipo de pago
  * and banco are captured once per unit rather than once per cita.
  *
- * Auth: admins only.
+ * Auth: master + entregas_editor.
  */
 export async function POST(request: Request) {
   const auth = await requireRole(rolesFor("entregas", "create"));

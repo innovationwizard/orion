@@ -79,7 +79,7 @@ function compareUnitNumber(a: string, b: string): number {
  * can offer what is still missing and show what is already booked, plus a
  * non-authoritative suggestion from the créditos snapshot.
  *
- * Auth: admins only — this is the scheduling picker, and it exposes the full
+ * Auth: master + entregas_editor — this is the scheduling picker, and it exposes the full
  * sold-unit roster with client names.
  */
 export async function GET() {

@@ -22,7 +22,7 @@ function sameTime(a: string, b: string): boolean {
  *
  * Completing a cita has NO side effects on rv_units or reservations, by design.
  *
- * Auth: admins only.
+ * Auth: master + entregas_editor.
  */
 export async function PATCH(
   request: Request,
@@ -192,7 +192,7 @@ export async function PATCH(
  * — this is for correcting a mistake. The expediente is removed alongside the
  * last remaining cita so no orphan rows accumulate.
  *
- * Auth: admins only.
+ * Auth: master + entregas_editor.
  */
 export async function DELETE(
   request: Request,
