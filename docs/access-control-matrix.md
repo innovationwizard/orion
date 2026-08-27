@@ -1,6 +1,6 @@
 # Orion Access Control Matrix
 
-> **Auto-generated** from `src/lib/permissions.ts` on 2026-08-24.
+> **Auto-generated** from `src/lib/permissions.ts` on 2026-08-27.
 > Do not edit manually. Run `npx tsx scripts/generate-access-matrix.ts` to regenerate.
 
 | Resource | Action | master | torredecontrol | gerencia | financiero | contabilidad | marketing | inventario | ventas | entregas_viewer | entregas_editor |
@@ -64,9 +64,9 @@
 | cotizador_config | update | ✓ | ✓ |  |  |  |  |  |  |  |  |
 | cotizador_config | delete | ✓ | ✓ |  |  |  |  |  |  |  |  |
 | entregas | view | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |  |  | ✓ | ✓ |
-| entregas | create | ✓ |  |  |  |  |  |  |  |  | ✓ |
-| entregas | update | ✓ |  |  |  |  |  |  |  |  | ✓ |
-| entregas | delete | ✓ |  |  |  |  |  |  |  |  | ✓ |
+| entregas | create | ✓ | ✓ |  |  |  |  |  |  |  | ✓ |
+| entregas | update | ✓ | ✓ |  |  |  |  |  |  |  | ✓ |
+| entregas | delete | ✓ | ✓ |  |  |  |  |  |  |  | ✓ |
 | sync | view | ✓ |  |  |  |  |  |  |  |  |  |
 | sync | create | ✓ |  |  |  |  |  |  |  |  |  |
 
@@ -76,5 +76,5 @@
 
 - **Resources:** 26
 - **Permission triples (resource × action):** 64
-- **Total role grants:** 165
+- **Total role grants:** 168
 - **Roles defined:** 10 (master, torredecontrol, gerencia, financiero, contabilidad, marketing, inventario, ventas, entregas_viewer, entregas_editor)
