@@ -375,9 +375,26 @@ export default function EntregasClient({ canEdit }: Props) {
 
   const stats = useMemo(() => {
     const total = filtered.length;
-    const completadas = filtered.filter((c) => c.estado === "COMPLETADA").length;
-    const confirmadas = filtered.filter((c) => c.estado === "CONFIRMADA").length;
-    const programadas = filtered.filter((c) => c.estado === "PROGRAMADA").length;
+    // An entrega is done only when both hitos are done: the escritura signed
+    // and the keys handed over. One milestone completed is still work pending.
+    const hitosPorEntrega = new Map<string, Set<EntregaMilestone>>();
+    for (const c of filtered) {
+      if (c.estado !== "COMPLETADA") continue;
+      const done = hitosPorEntrega.get(c.entrega_id);
+      if (done) done.add(c.milestone);
+      else hitosPorEntrega.set(c.entrega_id, new Set([c.milestone]));
+    }
+    const completadas = [...hitosPorEntrega.values()].filter((done) =>
+      MILESTONES.every((m) => done.has(m)),
+    ).length;
+    const confirmadas = new Set(
+      filtered.filter((c) => c.estado === "CONFIRMADA").map(groupKeyOf),
+    ).size;
+    // A visit where the escritura is signed and the keys handed over is one
+    // appointment, not two: programadas and confirmadas count slots, not hitos.
+    const programadas = new Set(
+      filtered.filter((c) => c.estado === "PROGRAMADA").map(groupKeyOf),
+    ).size;
     const atencion = filtered.filter(
       (c) => c.estado === "CANCELADA" || (c.reprogramaciones > 0 && c.estado !== "COMPLETADA"),
     ).length;
@@ -595,7 +612,7 @@ export default function EntregasClient({ canEdit }: Props) {
           }}
         >
           <StatCard num={stats.total} label="Hitos agendados" />
-          <StatCard num={stats.completadas} label="Completadas" />
+          <StatCard num={stats.completadas} label="Entregas completadas" />
           <StatCard num={stats.confirmadas} label="Confirmadas" accent />
           <StatCard num={stats.programadas} label="Programadas" />
           <StatCard num={stats.atencion} label="Requieren atención" />
@@ -1093,6 +1110,13 @@ function DetalleModal({
   const [hora, setHora] = useState(toInputTime(principal.hora));
   /** Which hitos the new date and hour reach — the whole visit unless split. */
   const [alcance, setAlcance] = useState<"TODOS" | EntregaMilestone>("TODOS");
+  /**
+   * Whether moving the visit counts against the client. Reschedules the sales
+   * department originates are operational noise and must not inflate the
+   * counter; the ones the client asks for are exactly what it tracks. Defaults
+   * to counting, so a move is never silently dropped from the record.
+   */
+  const [cuentaReprogramacion, setCuentaReprogramacion] = useState(true);
   const [estados, setEstados] = useState<Record<string, EntregaEstado>>(() =>
     porCita(citas, (c) => c.estado),
   );
@@ -1141,6 +1165,7 @@ function DetalleModal({
         if (enAlcance(c) && (fecha !== c.fecha || hora !== toInputTime(c.hora))) {
           payload.fecha = fecha;
           payload.hora = hora;
+          payload.cuenta_reprogramacion = cuentaReprogramacion;
         }
 
         const estado = estados[c.cita_id];
@@ -1211,6 +1236,7 @@ function DetalleModal({
     setFecha(principal.fecha);
     setHora(toInputTime(principal.hora));
     setAlcance("TODOS");
+    setCuentaReprogramacion(true);
     setEstados(porCita(citas, (c) => c.estado));
     setMotivos(porCita(citas, (c) => c.cancelada_motivo ?? ""));
     setNotas(porCita(citas, (c) => c.cita_notas ?? ""));
@@ -1371,17 +1397,44 @@ function DetalleModal({
           )}
 
           {moved && (
-            <div style={{ fontSize: 11.5, color: "#ffd79a" }}>
-              Mover{" "}
-              {alcance === "TODOS"
-                ? combinada
-                  ? "ambos hitos"
-                  : "la cita"
-                : `solo la ${MILESTONE_LABELS[alcance].toLowerCase()}`}{" "}
-              cuenta como reprogramación
-              {citas.some((c) => enAlcance(c) && c.estado === "CONFIRMADA")
-                ? " y anula la confirmación anterior."
-                : "."}
+            <div style={{ display: "grid", gap: 6 }}>
+              <label
+                htmlFor="edit-cuenta-reprogramacion"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  fontSize: 12.5,
+                  fontWeight: 600,
+                  color: "#ffd79a",
+                  cursor: "pointer",
+                }}
+              >
+                <input
+                  id="edit-cuenta-reprogramacion"
+                  type="checkbox"
+                  checked={cuentaReprogramacion}
+                  onChange={(e) => setCuentaReprogramacion(e.target.checked)}
+                  style={{ width: 16, height: 16, accentColor: "#ffd79a", cursor: "pointer" }}
+                />
+                ¿Cuenta como Reprogramada?
+              </label>
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.38)", lineHeight: 1.5 }}>
+                Márquela si el cliente pidió mover la cita. Desmárquela si el cambio lo originó
+                el departamento de ventas: la cita se mueve igual, pero no suma al contador de
+                reprogramaciones.
+              </div>
+              {citas.some((c) => enAlcance(c) && c.estado === "CONFIRMADA") && (
+                <div style={{ fontSize: 11.5, color: "#ffd79a" }}>
+                  Mover{" "}
+                  {alcance === "TODOS"
+                    ? combinada
+                      ? "ambos hitos"
+                      : "la cita"
+                    : `solo la ${MILESTONE_LABELS[alcance].toLowerCase()}`}{" "}
+                  anula la confirmación anterior.
+                </div>
+              )}
             </div>
           )}
 

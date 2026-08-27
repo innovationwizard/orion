@@ -52,6 +52,13 @@ export const actualizarCitaSchema = z
     fecha: isoDate.optional(),
     hora: isoTime.optional(),
     estado: z.enum(ESTADOS as [string, ...string[]]).optional(),
+    /**
+     * Whether moving the date or hour counts as a reprogramación. A move the
+     * sales department originated is operational noise and must not be charged
+     * to the client's record; one the client asked for must. Absent → counts,
+     * so no caller loses the reprogramación by omission.
+     */
+    cuenta_reprogramacion: z.boolean().optional(),
     cancelada_motivo: z.string().trim().min(1).max(2000).nullable().optional(),
     notas: z.string().trim().max(2000).nullable().optional(),
     tipo_pago: z.enum(TIPOS_PAGO as [string, ...string[]]).nullable().optional(),

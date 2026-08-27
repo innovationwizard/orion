@@ -16,9 +16,14 @@ function sameTime(a: string, b: string): boolean {
  * PATCH /api/entregas/citas/[id]
  *
  * Reschedules, confirms, completes or cancels one milestone. Moving the date or
- * hour returns the cita to PROGRAMADA and increments `reprogramaciones` — a
- * reschedule is history, not a state — and the before/after pair is written to
- * audit_events.
+ * hour returns the cita to PROGRAMADA — a reschedule is history, not a state —
+ * and the before/after pair is written to audit_events.
+ *
+ * `reprogramaciones` only goes up when the move counts against the client:
+ * `cuenta_reprogramacion: false` moves the cita without touching the counter,
+ * for the reschedules the sales department itself originates. Omitting the flag
+ * counts the move, keeping the previous behaviour for any other caller. Either
+ * way the move is audited, and the flag is recorded with the before/after.
  *
  * Completing a cita has NO side effects on rv_units or reservations, by design.
  *
@@ -59,6 +64,7 @@ export async function PATCH(
   const nuevaHora = input.hora ?? current.hora;
   const reprogramada =
     nuevaFecha !== current.fecha || !sameTime(nuevaHora, current.hora);
+  const cuentaReprogramacion = input.cuenta_reprogramacion ?? true;
 
   // A cancelled cita must be explicitly revived; rescheduling one silently
   // would resurrect an appointment nobody re-agreed to.
@@ -76,8 +82,9 @@ export async function PATCH(
   if (input.notas !== undefined) patch.notas = input.notas;
 
   if (reprogramada) {
-    patch.reprogramaciones = current.reprogramaciones + 1;
-    // Moving the appointment invalidates a prior confirmation.
+    if (cuentaReprogramacion) patch.reprogramaciones = current.reprogramaciones + 1;
+    // Moving the appointment invalidates a prior confirmation, whoever asked
+    // for the move: the client has not agreed to the new slot yet.
     if (input.estado === undefined && currentEstado === "CONFIRMADA") {
       patch.estado = "PROGRAMADA";
     }
@@ -161,6 +168,7 @@ export async function PATCH(
         hora_anterior: current.hora,
         fecha_nueva: cita.fecha,
         hora_nueva: cita.hora,
+        cuenta_reprogramacion: cuentaReprogramacion,
         reprogramaciones: cita.reprogramaciones,
       },
       request,
