@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import NavBar from "@/components/nav-bar";
+import SiteNav from "@/components/site-nav";
 
 export const metadata: Metadata = {
   title: "Mercadeo | Puerta Abierta",
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function MercadeoPage() {
   return (
     <div className="flex flex-col h-screen">
-      <NavBar />
+      <SiteNav />
       <iframe
         src="/mercadeo/performance.html"
         title="Reporte maestro de mercadeo — Performance Dashboard Puerta Abierta"

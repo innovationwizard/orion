@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import NavBar from "@/components/nav-bar";
+import SiteNav from "@/components/site-nav";
 import KpiCard from "@/components/kpi-card";
 import type { CreditosPipelinePayload, PipelineDeal } from "@/app/api/creditos/pipeline/route";
 import { useScrollToHash } from "@/hooks/use-scroll-to-hash";
@@ -111,7 +111,7 @@ export default function PipelineClient() {
   if (error) {
     return (
       <div>
-        <NavBar />
+        <SiteNav />
         <div className="p-6 text-danger text-sm">No se pudo cargar el pipeline: {error}</div>
       </div>
     );
@@ -119,7 +119,7 @@ export default function PipelineClient() {
 
   return (
     <div>
-      <NavBar />
+      <SiteNav />
       <div className="p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[1600px] mx-auto">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">Pipeline de Expedientes de Crédito</h1>

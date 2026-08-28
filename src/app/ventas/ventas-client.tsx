@@ -4,7 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useProjects } from "@/hooks/use-projects";
 import { useVentas } from "@/hooks/use-ventas";
 import KpiCard from "@/components/kpi-card";
-import NavBar from "@/components/nav-bar";
+import SiteNav from "@/components/site-nav";
 import MonthlyChart from "./monthly-chart";
 import CumulativeChart from "./cumulative-chart";
 import VentasAnalitica from "./ventas-analitica";
@@ -26,7 +26,7 @@ export default function VentasClient() {
 
   return (
     <div className="p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[1400px] mx-auto">
-      <NavBar />
+      <SiteNav />
 
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>

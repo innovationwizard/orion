@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useCurrentSalesperson } from "@/hooks/use-current-salesperson";
 import { VentasProvider } from "@/lib/reservas/ventas-context";
-import NavBar from "@/components/nav-bar";
+import SiteNav from "@/components/site-nav";
 
 const TABS = [
   { href: "/ventas/portal/panel", label: "Panel" },
@@ -29,7 +29,7 @@ export default function VentasPortalLayout({
   if (loading) {
     return (
       <div className="p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[1400px] mx-auto">
-        <NavBar />
+        <SiteNav />
         <div className="animate-pulse grid gap-3">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="h-10 rounded bg-border" />
@@ -42,7 +42,7 @@ export default function VentasPortalLayout({
   if (error || !data) {
     return (
       <div className="p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[1400px] mx-auto">
-        <NavBar />
+        <SiteNav />
         <div className="bg-card rounded-2xl border border-border p-8 text-center">
           <p className="text-muted">
             Esta página es solo para asesores de ventas.
@@ -55,7 +55,7 @@ export default function VentasPortalLayout({
   return (
     <VentasProvider value={data}>
       <div className="p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[1400px] mx-auto">
-        <NavBar />
+        <SiteNav />
 
         {/* Header */}
         <div className="flex items-center justify-between">

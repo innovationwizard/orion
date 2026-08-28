@@ -4,7 +4,7 @@ import { useMemo, useState, useEffect, useCallback } from "react";
 import { useReservations } from "@/hooks/use-reservations";
 import { formatCurrency, formatDate } from "@/lib/reservas/constants";
 import type { ReservationPending } from "@/lib/reservas/types";
-import NavBar from "@/components/nav-bar";
+import SiteNav from "@/components/site-nav";
 
 // ─── Types ────────────────────────────────────────────────────
 interface AuditEvent {
@@ -132,7 +132,7 @@ export default function OperacionesClient() {
 
   return (
     <div className="p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[1600px] mx-auto">
-      <NavBar />
+      <SiteNav />
 
       <div>
         <h1 className="text-2xl font-bold text-text-primary">Centro de Operaciones</h1>

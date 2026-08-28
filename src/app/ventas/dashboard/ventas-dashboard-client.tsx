@@ -8,7 +8,7 @@ import {
   formatCurrency,
   formatDate,
 } from "@/lib/reservas/constants";
-import NavBar from "@/components/nav-bar";
+import SiteNav from "@/components/site-nav";
 
 export default function VentasDashboardClient() {
   const { data: spData, loading: spLoading, error: spError } = useCurrentSalesperson();
@@ -51,7 +51,7 @@ export default function VentasDashboardClient() {
   if (spLoading) {
     return (
       <div className="p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[1400px] mx-auto">
-        <NavBar />
+        <SiteNav />
         <div className="animate-pulse grid gap-3">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="h-10 rounded bg-border" />
@@ -64,7 +64,7 @@ export default function VentasDashboardClient() {
   if (spError || !spData) {
     return (
       <div className="p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[1400px] mx-auto">
-        <NavBar />
+        <SiteNav />
         <div className="bg-card rounded-2xl border border-border p-8 text-center">
           <p className="text-muted">
             Esta página es solo para asesores de ventas.
@@ -83,7 +83,7 @@ export default function VentasDashboardClient() {
 
   return (
     <div className="p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[1400px] mx-auto">
-      <NavBar />
+      <SiteNav />
 
       {/* Header */}
       <div>

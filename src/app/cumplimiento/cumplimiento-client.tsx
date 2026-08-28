@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import NavBar from "@/components/nav-bar";
+import SiteNav from "@/components/site-nav";
 import KpiCard from "@/components/kpi-card";
 import type { HudCumplimientoPayload, ExpedienteRow } from "@/app/api/hud/cumplimiento/route";
 
@@ -101,7 +101,7 @@ export default function CumplimientoClient() {
   if (error) {
     return (
       <div>
-        <NavBar />
+        <SiteNav />
         <div className="p-6 text-danger text-sm">No se pudo cargar cumplimiento: {error}</div>
       </div>
     );
@@ -109,7 +109,7 @@ export default function CumplimientoClient() {
 
   return (
     <div>
-      <NavBar />
+      <SiteNav />
       <div className="p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[1600px] mx-auto">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">Expedientes de Cumplimiento</h1>

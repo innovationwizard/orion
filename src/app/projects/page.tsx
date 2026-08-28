@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import ErrorBanner from "@/components/error-banner";
-import NavBar from "@/components/nav-bar";
+import SiteNav from "@/components/site-nav";
 import type { Project } from "@/lib/types";
 
 type ProjectPayload = {
@@ -145,7 +145,7 @@ export default function ProjectsPage() {
 
   return (
     <section className="p-[clamp(16px,4vw,32px)] grid gap-[clamp(16px,3vw,28px)]">
-      <NavBar />
+      <SiteNav />
       <header className="flex flex-wrap items-center gap-x-5 gap-y-3 justify-between">
         <div>
           <p className="uppercase tracking-[0.08em] text-[11px] font-semibold text-muted mb-2">PAI · Administración</p>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import NavBar from "@/components/nav-bar";
+import SiteNav from "@/components/site-nav";
 
 interface AuditEvent {
   id: string;
@@ -88,7 +88,7 @@ export default function AuditClient() {
 
   return (
     <div className="p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[1400px] mx-auto">
-      <NavBar />
+      <SiteNav />
 
       <div>
         <h1 className="text-2xl font-bold text-text-primary">Auditoría</h1>

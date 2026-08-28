@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useProjects } from "@/hooks/use-projects";
 import { useReferrals } from "@/hooks/use-referrals";
-import NavBar from "@/components/nav-bar";
+import SiteNav from "@/components/site-nav";
 import ReferralTable from "./referral-table";
 import ReferralForm from "./referral-form";
 
@@ -36,7 +36,7 @@ export default function ReferidosClient() {
 
   return (
     <div className="p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[1400px] mx-auto">
-      <NavBar />
+      <SiteNav />
 
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>

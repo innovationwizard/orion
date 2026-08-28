@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useProjects } from "@/hooks/use-projects";
 import { useIntegration } from "@/hooks/use-integration";
 import KpiCard from "@/components/kpi-card";
-import NavBar from "@/components/nav-bar";
+import SiteNav from "@/components/site-nav";
 import PipelineTable from "./pipeline-table";
 
 export default function IntegracionClient() {
@@ -42,7 +42,7 @@ export default function IntegracionClient() {
 
   return (
     <div className="p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[1400px] mx-auto">
-      <NavBar />
+      <SiteNav />
 
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>

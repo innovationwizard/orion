@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import NavBar from "@/components/nav-bar";
+import SiteNav from "@/components/site-nav";
 import KpiCard from "@/components/kpi-card";
 import CreditProgressBar from "@/components/creditos/progress-bar";
 import DonutChart from "@/components/creditos/donut-chart";
@@ -81,7 +81,7 @@ export default function CreditosClient() {
 
   return (
     <div className="min-h-screen bg-bg">
-      <NavBar />
+      <SiteNav />
 
       {/* Header */}
       <div className="px-6 pt-4 pb-2">

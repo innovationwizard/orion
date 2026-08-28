@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import NavBar from "@/components/nav-bar";
+import SiteNav from "@/components/site-nav";
 
 /* ───── types ───── */
 
@@ -322,7 +322,7 @@ export default function CotizadorConfigClient() {
 
   return (
     <div className="p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[1100px] mx-auto">
-      <NavBar />
+      <SiteNav />
 
       <header className="flex items-center justify-between gap-4 flex-wrap">
         <div>

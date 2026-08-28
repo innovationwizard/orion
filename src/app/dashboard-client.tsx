@@ -13,7 +13,7 @@ import PaymentDetailModal from "@/components/payment-detail-modal";
 import CobrosDecisiones from "@/components/cobros-decisiones";
 import type { PaymentAnalyticsUnit } from "@/components/payment-treemap";
 import { DATE_PRESETS } from "@/lib/date-presets";
-import NavBar from "@/components/nav-bar";
+import SiteNav from "@/components/site-nav";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -375,7 +375,7 @@ export default function DashboardClient({ role }: { role?: string }) {
 
   return (
     <section className="p-[clamp(16px,4vw,32px)] grid gap-[clamp(16px,3vw,28px)]">
-      <NavBar />
+      <SiteNav />
 
       {/* Header */}
       <header className="flex flex-wrap gap-x-6 gap-y-5 items-start justify-between">

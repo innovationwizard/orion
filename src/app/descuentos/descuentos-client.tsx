@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, useEffect, useMemo, useState } from "react";
-import NavBar from "@/components/nav-bar";
+import SiteNav from "@/components/site-nav";
 import KpiCard from "@/components/kpi-card";
 import type { DescuentosPayload, DescuentoFolder } from "@/app/api/descuentos/route";
 
@@ -86,7 +86,7 @@ export default function DescuentosClient() {
   if (error) {
     return (
       <div>
-        <NavBar />
+        <SiteNav />
         <div className="p-6 text-danger text-sm">No se pudo cargar descuentos: {error}</div>
       </div>
     );
@@ -94,7 +94,7 @@ export default function DescuentosClient() {
 
   return (
     <div>
-      <NavBar />
+      <SiteNav />
       <div className="p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[1400px] mx-auto">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">Control de Descuentos</h1>

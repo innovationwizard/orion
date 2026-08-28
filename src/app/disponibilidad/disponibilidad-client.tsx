@@ -11,7 +11,7 @@ import ProjectTowerFilter from "./project-tower-filter";
 import StatusLegend from "./status-legend";
 import ConnectionStatus from "./connection-status";
 import AvailabilityGrid from "./availability-grid";
-import NavBar from "@/components/nav-bar";
+import SiteNav from "@/components/site-nav";
 
 function getInitialParam(key: string): string {
   if (typeof window === "undefined") return "";
@@ -95,7 +95,7 @@ export default function DisponibilidadClient() {
 
   return (
     <div className="p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[1400px] mx-auto">
-      <NavBar />
+      <SiteNav />
 
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-4">

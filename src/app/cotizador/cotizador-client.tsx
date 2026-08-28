@@ -12,7 +12,7 @@ import {
   computeEscrituracion,
 } from "@/lib/reservas/cotizador";
 import { formatCurrency, formatDate } from "@/lib/reservas/constants";
-import NavBar from "@/components/nav-bar";
+import SiteNav from "@/components/site-nav";
 import { useCurrentSalesperson } from "@/hooks/use-current-salesperson";
 import InstallmentTable from "./installment-table";
 import FinancingMatrix from "./financing-matrix";
@@ -199,7 +199,7 @@ export default function CotizadorClient() {
   return (
     <div className="cotizador-page p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[900px] mx-auto">
       <style dangerouslySetInnerHTML={{ __html: printStyles }} />
-      <NavBar />
+      <SiteNav />
 
       {projectSlug && !imageError && (
         <div className="cotizador-project-banner">

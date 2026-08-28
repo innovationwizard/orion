@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import NavBar from "@/components/nav-bar";
+import SiteNav from "@/components/site-nav";
 
 interface Project {
   id: string;
@@ -108,7 +108,7 @@ export default function RolesClient() {
   if (loading) {
     return (
       <div className="p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[1400px] mx-auto">
-        <NavBar />
+        <SiteNav />
         <div className="grid gap-4">
           <div className="h-8 w-64 rounded-lg bg-border animate-pulse" />
           <div className="grid grid-cols-3 gap-3">
@@ -125,7 +125,7 @@ export default function RolesClient() {
   if (error) {
     return (
       <div className="p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[1400px] mx-auto">
-        <NavBar />
+        <SiteNav />
         <div className="bg-card rounded-2xl shadow-card border border-border p-8 text-center grid gap-4">
           <h2 className="text-lg font-bold text-text-primary">Error</h2>
           <p className="text-sm text-muted">{error}</p>
@@ -136,7 +136,7 @@ export default function RolesClient() {
 
   return (
     <div className="p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[1400px] mx-auto">
-      <NavBar />
+      <SiteNav />
 
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">

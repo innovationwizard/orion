@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import NavBar from "@/components/nav-bar";
+import SiteNav from "@/components/site-nav";
 import {
   CITAS_POR_DIA,
   DIA_LABELS,
@@ -480,7 +480,7 @@ export default function EntregasClient({ canEdit }: Props) {
 
   return (
     <>
-      <NavBar />
+      <SiteNav />
 
       <div
         style={{

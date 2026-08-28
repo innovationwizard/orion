@@ -9,7 +9,7 @@ import ReservationFilters from "./reservation-filters";
 import ReservationTable from "./reservation-table";
 import ReservationDetail from "./reservation-detail";
 import ActionConfirmDialog from "./action-confirm-dialog";
-import NavBar from "@/components/nav-bar";
+import SiteNav from "@/components/site-nav";
 
 export default function ReservasAdminClient() {
   const router = useRouter();
@@ -96,7 +96,7 @@ export default function ReservasAdminClient() {
 
   return (
     <div className="p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[1400px] mx-auto">
-      <NavBar />
+      <SiteNav />
 
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
