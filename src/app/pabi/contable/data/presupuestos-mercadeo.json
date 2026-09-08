@@ -1,0 +1,63 @@
+{
+  "status": "ready",
+  "updatedAt": "2026-06-30",
+  "source": "03  06.26 Fondeo y Gastos de proyectos.xlsx · 02  06.26 Ejecución Presupuesto Mercadeo PAI.xlsx",
+  "rows": {
+    "1": {
+      "kind": "mercadeo-oficial",
+      "acumulado": {
+        "value": 7052810.61,
+        "periodo": "Acumulado desde inicio de cada proyecto",
+        "fuente": "Fondeo y Gastos de Proyectos · hoja Resúmen · fila 17 MERCADEO"
+      },
+      "semestre": {
+        "periodo": "Enero–Junio 2026",
+        "real": 840882.07,
+        "presupuesto": 755697.28,
+        "presupuestoAnual": 1426394.56
+      },
+      "porProyecto": [
+        { "name": "Boulevard 5", "presupuestoAnual": 339507.48, "presupuestoSemestre": 169753.74, "realSemestre": 226167.64 },
+        { "name": "Benestare", "presupuestoAnual": 299608.56, "presupuestoSemestre": 149804.28, "realSemestre": 156437.69 },
+        { "name": "Bosque Las Tapias", "presupuestoAnual": 460280.00, "presupuestoSemestre": 232640.00, "realSemestre": 261698.06 },
+        { "name": "Santa Elena", "presupuestoAnual": 326998.52, "presupuestoSemestre": 203499.26, "realSemestre": 136942.44 },
+        { "name": "Puerta Abierta (corporativo)", "presupuestoAnual": 0, "presupuestoSemestre": 0, "realSemestre": 59636.24 }
+      ],
+      "assumption": {
+        "decision": "El presupuesto por proyecto del semestre se suma de las columnas Presupuestado de enero a junio en cada hoja de «Ejecución Presupuesto Mercadeo PAI». Se agregó para que el bullet chart compare real contra presupuesto del mismo semestre; antes la barra era el real de enero–junio y la línea el presupuesto anual completo, dos períodos distintos. Los tres totales (Q755,697.28 semestre, Q840,882.07 real, Q1,426,394.56 anual) cuadran al centavo contra la suma por proyecto.",
+        "ifChanged": "Editar presupuestoSemestre en rows[\"1\"].porProyecto. Puerta Abierta corporativo lleva presupuesto cero y gasto real: es gasto sin línea presupuestada, no un dato faltante."
+      }
+    },
+    "2": {
+      "kind": "fondeo-status",
+      "total": 21159853.49,
+      "porProyecto": [
+        { "name": "Casa Elisa", "mercadeo": 1283900.53, "corporativo": 110677.57, "comisiones": 1620400.10, "total": 3014978.20, "comisionesConcilia": false },
+        { "name": "Boulevard 5", "mercadeo": 4534732.40, "corporativo": 1074235.61, "comisiones": 4364496.75, "total": 9973464.76, "comisionesConcilia": false },
+        { "name": "Benestare", "mercadeo": 2449337.21, "corporativo": 998739.09, "comisiones": 643147.19, "total": 4091223.49, "comisionesConcilia": false },
+        { "name": "Bosque Las Tapias", "mercadeo": 1341732.71, "corporativo": 851330.60, "comisiones": 618236.00, "total": 2811299.31, "comisionesConcilia": null },
+        { "name": "Santa Elena", "mercadeo": 713897.23, "corporativo": 260030.02, "comisiones": 294960.48, "total": 1268887.73, "comisionesConcilia": true }
+      ],
+      "conciliaNota": "Comisiones se cruza contra el libro Puerta Abierta Resultados y Dividendos. Sólo Santa Elena cuadra al centavo hoy; Bosque Las Tapias no tiene contraparte registrada en ese libro."
+    },
+    "3": {
+      "kind": "centros-costo",
+      "periodo": "Enero–Junio 2026",
+      "centros": [
+        { "name": "Comercial", "gasto": 678723.07 },
+        { "name": "Créditos", "gasto": 298675.48 },
+        { "name": "Administrativo operativo", "gasto": 792058.00 },
+        { "name": "Mercadeo (planilla)", "gasto": 214825.15 },
+        { "name": "Asistencia comercial", "gasto": 38360.95 },
+        { "name": "Entregas", "gasto": null }
+      ],
+      "administrativoOperativo": 792058.00,
+      "totalTodosLosCentros": 2105888.97,
+      "presupuestoDisponible": false,
+      "assumption": {
+        "decision": "«Administrativo operativo» (Q792,058.00, fila 28 de la hoja General) es lo que Contabilidad llama Corporativo/Administrativo — luz, papelería, internet, renta. Los otros cinco centros son planilla por área, incluida la de Mercadeo (Q214,825.15), que no es el presupuesto de medios — ese vive en la fila 1 de esta sección.",
+        "ifChanged": "Editar rows[\"3\"] en este archivo — el KPI destacado usa el campo administrativoOperativo, no la suma de todos los centros."
+      }
+    }
+  }
+}

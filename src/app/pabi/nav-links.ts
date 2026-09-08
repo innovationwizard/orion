@@ -8,9 +8,8 @@ export const NON_VENTAS_CATEGORIES: PanelCategory[] = [
   {
     name: "Comercial",
     links: [
-      { href: "/", label: "Dashboard" },
+      // Dashboard salió de aquí: ahora es "Dashboard de Cobros" en Finanzas.
       { href: "/projects", label: "Projects" },
-      { href: "/disponibilidad", label: "Disponibilidad" },
       { href: "/admin/reservas", label: "Reservas", roles: ADMIN_ROLES },
       { href: "/admin/operaciones", label: "Operaciones", roles: ADMIN_ROLES },
       { href: "/cotizador", label: "Cotizador" },
@@ -25,17 +24,16 @@ export const NON_VENTAS_CATEGORIES: PanelCategory[] = [
       { href: "/referidos", label: "Referidos", roles: ADMIN_ROLES },
       { href: "/buyer-persona", label: "Buyer Persona", roles: ADMIN_ROLES },
       { href: "/mercadeo", label: "Mercadeo", roles: DATA_VIEWER_ROLES },
-      { href: "/promociones", label: "Promociones", roles: DATA_VIEWER_ROLES },
-      { href: "/descuentos", label: "Descuentos", roles: DATA_VIEWER_ROLES },
     ],
   },
   {
     name: "Finanzas",
     links: [
+      { href: "/", label: "Dashboard de Cobros", roles: DATA_VIEWER_ROLES },
       { href: "/creditos", label: "Créditos", roles: DATA_VIEWER_ROLES },
       { href: "/creditos/pipeline", label: "Expedientes", roles: DATA_VIEWER_ROLES },
       { href: "/cumplimiento", label: "Cumplimiento", roles: DATA_VIEWER_ROLES },
-      { href: "/valorizacion", label: "Valorizacion", roles: ADMIN_ROLES },
+      { href: "/contable", label: "Contable", roles: DATA_VIEWER_ROLES },
     ],
   },
   {
@@ -69,6 +67,57 @@ export const VENTAS_CATEGORIES: PanelCategory[] = [
       { href: "/cotizador", label: "Cotizador" },
     ],
   },
+];
+
+/**
+ * Sections of the consolidated `/ventas` page, in the order of the "Ventas por
+ * Proyecto" block of the commercial reporting sheet. Disponibilidad,
+ * Valorización, Descuentos and Promociones used to be their own Panel entries;
+ * they now live inside `/ventas` and are reached through its in-page SectionNav.
+ *
+ * `roles` here only decides what the UI offers — each underlying API route
+ * still enforces its own `requireRole(...)`.
+ */
+export type VentasSection = {
+  id: string;
+  label: string;
+  roles?: string[];
+  /**
+   * When set, the entry navigates to this page instead of expanding a card in
+   * place. Used for destinations that are too large to embed and keep their own
+   * page.
+   */
+  href?: string;
+};
+
+export const VENTAS_SECTIONS: VentasSection[] = [
+  { id: "avance", label: "Avance", roles: DATA_VIEWER_ROLES },
+  { id: "ritmo", label: "Ritmo" },
+  { id: "objetivos", label: "Objetivos", roles: DATA_VIEWER_ROLES },
+  { id: "canales", label: "Canales", roles: DATA_VIEWER_ROLES },
+  { id: "modelos", label: "Modelos", roles: DATA_VIEWER_ROLES },
+  { id: "disponibilidad", label: "Disponibilidad" },
+  { id: "valorizacion", label: "Valorización", roles: ADMIN_ROLES },
+  { id: "descuentos", label: "Descuentos", roles: DATA_VIEWER_ROLES },
+  { id: "promociones", label: "Promociones", roles: DATA_VIEWER_ROLES },
+];
+
+/**
+ * Sections of `/mercadeo`. The sheet's Mercadeo block is a single row 1
+ * ("Reporte maestro") with sub-rows 1.1–1.6 plus rows 2–5; all of them are
+ * views of the same master report, so the page presents them as one report
+ * rather than eleven separate cards. The three sections below mirror the pages
+ * of the report mercadeo actually uses (Resumen, Performance Ads, Presupuesto),
+ * so the nav reads the way the marketing manager already navigates it.
+ *
+ * The report's remaining pages (Inversión/Reservas, Reporte Reservas,
+ * Inventarios) need reservation and inventory data this page does not load —
+ * they stay in the full report, linked from the bottom of the page.
+ */
+export const MERCADEO_SECTIONS: VentasSection[] = [
+  { id: "resumen", label: "Resumen" },
+  { id: "performance-ads", label: "Performance Ads" },
+  { id: "presupuesto", label: "Presupuesto" },
 ];
 
 export const ENTREGAS_ONLY_CATEGORIES: PanelCategory[] = [

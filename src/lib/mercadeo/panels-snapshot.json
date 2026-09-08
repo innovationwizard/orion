@@ -1,0 +1,7878 @@
+{
+  "_source": "Extracted from the window.__PA_DATA__ payload embedded in public/mercadeo/performance.html (Power BI pbixray reconstruction). Regenerate with scripts/extract-mercadeo-panels.py after replacing the export. spendNative is in each account's own currency (see `currency`) — the Meta Ads column is mislabelled USD and the Power BI mixes GTQ/USD; do not sum across accounts without converting.",
+  "epoch": "2024-07-05",
+  "refreshed": "2026-08-04",
+  "excludedCampaign": "cons_guat__kpa_LeadsWebsiteBoulevard_fb_lds_cpa_11noval20nov",
+  "accounts": [
+    {
+      "account": "Benestare",
+      "currency": "GTQ",
+      "alcance": 16657783,
+      "impresiones": 22123581,
+      "leads": 29329,
+      "clics": 513798,
+      "spendNative": 51809.48
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "currency": "GTQ",
+      "alcance": 22601832,
+      "impresiones": 30286338,
+      "leads": 13776,
+      "clics": 658828,
+      "spendNative": 69160.23
+    },
+    {
+      "account": "Boulevard5",
+      "currency": "USD",
+      "alcance": 19331768,
+      "impresiones": 25159705,
+      "leads": 114797,
+      "clics": 590903,
+      "spendNative": 84781.2
+    },
+    {
+      "account": "Casa Elisa",
+      "currency": "USD",
+      "alcance": 4933096,
+      "impresiones": 6812811,
+      "leads": 3575,
+      "clics": 116343,
+      "spendNative": 24967.86
+    },
+    {
+      "account": "Puerta Abierta",
+      "currency": "GTQ",
+      "alcance": 613764,
+      "impresiones": 750047,
+      "leads": 882,
+      "clics": 19345,
+      "spendNative": 5776.69
+    },
+    {
+      "account": "Santa Elena",
+      "currency": "GTQ",
+      "alcance": 5428117,
+      "impresiones": 7120344,
+      "leads": 1435,
+      "clics": 153901,
+      "spendNative": 23631.7
+    }
+  ],
+  "daily": [
+    {
+      "date": "2024-07-05",
+      "alcance": 22660,
+      "impresiones": 29202,
+      "leads": 19,
+      "clics": 614
+    },
+    {
+      "date": "2024-07-06",
+      "alcance": 19237,
+      "impresiones": 24731,
+      "leads": 12,
+      "clics": 561
+    },
+    {
+      "date": "2024-07-07",
+      "alcance": 21481,
+      "impresiones": 28437,
+      "leads": 22,
+      "clics": 700
+    },
+    {
+      "date": "2024-07-08",
+      "alcance": 27117,
+      "impresiones": 36181,
+      "leads": 22,
+      "clics": 795
+    },
+    {
+      "date": "2024-07-09",
+      "alcance": 26982,
+      "impresiones": 35220,
+      "leads": 17,
+      "clics": 649
+    },
+    {
+      "date": "2024-07-10",
+      "alcance": 23491,
+      "impresiones": 29969,
+      "leads": 17,
+      "clics": 600
+    },
+    {
+      "date": "2024-07-11",
+      "alcance": 25312,
+      "impresiones": 32237,
+      "leads": 23,
+      "clics": 772
+    },
+    {
+      "date": "2024-07-12",
+      "alcance": 25717,
+      "impresiones": 32552,
+      "leads": 17,
+      "clics": 736
+    },
+    {
+      "date": "2024-07-13",
+      "alcance": 23158,
+      "impresiones": 28888,
+      "leads": 19,
+      "clics": 736
+    },
+    {
+      "date": "2024-07-14",
+      "alcance": 27845,
+      "impresiones": 35103,
+      "leads": 21,
+      "clics": 839
+    },
+    {
+      "date": "2024-07-15",
+      "alcance": 29744,
+      "impresiones": 37653,
+      "leads": 15,
+      "clics": 815
+    },
+    {
+      "date": "2024-07-16",
+      "alcance": 29097,
+      "impresiones": 36082,
+      "leads": 20,
+      "clics": 777
+    },
+    {
+      "date": "2024-07-17",
+      "alcance": 26771,
+      "impresiones": 32981,
+      "leads": 13,
+      "clics": 704
+    },
+    {
+      "date": "2024-07-18",
+      "alcance": 27113,
+      "impresiones": 33647,
+      "leads": 22,
+      "clics": 745
+    },
+    {
+      "date": "2024-07-19",
+      "alcance": 22650,
+      "impresiones": 27587,
+      "leads": 14,
+      "clics": 572
+    },
+    {
+      "date": "2024-07-20",
+      "alcance": 16409,
+      "impresiones": 20061,
+      "leads": 15,
+      "clics": 545
+    },
+    {
+      "date": "2024-07-21",
+      "alcance": 17445,
+      "impresiones": 21723,
+      "leads": 19,
+      "clics": 680
+    },
+    {
+      "date": "2024-07-22",
+      "alcance": 19999,
+      "impresiones": 25544,
+      "leads": 16,
+      "clics": 629
+    },
+    {
+      "date": "2024-07-23",
+      "alcance": 19678,
+      "impresiones": 25177,
+      "leads": 13,
+      "clics": 594
+    },
+    {
+      "date": "2024-07-24",
+      "alcance": 19513,
+      "impresiones": 24742,
+      "leads": 17,
+      "clics": 568
+    },
+    {
+      "date": "2024-07-25",
+      "alcance": 18671,
+      "impresiones": 23365,
+      "leads": 22,
+      "clics": 565
+    },
+    {
+      "date": "2024-07-26",
+      "alcance": 19281,
+      "impresiones": 24359,
+      "leads": 15,
+      "clics": 531
+    },
+    {
+      "date": "2024-07-27",
+      "alcance": 18483,
+      "impresiones": 22570,
+      "leads": 17,
+      "clics": 544
+    },
+    {
+      "date": "2024-07-28",
+      "alcance": 20401,
+      "impresiones": 25605,
+      "leads": 21,
+      "clics": 646
+    },
+    {
+      "date": "2024-07-29",
+      "alcance": 24654,
+      "impresiones": 34148,
+      "leads": 25,
+      "clics": 699
+    },
+    {
+      "date": "2024-07-30",
+      "alcance": 23987,
+      "impresiones": 29487,
+      "leads": 19,
+      "clics": 582
+    },
+    {
+      "date": "2024-07-31",
+      "alcance": 24076,
+      "impresiones": 29740,
+      "leads": 22,
+      "clics": 606
+    },
+    {
+      "date": "2024-08-01",
+      "alcance": 23060,
+      "impresiones": 28578,
+      "leads": 19,
+      "clics": 581
+    },
+    {
+      "date": "2024-08-02",
+      "alcance": 18173,
+      "impresiones": 22099,
+      "leads": 14,
+      "clics": 480
+    },
+    {
+      "date": "2024-08-03",
+      "alcance": 15947,
+      "impresiones": 19399,
+      "leads": 18,
+      "clics": 475
+    },
+    {
+      "date": "2024-08-04",
+      "alcance": 16967,
+      "impresiones": 21704,
+      "leads": 17,
+      "clics": 600
+    },
+    {
+      "date": "2024-08-05",
+      "alcance": 18445,
+      "impresiones": 24062,
+      "leads": 17,
+      "clics": 575
+    },
+    {
+      "date": "2024-08-06",
+      "alcance": 17059,
+      "impresiones": 21861,
+      "leads": 16,
+      "clics": 530
+    },
+    {
+      "date": "2024-08-07",
+      "alcance": 17925,
+      "impresiones": 23103,
+      "leads": 15,
+      "clics": 516
+    },
+    {
+      "date": "2024-08-08",
+      "alcance": 16609,
+      "impresiones": 20837,
+      "leads": 7,
+      "clics": 436
+    },
+    {
+      "date": "2024-08-09",
+      "alcance": 18009,
+      "impresiones": 22323,
+      "leads": 11,
+      "clics": 498
+    },
+    {
+      "date": "2024-08-10",
+      "alcance": 14620,
+      "impresiones": 18347,
+      "leads": 11,
+      "clics": 476
+    },
+    {
+      "date": "2024-08-11",
+      "alcance": 16812,
+      "impresiones": 21122,
+      "leads": 19,
+      "clics": 588
+    },
+    {
+      "date": "2024-08-12",
+      "alcance": 16712,
+      "impresiones": 21303,
+      "leads": 14,
+      "clics": 477
+    },
+    {
+      "date": "2024-08-13",
+      "alcance": 15209,
+      "impresiones": 19474,
+      "leads": 14,
+      "clics": 482
+    },
+    {
+      "date": "2024-08-14",
+      "alcance": 17308,
+      "impresiones": 22311,
+      "leads": 16,
+      "clics": 464
+    },
+    {
+      "date": "2024-08-15",
+      "alcance": 16903,
+      "impresiones": 21806,
+      "leads": 13,
+      "clics": 501
+    },
+    {
+      "date": "2024-08-16",
+      "alcance": 18229,
+      "impresiones": 22847,
+      "leads": 22,
+      "clics": 571
+    },
+    {
+      "date": "2024-08-17",
+      "alcance": 15821,
+      "impresiones": 19452,
+      "leads": 20,
+      "clics": 549
+    },
+    {
+      "date": "2024-08-18",
+      "alcance": 20348,
+      "impresiones": 25570,
+      "leads": 22,
+      "clics": 692
+    },
+    {
+      "date": "2024-08-19",
+      "alcance": 25852,
+      "impresiones": 31772,
+      "leads": 20,
+      "clics": 728
+    },
+    {
+      "date": "2024-08-20",
+      "alcance": 30352,
+      "impresiones": 38063,
+      "leads": 20,
+      "clics": 790
+    },
+    {
+      "date": "2024-08-21",
+      "alcance": 27114,
+      "impresiones": 33932,
+      "leads": 33,
+      "clics": 841
+    },
+    {
+      "date": "2024-08-22",
+      "alcance": 28067,
+      "impresiones": 35212,
+      "leads": 25,
+      "clics": 754
+    },
+    {
+      "date": "2024-08-23",
+      "alcance": 26355,
+      "impresiones": 32344,
+      "leads": 27,
+      "clics": 730
+    },
+    {
+      "date": "2024-08-24",
+      "alcance": 23537,
+      "impresiones": 28955,
+      "leads": 23,
+      "clics": 700
+    },
+    {
+      "date": "2024-08-25",
+      "alcance": 29115,
+      "impresiones": 36517,
+      "leads": 22,
+      "clics": 872
+    },
+    {
+      "date": "2024-08-26",
+      "alcance": 35109,
+      "impresiones": 43838,
+      "leads": 35,
+      "clics": 881
+    },
+    {
+      "date": "2024-08-27",
+      "alcance": 38154,
+      "impresiones": 49044,
+      "leads": 33,
+      "clics": 1010
+    },
+    {
+      "date": "2024-08-28",
+      "alcance": 39767,
+      "impresiones": 51345,
+      "leads": 32,
+      "clics": 979
+    },
+    {
+      "date": "2024-08-29",
+      "alcance": 40034,
+      "impresiones": 50552,
+      "leads": 15,
+      "clics": 835
+    },
+    {
+      "date": "2024-08-30",
+      "alcance": 39968,
+      "impresiones": 50051,
+      "leads": 30,
+      "clics": 904
+    },
+    {
+      "date": "2024-08-31",
+      "alcance": 37558,
+      "impresiones": 46153,
+      "leads": 21,
+      "clics": 876
+    },
+    {
+      "date": "2024-09-01",
+      "alcance": 53494,
+      "impresiones": 69256,
+      "leads": 47,
+      "clics": 1306
+    },
+    {
+      "date": "2024-09-02",
+      "alcance": 56710,
+      "impresiones": 74263,
+      "leads": 33,
+      "clics": 1122
+    },
+    {
+      "date": "2024-09-03",
+      "alcance": 53841,
+      "impresiones": 69280,
+      "leads": 35,
+      "clics": 1132
+    },
+    {
+      "date": "2024-09-04",
+      "alcance": 50938,
+      "impresiones": 64644,
+      "leads": 37,
+      "clics": 1035
+    },
+    {
+      "date": "2024-09-05",
+      "alcance": 35925,
+      "impresiones": 46501,
+      "leads": 11,
+      "clics": 808
+    },
+    {
+      "date": "2024-09-06",
+      "alcance": 39004,
+      "impresiones": 55302,
+      "leads": 21,
+      "clics": 832
+    },
+    {
+      "date": "2024-09-07",
+      "alcance": 35948,
+      "impresiones": 50180,
+      "leads": 15,
+      "clics": 792
+    },
+    {
+      "date": "2024-09-08",
+      "alcance": 37669,
+      "impresiones": 51248,
+      "leads": 13,
+      "clics": 852
+    },
+    {
+      "date": "2024-09-09",
+      "alcance": 36052,
+      "impresiones": 49625,
+      "leads": 20,
+      "clics": 784
+    },
+    {
+      "date": "2024-09-10",
+      "alcance": 36386,
+      "impresiones": 49354,
+      "leads": 23,
+      "clics": 831
+    },
+    {
+      "date": "2024-09-11",
+      "alcance": 36699,
+      "impresiones": 48270,
+      "leads": 16,
+      "clics": 715
+    },
+    {
+      "date": "2024-09-12",
+      "alcance": 39111,
+      "impresiones": 50567,
+      "leads": 9,
+      "clics": 708
+    },
+    {
+      "date": "2024-09-13",
+      "alcance": 37560,
+      "impresiones": 49152,
+      "leads": 21,
+      "clics": 820
+    },
+    {
+      "date": "2024-09-14",
+      "alcance": 36234,
+      "impresiones": 47589,
+      "leads": 23,
+      "clics": 830
+    },
+    {
+      "date": "2024-09-15",
+      "alcance": 43635,
+      "impresiones": 58217,
+      "leads": 26,
+      "clics": 969
+    },
+    {
+      "date": "2024-09-16",
+      "alcance": 39934,
+      "impresiones": 53799,
+      "leads": 21,
+      "clics": 786
+    },
+    {
+      "date": "2024-09-17",
+      "alcance": 34673,
+      "impresiones": 48633,
+      "leads": 15,
+      "clics": 728
+    },
+    {
+      "date": "2024-09-18",
+      "alcance": 34154,
+      "impresiones": 46047,
+      "leads": 11,
+      "clics": 736
+    },
+    {
+      "date": "2024-09-19",
+      "alcance": 31980,
+      "impresiones": 43115,
+      "leads": 11,
+      "clics": 679
+    },
+    {
+      "date": "2024-09-20",
+      "alcance": 31550,
+      "impresiones": 42826,
+      "leads": 18,
+      "clics": 667
+    },
+    {
+      "date": "2024-09-21",
+      "alcance": 30677,
+      "impresiones": 41450,
+      "leads": 18,
+      "clics": 661
+    },
+    {
+      "date": "2024-09-22",
+      "alcance": 33391,
+      "impresiones": 45458,
+      "leads": 22,
+      "clics": 785
+    },
+    {
+      "date": "2024-09-23",
+      "alcance": 39684,
+      "impresiones": 53260,
+      "leads": 15,
+      "clics": 808
+    },
+    {
+      "date": "2024-09-24",
+      "alcance": 35969,
+      "impresiones": 49275,
+      "leads": 19,
+      "clics": 793
+    },
+    {
+      "date": "2024-09-25",
+      "alcance": 33660,
+      "impresiones": 44668,
+      "leads": 14,
+      "clics": 741
+    },
+    {
+      "date": "2024-09-26",
+      "alcance": 33759,
+      "impresiones": 44285,
+      "leads": 20,
+      "clics": 625
+    },
+    {
+      "date": "2024-09-27",
+      "alcance": 31437,
+      "impresiones": 41314,
+      "leads": 12,
+      "clics": 626
+    },
+    {
+      "date": "2024-09-28",
+      "alcance": 30428,
+      "impresiones": 39666,
+      "leads": 10,
+      "clics": 566
+    },
+    {
+      "date": "2024-09-29",
+      "alcance": 34288,
+      "impresiones": 45455,
+      "leads": 16,
+      "clics": 663
+    },
+    {
+      "date": "2024-09-30",
+      "alcance": 39179,
+      "impresiones": 51332,
+      "leads": 17,
+      "clics": 724
+    },
+    {
+      "date": "2024-10-01",
+      "alcance": 46231,
+      "impresiones": 60817,
+      "leads": 24,
+      "clics": 837
+    },
+    {
+      "date": "2024-10-02",
+      "alcance": 44504,
+      "impresiones": 58883,
+      "leads": 22,
+      "clics": 822
+    },
+    {
+      "date": "2024-10-03",
+      "alcance": 42311,
+      "impresiones": 55647,
+      "leads": 18,
+      "clics": 747
+    },
+    {
+      "date": "2024-10-04",
+      "alcance": 45937,
+      "impresiones": 58307,
+      "leads": 23,
+      "clics": 944
+    },
+    {
+      "date": "2024-10-05",
+      "alcance": 38384,
+      "impresiones": 50998,
+      "leads": 30,
+      "clics": 975
+    },
+    {
+      "date": "2024-10-06",
+      "alcance": 26893,
+      "impresiones": 33843,
+      "leads": 28,
+      "clics": 684
+    },
+    {
+      "date": "2024-10-07",
+      "alcance": 56977,
+      "impresiones": 78950,
+      "leads": 42,
+      "clics": 1349
+    },
+    {
+      "date": "2024-10-08",
+      "alcance": 44854,
+      "impresiones": 66161,
+      "leads": 30,
+      "clics": 1121
+    },
+    {
+      "date": "2024-10-09",
+      "alcance": 38584,
+      "impresiones": 54788,
+      "leads": 36,
+      "clics": 1084
+    },
+    {
+      "date": "2024-10-10",
+      "alcance": 34156,
+      "impresiones": 44559,
+      "leads": 37,
+      "clics": 963
+    },
+    {
+      "date": "2024-10-11",
+      "alcance": 31243,
+      "impresiones": 38368,
+      "leads": 24,
+      "clics": 844
+    },
+    {
+      "date": "2024-10-12",
+      "alcance": 29066,
+      "impresiones": 36792,
+      "leads": 24,
+      "clics": 834
+    },
+    {
+      "date": "2024-10-13",
+      "alcance": 32727,
+      "impresiones": 40705,
+      "leads": 32,
+      "clics": 988
+    },
+    {
+      "date": "2024-10-14",
+      "alcance": 34980,
+      "impresiones": 43252,
+      "leads": 38,
+      "clics": 1204
+    },
+    {
+      "date": "2024-10-15",
+      "alcance": 33502,
+      "impresiones": 40285,
+      "leads": 45,
+      "clics": 1135
+    },
+    {
+      "date": "2024-10-16",
+      "alcance": 34570,
+      "impresiones": 42009,
+      "leads": 43,
+      "clics": 1094
+    },
+    {
+      "date": "2024-10-17",
+      "alcance": 31689,
+      "impresiones": 38509,
+      "leads": 22,
+      "clics": 963
+    },
+    {
+      "date": "2024-10-18",
+      "alcance": 25886,
+      "impresiones": 31570,
+      "leads": 20,
+      "clics": 741
+    },
+    {
+      "date": "2024-10-19",
+      "alcance": 23177,
+      "impresiones": 28447,
+      "leads": 21,
+      "clics": 748
+    },
+    {
+      "date": "2024-10-20",
+      "alcance": 24568,
+      "impresiones": 30336,
+      "leads": 28,
+      "clics": 787
+    },
+    {
+      "date": "2024-10-21",
+      "alcance": 25859,
+      "impresiones": 32601,
+      "leads": 29,
+      "clics": 785
+    },
+    {
+      "date": "2024-10-22",
+      "alcance": 20552,
+      "impresiones": 24250,
+      "leads": 12,
+      "clics": 547
+    },
+    {
+      "date": "2024-10-23",
+      "alcance": 19629,
+      "impresiones": 22915,
+      "leads": 15,
+      "clics": 637
+    },
+    {
+      "date": "2024-10-24",
+      "alcance": 17894,
+      "impresiones": 20630,
+      "leads": 11,
+      "clics": 503
+    },
+    {
+      "date": "2024-10-25",
+      "alcance": 28568,
+      "impresiones": 34484,
+      "leads": 16,
+      "clics": 781
+    },
+    {
+      "date": "2024-10-26",
+      "alcance": 31596,
+      "impresiones": 37060,
+      "leads": 19,
+      "clics": 783
+    },
+    {
+      "date": "2024-10-27",
+      "alcance": 29702,
+      "impresiones": 34666,
+      "leads": 24,
+      "clics": 837
+    },
+    {
+      "date": "2024-10-28",
+      "alcance": 39984,
+      "impresiones": 49127,
+      "leads": 35,
+      "clics": 1067
+    },
+    {
+      "date": "2024-10-29",
+      "alcance": 44367,
+      "impresiones": 54167,
+      "leads": 40,
+      "clics": 1113
+    },
+    {
+      "date": "2024-10-30",
+      "alcance": 40434,
+      "impresiones": 49542,
+      "leads": 43,
+      "clics": 986
+    },
+    {
+      "date": "2024-10-31",
+      "alcance": 47190,
+      "impresiones": 57497,
+      "leads": 36,
+      "clics": 933
+    },
+    {
+      "date": "2024-11-01",
+      "alcance": 56624,
+      "impresiones": 69484,
+      "leads": 39,
+      "clics": 1264
+    },
+    {
+      "date": "2024-11-02",
+      "alcance": 50595,
+      "impresiones": 60181,
+      "leads": 38,
+      "clics": 1213
+    },
+    {
+      "date": "2024-11-03",
+      "alcance": 63830,
+      "impresiones": 80307,
+      "leads": 59,
+      "clics": 1586
+    },
+    {
+      "date": "2024-11-04",
+      "alcance": 56090,
+      "impresiones": 70093,
+      "leads": 48,
+      "clics": 1372
+    },
+    {
+      "date": "2024-11-05",
+      "alcance": 53629,
+      "impresiones": 67100,
+      "leads": 45,
+      "clics": 1059
+    },
+    {
+      "date": "2024-11-06",
+      "alcance": 52525,
+      "impresiones": 63879,
+      "leads": 41,
+      "clics": 1079
+    },
+    {
+      "date": "2024-11-07",
+      "alcance": 48660,
+      "impresiones": 59120,
+      "leads": 40,
+      "clics": 1019
+    },
+    {
+      "date": "2024-11-08",
+      "alcance": 48416,
+      "impresiones": 59106,
+      "leads": 44,
+      "clics": 1066
+    },
+    {
+      "date": "2024-11-09",
+      "alcance": 44426,
+      "impresiones": 53675,
+      "leads": 40,
+      "clics": 944
+    },
+    {
+      "date": "2024-11-10",
+      "alcance": 58335,
+      "impresiones": 73003,
+      "leads": 56,
+      "clics": 1401
+    },
+    {
+      "date": "2024-11-11",
+      "alcance": 48679,
+      "impresiones": 61084,
+      "leads": 55,
+      "clics": 1204
+    },
+    {
+      "date": "2024-11-12",
+      "alcance": 45891,
+      "impresiones": 57184,
+      "leads": 39,
+      "clics": 1158
+    },
+    {
+      "date": "2024-11-13",
+      "alcance": 50247,
+      "impresiones": 62429,
+      "leads": 36,
+      "clics": 1224
+    },
+    {
+      "date": "2024-11-14",
+      "alcance": 43601,
+      "impresiones": 54028,
+      "leads": 39,
+      "clics": 976
+    },
+    {
+      "date": "2024-11-15",
+      "alcance": 50700,
+      "impresiones": 64846,
+      "leads": 43,
+      "clics": 1060
+    },
+    {
+      "date": "2024-11-16",
+      "alcance": 42231,
+      "impresiones": 53282,
+      "leads": 35,
+      "clics": 870
+    },
+    {
+      "date": "2024-11-17",
+      "alcance": 53045,
+      "impresiones": 67958,
+      "leads": 50,
+      "clics": 1242
+    },
+    {
+      "date": "2024-11-18",
+      "alcance": 54921,
+      "impresiones": 69592,
+      "leads": 41,
+      "clics": 1073
+    },
+    {
+      "date": "2024-11-19",
+      "alcance": 47729,
+      "impresiones": 60415,
+      "leads": 49,
+      "clics": 1045
+    },
+    {
+      "date": "2024-11-20",
+      "alcance": 45052,
+      "impresiones": 56864,
+      "leads": 34,
+      "clics": 987
+    },
+    {
+      "date": "2024-11-21",
+      "alcance": 46952,
+      "impresiones": 58353,
+      "leads": 53,
+      "clics": 1037
+    },
+    {
+      "date": "2024-11-22",
+      "alcance": 61006,
+      "impresiones": 74212,
+      "leads": 34,
+      "clics": 1353
+    },
+    {
+      "date": "2024-11-23",
+      "alcance": 59992,
+      "impresiones": 74650,
+      "leads": 35,
+      "clics": 1388
+    },
+    {
+      "date": "2024-11-24",
+      "alcance": 67665,
+      "impresiones": 85006,
+      "leads": 61,
+      "clics": 1599
+    },
+    {
+      "date": "2024-11-25",
+      "alcance": 66383,
+      "impresiones": 83433,
+      "leads": 47,
+      "clics": 1436
+    },
+    {
+      "date": "2024-11-26",
+      "alcance": 60829,
+      "impresiones": 74979,
+      "leads": 45,
+      "clics": 1356
+    },
+    {
+      "date": "2024-11-27",
+      "alcance": 57645,
+      "impresiones": 70163,
+      "leads": 39,
+      "clics": 1355
+    },
+    {
+      "date": "2024-11-28",
+      "alcance": 63242,
+      "impresiones": 78349,
+      "leads": 34,
+      "clics": 1354
+    },
+    {
+      "date": "2024-11-29",
+      "alcance": 60610,
+      "impresiones": 76165,
+      "leads": 42,
+      "clics": 1385
+    },
+    {
+      "date": "2024-11-30",
+      "alcance": 58981,
+      "impresiones": 71279,
+      "leads": 30,
+      "clics": 1292
+    },
+    {
+      "date": "2024-12-01",
+      "alcance": 93381,
+      "impresiones": 116977,
+      "leads": 73,
+      "clics": 2110
+    },
+    {
+      "date": "2024-12-02",
+      "alcance": 95359,
+      "impresiones": 120972,
+      "leads": 58,
+      "clics": 1970
+    },
+    {
+      "date": "2024-12-03",
+      "alcance": 91267,
+      "impresiones": 115660,
+      "leads": 57,
+      "clics": 1855
+    },
+    {
+      "date": "2024-12-04",
+      "alcance": 83264,
+      "impresiones": 104053,
+      "leads": 37,
+      "clics": 1628
+    },
+    {
+      "date": "2024-12-05",
+      "alcance": 82264,
+      "impresiones": 102810,
+      "leads": 33,
+      "clics": 1508
+    },
+    {
+      "date": "2024-12-06",
+      "alcance": 79529,
+      "impresiones": 97871,
+      "leads": 33,
+      "clics": 1517
+    },
+    {
+      "date": "2024-12-07",
+      "alcance": 71123,
+      "impresiones": 86637,
+      "leads": 50,
+      "clics": 1300
+    },
+    {
+      "date": "2024-12-08",
+      "alcance": 81478,
+      "impresiones": 102899,
+      "leads": 54,
+      "clics": 1698
+    },
+    {
+      "date": "2024-12-09",
+      "alcance": 77135,
+      "impresiones": 98119,
+      "leads": 37,
+      "clics": 1603
+    },
+    {
+      "date": "2024-12-10",
+      "alcance": 71796,
+      "impresiones": 89545,
+      "leads": 57,
+      "clics": 1484
+    },
+    {
+      "date": "2024-12-11",
+      "alcance": 64133,
+      "impresiones": 80715,
+      "leads": 43,
+      "clics": 1217
+    },
+    {
+      "date": "2024-12-12",
+      "alcance": 59594,
+      "impresiones": 78182,
+      "leads": 52,
+      "clics": 1307
+    },
+    {
+      "date": "2024-12-13",
+      "alcance": 54851,
+      "impresiones": 71464,
+      "leads": 39,
+      "clics": 1151
+    },
+    {
+      "date": "2024-12-14",
+      "alcance": 50020,
+      "impresiones": 63429,
+      "leads": 42,
+      "clics": 1076
+    },
+    {
+      "date": "2024-12-15",
+      "alcance": 58504,
+      "impresiones": 76666,
+      "leads": 57,
+      "clics": 1439
+    },
+    {
+      "date": "2024-12-16",
+      "alcance": 58512,
+      "impresiones": 75425,
+      "leads": 46,
+      "clics": 1260
+    },
+    {
+      "date": "2024-12-17",
+      "alcance": 61231,
+      "impresiones": 80091,
+      "leads": 55,
+      "clics": 1399
+    },
+    {
+      "date": "2024-12-18",
+      "alcance": 61980,
+      "impresiones": 80537,
+      "leads": 45,
+      "clics": 1350
+    },
+    {
+      "date": "2024-12-19",
+      "alcance": 57696,
+      "impresiones": 73814,
+      "leads": 28,
+      "clics": 1079
+    },
+    {
+      "date": "2024-12-20",
+      "alcance": 35717,
+      "impresiones": 46941,
+      "leads": 19,
+      "clics": 702
+    },
+    {
+      "date": "2024-12-21",
+      "alcance": 27148,
+      "impresiones": 35854,
+      "leads": 17,
+      "clics": 646
+    },
+    {
+      "date": "2024-12-22",
+      "alcance": 35309,
+      "impresiones": 47614,
+      "leads": 25,
+      "clics": 937
+    },
+    {
+      "date": "2024-12-23",
+      "alcance": 37188,
+      "impresiones": 49383,
+      "leads": 27,
+      "clics": 786
+    },
+    {
+      "date": "2024-12-24",
+      "alcance": 40061,
+      "impresiones": 52108,
+      "leads": 22,
+      "clics": 654
+    },
+    {
+      "date": "2024-12-25",
+      "alcance": 48036,
+      "impresiones": 63775,
+      "leads": 32,
+      "clics": 1079
+    },
+    {
+      "date": "2024-12-26",
+      "alcance": 40721,
+      "impresiones": 55463,
+      "leads": 35,
+      "clics": 1020
+    },
+    {
+      "date": "2024-12-27",
+      "alcance": 38504,
+      "impresiones": 54171,
+      "leads": 32,
+      "clics": 986
+    },
+    {
+      "date": "2024-12-28",
+      "alcance": 38569,
+      "impresiones": 51849,
+      "leads": 41,
+      "clics": 995
+    },
+    {
+      "date": "2024-12-29",
+      "alcance": 48650,
+      "impresiones": 65687,
+      "leads": 38,
+      "clics": 1264
+    },
+    {
+      "date": "2024-12-30",
+      "alcance": 45780,
+      "impresiones": 61338,
+      "leads": 39,
+      "clics": 1102
+    },
+    {
+      "date": "2024-12-31",
+      "alcance": 52332,
+      "impresiones": 66428,
+      "leads": 20,
+      "clics": 1011
+    },
+    {
+      "date": "2025-01-01",
+      "alcance": 71514,
+      "impresiones": 94902,
+      "leads": 43,
+      "clics": 1465
+    },
+    {
+      "date": "2025-01-02",
+      "alcance": 62613,
+      "impresiones": 88494,
+      "leads": 59,
+      "clics": 1588
+    },
+    {
+      "date": "2025-01-03",
+      "alcance": 57336,
+      "impresiones": 81686,
+      "leads": 42,
+      "clics": 1397
+    },
+    {
+      "date": "2025-01-04",
+      "alcance": 54796,
+      "impresiones": 76360,
+      "leads": 57,
+      "clics": 1411
+    },
+    {
+      "date": "2025-01-05",
+      "alcance": 70729,
+      "impresiones": 99110,
+      "leads": 53,
+      "clics": 1842
+    },
+    {
+      "date": "2025-01-06",
+      "alcance": 63772,
+      "impresiones": 88224,
+      "leads": 45,
+      "clics": 1391
+    },
+    {
+      "date": "2025-01-07",
+      "alcance": 64476,
+      "impresiones": 86991,
+      "leads": 34,
+      "clics": 1431
+    },
+    {
+      "date": "2025-01-08",
+      "alcance": 56892,
+      "impresiones": 78346,
+      "leads": 31,
+      "clics": 1326
+    },
+    {
+      "date": "2025-01-09",
+      "alcance": 49484,
+      "impresiones": 66644,
+      "leads": 32,
+      "clics": 1097
+    },
+    {
+      "date": "2025-01-10",
+      "alcance": 42332,
+      "impresiones": 57719,
+      "leads": 26,
+      "clics": 924
+    },
+    {
+      "date": "2025-01-11",
+      "alcance": 34612,
+      "impresiones": 47663,
+      "leads": 30,
+      "clics": 822
+    },
+    {
+      "date": "2025-01-12",
+      "alcance": 39472,
+      "impresiones": 54672,
+      "leads": 31,
+      "clics": 956
+    },
+    {
+      "date": "2025-01-13",
+      "alcance": 40087,
+      "impresiones": 55849,
+      "leads": 22,
+      "clics": 850
+    },
+    {
+      "date": "2025-01-14",
+      "alcance": 37773,
+      "impresiones": 52855,
+      "leads": 33,
+      "clics": 915
+    },
+    {
+      "date": "2025-01-15",
+      "alcance": 35580,
+      "impresiones": 47995,
+      "leads": 28,
+      "clics": 815
+    },
+    {
+      "date": "2025-01-16",
+      "alcance": 31608,
+      "impresiones": 43295,
+      "leads": 28,
+      "clics": 733
+    },
+    {
+      "date": "2025-01-17",
+      "alcance": 32269,
+      "impresiones": 43650,
+      "leads": 31,
+      "clics": 776
+    },
+    {
+      "date": "2025-01-18",
+      "alcance": 31872,
+      "impresiones": 43128,
+      "leads": 33,
+      "clics": 861
+    },
+    {
+      "date": "2025-01-19",
+      "alcance": 36804,
+      "impresiones": 50699,
+      "leads": 16,
+      "clics": 949
+    },
+    {
+      "date": "2025-01-20",
+      "alcance": 37954,
+      "impresiones": 51755,
+      "leads": 40,
+      "clics": 860
+    },
+    {
+      "date": "2025-01-21",
+      "alcance": 36224,
+      "impresiones": 49823,
+      "leads": 29,
+      "clics": 858
+    },
+    {
+      "date": "2025-01-22",
+      "alcance": 33167,
+      "impresiones": 44473,
+      "leads": 30,
+      "clics": 710
+    },
+    {
+      "date": "2025-01-23",
+      "alcance": 32312,
+      "impresiones": 43469,
+      "leads": 16,
+      "clics": 757
+    },
+    {
+      "date": "2025-01-24",
+      "alcance": 31840,
+      "impresiones": 41066,
+      "leads": 20,
+      "clics": 754
+    },
+    {
+      "date": "2025-01-25",
+      "alcance": 24978,
+      "impresiones": 33382,
+      "leads": 28,
+      "clics": 678
+    },
+    {
+      "date": "2025-01-31",
+      "alcance": 48626,
+      "impresiones": 69015,
+      "leads": 50,
+      "clics": 1304
+    },
+    {
+      "date": "2025-02-01",
+      "alcance": 57583,
+      "impresiones": 81975,
+      "leads": 40,
+      "clics": 1518
+    },
+    {
+      "date": "2025-02-02",
+      "alcance": 43639,
+      "impresiones": 60126,
+      "leads": 40,
+      "clics": 1139
+    },
+    {
+      "date": "2025-02-03",
+      "alcance": 38980,
+      "impresiones": 56369,
+      "leads": 33,
+      "clics": 924
+    },
+    {
+      "date": "2025-02-04",
+      "alcance": 27944,
+      "impresiones": 41441,
+      "leads": 31,
+      "clics": 823
+    },
+    {
+      "date": "2025-02-05",
+      "alcance": 21940,
+      "impresiones": 30078,
+      "leads": 23,
+      "clics": 542
+    },
+    {
+      "date": "2025-02-06",
+      "alcance": 36053,
+      "impresiones": 50402,
+      "leads": 28,
+      "clics": 928
+    },
+    {
+      "date": "2025-02-07",
+      "alcance": 43375,
+      "impresiones": 61424,
+      "leads": 21,
+      "clics": 1137
+    },
+    {
+      "date": "2025-02-08",
+      "alcance": 44719,
+      "impresiones": 59628,
+      "leads": 30,
+      "clics": 1193
+    },
+    {
+      "date": "2025-02-09",
+      "alcance": 39573,
+      "impresiones": 52183,
+      "leads": 34,
+      "clics": 1181
+    },
+    {
+      "date": "2025-02-10",
+      "alcance": 45240,
+      "impresiones": 61406,
+      "leads": 21,
+      "clics": 1153
+    },
+    {
+      "date": "2025-02-11",
+      "alcance": 41795,
+      "impresiones": 56582,
+      "leads": 28,
+      "clics": 988
+    },
+    {
+      "date": "2025-02-12",
+      "alcance": 42408,
+      "impresiones": 56198,
+      "leads": 21,
+      "clics": 862
+    },
+    {
+      "date": "2025-02-13",
+      "alcance": 45743,
+      "impresiones": 60068,
+      "leads": 27,
+      "clics": 916
+    },
+    {
+      "date": "2025-02-14",
+      "alcance": 45727,
+      "impresiones": 59445,
+      "leads": 20,
+      "clics": 860
+    },
+    {
+      "date": "2025-02-15",
+      "alcance": 36262,
+      "impresiones": 48153,
+      "leads": 17,
+      "clics": 809
+    },
+    {
+      "date": "2025-02-16",
+      "alcance": 42040,
+      "impresiones": 58061,
+      "leads": 13,
+      "clics": 1013
+    },
+    {
+      "date": "2025-02-17",
+      "alcance": 41966,
+      "impresiones": 58338,
+      "leads": 26,
+      "clics": 944
+    },
+    {
+      "date": "2025-02-18",
+      "alcance": 42093,
+      "impresiones": 57937,
+      "leads": 18,
+      "clics": 737
+    },
+    {
+      "date": "2025-02-19",
+      "alcance": 43257,
+      "impresiones": 58724,
+      "leads": 17,
+      "clics": 740
+    },
+    {
+      "date": "2025-02-20",
+      "alcance": 31466,
+      "impresiones": 40164,
+      "leads": 17,
+      "clics": 632
+    },
+    {
+      "date": "2025-02-21",
+      "alcance": 40774,
+      "impresiones": 53240,
+      "leads": 13,
+      "clics": 718
+    },
+    {
+      "date": "2025-02-22",
+      "alcance": 36580,
+      "impresiones": 47438,
+      "leads": 17,
+      "clics": 682
+    },
+    {
+      "date": "2025-02-23",
+      "alcance": 38520,
+      "impresiones": 49656,
+      "leads": 22,
+      "clics": 756
+    },
+    {
+      "date": "2025-02-24",
+      "alcance": 37418,
+      "impresiones": 48053,
+      "leads": 23,
+      "clics": 688
+    },
+    {
+      "date": "2025-02-25",
+      "alcance": 34837,
+      "impresiones": 45320,
+      "leads": 14,
+      "clics": 693
+    },
+    {
+      "date": "2025-02-26",
+      "alcance": 33211,
+      "impresiones": 43447,
+      "leads": 28,
+      "clics": 698
+    },
+    {
+      "date": "2025-02-27",
+      "alcance": 31319,
+      "impresiones": 40271,
+      "leads": 21,
+      "clics": 612
+    },
+    {
+      "date": "2025-02-28",
+      "alcance": 30933,
+      "impresiones": 39927,
+      "leads": 13,
+      "clics": 644
+    },
+    {
+      "date": "2025-03-01",
+      "alcance": 31057,
+      "impresiones": 39858,
+      "leads": 14,
+      "clics": 727
+    },
+    {
+      "date": "2025-03-02",
+      "alcance": 41245,
+      "impresiones": 54475,
+      "leads": 29,
+      "clics": 988
+    },
+    {
+      "date": "2025-03-03",
+      "alcance": 39151,
+      "impresiones": 51488,
+      "leads": 18,
+      "clics": 852
+    },
+    {
+      "date": "2025-03-04",
+      "alcance": 38624,
+      "impresiones": 49775,
+      "leads": 19,
+      "clics": 830
+    },
+    {
+      "date": "2025-03-05",
+      "alcance": 37835,
+      "impresiones": 47653,
+      "leads": 7,
+      "clics": 794
+    },
+    {
+      "date": "2025-03-06",
+      "alcance": 38947,
+      "impresiones": 49290,
+      "leads": 16,
+      "clics": 869
+    },
+    {
+      "date": "2025-03-07",
+      "alcance": 37400,
+      "impresiones": 48599,
+      "leads": 25,
+      "clics": 964
+    },
+    {
+      "date": "2025-03-08",
+      "alcance": 40707,
+      "impresiones": 52807,
+      "leads": 24,
+      "clics": 1131
+    },
+    {
+      "date": "2025-03-09",
+      "alcance": 48008,
+      "impresiones": 65901,
+      "leads": 30,
+      "clics": 1522
+    },
+    {
+      "date": "2025-03-10",
+      "alcance": 49301,
+      "impresiones": 66135,
+      "leads": 28,
+      "clics": 1395
+    },
+    {
+      "date": "2025-03-11",
+      "alcance": 49611,
+      "impresiones": 64581,
+      "leads": 38,
+      "clics": 1347
+    },
+    {
+      "date": "2025-03-12",
+      "alcance": 53534,
+      "impresiones": 71474,
+      "leads": 26,
+      "clics": 1328
+    },
+    {
+      "date": "2025-03-13",
+      "alcance": 52480,
+      "impresiones": 68578,
+      "leads": 25,
+      "clics": 1110
+    },
+    {
+      "date": "2025-03-14",
+      "alcance": 45684,
+      "impresiones": 59468,
+      "leads": 33,
+      "clics": 1059
+    },
+    {
+      "date": "2025-03-15",
+      "alcance": 42512,
+      "impresiones": 53994,
+      "leads": 23,
+      "clics": 1073
+    },
+    {
+      "date": "2025-03-16",
+      "alcance": 51148,
+      "impresiones": 66216,
+      "leads": 29,
+      "clics": 1260
+    },
+    {
+      "date": "2025-03-17",
+      "alcance": 53682,
+      "impresiones": 69072,
+      "leads": 31,
+      "clics": 1273
+    },
+    {
+      "date": "2025-03-18",
+      "alcance": 55990,
+      "impresiones": 72690,
+      "leads": 31,
+      "clics": 1237
+    },
+    {
+      "date": "2025-03-19",
+      "alcance": 79320,
+      "impresiones": 104944,
+      "leads": 39,
+      "clics": 1780
+    },
+    {
+      "date": "2025-03-20",
+      "alcance": 65574,
+      "impresiones": 87393,
+      "leads": 36,
+      "clics": 2010
+    },
+    {
+      "date": "2025-03-21",
+      "alcance": 77474,
+      "impresiones": 102028,
+      "leads": 32,
+      "clics": 2189
+    },
+    {
+      "date": "2025-03-22",
+      "alcance": 48855,
+      "impresiones": 66411,
+      "leads": 26,
+      "clics": 1458
+    },
+    {
+      "date": "2025-03-23",
+      "alcance": 64096,
+      "impresiones": 85795,
+      "leads": 52,
+      "clics": 1768
+    },
+    {
+      "date": "2025-03-24",
+      "alcance": 65184,
+      "impresiones": 86513,
+      "leads": 35,
+      "clics": 1670
+    },
+    {
+      "date": "2025-03-25",
+      "alcance": 59182,
+      "impresiones": 80962,
+      "leads": 38,
+      "clics": 1744
+    },
+    {
+      "date": "2025-03-26",
+      "alcance": 55868,
+      "impresiones": 74869,
+      "leads": 29,
+      "clics": 1586
+    },
+    {
+      "date": "2025-03-27",
+      "alcance": 57039,
+      "impresiones": 77109,
+      "leads": 23,
+      "clics": 1563
+    },
+    {
+      "date": "2025-03-28",
+      "alcance": 59572,
+      "impresiones": 80413,
+      "leads": 30,
+      "clics": 1647
+    },
+    {
+      "date": "2025-03-29",
+      "alcance": 54470,
+      "impresiones": 71412,
+      "leads": 29,
+      "clics": 1490
+    },
+    {
+      "date": "2025-03-30",
+      "alcance": 62157,
+      "impresiones": 84669,
+      "leads": 43,
+      "clics": 1811
+    },
+    {
+      "date": "2025-03-31",
+      "alcance": 79503,
+      "impresiones": 105490,
+      "leads": 47,
+      "clics": 1958
+    },
+    {
+      "date": "2025-04-01",
+      "alcance": 84493,
+      "impresiones": 118290,
+      "leads": 45,
+      "clics": 2451
+    },
+    {
+      "date": "2025-04-02",
+      "alcance": 84612,
+      "impresiones": 116505,
+      "leads": 41,
+      "clics": 2248
+    },
+    {
+      "date": "2025-04-03",
+      "alcance": 93727,
+      "impresiones": 126409,
+      "leads": 38,
+      "clics": 2171
+    },
+    {
+      "date": "2025-04-04",
+      "alcance": 90387,
+      "impresiones": 121811,
+      "leads": 27,
+      "clics": 1977
+    },
+    {
+      "date": "2025-04-05",
+      "alcance": 80272,
+      "impresiones": 108478,
+      "leads": 33,
+      "clics": 2011
+    },
+    {
+      "date": "2025-04-06",
+      "alcance": 91387,
+      "impresiones": 124907,
+      "leads": 32,
+      "clics": 2183
+    },
+    {
+      "date": "2025-04-07",
+      "alcance": 96195,
+      "impresiones": 130924,
+      "leads": 38,
+      "clics": 2099
+    },
+    {
+      "date": "2025-04-08",
+      "alcance": 100899,
+      "impresiones": 137794,
+      "leads": 31,
+      "clics": 2037
+    },
+    {
+      "date": "2025-04-09",
+      "alcance": 82546,
+      "impresiones": 111287,
+      "leads": 27,
+      "clics": 1636
+    },
+    {
+      "date": "2025-04-10",
+      "alcance": 78743,
+      "impresiones": 108364,
+      "leads": 28,
+      "clics": 1775
+    },
+    {
+      "date": "2025-04-11",
+      "alcance": 78388,
+      "impresiones": 103834,
+      "leads": 32,
+      "clics": 1618
+    },
+    {
+      "date": "2025-04-12",
+      "alcance": 77654,
+      "impresiones": 103758,
+      "leads": 27,
+      "clics": 1646
+    },
+    {
+      "date": "2025-04-13",
+      "alcance": 96490,
+      "impresiones": 126209,
+      "leads": 43,
+      "clics": 1948
+    },
+    {
+      "date": "2025-04-14",
+      "alcance": 99373,
+      "impresiones": 132210,
+      "leads": 34,
+      "clics": 1849
+    },
+    {
+      "date": "2025-04-15",
+      "alcance": 30952,
+      "impresiones": 38032,
+      "leads": 20,
+      "clics": 635
+    },
+    {
+      "date": "2025-04-16",
+      "alcance": 16372,
+      "impresiones": 20734,
+      "leads": 14,
+      "clics": 369
+    },
+    {
+      "date": "2025-04-17",
+      "alcance": 16076,
+      "impresiones": 20918,
+      "leads": 17,
+      "clics": 416
+    },
+    {
+      "date": "2025-04-18",
+      "alcance": 15518,
+      "impresiones": 20727,
+      "leads": 16,
+      "clics": 426
+    },
+    {
+      "date": "2025-04-19",
+      "alcance": 13727,
+      "impresiones": 17544,
+      "leads": 17,
+      "clics": 405
+    },
+    {
+      "date": "2025-04-20",
+      "alcance": 19214,
+      "impresiones": 26608,
+      "leads": 23,
+      "clics": 570
+    },
+    {
+      "date": "2025-04-21",
+      "alcance": 51279,
+      "impresiones": 70064,
+      "leads": 36,
+      "clics": 1213
+    },
+    {
+      "date": "2025-04-22",
+      "alcance": 50498,
+      "impresiones": 69590,
+      "leads": 30,
+      "clics": 1082
+    },
+    {
+      "date": "2025-04-23",
+      "alcance": 46556,
+      "impresiones": 62913,
+      "leads": 31,
+      "clics": 1081
+    },
+    {
+      "date": "2025-04-24",
+      "alcance": 48878,
+      "impresiones": 63602,
+      "leads": 25,
+      "clics": 1143
+    },
+    {
+      "date": "2025-04-25",
+      "alcance": 45326,
+      "impresiones": 58654,
+      "leads": 20,
+      "clics": 1074
+    },
+    {
+      "date": "2025-04-26",
+      "alcance": 31707,
+      "impresiones": 40074,
+      "leads": 18,
+      "clics": 686
+    },
+    {
+      "date": "2025-04-27",
+      "alcance": 36195,
+      "impresiones": 45268,
+      "leads": 18,
+      "clics": 759
+    },
+    {
+      "date": "2025-04-28",
+      "alcance": 44414,
+      "impresiones": 58702,
+      "leads": 34,
+      "clics": 1034
+    },
+    {
+      "date": "2025-04-29",
+      "alcance": 43285,
+      "impresiones": 58762,
+      "leads": 28,
+      "clics": 992
+    },
+    {
+      "date": "2025-04-30",
+      "alcance": 84443,
+      "impresiones": 109271,
+      "leads": 92,
+      "clics": 2952
+    },
+    {
+      "date": "2025-05-01",
+      "alcance": 78680,
+      "impresiones": 99161,
+      "leads": 84,
+      "clics": 2807
+    },
+    {
+      "date": "2025-05-02",
+      "alcance": 60112,
+      "impresiones": 75832,
+      "leads": 48,
+      "clics": 2058
+    },
+    {
+      "date": "2025-05-03",
+      "alcance": 56927,
+      "impresiones": 72528,
+      "leads": 44,
+      "clics": 2214
+    },
+    {
+      "date": "2025-05-04",
+      "alcance": 77260,
+      "impresiones": 97122,
+      "leads": 67,
+      "clics": 3143
+    },
+    {
+      "date": "2025-05-05",
+      "alcance": 56196,
+      "impresiones": 68767,
+      "leads": 45,
+      "clics": 2089
+    },
+    {
+      "date": "2025-05-06",
+      "alcance": 61916,
+      "impresiones": 76422,
+      "leads": 58,
+      "clics": 2274
+    },
+    {
+      "date": "2025-05-07",
+      "alcance": 61734,
+      "impresiones": 77947,
+      "leads": 64,
+      "clics": 2173
+    },
+    {
+      "date": "2025-05-08",
+      "alcance": 79073,
+      "impresiones": 97857,
+      "leads": 53,
+      "clics": 3054
+    },
+    {
+      "date": "2025-05-09",
+      "alcance": 64744,
+      "impresiones": 82558,
+      "leads": 55,
+      "clics": 2242
+    },
+    {
+      "date": "2025-05-10",
+      "alcance": 60853,
+      "impresiones": 79557,
+      "leads": 37,
+      "clics": 2098
+    },
+    {
+      "date": "2025-05-11",
+      "alcance": 89117,
+      "impresiones": 115720,
+      "leads": 64,
+      "clics": 3100
+    },
+    {
+      "date": "2025-05-12",
+      "alcance": 88792,
+      "impresiones": 117722,
+      "leads": 48,
+      "clics": 2778
+    },
+    {
+      "date": "2025-05-13",
+      "alcance": 148314,
+      "impresiones": 201325,
+      "leads": 88,
+      "clics": 5370
+    },
+    {
+      "date": "2025-05-14",
+      "alcance": 146372,
+      "impresiones": 195166,
+      "leads": 97,
+      "clics": 5081
+    },
+    {
+      "date": "2025-05-15",
+      "alcance": 142941,
+      "impresiones": 184521,
+      "leads": 107,
+      "clics": 5178
+    },
+    {
+      "date": "2025-05-16",
+      "alcance": 128940,
+      "impresiones": 160251,
+      "leads": 86,
+      "clics": 4503
+    },
+    {
+      "date": "2025-05-17",
+      "alcance": 106070,
+      "impresiones": 135077,
+      "leads": 81,
+      "clics": 3892
+    },
+    {
+      "date": "2025-05-18",
+      "alcance": 131108,
+      "impresiones": 168795,
+      "leads": 75,
+      "clics": 4786
+    },
+    {
+      "date": "2025-05-19",
+      "alcance": 100804,
+      "impresiones": 130238,
+      "leads": 87,
+      "clics": 3424
+    },
+    {
+      "date": "2025-05-20",
+      "alcance": 84686,
+      "impresiones": 110492,
+      "leads": 82,
+      "clics": 3192
+    },
+    {
+      "date": "2025-05-21",
+      "alcance": 76636,
+      "impresiones": 105303,
+      "leads": 52,
+      "clics": 2174
+    },
+    {
+      "date": "2025-05-22",
+      "alcance": 69075,
+      "impresiones": 93365,
+      "leads": 37,
+      "clics": 1588
+    },
+    {
+      "date": "2025-05-23",
+      "alcance": 79508,
+      "impresiones": 110088,
+      "leads": 71,
+      "clics": 2258
+    },
+    {
+      "date": "2025-05-24",
+      "alcance": 84680,
+      "impresiones": 113703,
+      "leads": 69,
+      "clics": 2756
+    },
+    {
+      "date": "2025-05-25",
+      "alcance": 115623,
+      "impresiones": 158389,
+      "leads": 95,
+      "clics": 3993
+    },
+    {
+      "date": "2025-05-26",
+      "alcance": 107747,
+      "impresiones": 151415,
+      "leads": 76,
+      "clics": 3006
+    },
+    {
+      "date": "2025-05-27",
+      "alcance": 134278,
+      "impresiones": 178743,
+      "leads": 92,
+      "clics": 4079
+    },
+    {
+      "date": "2025-05-28",
+      "alcance": 89050,
+      "impresiones": 116388,
+      "leads": 83,
+      "clics": 3176
+    },
+    {
+      "date": "2025-05-29",
+      "alcance": 45736,
+      "impresiones": 59442,
+      "leads": 50,
+      "clics": 1530
+    },
+    {
+      "date": "2025-05-30",
+      "alcance": 42619,
+      "impresiones": 55217,
+      "leads": 45,
+      "clics": 1371
+    },
+    {
+      "date": "2025-05-31",
+      "alcance": 38898,
+      "impresiones": 51332,
+      "leads": 35,
+      "clics": 1422
+    },
+    {
+      "date": "2025-06-01",
+      "alcance": 60888,
+      "impresiones": 82087,
+      "leads": 48,
+      "clics": 1984
+    },
+    {
+      "date": "2025-06-02",
+      "alcance": 69383,
+      "impresiones": 93535,
+      "leads": 57,
+      "clics": 1896
+    },
+    {
+      "date": "2025-06-03",
+      "alcance": 67604,
+      "impresiones": 93307,
+      "leads": 45,
+      "clics": 1959
+    },
+    {
+      "date": "2025-06-04",
+      "alcance": 77885,
+      "impresiones": 99990,
+      "leads": 43,
+      "clics": 2089
+    },
+    {
+      "date": "2025-06-05",
+      "alcance": 133070,
+      "impresiones": 162500,
+      "leads": 58,
+      "clics": 3535
+    },
+    {
+      "date": "2025-06-06",
+      "alcance": 141478,
+      "impresiones": 185980,
+      "leads": 87,
+      "clics": 3863
+    },
+    {
+      "date": "2025-06-07",
+      "alcance": 150565,
+      "impresiones": 191957,
+      "leads": 69,
+      "clics": 4265
+    },
+    {
+      "date": "2025-06-08",
+      "alcance": 208540,
+      "impresiones": 281266,
+      "leads": 113,
+      "clics": 6328
+    },
+    {
+      "date": "2025-06-09",
+      "alcance": 207496,
+      "impresiones": 263131,
+      "leads": 105,
+      "clics": 5579
+    },
+    {
+      "date": "2025-06-10",
+      "alcance": 181730,
+      "impresiones": 229378,
+      "leads": 89,
+      "clics": 5226
+    },
+    {
+      "date": "2025-06-11",
+      "alcance": 235100,
+      "impresiones": 327284,
+      "leads": 168,
+      "clics": 6981
+    },
+    {
+      "date": "2025-06-12",
+      "alcance": 260959,
+      "impresiones": 343553,
+      "leads": 170,
+      "clics": 5930
+    },
+    {
+      "date": "2025-06-13",
+      "alcance": 310295,
+      "impresiones": 401771,
+      "leads": 125,
+      "clics": 6516
+    },
+    {
+      "date": "2025-06-14",
+      "alcance": 274196,
+      "impresiones": 363166,
+      "leads": 135,
+      "clics": 7429
+    },
+    {
+      "date": "2025-06-15",
+      "alcance": 308116,
+      "impresiones": 407108,
+      "leads": 126,
+      "clics": 7768
+    },
+    {
+      "date": "2025-06-16",
+      "alcance": 291392,
+      "impresiones": 389400,
+      "leads": 115,
+      "clics": 5875
+    },
+    {
+      "date": "2025-06-17",
+      "alcance": 237219,
+      "impresiones": 315231,
+      "leads": 119,
+      "clics": 4719
+    },
+    {
+      "date": "2025-06-18",
+      "alcance": 260761,
+      "impresiones": 356391,
+      "leads": 101,
+      "clics": 5248
+    },
+    {
+      "date": "2025-06-19",
+      "alcance": 272283,
+      "impresiones": 396833,
+      "leads": 120,
+      "clics": 5741
+    },
+    {
+      "date": "2025-06-20",
+      "alcance": 245811,
+      "impresiones": 355926,
+      "leads": 105,
+      "clics": 5109
+    },
+    {
+      "date": "2025-06-21",
+      "alcance": 235926,
+      "impresiones": 322381,
+      "leads": 105,
+      "clics": 5497
+    },
+    {
+      "date": "2025-06-22",
+      "alcance": 264656,
+      "impresiones": 374231,
+      "leads": 125,
+      "clics": 6181
+    },
+    {
+      "date": "2025-06-23",
+      "alcance": 248290,
+      "impresiones": 361519,
+      "leads": 139,
+      "clics": 5310
+    },
+    {
+      "date": "2025-06-24",
+      "alcance": 241649,
+      "impresiones": 338561,
+      "leads": 127,
+      "clics": 4957
+    },
+    {
+      "date": "2025-06-25",
+      "alcance": 212480,
+      "impresiones": 283378,
+      "leads": 121,
+      "clics": 4773
+    },
+    {
+      "date": "2025-06-26",
+      "alcance": 197261,
+      "impresiones": 268768,
+      "leads": 92,
+      "clics": 4200
+    },
+    {
+      "date": "2025-06-27",
+      "alcance": 173673,
+      "impresiones": 230777,
+      "leads": 92,
+      "clics": 3877
+    },
+    {
+      "date": "2025-06-28",
+      "alcance": 166551,
+      "impresiones": 220746,
+      "leads": 96,
+      "clics": 3694
+    },
+    {
+      "date": "2025-06-29",
+      "alcance": 175789,
+      "impresiones": 231513,
+      "leads": 93,
+      "clics": 4410
+    },
+    {
+      "date": "2025-06-30",
+      "alcance": 136591,
+      "impresiones": 175885,
+      "leads": 92,
+      "clics": 3365
+    },
+    {
+      "date": "2025-07-01",
+      "alcance": 114908,
+      "impresiones": 157125,
+      "leads": 86,
+      "clics": 3101
+    },
+    {
+      "date": "2025-07-02",
+      "alcance": 157233,
+      "impresiones": 227847,
+      "leads": 122,
+      "clics": 4422
+    },
+    {
+      "date": "2025-07-03",
+      "alcance": 190737,
+      "impresiones": 286387,
+      "leads": 73,
+      "clics": 5098
+    },
+    {
+      "date": "2025-07-04",
+      "alcance": 180222,
+      "impresiones": 262691,
+      "leads": 104,
+      "clics": 4952
+    },
+    {
+      "date": "2025-07-05",
+      "alcance": 189317,
+      "impresiones": 283782,
+      "leads": 92,
+      "clics": 5689
+    },
+    {
+      "date": "2025-07-06",
+      "alcance": 200467,
+      "impresiones": 290652,
+      "leads": 123,
+      "clics": 6076
+    },
+    {
+      "date": "2025-07-07",
+      "alcance": 214426,
+      "impresiones": 322931,
+      "leads": 84,
+      "clics": 5194
+    },
+    {
+      "date": "2025-07-08",
+      "alcance": 94838,
+      "impresiones": 148426,
+      "leads": 41,
+      "clics": 2158
+    },
+    {
+      "date": "2025-07-09",
+      "alcance": 225309,
+      "impresiones": 319592,
+      "leads": 9,
+      "clics": 4508
+    },
+    {
+      "date": "2025-07-10",
+      "alcance": 277841,
+      "impresiones": 429527,
+      "leads": 42,
+      "clics": 5604
+    },
+    {
+      "date": "2025-07-11",
+      "alcance": 189978,
+      "impresiones": 284874,
+      "leads": 55,
+      "clics": 3683
+    },
+    {
+      "date": "2025-07-12",
+      "alcance": 147924,
+      "impresiones": 215853,
+      "leads": 66,
+      "clics": 3528
+    },
+    {
+      "date": "2025-07-13",
+      "alcance": 189620,
+      "impresiones": 272172,
+      "leads": 109,
+      "clics": 5045
+    },
+    {
+      "date": "2025-07-14",
+      "alcance": 198305,
+      "impresiones": 285689,
+      "leads": 92,
+      "clics": 4497
+    },
+    {
+      "date": "2025-07-15",
+      "alcance": 196279,
+      "impresiones": 284400,
+      "leads": 112,
+      "clics": 4574
+    },
+    {
+      "date": "2025-07-16",
+      "alcance": 204447,
+      "impresiones": 293563,
+      "leads": 127,
+      "clics": 5020
+    },
+    {
+      "date": "2025-07-17",
+      "alcance": 242778,
+      "impresiones": 343918,
+      "leads": 113,
+      "clics": 5831
+    },
+    {
+      "date": "2025-07-18",
+      "alcance": 214109,
+      "impresiones": 297196,
+      "leads": 73,
+      "clics": 4702
+    },
+    {
+      "date": "2025-07-19",
+      "alcance": 197595,
+      "impresiones": 277158,
+      "leads": 104,
+      "clics": 4957
+    },
+    {
+      "date": "2025-07-20",
+      "alcance": 221174,
+      "impresiones": 319295,
+      "leads": 127,
+      "clics": 5894
+    },
+    {
+      "date": "2025-07-21",
+      "alcance": 166340,
+      "impresiones": 249699,
+      "leads": 61,
+      "clics": 4028
+    },
+    {
+      "date": "2025-07-22",
+      "alcance": 263927,
+      "impresiones": 360053,
+      "leads": 119,
+      "clics": 5740
+    },
+    {
+      "date": "2025-07-23",
+      "alcance": 218700,
+      "impresiones": 318615,
+      "leads": 119,
+      "clics": 5339
+    },
+    {
+      "date": "2025-07-24",
+      "alcance": 201543,
+      "impresiones": 300053,
+      "leads": 97,
+      "clics": 4842
+    },
+    {
+      "date": "2025-07-25",
+      "alcance": 199203,
+      "impresiones": 290764,
+      "leads": 78,
+      "clics": 4360
+    },
+    {
+      "date": "2025-07-26",
+      "alcance": 178145,
+      "impresiones": 251613,
+      "leads": 109,
+      "clics": 4262
+    },
+    {
+      "date": "2025-07-27",
+      "alcance": 212000,
+      "impresiones": 296443,
+      "leads": 134,
+      "clics": 5313
+    },
+    {
+      "date": "2025-07-28",
+      "alcance": 176409,
+      "impresiones": 262739,
+      "leads": 102,
+      "clics": 3970
+    },
+    {
+      "date": "2025-07-29",
+      "alcance": 157060,
+      "impresiones": 229283,
+      "leads": 80,
+      "clics": 3225
+    },
+    {
+      "date": "2025-07-30",
+      "alcance": 148946,
+      "impresiones": 210722,
+      "leads": 83,
+      "clics": 3385
+    },
+    {
+      "date": "2025-07-31",
+      "alcance": 162933,
+      "impresiones": 221805,
+      "leads": 86,
+      "clics": 3637
+    },
+    {
+      "date": "2025-08-01",
+      "alcance": 185442,
+      "impresiones": 266930,
+      "leads": 75,
+      "clics": 4700
+    },
+    {
+      "date": "2025-08-02",
+      "alcance": 175954,
+      "impresiones": 246424,
+      "leads": 85,
+      "clics": 4938
+    },
+    {
+      "date": "2025-08-03",
+      "alcance": 187695,
+      "impresiones": 264206,
+      "leads": 122,
+      "clics": 5634
+    },
+    {
+      "date": "2025-08-04",
+      "alcance": 191334,
+      "impresiones": 268649,
+      "leads": 103,
+      "clics": 5116
+    },
+    {
+      "date": "2025-08-05",
+      "alcance": 166803,
+      "impresiones": 242148,
+      "leads": 93,
+      "clics": 7452
+    },
+    {
+      "date": "2025-08-06",
+      "alcance": 164750,
+      "impresiones": 237360,
+      "leads": 98,
+      "clics": 6103
+    },
+    {
+      "date": "2025-08-07",
+      "alcance": 163292,
+      "impresiones": 234646,
+      "leads": 80,
+      "clics": 5285
+    },
+    {
+      "date": "2025-08-08",
+      "alcance": 147116,
+      "impresiones": 200425,
+      "leads": 80,
+      "clics": 4642
+    },
+    {
+      "date": "2025-08-09",
+      "alcance": 130209,
+      "impresiones": 184570,
+      "leads": 67,
+      "clics": 3700
+    },
+    {
+      "date": "2025-08-10",
+      "alcance": 139309,
+      "impresiones": 196096,
+      "leads": 66,
+      "clics": 3905
+    },
+    {
+      "date": "2025-08-11",
+      "alcance": 159079,
+      "impresiones": 218957,
+      "leads": 98,
+      "clics": 3968
+    },
+    {
+      "date": "2025-08-12",
+      "alcance": 165763,
+      "impresiones": 222812,
+      "leads": 91,
+      "clics": 4209
+    },
+    {
+      "date": "2025-08-13",
+      "alcance": 156386,
+      "impresiones": 202797,
+      "leads": 60,
+      "clics": 4036
+    },
+    {
+      "date": "2025-08-14",
+      "alcance": 153804,
+      "impresiones": 199763,
+      "leads": 68,
+      "clics": 3993
+    },
+    {
+      "date": "2025-08-15",
+      "alcance": 135280,
+      "impresiones": 175634,
+      "leads": 64,
+      "clics": 3815
+    },
+    {
+      "date": "2025-08-16",
+      "alcance": 129536,
+      "impresiones": 166775,
+      "leads": 52,
+      "clics": 3782
+    },
+    {
+      "date": "2025-08-17",
+      "alcance": 144856,
+      "impresiones": 186652,
+      "leads": 70,
+      "clics": 4060
+    },
+    {
+      "date": "2025-08-18",
+      "alcance": 154492,
+      "impresiones": 209431,
+      "leads": 87,
+      "clics": 4270
+    },
+    {
+      "date": "2025-08-19",
+      "alcance": 153006,
+      "impresiones": 210407,
+      "leads": 87,
+      "clics": 4495
+    },
+    {
+      "date": "2025-08-20",
+      "alcance": 202140,
+      "impresiones": 279892,
+      "leads": 70,
+      "clics": 5733
+    },
+    {
+      "date": "2025-08-21",
+      "alcance": 188827,
+      "impresiones": 264445,
+      "leads": 72,
+      "clics": 6463
+    },
+    {
+      "date": "2025-08-22",
+      "alcance": 179485,
+      "impresiones": 256657,
+      "leads": 78,
+      "clics": 6878
+    },
+    {
+      "date": "2025-08-23",
+      "alcance": 184097,
+      "impresiones": 267076,
+      "leads": 70,
+      "clics": 7106
+    },
+    {
+      "date": "2025-08-24",
+      "alcance": 216989,
+      "impresiones": 317966,
+      "leads": 88,
+      "clics": 8749
+    },
+    {
+      "date": "2025-08-25",
+      "alcance": 208464,
+      "impresiones": 306893,
+      "leads": 102,
+      "clics": 8193
+    },
+    {
+      "date": "2025-08-26",
+      "alcance": 206874,
+      "impresiones": 296359,
+      "leads": 100,
+      "clics": 7813
+    },
+    {
+      "date": "2025-08-27",
+      "alcance": 206383,
+      "impresiones": 287261,
+      "leads": 115,
+      "clics": 7417
+    },
+    {
+      "date": "2025-08-28",
+      "alcance": 193310,
+      "impresiones": 263121,
+      "leads": 114,
+      "clics": 6688
+    },
+    {
+      "date": "2025-08-29",
+      "alcance": 186324,
+      "impresiones": 246393,
+      "leads": 90,
+      "clics": 8425
+    },
+    {
+      "date": "2025-08-30",
+      "alcance": 152555,
+      "impresiones": 210882,
+      "leads": 87,
+      "clics": 7627
+    },
+    {
+      "date": "2025-08-31",
+      "alcance": 226950,
+      "impresiones": 308119,
+      "leads": 130,
+      "clics": 11419
+    },
+    {
+      "date": "2025-09-01",
+      "alcance": 267534,
+      "impresiones": 351012,
+      "leads": 118,
+      "clics": 9769
+    },
+    {
+      "date": "2025-09-02",
+      "alcance": 239051,
+      "impresiones": 326984,
+      "leads": 75,
+      "clics": 9619
+    },
+    {
+      "date": "2025-09-03",
+      "alcance": 220809,
+      "impresiones": 306158,
+      "leads": 71,
+      "clics": 7920
+    },
+    {
+      "date": "2025-09-04",
+      "alcance": 109500,
+      "impresiones": 142486,
+      "leads": 43,
+      "clics": 5874
+    },
+    {
+      "date": "2025-09-05",
+      "alcance": 128493,
+      "impresiones": 169554,
+      "leads": 45,
+      "clics": 3218
+    },
+    {
+      "date": "2025-09-06",
+      "alcance": 117813,
+      "impresiones": 159047,
+      "leads": 64,
+      "clics": 3580
+    },
+    {
+      "date": "2025-09-07",
+      "alcance": 146350,
+      "impresiones": 208217,
+      "leads": 63,
+      "clics": 4953
+    },
+    {
+      "date": "2025-09-08",
+      "alcance": 120809,
+      "impresiones": 179406,
+      "leads": 72,
+      "clics": 5197
+    },
+    {
+      "date": "2025-09-09",
+      "alcance": 121018,
+      "impresiones": 180132,
+      "leads": 47,
+      "clics": 5407
+    },
+    {
+      "date": "2025-09-10",
+      "alcance": 131569,
+      "impresiones": 196761,
+      "leads": 95,
+      "clics": 5488
+    },
+    {
+      "date": "2025-09-11",
+      "alcance": 149898,
+      "impresiones": 211398,
+      "leads": 125,
+      "clics": 4580
+    },
+    {
+      "date": "2025-09-12",
+      "alcance": 144159,
+      "impresiones": 199097,
+      "leads": 103,
+      "clics": 4791
+    },
+    {
+      "date": "2025-09-13",
+      "alcance": 142514,
+      "impresiones": 199214,
+      "leads": 110,
+      "clics": 4564
+    },
+    {
+      "date": "2025-09-14",
+      "alcance": 151895,
+      "impresiones": 220003,
+      "leads": 126,
+      "clics": 5304
+    },
+    {
+      "date": "2025-09-15",
+      "alcance": 110654,
+      "impresiones": 157908,
+      "leads": 152,
+      "clics": 4486
+    },
+    {
+      "date": "2025-09-16",
+      "alcance": 106206,
+      "impresiones": 156904,
+      "leads": 103,
+      "clics": 4341
+    },
+    {
+      "date": "2025-09-17",
+      "alcance": 114226,
+      "impresiones": 161017,
+      "leads": 89,
+      "clics": 3622
+    },
+    {
+      "date": "2025-09-18",
+      "alcance": 114440,
+      "impresiones": 175490,
+      "leads": 132,
+      "clics": 4397
+    },
+    {
+      "date": "2025-09-19",
+      "alcance": 125385,
+      "impresiones": 198690,
+      "leads": 116,
+      "clics": 5440
+    },
+    {
+      "date": "2025-09-20",
+      "alcance": 145320,
+      "impresiones": 233175,
+      "leads": 148,
+      "clics": 6140
+    },
+    {
+      "date": "2025-09-21",
+      "alcance": 140191,
+      "impresiones": 207918,
+      "leads": 137,
+      "clics": 8689
+    },
+    {
+      "date": "2025-09-22",
+      "alcance": 105397,
+      "impresiones": 155281,
+      "leads": 139,
+      "clics": 6334
+    },
+    {
+      "date": "2025-09-23",
+      "alcance": 85433,
+      "impresiones": 137973,
+      "leads": 142,
+      "clics": 3981
+    },
+    {
+      "date": "2025-09-24",
+      "alcance": 79628,
+      "impresiones": 124268,
+      "leads": 137,
+      "clics": 2699
+    },
+    {
+      "date": "2025-09-25",
+      "alcance": 61357,
+      "impresiones": 90360,
+      "leads": 111,
+      "clics": 2403
+    },
+    {
+      "date": "2025-09-26",
+      "alcance": 66164,
+      "impresiones": 102696,
+      "leads": 130,
+      "clics": 2628
+    },
+    {
+      "date": "2025-09-27",
+      "alcance": 66960,
+      "impresiones": 106087,
+      "leads": 176,
+      "clics": 3016
+    },
+    {
+      "date": "2025-09-28",
+      "alcance": 76435,
+      "impresiones": 118565,
+      "leads": 174,
+      "clics": 3396
+    },
+    {
+      "date": "2025-09-29",
+      "alcance": 59289,
+      "impresiones": 82840,
+      "leads": 162,
+      "clics": 2179
+    },
+    {
+      "date": "2025-09-30",
+      "alcance": 67285,
+      "impresiones": 92335,
+      "leads": 172,
+      "clics": 2279
+    },
+    {
+      "date": "2025-10-01",
+      "alcance": 109597,
+      "impresiones": 159163,
+      "leads": 150,
+      "clics": 3167
+    },
+    {
+      "date": "2025-10-02",
+      "alcance": 121183,
+      "impresiones": 169593,
+      "leads": 153,
+      "clics": 3168
+    },
+    {
+      "date": "2025-10-03",
+      "alcance": 116217,
+      "impresiones": 153846,
+      "leads": 94,
+      "clics": 2705
+    },
+    {
+      "date": "2025-10-04",
+      "alcance": 112676,
+      "impresiones": 150961,
+      "leads": 155,
+      "clics": 2532
+    },
+    {
+      "date": "2025-10-05",
+      "alcance": 130348,
+      "impresiones": 175078,
+      "leads": 197,
+      "clics": 2914
+    },
+    {
+      "date": "2025-10-06",
+      "alcance": 95423,
+      "impresiones": 122730,
+      "leads": 179,
+      "clics": 1858
+    },
+    {
+      "date": "2025-10-07",
+      "alcance": 106290,
+      "impresiones": 142705,
+      "leads": 202,
+      "clics": 2170
+    },
+    {
+      "date": "2025-10-08",
+      "alcance": 77775,
+      "impresiones": 101562,
+      "leads": 196,
+      "clics": 1469
+    },
+    {
+      "date": "2025-10-09",
+      "alcance": 77793,
+      "impresiones": 98021,
+      "leads": 156,
+      "clics": 1419
+    },
+    {
+      "date": "2025-10-10",
+      "alcance": 62989,
+      "impresiones": 80803,
+      "leads": 112,
+      "clics": 1062
+    },
+    {
+      "date": "2025-10-11",
+      "alcance": 85828,
+      "impresiones": 124527,
+      "leads": 158,
+      "clics": 1680
+    },
+    {
+      "date": "2025-10-12",
+      "alcance": 107297,
+      "impresiones": 153368,
+      "leads": 170,
+      "clics": 2221
+    },
+    {
+      "date": "2025-10-13",
+      "alcance": 94549,
+      "impresiones": 129307,
+      "leads": 118,
+      "clics": 1579
+    },
+    {
+      "date": "2025-10-14",
+      "alcance": 86261,
+      "impresiones": 116783,
+      "leads": 76,
+      "clics": 1275
+    },
+    {
+      "date": "2025-10-15",
+      "alcance": 83522,
+      "impresiones": 111912,
+      "leads": 104,
+      "clics": 1366
+    },
+    {
+      "date": "2025-10-16",
+      "alcance": 76410,
+      "impresiones": 105226,
+      "leads": 99,
+      "clics": 1379
+    },
+    {
+      "date": "2025-10-17",
+      "alcance": 72437,
+      "impresiones": 97123,
+      "leads": 101,
+      "clics": 1306
+    },
+    {
+      "date": "2025-10-18",
+      "alcance": 88870,
+      "impresiones": 117097,
+      "leads": 129,
+      "clics": 1556
+    },
+    {
+      "date": "2025-10-19",
+      "alcance": 115366,
+      "impresiones": 149219,
+      "leads": 122,
+      "clics": 1779
+    },
+    {
+      "date": "2025-10-20",
+      "alcance": 83170,
+      "impresiones": 103968,
+      "leads": 65,
+      "clics": 1140
+    },
+    {
+      "date": "2025-10-21",
+      "alcance": 111059,
+      "impresiones": 136259,
+      "leads": 58,
+      "clics": 1826
+    },
+    {
+      "date": "2025-10-22",
+      "alcance": 107170,
+      "impresiones": 141405,
+      "leads": 108,
+      "clics": 2160
+    },
+    {
+      "date": "2025-10-23",
+      "alcance": 97950,
+      "impresiones": 143948,
+      "leads": 127,
+      "clics": 1830
+    },
+    {
+      "date": "2025-10-24",
+      "alcance": 105741,
+      "impresiones": 147248,
+      "leads": 120,
+      "clics": 1651
+    },
+    {
+      "date": "2025-10-25",
+      "alcance": 119446,
+      "impresiones": 161244,
+      "leads": 94,
+      "clics": 1642
+    },
+    {
+      "date": "2025-10-26",
+      "alcance": 153031,
+      "impresiones": 220680,
+      "leads": 134,
+      "clics": 2136
+    },
+    {
+      "date": "2025-10-27",
+      "alcance": 155551,
+      "impresiones": 216644,
+      "leads": 102,
+      "clics": 1996
+    },
+    {
+      "date": "2025-10-28",
+      "alcance": 156904,
+      "impresiones": 217588,
+      "leads": 120,
+      "clics": 2170
+    },
+    {
+      "date": "2025-10-29",
+      "alcance": 143368,
+      "impresiones": 190317,
+      "leads": 93,
+      "clics": 1964
+    },
+    {
+      "date": "2025-10-30",
+      "alcance": 146177,
+      "impresiones": 199096,
+      "leads": 88,
+      "clics": 2173
+    },
+    {
+      "date": "2025-10-31",
+      "alcance": 137314,
+      "impresiones": 179790,
+      "leads": 91,
+      "clics": 2189
+    },
+    {
+      "date": "2025-11-01",
+      "alcance": 105540,
+      "impresiones": 141075,
+      "leads": 79,
+      "clics": 2124
+    },
+    {
+      "date": "2025-11-02",
+      "alcance": 155307,
+      "impresiones": 213187,
+      "leads": 150,
+      "clics": 3021
+    },
+    {
+      "date": "2025-11-03",
+      "alcance": 151305,
+      "impresiones": 197283,
+      "leads": 105,
+      "clics": 2593
+    },
+    {
+      "date": "2025-11-04",
+      "alcance": 181253,
+      "impresiones": 247136,
+      "leads": 195,
+      "clics": 3802
+    },
+    {
+      "date": "2025-11-05",
+      "alcance": 135419,
+      "impresiones": 191067,
+      "leads": 155,
+      "clics": 2769
+    },
+    {
+      "date": "2025-11-06",
+      "alcance": 108183,
+      "impresiones": 148445,
+      "leads": 157,
+      "clics": 2226
+    },
+    {
+      "date": "2025-11-07",
+      "alcance": 101411,
+      "impresiones": 146762,
+      "leads": 133,
+      "clics": 2219
+    },
+    {
+      "date": "2025-11-08",
+      "alcance": 113827,
+      "impresiones": 161824,
+      "leads": 194,
+      "clics": 2747
+    },
+    {
+      "date": "2025-11-09",
+      "alcance": 130589,
+      "impresiones": 184880,
+      "leads": 163,
+      "clics": 2877
+    },
+    {
+      "date": "2025-11-10",
+      "alcance": 147379,
+      "impresiones": 209954,
+      "leads": 212,
+      "clics": 3145
+    },
+    {
+      "date": "2025-11-11",
+      "alcance": 137639,
+      "impresiones": 190315,
+      "leads": 1702,
+      "clics": 4386
+    },
+    {
+      "date": "2025-11-12",
+      "alcance": 170335,
+      "impresiones": 251062,
+      "leads": 19072,
+      "clics": 23755
+    },
+    {
+      "date": "2025-11-13",
+      "alcance": 164067,
+      "impresiones": 240859,
+      "leads": 19301,
+      "clics": 24697
+    },
+    {
+      "date": "2025-11-14",
+      "alcance": 173899,
+      "impresiones": 249805,
+      "leads": 18475,
+      "clics": 24566
+    },
+    {
+      "date": "2025-11-15",
+      "alcance": 181492,
+      "impresiones": 260476,
+      "leads": 19857,
+      "clics": 26426
+    },
+    {
+      "date": "2025-11-16",
+      "alcance": 244986,
+      "impresiones": 343099,
+      "leads": 22387,
+      "clics": 31106
+    },
+    {
+      "date": "2025-11-17",
+      "alcance": 159684,
+      "impresiones": 210495,
+      "leads": 4605,
+      "clics": 7946
+    },
+    {
+      "date": "2025-11-18",
+      "alcance": 137718,
+      "impresiones": 188281,
+      "leads": 164,
+      "clics": 2377
+    },
+    {
+      "date": "2025-11-19",
+      "alcance": 126247,
+      "impresiones": 169149,
+      "leads": 171,
+      "clics": 2294
+    },
+    {
+      "date": "2025-11-20",
+      "alcance": 138798,
+      "impresiones": 182489,
+      "leads": 140,
+      "clics": 2255
+    },
+    {
+      "date": "2025-11-21",
+      "alcance": 143800,
+      "impresiones": 187663,
+      "leads": 121,
+      "clics": 2298
+    },
+    {
+      "date": "2025-11-22",
+      "alcance": 144145,
+      "impresiones": 193291,
+      "leads": 147,
+      "clics": 2529
+    },
+    {
+      "date": "2025-11-23",
+      "alcance": 174494,
+      "impresiones": 234994,
+      "leads": 181,
+      "clics": 2945
+    },
+    {
+      "date": "2025-11-24",
+      "alcance": 163990,
+      "impresiones": 223191,
+      "leads": 181,
+      "clics": 2677
+    },
+    {
+      "date": "2025-11-25",
+      "alcance": 147919,
+      "impresiones": 192295,
+      "leads": 156,
+      "clics": 2324
+    },
+    {
+      "date": "2025-11-26",
+      "alcance": 136418,
+      "impresiones": 182224,
+      "leads": 147,
+      "clics": 2293
+    },
+    {
+      "date": "2025-11-27",
+      "alcance": 98990,
+      "impresiones": 125477,
+      "leads": 98,
+      "clics": 2058
+    },
+    {
+      "date": "2025-11-28",
+      "alcance": 98011,
+      "impresiones": 117332,
+      "leads": 92,
+      "clics": 2839
+    },
+    {
+      "date": "2025-11-29",
+      "alcance": 56002,
+      "impresiones": 73844,
+      "leads": 116,
+      "clics": 3932
+    },
+    {
+      "date": "2025-11-30",
+      "alcance": 75673,
+      "impresiones": 98185,
+      "leads": 175,
+      "clics": 3181
+    },
+    {
+      "date": "2025-12-01",
+      "alcance": 100958,
+      "impresiones": 129064,
+      "leads": 125,
+      "clics": 3971
+    },
+    {
+      "date": "2025-12-02",
+      "alcance": 109745,
+      "impresiones": 136404,
+      "leads": 159,
+      "clics": 4019
+    },
+    {
+      "date": "2025-12-03",
+      "alcance": 115896,
+      "impresiones": 137427,
+      "leads": 125,
+      "clics": 3356
+    },
+    {
+      "date": "2025-12-04",
+      "alcance": 114679,
+      "impresiones": 141657,
+      "leads": 141,
+      "clics": 3432
+    },
+    {
+      "date": "2025-12-05",
+      "alcance": 117577,
+      "impresiones": 143531,
+      "leads": 112,
+      "clics": 3465
+    },
+    {
+      "date": "2025-12-06",
+      "alcance": 119947,
+      "impresiones": 146235,
+      "leads": 139,
+      "clics": 3890
+    },
+    {
+      "date": "2025-12-07",
+      "alcance": 130732,
+      "impresiones": 161486,
+      "leads": 131,
+      "clics": 4400
+    },
+    {
+      "date": "2025-12-08",
+      "alcance": 133084,
+      "impresiones": 163680,
+      "leads": 139,
+      "clics": 4517
+    },
+    {
+      "date": "2025-12-09",
+      "alcance": 117352,
+      "impresiones": 146248,
+      "leads": 130,
+      "clics": 4102
+    },
+    {
+      "date": "2025-12-10",
+      "alcance": 123454,
+      "impresiones": 150532,
+      "leads": 108,
+      "clics": 3654
+    },
+    {
+      "date": "2025-12-11",
+      "alcance": 124246,
+      "impresiones": 151908,
+      "leads": 134,
+      "clics": 4131
+    },
+    {
+      "date": "2025-12-12",
+      "alcance": 131313,
+      "impresiones": 158616,
+      "leads": 100,
+      "clics": 3971
+    },
+    {
+      "date": "2025-12-13",
+      "alcance": 123258,
+      "impresiones": 150190,
+      "leads": 126,
+      "clics": 3959
+    },
+    {
+      "date": "2025-12-14",
+      "alcance": 126924,
+      "impresiones": 154780,
+      "leads": 171,
+      "clics": 4153
+    },
+    {
+      "date": "2025-12-15",
+      "alcance": 121956,
+      "impresiones": 149598,
+      "leads": 133,
+      "clics": 3526
+    },
+    {
+      "date": "2025-12-16",
+      "alcance": 115568,
+      "impresiones": 140585,
+      "leads": 122,
+      "clics": 3138
+    },
+    {
+      "date": "2025-12-17",
+      "alcance": 101524,
+      "impresiones": 126482,
+      "leads": 108,
+      "clics": 2995
+    },
+    {
+      "date": "2025-12-18",
+      "alcance": 105291,
+      "impresiones": 126861,
+      "leads": 97,
+      "clics": 2715
+    },
+    {
+      "date": "2025-12-19",
+      "alcance": 100007,
+      "impresiones": 120103,
+      "leads": 106,
+      "clics": 2397
+    },
+    {
+      "date": "2025-12-20",
+      "alcance": 99425,
+      "impresiones": 121056,
+      "leads": 121,
+      "clics": 2503
+    },
+    {
+      "date": "2025-12-21",
+      "alcance": 111053,
+      "impresiones": 135130,
+      "leads": 116,
+      "clics": 2769
+    },
+    {
+      "date": "2025-12-22",
+      "alcance": 65813,
+      "impresiones": 78683,
+      "leads": 76,
+      "clics": 1611
+    },
+    {
+      "date": "2025-12-23",
+      "alcance": 55276,
+      "impresiones": 65366,
+      "leads": 61,
+      "clics": 1364
+    },
+    {
+      "date": "2025-12-24",
+      "alcance": 57100,
+      "impresiones": 67633,
+      "leads": 71,
+      "clics": 1410
+    },
+    {
+      "date": "2025-12-25",
+      "alcance": 67968,
+      "impresiones": 82589,
+      "leads": 132,
+      "clics": 2103
+    },
+    {
+      "date": "2025-12-26",
+      "alcance": 61669,
+      "impresiones": 74376,
+      "leads": 126,
+      "clics": 2235
+    },
+    {
+      "date": "2025-12-27",
+      "alcance": 63398,
+      "impresiones": 77262,
+      "leads": 154,
+      "clics": 2365
+    },
+    {
+      "date": "2025-12-28",
+      "alcance": 69010,
+      "impresiones": 84386,
+      "leads": 140,
+      "clics": 2541
+    },
+    {
+      "date": "2025-12-29",
+      "alcance": 61733,
+      "impresiones": 76829,
+      "leads": 121,
+      "clics": 2195
+    },
+    {
+      "date": "2025-12-30",
+      "alcance": 89336,
+      "impresiones": 110942,
+      "leads": 189,
+      "clics": 3461
+    },
+    {
+      "date": "2025-12-31",
+      "alcance": 113250,
+      "impresiones": 140175,
+      "leads": 209,
+      "clics": 4088
+    },
+    {
+      "date": "2026-01-01",
+      "alcance": 175945,
+      "impresiones": 224353,
+      "leads": 292,
+      "clics": 6260
+    },
+    {
+      "date": "2026-01-02",
+      "alcance": 151555,
+      "impresiones": 193004,
+      "leads": 280,
+      "clics": 5295
+    },
+    {
+      "date": "2026-01-03",
+      "alcance": 165358,
+      "impresiones": 205711,
+      "leads": 255,
+      "clics": 5153
+    },
+    {
+      "date": "2026-01-04",
+      "alcance": 158959,
+      "impresiones": 201815,
+      "leads": 262,
+      "clics": 5137
+    },
+    {
+      "date": "2026-01-05",
+      "alcance": 157936,
+      "impresiones": 199706,
+      "leads": 229,
+      "clics": 4966
+    },
+    {
+      "date": "2026-01-06",
+      "alcance": 166599,
+      "impresiones": 203863,
+      "leads": 221,
+      "clics": 5403
+    },
+    {
+      "date": "2026-01-07",
+      "alcance": 164288,
+      "impresiones": 201200,
+      "leads": 214,
+      "clics": 5438
+    },
+    {
+      "date": "2026-01-08",
+      "alcance": 147547,
+      "impresiones": 177364,
+      "leads": 216,
+      "clics": 4598
+    },
+    {
+      "date": "2026-01-09",
+      "alcance": 142237,
+      "impresiones": 167875,
+      "leads": 157,
+      "clics": 4181
+    },
+    {
+      "date": "2026-01-10",
+      "alcance": 136684,
+      "impresiones": 164805,
+      "leads": 211,
+      "clics": 4503
+    },
+    {
+      "date": "2026-01-11",
+      "alcance": 137749,
+      "impresiones": 167674,
+      "leads": 231,
+      "clics": 4670
+    },
+    {
+      "date": "2026-01-12",
+      "alcance": 133459,
+      "impresiones": 162594,
+      "leads": 174,
+      "clics": 3876
+    },
+    {
+      "date": "2026-01-13",
+      "alcance": 136908,
+      "impresiones": 165036,
+      "leads": 209,
+      "clics": 3970
+    },
+    {
+      "date": "2026-01-14",
+      "alcance": 138177,
+      "impresiones": 166015,
+      "leads": 161,
+      "clics": 3836
+    },
+    {
+      "date": "2026-01-15",
+      "alcance": 122055,
+      "impresiones": 148792,
+      "leads": 142,
+      "clics": 3826
+    },
+    {
+      "date": "2026-01-16",
+      "alcance": 120990,
+      "impresiones": 145913,
+      "leads": 146,
+      "clics": 3272
+    },
+    {
+      "date": "2026-01-17",
+      "alcance": 122933,
+      "impresiones": 148092,
+      "leads": 157,
+      "clics": 3650
+    },
+    {
+      "date": "2026-01-18",
+      "alcance": 133703,
+      "impresiones": 165188,
+      "leads": 164,
+      "clics": 3627
+    },
+    {
+      "date": "2026-01-19",
+      "alcance": 136640,
+      "impresiones": 166453,
+      "leads": 181,
+      "clics": 3277
+    },
+    {
+      "date": "2026-01-20",
+      "alcance": 128293,
+      "impresiones": 154120,
+      "leads": 153,
+      "clics": 3194
+    },
+    {
+      "date": "2026-01-21",
+      "alcance": 122700,
+      "impresiones": 149375,
+      "leads": 167,
+      "clics": 3337
+    },
+    {
+      "date": "2026-01-22",
+      "alcance": 122759,
+      "impresiones": 146226,
+      "leads": 159,
+      "clics": 3513
+    },
+    {
+      "date": "2026-01-23",
+      "alcance": 121448,
+      "impresiones": 141845,
+      "leads": 169,
+      "clics": 3469
+    },
+    {
+      "date": "2026-01-24",
+      "alcance": 117127,
+      "impresiones": 140666,
+      "leads": 156,
+      "clics": 3789
+    },
+    {
+      "date": "2026-01-25",
+      "alcance": 125041,
+      "impresiones": 152298,
+      "leads": 189,
+      "clics": 3962
+    },
+    {
+      "date": "2026-01-26",
+      "alcance": 123736,
+      "impresiones": 151668,
+      "leads": 174,
+      "clics": 3595
+    },
+    {
+      "date": "2026-01-27",
+      "alcance": 113769,
+      "impresiones": 139668,
+      "leads": 157,
+      "clics": 3638
+    },
+    {
+      "date": "2026-01-28",
+      "alcance": 104097,
+      "impresiones": 125880,
+      "leads": 157,
+      "clics": 3526
+    },
+    {
+      "date": "2026-01-29",
+      "alcance": 110517,
+      "impresiones": 132458,
+      "leads": 123,
+      "clics": 3141
+    },
+    {
+      "date": "2026-01-30",
+      "alcance": 106972,
+      "impresiones": 126737,
+      "leads": 119,
+      "clics": 2937
+    },
+    {
+      "date": "2026-01-31",
+      "alcance": 118381,
+      "impresiones": 140216,
+      "leads": 160,
+      "clics": 3375
+    },
+    {
+      "date": "2026-02-01",
+      "alcance": 136175,
+      "impresiones": 165812,
+      "leads": 178,
+      "clics": 3906
+    },
+    {
+      "date": "2026-02-02",
+      "alcance": 129894,
+      "impresiones": 157904,
+      "leads": 161,
+      "clics": 3649
+    },
+    {
+      "date": "2026-02-03",
+      "alcance": 131009,
+      "impresiones": 158177,
+      "leads": 158,
+      "clics": 3427
+    },
+    {
+      "date": "2026-02-04",
+      "alcance": 116935,
+      "impresiones": 141665,
+      "leads": 108,
+      "clics": 3093
+    },
+    {
+      "date": "2026-02-05",
+      "alcance": 129822,
+      "impresiones": 153131,
+      "leads": 130,
+      "clics": 3173
+    },
+    {
+      "date": "2026-02-06",
+      "alcance": 122325,
+      "impresiones": 142601,
+      "leads": 126,
+      "clics": 3532
+    },
+    {
+      "date": "2026-02-07",
+      "alcance": 129530,
+      "impresiones": 155840,
+      "leads": 150,
+      "clics": 4034
+    },
+    {
+      "date": "2026-02-08",
+      "alcance": 131203,
+      "impresiones": 160424,
+      "leads": 156,
+      "clics": 3970
+    },
+    {
+      "date": "2026-02-09",
+      "alcance": 126084,
+      "impresiones": 154182,
+      "leads": 122,
+      "clics": 3781
+    },
+    {
+      "date": "2026-02-10",
+      "alcance": 126170,
+      "impresiones": 150305,
+      "leads": 162,
+      "clics": 3877
+    },
+    {
+      "date": "2026-02-11",
+      "alcance": 124349,
+      "impresiones": 150045,
+      "leads": 134,
+      "clics": 3654
+    },
+    {
+      "date": "2026-02-12",
+      "alcance": 117689,
+      "impresiones": 139982,
+      "leads": 100,
+      "clics": 3223
+    },
+    {
+      "date": "2026-02-13",
+      "alcance": 118019,
+      "impresiones": 142047,
+      "leads": 118,
+      "clics": 3724
+    },
+    {
+      "date": "2026-02-14",
+      "alcance": 139616,
+      "impresiones": 162530,
+      "leads": 126,
+      "clics": 3911
+    },
+    {
+      "date": "2026-02-15",
+      "alcance": 149282,
+      "impresiones": 179595,
+      "leads": 137,
+      "clics": 4866
+    },
+    {
+      "date": "2026-02-16",
+      "alcance": 107317,
+      "impresiones": 131000,
+      "leads": 134,
+      "clics": 3325
+    },
+    {
+      "date": "2026-02-17",
+      "alcance": 114390,
+      "impresiones": 141277,
+      "leads": 123,
+      "clics": 4044
+    },
+    {
+      "date": "2026-02-18",
+      "alcance": 113173,
+      "impresiones": 138931,
+      "leads": 95,
+      "clics": 3349
+    },
+    {
+      "date": "2026-02-19",
+      "alcance": 114535,
+      "impresiones": 139192,
+      "leads": 128,
+      "clics": 3436
+    },
+    {
+      "date": "2026-02-20",
+      "alcance": 126820,
+      "impresiones": 153459,
+      "leads": 120,
+      "clics": 3907
+    },
+    {
+      "date": "2026-02-21",
+      "alcance": 97447,
+      "impresiones": 118334,
+      "leads": 149,
+      "clics": 3310
+    },
+    {
+      "date": "2026-02-22",
+      "alcance": 120694,
+      "impresiones": 148465,
+      "leads": 155,
+      "clics": 3804
+    },
+    {
+      "date": "2026-02-23",
+      "alcance": 115405,
+      "impresiones": 141883,
+      "leads": 145,
+      "clics": 3404
+    },
+    {
+      "date": "2026-02-24",
+      "alcance": 119777,
+      "impresiones": 142638,
+      "leads": 129,
+      "clics": 3246
+    },
+    {
+      "date": "2026-02-25",
+      "alcance": 111619,
+      "impresiones": 134760,
+      "leads": 118,
+      "clics": 3110
+    },
+    {
+      "date": "2026-02-26",
+      "alcance": 104476,
+      "impresiones": 124619,
+      "leads": 108,
+      "clics": 2860
+    },
+    {
+      "date": "2026-02-27",
+      "alcance": 103191,
+      "impresiones": 123274,
+      "leads": 103,
+      "clics": 2802
+    },
+    {
+      "date": "2026-02-28",
+      "alcance": 104942,
+      "impresiones": 124531,
+      "leads": 120,
+      "clics": 2676
+    },
+    {
+      "date": "2026-03-01",
+      "alcance": 138154,
+      "impresiones": 164525,
+      "leads": 152,
+      "clics": 3412
+    },
+    {
+      "date": "2026-03-02",
+      "alcance": 142300,
+      "impresiones": 168239,
+      "leads": 115,
+      "clics": 2816
+    },
+    {
+      "date": "2026-03-03",
+      "alcance": 114726,
+      "impresiones": 139568,
+      "leads": 111,
+      "clics": 3256
+    },
+    {
+      "date": "2026-03-04",
+      "alcance": 119498,
+      "impresiones": 145989,
+      "leads": 103,
+      "clics": 3176
+    },
+    {
+      "date": "2026-03-05",
+      "alcance": 119675,
+      "impresiones": 150446,
+      "leads": 108,
+      "clics": 3127
+    },
+    {
+      "date": "2026-03-06",
+      "alcance": 120492,
+      "impresiones": 149029,
+      "leads": 100,
+      "clics": 3062
+    },
+    {
+      "date": "2026-03-07",
+      "alcance": 133257,
+      "impresiones": 160630,
+      "leads": 123,
+      "clics": 2987
+    },
+    {
+      "date": "2026-03-08",
+      "alcance": 127837,
+      "impresiones": 157900,
+      "leads": 102,
+      "clics": 2894
+    },
+    {
+      "date": "2026-03-09",
+      "alcance": 108331,
+      "impresiones": 134618,
+      "leads": 105,
+      "clics": 2583
+    },
+    {
+      "date": "2026-03-10",
+      "alcance": 114797,
+      "impresiones": 142370,
+      "leads": 129,
+      "clics": 2772
+    },
+    {
+      "date": "2026-03-11",
+      "alcance": 105056,
+      "impresiones": 129929,
+      "leads": 93,
+      "clics": 2497
+    },
+    {
+      "date": "2026-03-12",
+      "alcance": 106179,
+      "impresiones": 127546,
+      "leads": 113,
+      "clics": 2710
+    },
+    {
+      "date": "2026-03-13",
+      "alcance": 96400,
+      "impresiones": 121674,
+      "leads": 136,
+      "clics": 2707
+    },
+    {
+      "date": "2026-03-14",
+      "alcance": 95231,
+      "impresiones": 116760,
+      "leads": 100,
+      "clics": 2457
+    },
+    {
+      "date": "2026-03-15",
+      "alcance": 109180,
+      "impresiones": 137914,
+      "leads": 127,
+      "clics": 3001
+    },
+    {
+      "date": "2026-03-16",
+      "alcance": 114389,
+      "impresiones": 150477,
+      "leads": 153,
+      "clics": 3093
+    },
+    {
+      "date": "2026-03-17",
+      "alcance": 107106,
+      "impresiones": 137689,
+      "leads": 111,
+      "clics": 2730
+    },
+    {
+      "date": "2026-03-18",
+      "alcance": 104444,
+      "impresiones": 133852,
+      "leads": 108,
+      "clics": 2661
+    },
+    {
+      "date": "2026-03-19",
+      "alcance": 100414,
+      "impresiones": 124641,
+      "leads": 104,
+      "clics": 2487
+    },
+    {
+      "date": "2026-03-20",
+      "alcance": 96813,
+      "impresiones": 119973,
+      "leads": 88,
+      "clics": 2664
+    },
+    {
+      "date": "2026-03-21",
+      "alcance": 92141,
+      "impresiones": 119664,
+      "leads": 97,
+      "clics": 3240
+    },
+    {
+      "date": "2026-03-22",
+      "alcance": 102020,
+      "impresiones": 132334,
+      "leads": 96,
+      "clics": 3925
+    },
+    {
+      "date": "2026-03-23",
+      "alcance": 88792,
+      "impresiones": 115032,
+      "leads": 112,
+      "clics": 3978
+    },
+    {
+      "date": "2026-03-24",
+      "alcance": 77559,
+      "impresiones": 100721,
+      "leads": 102,
+      "clics": 3935
+    },
+    {
+      "date": "2026-03-25",
+      "alcance": 84786,
+      "impresiones": 109492,
+      "leads": 99,
+      "clics": 3579
+    },
+    {
+      "date": "2026-03-26",
+      "alcance": 82958,
+      "impresiones": 108139,
+      "leads": 92,
+      "clics": 3175
+    },
+    {
+      "date": "2026-03-27",
+      "alcance": 80730,
+      "impresiones": 104706,
+      "leads": 97,
+      "clics": 3180
+    },
+    {
+      "date": "2026-03-28",
+      "alcance": 93740,
+      "impresiones": 118944,
+      "leads": 106,
+      "clics": 2673
+    },
+    {
+      "date": "2026-03-29",
+      "alcance": 87385,
+      "impresiones": 114215,
+      "leads": 118,
+      "clics": 2960
+    },
+    {
+      "date": "2026-03-30",
+      "alcance": 92975,
+      "impresiones": 119239,
+      "leads": 108,
+      "clics": 2820
+    },
+    {
+      "date": "2026-03-31",
+      "alcance": 102516,
+      "impresiones": 134772,
+      "leads": 116,
+      "clics": 3296
+    },
+    {
+      "date": "2026-04-01",
+      "alcance": 105093,
+      "impresiones": 143800,
+      "leads": 107,
+      "clics": 3495
+    },
+    {
+      "date": "2026-04-02",
+      "alcance": 113910,
+      "impresiones": 152240,
+      "leads": 116,
+      "clics": 3549
+    },
+    {
+      "date": "2026-04-03",
+      "alcance": 132949,
+      "impresiones": 173002,
+      "leads": 96,
+      "clics": 3988
+    },
+    {
+      "date": "2026-04-04",
+      "alcance": 134334,
+      "impresiones": 177392,
+      "leads": 132,
+      "clics": 3995
+    },
+    {
+      "date": "2026-04-05",
+      "alcance": 152675,
+      "impresiones": 206351,
+      "leads": 163,
+      "clics": 4150
+    },
+    {
+      "date": "2026-04-06",
+      "alcance": 152743,
+      "impresiones": 199057,
+      "leads": 119,
+      "clics": 3817
+    },
+    {
+      "date": "2026-04-07",
+      "alcance": 144889,
+      "impresiones": 180277,
+      "leads": 129,
+      "clics": 3677
+    },
+    {
+      "date": "2026-04-08",
+      "alcance": 137637,
+      "impresiones": 174628,
+      "leads": 103,
+      "clics": 3591
+    },
+    {
+      "date": "2026-04-09",
+      "alcance": 101980,
+      "impresiones": 133145,
+      "leads": 97,
+      "clics": 3107
+    },
+    {
+      "date": "2026-04-10",
+      "alcance": 107001,
+      "impresiones": 140725,
+      "leads": 117,
+      "clics": 3411
+    },
+    {
+      "date": "2026-04-11",
+      "alcance": 102741,
+      "impresiones": 136498,
+      "leads": 143,
+      "clics": 3151
+    },
+    {
+      "date": "2026-04-12",
+      "alcance": 113631,
+      "impresiones": 152904,
+      "leads": 121,
+      "clics": 3445
+    },
+    {
+      "date": "2026-04-13",
+      "alcance": 97019,
+      "impresiones": 132102,
+      "leads": 81,
+      "clics": 3019
+    },
+    {
+      "date": "2026-04-14",
+      "alcance": 100484,
+      "impresiones": 131227,
+      "leads": 109,
+      "clics": 2941
+    },
+    {
+      "date": "2026-04-15",
+      "alcance": 111949,
+      "impresiones": 143129,
+      "leads": 126,
+      "clics": 3391
+    },
+    {
+      "date": "2026-04-16",
+      "alcance": 113729,
+      "impresiones": 140746,
+      "leads": 95,
+      "clics": 2886
+    },
+    {
+      "date": "2026-04-17",
+      "alcance": 98188,
+      "impresiones": 120870,
+      "leads": 82,
+      "clics": 2705
+    },
+    {
+      "date": "2026-04-18",
+      "alcance": 97726,
+      "impresiones": 129445,
+      "leads": 91,
+      "clics": 3061
+    },
+    {
+      "date": "2026-04-19",
+      "alcance": 97290,
+      "impresiones": 133009,
+      "leads": 108,
+      "clics": 3428
+    },
+    {
+      "date": "2026-04-20",
+      "alcance": 95955,
+      "impresiones": 129469,
+      "leads": 124,
+      "clics": 2807
+    },
+    {
+      "date": "2026-04-21",
+      "alcance": 100060,
+      "impresiones": 133189,
+      "leads": 99,
+      "clics": 2703
+    },
+    {
+      "date": "2026-04-22",
+      "alcance": 98797,
+      "impresiones": 129540,
+      "leads": 92,
+      "clics": 2738
+    },
+    {
+      "date": "2026-04-23",
+      "alcance": 90769,
+      "impresiones": 117570,
+      "leads": 79,
+      "clics": 2587
+    },
+    {
+      "date": "2026-04-24",
+      "alcance": 110417,
+      "impresiones": 137633,
+      "leads": 67,
+      "clics": 2743
+    },
+    {
+      "date": "2026-04-25",
+      "alcance": 111137,
+      "impresiones": 140194,
+      "leads": 77,
+      "clics": 2755
+    },
+    {
+      "date": "2026-04-26",
+      "alcance": 110030,
+      "impresiones": 147031,
+      "leads": 86,
+      "clics": 2966
+    },
+    {
+      "date": "2026-04-27",
+      "alcance": 94749,
+      "impresiones": 126659,
+      "leads": 77,
+      "clics": 2617
+    },
+    {
+      "date": "2026-04-28",
+      "alcance": 90261,
+      "impresiones": 120069,
+      "leads": 93,
+      "clics": 2577
+    },
+    {
+      "date": "2026-04-29",
+      "alcance": 92765,
+      "impresiones": 123130,
+      "leads": 97,
+      "clics": 2852
+    },
+    {
+      "date": "2026-04-30",
+      "alcance": 94469,
+      "impresiones": 120613,
+      "leads": 90,
+      "clics": 2786
+    },
+    {
+      "date": "2026-05-01",
+      "alcance": 119804,
+      "impresiones": 156284,
+      "leads": 113,
+      "clics": 3572
+    },
+    {
+      "date": "2026-05-02",
+      "alcance": 127515,
+      "impresiones": 167348,
+      "leads": 116,
+      "clics": 4031
+    },
+    {
+      "date": "2026-05-03",
+      "alcance": 149608,
+      "impresiones": 200406,
+      "leads": 130,
+      "clics": 5213
+    },
+    {
+      "date": "2026-05-04",
+      "alcance": 129751,
+      "impresiones": 173916,
+      "leads": 110,
+      "clics": 4126
+    },
+    {
+      "date": "2026-05-05",
+      "alcance": 109633,
+      "impresiones": 143271,
+      "leads": 90,
+      "clics": 3465
+    },
+    {
+      "date": "2026-05-06",
+      "alcance": 109962,
+      "impresiones": 147702,
+      "leads": 122,
+      "clics": 4035
+    },
+    {
+      "date": "2026-05-07",
+      "alcance": 98933,
+      "impresiones": 131390,
+      "leads": 74,
+      "clics": 3449
+    },
+    {
+      "date": "2026-05-08",
+      "alcance": 104406,
+      "impresiones": 135805,
+      "leads": 85,
+      "clics": 3748
+    },
+    {
+      "date": "2026-05-09",
+      "alcance": 104238,
+      "impresiones": 135773,
+      "leads": 84,
+      "clics": 3779
+    },
+    {
+      "date": "2026-05-10",
+      "alcance": 117311,
+      "impresiones": 155413,
+      "leads": 89,
+      "clics": 4089
+    },
+    {
+      "date": "2026-05-11",
+      "alcance": 109914,
+      "impresiones": 142924,
+      "leads": 91,
+      "clics": 3831
+    },
+    {
+      "date": "2026-05-12",
+      "alcance": 108776,
+      "impresiones": 144862,
+      "leads": 91,
+      "clics": 3947
+    },
+    {
+      "date": "2026-05-13",
+      "alcance": 112890,
+      "impresiones": 146624,
+      "leads": 89,
+      "clics": 3743
+    },
+    {
+      "date": "2026-05-14",
+      "alcance": 97506,
+      "impresiones": 123589,
+      "leads": 68,
+      "clics": 3221
+    },
+    {
+      "date": "2026-05-15",
+      "alcance": 98057,
+      "impresiones": 120980,
+      "leads": 109,
+      "clics": 3581
+    },
+    {
+      "date": "2026-05-16",
+      "alcance": 96719,
+      "impresiones": 126077,
+      "leads": 104,
+      "clics": 3569
+    },
+    {
+      "date": "2026-05-17",
+      "alcance": 107091,
+      "impresiones": 140978,
+      "leads": 127,
+      "clics": 4056
+    },
+    {
+      "date": "2026-05-18",
+      "alcance": 103925,
+      "impresiones": 140274,
+      "leads": 112,
+      "clics": 3379
+    },
+    {
+      "date": "2026-05-19",
+      "alcance": 94326,
+      "impresiones": 126364,
+      "leads": 108,
+      "clics": 3602
+    },
+    {
+      "date": "2026-05-20",
+      "alcance": 88107,
+      "impresiones": 120762,
+      "leads": 118,
+      "clics": 3693
+    },
+    {
+      "date": "2026-05-21",
+      "alcance": 83821,
+      "impresiones": 113184,
+      "leads": 78,
+      "clics": 3109
+    },
+    {
+      "date": "2026-05-22",
+      "alcance": 75029,
+      "impresiones": 101629,
+      "leads": 76,
+      "clics": 2965
+    },
+    {
+      "date": "2026-05-23",
+      "alcance": 77375,
+      "impresiones": 106624,
+      "leads": 76,
+      "clics": 3304
+    },
+    {
+      "date": "2026-05-24",
+      "alcance": 77815,
+      "impresiones": 109032,
+      "leads": 96,
+      "clics": 3215
+    },
+    {
+      "date": "2026-05-25",
+      "alcance": 76473,
+      "impresiones": 107431,
+      "leads": 98,
+      "clics": 3140
+    },
+    {
+      "date": "2026-05-26",
+      "alcance": 72704,
+      "impresiones": 98553,
+      "leads": 75,
+      "clics": 2786
+    },
+    {
+      "date": "2026-05-27",
+      "alcance": 87748,
+      "impresiones": 114439,
+      "leads": 96,
+      "clics": 3015
+    },
+    {
+      "date": "2026-05-28",
+      "alcance": 79859,
+      "impresiones": 104884,
+      "leads": 83,
+      "clics": 2939
+    },
+    {
+      "date": "2026-05-29",
+      "alcance": 84088,
+      "impresiones": 108431,
+      "leads": 88,
+      "clics": 2684
+    },
+    {
+      "date": "2026-05-30",
+      "alcance": 97850,
+      "impresiones": 125753,
+      "leads": 106,
+      "clics": 3232
+    },
+    {
+      "date": "2026-05-31",
+      "alcance": 110859,
+      "impresiones": 146910,
+      "leads": 123,
+      "clics": 3889
+    },
+    {
+      "date": "2026-06-01",
+      "alcance": 120550,
+      "impresiones": 156953,
+      "leads": 89,
+      "clics": 3160
+    },
+    {
+      "date": "2026-06-02",
+      "alcance": 103793,
+      "impresiones": 136349,
+      "leads": 107,
+      "clics": 3423
+    },
+    {
+      "date": "2026-06-03",
+      "alcance": 111596,
+      "impresiones": 144253,
+      "leads": 89,
+      "clics": 3563
+    },
+    {
+      "date": "2026-06-04",
+      "alcance": 104106,
+      "impresiones": 135411,
+      "leads": 98,
+      "clics": 3269
+    },
+    {
+      "date": "2026-06-05",
+      "alcance": 99655,
+      "impresiones": 128235,
+      "leads": 90,
+      "clics": 3256
+    },
+    {
+      "date": "2026-06-06",
+      "alcance": 99217,
+      "impresiones": 127392,
+      "leads": 87,
+      "clics": 3056
+    },
+    {
+      "date": "2026-06-07",
+      "alcance": 106619,
+      "impresiones": 139510,
+      "leads": 114,
+      "clics": 3460
+    },
+    {
+      "date": "2026-06-08",
+      "alcance": 96327,
+      "impresiones": 122923,
+      "leads": 81,
+      "clics": 2731
+    },
+    {
+      "date": "2026-06-09",
+      "alcance": 107081,
+      "impresiones": 138535,
+      "leads": 85,
+      "clics": 3031
+    },
+    {
+      "date": "2026-06-10",
+      "alcance": 99499,
+      "impresiones": 128928,
+      "leads": 96,
+      "clics": 2692
+    },
+    {
+      "date": "2026-06-11",
+      "alcance": 90966,
+      "impresiones": 114290,
+      "leads": 81,
+      "clics": 2360
+    },
+    {
+      "date": "2026-06-12",
+      "alcance": 85410,
+      "impresiones": 108473,
+      "leads": 77,
+      "clics": 2318
+    },
+    {
+      "date": "2026-06-13",
+      "alcance": 85317,
+      "impresiones": 107719,
+      "leads": 76,
+      "clics": 2304
+    },
+    {
+      "date": "2026-06-14",
+      "alcance": 95046,
+      "impresiones": 122711,
+      "leads": 97,
+      "clics": 2385
+    },
+    {
+      "date": "2026-06-15",
+      "alcance": 78707,
+      "impresiones": 103314,
+      "leads": 83,
+      "clics": 2225
+    },
+    {
+      "date": "2026-06-16",
+      "alcance": 78469,
+      "impresiones": 100916,
+      "leads": 83,
+      "clics": 2185
+    },
+    {
+      "date": "2026-06-17",
+      "alcance": 73264,
+      "impresiones": 93618,
+      "leads": 70,
+      "clics": 2023
+    },
+    {
+      "date": "2026-06-18",
+      "alcance": 65527,
+      "impresiones": 82797,
+      "leads": 63,
+      "clics": 2011
+    },
+    {
+      "date": "2026-06-19",
+      "alcance": 67297,
+      "impresiones": 86804,
+      "leads": 76,
+      "clics": 1986
+    },
+    {
+      "date": "2026-06-20",
+      "alcance": 60888,
+      "impresiones": 81812,
+      "leads": 81,
+      "clics": 1820
+    },
+    {
+      "date": "2026-06-21",
+      "alcance": 81766,
+      "impresiones": 109720,
+      "leads": 91,
+      "clics": 2375
+    },
+    {
+      "date": "2026-06-22",
+      "alcance": 82252,
+      "impresiones": 105923,
+      "leads": 73,
+      "clics": 2297
+    },
+    {
+      "date": "2026-06-23",
+      "alcance": 77521,
+      "impresiones": 99457,
+      "leads": 84,
+      "clics": 2022
+    },
+    {
+      "date": "2026-06-24",
+      "alcance": 104595,
+      "impresiones": 128939,
+      "leads": 75,
+      "clics": 2573
+    },
+    {
+      "date": "2026-06-25",
+      "alcance": 81513,
+      "impresiones": 100572,
+      "leads": 53,
+      "clics": 1983
+    },
+    {
+      "date": "2026-06-26",
+      "alcance": 73596,
+      "impresiones": 90700,
+      "leads": 59,
+      "clics": 1694
+    },
+    {
+      "date": "2026-06-27",
+      "alcance": 71312,
+      "impresiones": 87119,
+      "leads": 58,
+      "clics": 1795
+    },
+    {
+      "date": "2026-06-28",
+      "alcance": 78750,
+      "impresiones": 99752,
+      "leads": 81,
+      "clics": 2024
+    },
+    {
+      "date": "2026-06-29",
+      "alcance": 82660,
+      "impresiones": 102382,
+      "leads": 71,
+      "clics": 2005
+    },
+    {
+      "date": "2026-06-30",
+      "alcance": 68453,
+      "impresiones": 91134,
+      "leads": 99,
+      "clics": 2124
+    },
+    {
+      "date": "2026-07-01",
+      "alcance": 87391,
+      "impresiones": 113289,
+      "leads": 99,
+      "clics": 2523
+    },
+    {
+      "date": "2026-07-02",
+      "alcance": 87578,
+      "impresiones": 114858,
+      "leads": 103,
+      "clics": 2454
+    },
+    {
+      "date": "2026-07-03",
+      "alcance": 86940,
+      "impresiones": 114862,
+      "leads": 85,
+      "clics": 2379
+    },
+    {
+      "date": "2026-07-04",
+      "alcance": 84368,
+      "impresiones": 111919,
+      "leads": 112,
+      "clics": 2500
+    },
+    {
+      "date": "2026-07-05",
+      "alcance": 92551,
+      "impresiones": 123366,
+      "leads": 119,
+      "clics": 2716
+    },
+    {
+      "date": "2026-07-06",
+      "alcance": 81173,
+      "impresiones": 108790,
+      "leads": 91,
+      "clics": 2451
+    },
+    {
+      "date": "2026-07-07",
+      "alcance": 76821,
+      "impresiones": 104422,
+      "leads": 75,
+      "clics": 2332
+    },
+    {
+      "date": "2026-07-08",
+      "alcance": 76040,
+      "impresiones": 101037,
+      "leads": 88,
+      "clics": 2477
+    },
+    {
+      "date": "2026-07-09",
+      "alcance": 73590,
+      "impresiones": 97204,
+      "leads": 90,
+      "clics": 2448
+    },
+    {
+      "date": "2026-07-10",
+      "alcance": 71313,
+      "impresiones": 94980,
+      "leads": 90,
+      "clics": 2328
+    },
+    {
+      "date": "2026-07-11",
+      "alcance": 68102,
+      "impresiones": 91752,
+      "leads": 105,
+      "clics": 2400
+    },
+    {
+      "date": "2026-07-12",
+      "alcance": 74615,
+      "impresiones": 101773,
+      "leads": 113,
+      "clics": 2775
+    },
+    {
+      "date": "2026-07-13",
+      "alcance": 61879,
+      "impresiones": 84476,
+      "leads": 90,
+      "clics": 2110
+    },
+    {
+      "date": "2026-07-14",
+      "alcance": 64708,
+      "impresiones": 86820,
+      "leads": 81,
+      "clics": 2212
+    },
+    {
+      "date": "2026-07-15",
+      "alcance": 64301,
+      "impresiones": 86559,
+      "leads": 88,
+      "clics": 2326
+    },
+    {
+      "date": "2026-07-16",
+      "alcance": 67825,
+      "impresiones": 89056,
+      "leads": 94,
+      "clics": 2416
+    },
+    {
+      "date": "2026-07-17",
+      "alcance": 63987,
+      "impresiones": 85342,
+      "leads": 65,
+      "clics": 2005
+    },
+    {
+      "date": "2026-07-18",
+      "alcance": 62235,
+      "impresiones": 83457,
+      "leads": 88,
+      "clics": 2215
+    },
+    {
+      "date": "2026-07-19",
+      "alcance": 73785,
+      "impresiones": 98611,
+      "leads": 105,
+      "clics": 2433
+    },
+    {
+      "date": "2026-07-20",
+      "alcance": 80980,
+      "impresiones": 107256,
+      "leads": 84,
+      "clics": 2568
+    },
+    {
+      "date": "2026-07-21",
+      "alcance": 70322,
+      "impresiones": 93735,
+      "leads": 114,
+      "clics": 2665
+    },
+    {
+      "date": "2026-07-22",
+      "alcance": 63424,
+      "impresiones": 85486,
+      "leads": 90,
+      "clics": 2277
+    },
+    {
+      "date": "2026-07-23",
+      "alcance": 62174,
+      "impresiones": 82730,
+      "leads": 78,
+      "clics": 2213
+    },
+    {
+      "date": "2026-07-24",
+      "alcance": 61726,
+      "impresiones": 80705,
+      "leads": 55,
+      "clics": 1936
+    },
+    {
+      "date": "2026-07-25",
+      "alcance": 59392,
+      "impresiones": 77445,
+      "leads": 65,
+      "clics": 1995
+    },
+    {
+      "date": "2026-07-26",
+      "alcance": 67675,
+      "impresiones": 89876,
+      "leads": 94,
+      "clics": 2475
+    },
+    {
+      "date": "2026-07-27",
+      "alcance": 70600,
+      "impresiones": 92896,
+      "leads": 82,
+      "clics": 2306
+    },
+    {
+      "date": "2026-07-28",
+      "alcance": 65832,
+      "impresiones": 88141,
+      "leads": 115,
+      "clics": 2426
+    },
+    {
+      "date": "2026-07-29",
+      "alcance": 68267,
+      "impresiones": 90801,
+      "leads": 108,
+      "clics": 2402
+    },
+    {
+      "date": "2026-07-30",
+      "alcance": 64798,
+      "impresiones": 84138,
+      "leads": 101,
+      "clics": 2269
+    },
+    {
+      "date": "2026-07-31",
+      "alcance": 72161,
+      "impresiones": 96495,
+      "leads": 83,
+      "clics": 2408
+    },
+    {
+      "date": "2026-08-01",
+      "alcance": 75705,
+      "impresiones": 103126,
+      "leads": 102,
+      "clics": 2676
+    },
+    {
+      "date": "2026-08-02",
+      "alcance": 92371,
+      "impresiones": 128334,
+      "leads": 87,
+      "clics": 2998
+    },
+    {
+      "date": "2026-08-03",
+      "alcance": 88116,
+      "impresiones": 118891,
+      "leads": 112,
+      "clics": 2714
+    },
+    {
+      "date": "2026-08-04",
+      "alcance": 31074,
+      "impresiones": 37829,
+      "leads": 25,
+      "clics": 851
+    }
+  ],
+  "monthAccount": [
+    {
+      "month": "2024-07",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 119,
+      "spendNative": 516.23
+    },
+    {
+      "month": "2024-07",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 136,
+      "spendNative": 1217.25
+    },
+    {
+      "month": "2024-07",
+      "account": "Casa Elisa",
+      "currency": "USD",
+      "leads": 118,
+      "spendNative": 944.8
+    },
+    {
+      "month": "2024-07",
+      "account": "Puerta Abierta",
+      "currency": "GTQ",
+      "leads": 121,
+      "spendNative": 702.66
+    },
+    {
+      "month": "2024-07",
+      "account": "Santa Elena",
+      "currency": "GTQ",
+      "leads": 0,
+      "spendNative": 130.32
+    },
+    {
+      "month": "2024-08",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 222,
+      "spendNative": 609.7
+    },
+    {
+      "month": "2024-08",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 101,
+      "spendNative": 930.04
+    },
+    {
+      "month": "2024-08",
+      "account": "Casa Elisa",
+      "currency": "USD",
+      "leads": 157,
+      "spendNative": 1079.66
+    },
+    {
+      "month": "2024-08",
+      "account": "Puerta Abierta",
+      "currency": "GTQ",
+      "leads": 141,
+      "spendNative": 975.97
+    },
+    {
+      "month": "2024-08",
+      "account": "Santa Elena",
+      "currency": "GTQ",
+      "leads": 0,
+      "spendNative": 193.53
+    },
+    {
+      "month": "2024-09",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 188,
+      "spendNative": 1562.02
+    },
+    {
+      "month": "2024-09",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 194,
+      "spendNative": 1576.2
+    },
+    {
+      "month": "2024-09",
+      "account": "Casa Elisa",
+      "currency": "USD",
+      "leads": 112,
+      "spendNative": 1054.39
+    },
+    {
+      "month": "2024-09",
+      "account": "Puerta Abierta",
+      "currency": "GTQ",
+      "leads": 95,
+      "spendNative": 553.74
+    },
+    {
+      "month": "2024-09",
+      "account": "Santa Elena",
+      "currency": "GTQ",
+      "leads": 0,
+      "spendNative": 187.99
+    },
+    {
+      "month": "2024-10",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 264,
+      "spendNative": 847.18
+    },
+    {
+      "month": "2024-10",
+      "account": "Bosque Las Tapias",
+      "currency": "GTQ",
+      "leads": 49,
+      "spendNative": 163.06
+    },
+    {
+      "month": "2024-10",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 224,
+      "spendNative": 1879.43
+    },
+    {
+      "month": "2024-10",
+      "account": "Casa Elisa",
+      "currency": "USD",
+      "leads": 247,
+      "spendNative": 1172.94
+    },
+    {
+      "month": "2024-10",
+      "account": "Puerta Abierta",
+      "currency": "GTQ",
+      "leads": 83,
+      "spendNative": 525.69
+    },
+    {
+      "month": "2024-10",
+      "account": "Santa Elena",
+      "currency": "GTQ",
+      "leads": 0,
+      "spendNative": 194.29
+    },
+    {
+      "month": "2024-11",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 450,
+      "spendNative": 1042.46
+    },
+    {
+      "month": "2024-11",
+      "account": "Bosque Las Tapias",
+      "currency": "GTQ",
+      "leads": 115,
+      "spendNative": 764.06
+    },
+    {
+      "month": "2024-11",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 241,
+      "spendNative": 2621.36
+    },
+    {
+      "month": "2024-11",
+      "account": "Casa Elisa",
+      "currency": "USD",
+      "leads": 411,
+      "spendNative": 2059.42
+    },
+    {
+      "month": "2024-11",
+      "account": "Puerta Abierta",
+      "currency": "GTQ",
+      "leads": 73,
+      "spendNative": 504.77
+    },
+    {
+      "month": "2024-11",
+      "account": "Santa Elena",
+      "currency": "GTQ",
+      "leads": 1,
+      "spendNative": 186.75
+    },
+    {
+      "month": "2024-12",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 331,
+      "spendNative": 791.57
+    },
+    {
+      "month": "2024-12",
+      "account": "Bosque Las Tapias",
+      "currency": "GTQ",
+      "leads": 142,
+      "spendNative": 1283.63
+    },
+    {
+      "month": "2024-12",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 178,
+      "spendNative": 2085.77
+    },
+    {
+      "month": "2024-12",
+      "account": "Casa Elisa",
+      "currency": "USD",
+      "leads": 482,
+      "spendNative": 3404.51
+    },
+    {
+      "month": "2024-12",
+      "account": "Puerta Abierta",
+      "currency": "GTQ",
+      "leads": 70,
+      "spendNative": 528.32
+    },
+    {
+      "month": "2024-12",
+      "account": "Santa Elena",
+      "currency": "GTQ",
+      "leads": 40,
+      "spendNative": 694.8
+    },
+    {
+      "month": "2025-01",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 227,
+      "spendNative": 309.97
+    },
+    {
+      "month": "2025-01",
+      "account": "Bosque Las Tapias",
+      "currency": "GTQ",
+      "leads": 64,
+      "spendNative": 362.38
+    },
+    {
+      "month": "2025-01",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 148,
+      "spendNative": 632.38
+    },
+    {
+      "month": "2025-01",
+      "account": "Casa Elisa",
+      "currency": "USD",
+      "leads": 305,
+      "spendNative": 2924.99
+    },
+    {
+      "month": "2025-01",
+      "account": "Puerta Abierta",
+      "currency": "GTQ",
+      "leads": 79,
+      "spendNative": 443.62
+    },
+    {
+      "month": "2025-01",
+      "account": "Santa Elena",
+      "currency": "GTQ",
+      "leads": 64,
+      "spendNative": 825.48
+    },
+    {
+      "month": "2025-02",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 106,
+      "spendNative": 131.54
+    },
+    {
+      "month": "2025-02",
+      "account": "Bosque Las Tapias",
+      "currency": "GTQ",
+      "leads": 98,
+      "spendNative": 1408.74
+    },
+    {
+      "month": "2025-02",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 164,
+      "spendNative": 1638.55
+    },
+    {
+      "month": "2025-02",
+      "account": "Casa Elisa",
+      "currency": "USD",
+      "leads": 151,
+      "spendNative": 1461.29
+    },
+    {
+      "month": "2025-02",
+      "account": "Puerta Abierta",
+      "currency": "GTQ",
+      "leads": 97,
+      "spendNative": 605.99
+    },
+    {
+      "month": "2025-02",
+      "account": "Santa Elena",
+      "currency": "GTQ",
+      "leads": 40,
+      "spendNative": 1021.91
+    },
+    {
+      "month": "2025-03",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 101,
+      "spendNative": 81.28
+    },
+    {
+      "month": "2025-03",
+      "account": "Bosque Las Tapias",
+      "currency": "GTQ",
+      "leads": 149,
+      "spendNative": 1091.18
+    },
+    {
+      "month": "2025-03",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 204,
+      "spendNative": 3349.95
+    },
+    {
+      "month": "2025-03",
+      "account": "Casa Elisa",
+      "currency": "USD",
+      "leads": 323,
+      "spendNative": 3646.87
+    },
+    {
+      "month": "2025-03",
+      "account": "Puerta Abierta",
+      "currency": "GTQ",
+      "leads": 72,
+      "spendNative": 610.69
+    },
+    {
+      "month": "2025-03",
+      "account": "Santa Elena",
+      "currency": "GTQ",
+      "leads": 56,
+      "spendNative": 992.39
+    },
+    {
+      "month": "2025-04",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 138,
+      "spendNative": 109.15
+    },
+    {
+      "month": "2025-04",
+      "account": "Bosque Las Tapias",
+      "currency": "GTQ",
+      "leads": 128,
+      "spendNative": 1209.97
+    },
+    {
+      "month": "2025-04",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 210,
+      "spendNative": 2354.96
+    },
+    {
+      "month": "2025-04",
+      "account": "Casa Elisa",
+      "currency": "USD",
+      "leads": 400,
+      "spendNative": 3375.95
+    },
+    {
+      "month": "2025-04",
+      "account": "Puerta Abierta",
+      "currency": "GTQ",
+      "leads": 0,
+      "spendNative": 4.56
+    },
+    {
+      "month": "2025-04",
+      "account": "Santa Elena",
+      "currency": "GTQ",
+      "leads": 39,
+      "spendNative": 925.72
+    },
+    {
+      "month": "2025-05",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 728,
+      "spendNative": 876.72
+    },
+    {
+      "month": "2025-05",
+      "account": "Bosque Las Tapias",
+      "currency": "GTQ",
+      "leads": 746,
+      "spendNative": 1763.6
+    },
+    {
+      "month": "2025-05",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 365,
+      "spendNative": 2930.24
+    },
+    {
+      "month": "2025-05",
+      "account": "Casa Elisa",
+      "currency": "USD",
+      "leads": 129,
+      "spendNative": 187.42
+    },
+    {
+      "month": "2025-05",
+      "account": "Santa Elena",
+      "currency": "GTQ",
+      "leads": 107,
+      "spendNative": 1009.77
+    },
+    {
+      "month": "2025-06",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 1280,
+      "spendNative": 2852.22
+    },
+    {
+      "month": "2025-06",
+      "account": "Bosque Las Tapias",
+      "currency": "GTQ",
+      "leads": 1014,
+      "spendNative": 5101.74
+    },
+    {
+      "month": "2025-06",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 341,
+      "spendNative": 3661.95
+    },
+    {
+      "month": "2025-06",
+      "account": "Casa Elisa",
+      "currency": "USD",
+      "leads": 187,
+      "spendNative": 516.77
+    },
+    {
+      "month": "2025-06",
+      "account": "Santa Elena",
+      "currency": "GTQ",
+      "leads": 258,
+      "spendNative": 4372.35
+    },
+    {
+      "month": "2025-07",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 1477,
+      "spendNative": 4439.66
+    },
+    {
+      "month": "2025-07",
+      "account": "Bosque Las Tapias",
+      "currency": "GTQ",
+      "leads": 424,
+      "spendNative": 5064.35
+    },
+    {
+      "month": "2025-07",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 517,
+      "spendNative": 4261.28
+    },
+    {
+      "month": "2025-07",
+      "account": "Casa Elisa",
+      "currency": "USD",
+      "leads": 312,
+      "spendNative": 1231.91
+    },
+    {
+      "month": "2025-07",
+      "account": "Santa Elena",
+      "currency": "GTQ",
+      "leads": 92,
+      "spendNative": 5268.97
+    },
+    {
+      "month": "2025-08",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 1589,
+      "spendNative": 4665.46
+    },
+    {
+      "month": "2025-08",
+      "account": "Bosque Las Tapias",
+      "currency": "GTQ",
+      "leads": 448,
+      "spendNative": 6328.83
+    },
+    {
+      "month": "2025-08",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 474,
+      "spendNative": 4539.14
+    },
+    {
+      "month": "2025-08",
+      "account": "Casa Elisa",
+      "currency": "USD",
+      "leads": 128,
+      "spendNative": 941.13
+    },
+    {
+      "month": "2025-08",
+      "account": "Santa Elena",
+      "currency": "GTQ",
+      "leads": 23,
+      "spendNative": 715.99
+    },
+    {
+      "month": "2025-09",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 2322,
+      "spendNative": 3728.1
+    },
+    {
+      "month": "2025-09",
+      "account": "Bosque Las Tapias",
+      "currency": "GTQ",
+      "leads": 542,
+      "spendNative": 6075.89
+    },
+    {
+      "month": "2025-09",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 400,
+      "spendNative": 3953.6
+    },
+    {
+      "month": "2025-09",
+      "account": "Casa Elisa",
+      "currency": "USD",
+      "leads": 113,
+      "spendNative": 965.81
+    },
+    {
+      "month": "2025-10",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 2548,
+      "spendNative": 2856.53
+    },
+    {
+      "month": "2025-10",
+      "account": "Bosque Las Tapias",
+      "currency": "GTQ",
+      "leads": 705,
+      "spendNative": 5806.01
+    },
+    {
+      "month": "2025-10",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 618,
+      "spendNative": 6146.09
+    },
+    {
+      "month": "2025-11",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 3442,
+      "spendNative": 4929.07
+    },
+    {
+      "month": "2025-11",
+      "account": "Bosque Las Tapias",
+      "currency": "GTQ",
+      "leads": 517,
+      "spendNative": 3171.99
+    },
+    {
+      "month": "2025-11",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 104872,
+      "spendNative": 5643.39
+    },
+    {
+      "month": "2025-12",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 1833,
+      "spendNative": 2910.03
+    },
+    {
+      "month": "2025-12",
+      "account": "Bosque Las Tapias",
+      "currency": "GTQ",
+      "leads": 1382,
+      "spendNative": 3219.81
+    },
+    {
+      "month": "2025-12",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 707,
+      "spendNative": 4568.35
+    },
+    {
+      "month": "2026-01",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 3158,
+      "spendNative": 2582.36
+    },
+    {
+      "month": "2026-01",
+      "account": "Bosque Las Tapias",
+      "currency": "GTQ",
+      "leads": 1688,
+      "spendNative": 4103.1
+    },
+    {
+      "month": "2026-01",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 931,
+      "spendNative": 4489.54
+    },
+    {
+      "month": "2026-01",
+      "account": "Santa Elena",
+      "currency": "GTQ",
+      "leads": 8,
+      "spendNative": 29.37
+    },
+    {
+      "month": "2026-02",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 1840,
+      "spendNative": 2014.07
+    },
+    {
+      "month": "2026-02",
+      "account": "Bosque Las Tapias",
+      "currency": "GTQ",
+      "leads": 1029,
+      "spendNative": 3515.34
+    },
+    {
+      "month": "2026-02",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 692,
+      "spendNative": 3886.9
+    },
+    {
+      "month": "2026-02",
+      "account": "Santa Elena",
+      "currency": "GTQ",
+      "leads": 132,
+      "spendNative": 1128.45
+    },
+    {
+      "month": "2026-03",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 1747,
+      "spendNative": 2308.88
+    },
+    {
+      "month": "2026-03",
+      "account": "Bosque Las Tapias",
+      "currency": "GTQ",
+      "leads": 910,
+      "spendNative": 3731.12
+    },
+    {
+      "month": "2026-03",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 668,
+      "spendNative": 3996.66
+    },
+    {
+      "month": "2026-03",
+      "account": "Santa Elena",
+      "currency": "GTQ",
+      "leads": 99,
+      "spendNative": 1257.35
+    },
+    {
+      "month": "2026-04",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 1409,
+      "spendNative": 2689.46
+    },
+    {
+      "month": "2026-04",
+      "account": "Bosque Las Tapias",
+      "currency": "GTQ",
+      "leads": 883,
+      "spendNative": 3596.32
+    },
+    {
+      "month": "2026-04",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 593,
+      "spendNative": 4442.59
+    },
+    {
+      "month": "2026-04",
+      "account": "Santa Elena",
+      "currency": "GTQ",
+      "leads": 231,
+      "spendNative": 2430.93
+    },
+    {
+      "month": "2026-05",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 1255,
+      "spendNative": 3025.31
+    },
+    {
+      "month": "2026-05",
+      "account": "Bosque Las Tapias",
+      "currency": "GTQ",
+      "leads": 934,
+      "spendNative": 3770.4
+    },
+    {
+      "month": "2026-05",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 591,
+      "spendNative": 4592.37
+    },
+    {
+      "month": "2026-05",
+      "account": "Puerta Abierta",
+      "currency": "GTQ",
+      "leads": 0,
+      "spendNative": 35.17
+    },
+    {
+      "month": "2026-05",
+      "account": "Santa Elena",
+      "currency": "GTQ",
+      "leads": 245,
+      "spendNative": 2065.34
+    },
+    {
+      "month": "2026-06",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 1100,
+      "spendNative": 2801.78
+    },
+    {
+      "month": "2026-06",
+      "account": "Bosque Las Tapias",
+      "currency": "GTQ",
+      "leads": 823,
+      "spendNative": 3635.53
+    },
+    {
+      "month": "2026-06",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 544,
+      "spendNative": 4338.34
+    },
+    {
+      "month": "2026-06",
+      "account": "Puerta Abierta",
+      "currency": "GTQ",
+      "leads": 0,
+      "spendNative": 78.18
+    },
+    {
+      "month": "2026-07",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 1314,
+      "spendNative": 2810.74
+    },
+    {
+      "month": "2026-07",
+      "account": "Bosque Las Tapias",
+      "currency": "GTQ",
+      "leads": 877,
+      "spendNative": 3579.77
+    },
+    {
+      "month": "2026-07",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 608,
+      "spendNative": 4523.13
+    },
+    {
+      "month": "2026-07",
+      "account": "Puerta Abierta",
+      "currency": "GTQ",
+      "leads": 51,
+      "spendNative": 207.33
+    },
+    {
+      "month": "2026-08",
+      "account": "Benestare",
+      "currency": "GTQ",
+      "leads": 141,
+      "spendNative": 317.99
+    },
+    {
+      "month": "2026-08",
+      "account": "Bosque Las Tapias",
+      "currency": "GTQ",
+      "leads": 109,
+      "spendNative": 413.41
+    },
+    {
+      "month": "2026-08",
+      "account": "Boulevard5",
+      "currency": "USD",
+      "leads": 76,
+      "spendNative": 521.74
+    }
+  ],
+  "campaigns": [
+    {
+      "account": "Boulevard5",
+      "campaign": "cons_guat__kpa_LeadsWebsiteBoulevard_fb_lds_cpa_11noval20nov",
+      "currency": "USD",
+      "impresiones": 386647,
+      "leads": 104290,
+      "clics": 122800,
+      "spendNative": 323.49,
+      "months": 1
+    },
+    {
+      "account": "Benestare",
+      "campaign": "cons_guat__kpa_LeadGenerationPA_fb_lds_cpl_AO",
+      "currency": "GTQ",
+      "impresiones": 7737111,
+      "leads": 14819,
+      "clics": 165106,
+      "spendNative": 18638.4,
+      "months": 11
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "cons_guat__kpa_LeadGenerationBLT_fb_lds_cpl_AO",
+      "currency": "GTQ",
+      "impresiones": 8485030,
+      "leads": 5468,
+      "clics": 144464,
+      "spendNative": 18156.49,
+      "months": 11
+    },
+    {
+      "account": "Benestare",
+      "campaign": "Anuncions Main Pro",
+      "currency": "GTQ",
+      "impresiones": 1531979,
+      "leads": 3713,
+      "clics": 31232,
+      "spendNative": 4083.35,
+      "months": 2
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "cons_guat__kpa_LeadsBackUpBLT_fb_lds_cpa_17noval30nov",
+      "currency": "GTQ",
+      "impresiones": 4481186,
+      "leads": 3661,
+      "clics": 79498,
+      "spendNative": 13433.85,
+      "months": 12
+    },
+    {
+      "account": "Benestare",
+      "campaign": "Pauta mi primera casa",
+      "currency": "GTQ",
+      "impresiones": 3389301,
+      "leads": 3192,
+      "clics": 88063,
+      "spendNative": 7153.96,
+      "months": 4
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "cons_guat__kpa_LeadGenerationBoulevard5_fb_lds_cpl_AO",
+      "currency": "USD",
+      "impresiones": 5984678,
+      "leads": 3044,
+      "clics": 84939,
+      "spendNative": 22905.34,
+      "months": 11
+    },
+    {
+      "account": "Benestare",
+      "campaign": "cons_guat__kpa_LeadsSitioWebBNT_fb_lds_cpa_AO",
+      "currency": "GTQ",
+      "impresiones": 1004900,
+      "leads": 1643,
+      "clics": 29024,
+      "spendNative": 3094.3,
+      "months": 9
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "cons_guat__kpa_WebsiteLeadsBLVD5_fb_lds_cpa_AO",
+      "currency": "USD",
+      "impresiones": 1462132,
+      "leads": 1627,
+      "clics": 59885,
+      "spendNative": 6833.59,
+      "months": 10
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "cons_guat__kpa_LeadsBackUpB5_fb_lds_cpa_17noval30nov",
+      "currency": "USD",
+      "impresiones": 3450069,
+      "leads": 1625,
+      "clics": 48931,
+      "spendNative": 11141.03,
+      "months": 11
+    },
+    {
+      "account": "Benestare",
+      "campaign": "B-S",
+      "currency": "GTQ",
+      "impresiones": 1123826,
+      "leads": 1531,
+      "clics": 17704,
+      "spendNative": 2831.68,
+      "months": 8
+    },
+    {
+      "account": "Casa Elisa",
+      "campaign": "OL",
+      "currency": "USD",
+      "impresiones": 2501743,
+      "leads": 1488,
+      "clics": 36366,
+      "spendNative": 8548.31,
+      "months": 8
+    },
+    {
+      "account": "Casa Elisa",
+      "campaign": "FB-agosto-Leads",
+      "currency": "USD",
+      "impresiones": 1384300,
+      "leads": 983,
+      "clics": 27608,
+      "spendNative": 9299.72,
+      "months": 11
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "cons_guat__kpa_WebsiteLeadsBLT_fb_lds_cpa_AO",
+      "currency": "GTQ",
+      "impresiones": 1943400,
+      "leads": 895,
+      "clics": 108570,
+      "spendNative": 5833.43,
+      "months": 10
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Conjunto aptos 2 y 3",
+      "currency": "GTQ",
+      "impresiones": 1973919,
+      "leads": 893,
+      "clics": 43926,
+      "spendNative": 2694.24,
+      "months": 2
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "Campaña zona 4 (Amenidades)",
+      "currency": "USD",
+      "impresiones": 3507963,
+      "leads": 890,
+      "clics": 59249,
+      "spendNative": 6370.94,
+      "months": 3
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "Fb-Leads - N",
+      "currency": "USD",
+      "impresiones": 1287049,
+      "leads": 735,
+      "clics": 22561,
+      "spendNative": 6062.79,
+      "months": 9
+    },
+    {
+      "account": "Benestare",
+      "campaign": "cons_guat__kpa_LeadsVolumenBNT_ga_lds_cpl_AO",
+      "currency": "GTQ",
+      "impresiones": 176474,
+      "leads": 634,
+      "clics": 7125,
+      "spendNative": 991.31,
+      "months": 6
+    },
+    {
+      "account": "Benestare",
+      "campaign": "FORMULARIO OCTUBRE 2025",
+      "currency": "GTQ",
+      "impresiones": 378059,
+      "leads": 611,
+      "clics": 6440,
+      "spendNative": 835.8,
+      "months": 2
+    },
+    {
+      "account": "Benestare",
+      "campaign": "Bono 14",
+      "currency": "GTQ",
+      "impresiones": 951943,
+      "leads": 532,
+      "clics": 22383,
+      "spendNative": 2298.96,
+      "months": 3
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "AWO",
+      "currency": "USD",
+      "impresiones": 889974,
+      "leads": 517,
+      "clics": 12152,
+      "spendNative": 4882.21,
+      "months": 8
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Sala de ventas",
+      "currency": "GTQ",
+      "impresiones": 2765066,
+      "leads": 485,
+      "clics": 38008,
+      "spendNative": 5416.72,
+      "months": 3
+    },
+    {
+      "account": "Casa Elisa",
+      "campaign": "Julio video 2025",
+      "currency": "USD",
+      "impresiones": 908967,
+      "leads": 472,
+      "clics": 22574,
+      "spendNative": 2461.75,
+      "months": 3
+    },
+    {
+      "account": "Benestare",
+      "campaign": "Seguridad 24/7 y cuota",
+      "currency": "GTQ",
+      "impresiones": 210435,
+      "leads": 441,
+      "clics": 11856,
+      "spendNative": 325.9,
+      "months": 2
+    },
+    {
+      "account": "Benestare",
+      "campaign": "Camapaña preventa Agosto",
+      "currency": "GTQ",
+      "impresiones": 684545,
+      "leads": 430,
+      "clics": 14257,
+      "spendNative": 2002.37,
+      "months": 3
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Apto 2 habitaciones",
+      "currency": "GTQ",
+      "impresiones": 1438799,
+      "leads": 380,
+      "clics": 17223,
+      "spendNative": 2345.58,
+      "months": 1
+    },
+    {
+      "account": "Benestare",
+      "campaign": "Pauta leads sin cuota",
+      "currency": "GTQ",
+      "impresiones": 564649,
+      "leads": 372,
+      "clics": 6231,
+      "spendNative": 853.89,
+      "months": 2
+    },
+    {
+      "account": "Benestare",
+      "campaign": "Pauta Septiembre 1",
+      "currency": "GTQ",
+      "impresiones": 378942,
+      "leads": 339,
+      "clics": 9027,
+      "spendNative": 876.75,
+      "months": 2
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Pauta Enganche",
+      "currency": "GTQ",
+      "impresiones": 434880,
+      "leads": 319,
+      "clics": 13793,
+      "spendNative": 534.08,
+      "months": 1
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Camapaña sala de ventas /Apto modelo Agosto",
+      "currency": "GTQ",
+      "impresiones": 1674499,
+      "leads": 304,
+      "clics": 59778,
+      "spendNative": 4420.49,
+      "months": 3
+    },
+    {
+      "account": "Benestare",
+      "campaign": "cd-1",
+      "currency": "GTQ",
+      "impresiones": 569239,
+      "leads": 294,
+      "clics": 7450,
+      "spendNative": 1407.2,
+      "months": 4
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "Fb-Leads",
+      "currency": "USD",
+      "impresiones": 335012,
+      "leads": 294,
+      "clics": 5134,
+      "spendNative": 2050.79,
+      "months": 4
+    },
+    {
+      "account": "Puerta Abierta",
+      "campaign": "Campaña Benestare",
+      "currency": "GTQ",
+      "impresiones": 110366,
+      "leads": 294,
+      "clics": 5248,
+      "spendNative": 1285.2,
+      "months": 8
+    },
+    {
+      "account": "Puerta Abierta",
+      "campaign": "Campaña Blv5",
+      "currency": "GTQ",
+      "impresiones": 254289,
+      "leads": 293,
+      "clics": 4197,
+      "spendNative": 1505.78,
+      "months": 10
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "fb3 Campaign",
+      "currency": "GTQ",
+      "impresiones": 866664,
+      "leads": 224,
+      "clics": 14669,
+      "spendNative": 1642.02,
+      "months": 5
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "LM-1",
+      "currency": "GTQ",
+      "impresiones": 873633,
+      "leads": 215,
+      "clics": 18555,
+      "spendNative": 1794.51,
+      "months": 3
+    },
+    {
+      "account": "Benestare",
+      "campaign": "Tipo de apartamento",
+      "currency": "GTQ",
+      "impresiones": 132895,
+      "leads": 210,
+      "clics": 4889,
+      "spendNative": 214.86,
+      "months": 2
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "cons_guat__kpa_LeadsGeneratorSTEL_fb_lds_cpa_AO",
+      "currency": "GTQ",
+      "impresiones": 666858,
+      "leads": 206,
+      "clics": 10833,
+      "spendNative": 2147.1,
+      "months": 5
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "FORMULARIO Anuncios de Prueba NOV 2025",
+      "currency": "USD",
+      "impresiones": 760048,
+      "leads": 193,
+      "clics": 5118,
+      "spendNative": 2253.5,
+      "months": 2
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "Tipo de apartamento 1",
+      "currency": "USD",
+      "impresiones": 694563,
+      "leads": 191,
+      "clics": 12459,
+      "spendNative": 1781.83,
+      "months": 3
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "Pauta septiembre form",
+      "currency": "USD",
+      "impresiones": 262292,
+      "leads": 190,
+      "clics": 5717,
+      "spendNative": 1079.59,
+      "months": 1
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "cons_guat__kpa_QualityLeadsGEO_fb_lds_cpl_AO",
+      "currency": "GTQ",
+      "impresiones": 132846,
+      "leads": 190,
+      "clics": 5507,
+      "spendNative": 1234.06,
+      "months": 2
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "Leads general Guatemala Campaign",
+      "currency": "GTQ",
+      "impresiones": 434384,
+      "leads": 189,
+      "clics": 10573,
+      "spendNative": 2997.07,
+      "months": 6
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "cons_guat__kpa_LeadsWebsiteSTEL_fb_lds_cpa_AO",
+      "currency": "GTQ",
+      "impresiones": 418877,
+      "leads": 171,
+      "clics": 18720,
+      "spendNative": 1403.07,
+      "months": 4
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "Tipo apto B, C , E",
+      "currency": "USD",
+      "impresiones": 767412,
+      "leads": 164,
+      "clics": 12127,
+      "spendNative": 1922.91,
+      "months": 1
+    },
+    {
+      "account": "Benestare",
+      "campaign": "M",
+      "currency": "GTQ",
+      "impresiones": 431241,
+      "leads": 161,
+      "clics": 5885,
+      "spendNative": 904.5,
+      "months": 4
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "Pocket park 2.0",
+      "currency": "USD",
+      "impresiones": 572468,
+      "leads": 152,
+      "clics": 11645,
+      "spendNative": 1444.75,
+      "months": 1
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "FB-LEADS-1",
+      "currency": "GTQ",
+      "impresiones": 413682,
+      "leads": 146,
+      "clics": 6308,
+      "spendNative": 1290.45,
+      "months": 4
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "cons_guat__kpa_TOPLeadsSTEL_fb_lds_cpa_AO",
+      "currency": "GTQ",
+      "impresiones": 425440,
+      "leads": 143,
+      "clics": 8910,
+      "spendNative": 1871.69,
+      "months": 4
+    },
+    {
+      "account": "Casa Elisa",
+      "campaign": "Último apartamento",
+      "currency": "USD",
+      "impresiones": 103344,
+      "leads": 139,
+      "clics": 3294,
+      "spendNative": 166.3,
+      "months": 2
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "Campaña video 1 Agosto",
+      "currency": "USD",
+      "impresiones": 592292,
+      "leads": 138,
+      "clics": 33431,
+      "spendNative": 2046.64,
+      "months": 3
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Pauta Septiembre 2",
+      "currency": "GTQ",
+      "impresiones": 587681,
+      "leads": 134,
+      "clics": 37891,
+      "spendNative": 2104.56,
+      "months": 1
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "Pauta Modelo B",
+      "currency": "GTQ",
+      "impresiones": 593717,
+      "leads": 133,
+      "clics": 10575,
+      "spendNative": 2076.9,
+      "months": 1
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "FB2",
+      "currency": "GTQ",
+      "impresiones": 464768,
+      "leads": 131,
+      "clics": 7231,
+      "spendNative": 1160.05,
+      "months": 4
+    },
+    {
+      "account": "Puerta Abierta",
+      "campaign": "Campaña Casa Elisa",
+      "currency": "GTQ",
+      "impresiones": 137523,
+      "leads": 130,
+      "clics": 3327,
+      "spendNative": 1203.45,
+      "months": 10
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "C-0",
+      "currency": "USD",
+      "impresiones": 494805,
+      "leads": 124,
+      "clics": 19117,
+      "spendNative": 2852.18,
+      "months": 10
+    },
+    {
+      "account": "Casa Elisa",
+      "campaign": "co-fe",
+      "currency": "USD",
+      "impresiones": 94329,
+      "leads": 117,
+      "clics": 1884,
+      "spendNative": 293.5,
+      "months": 2
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "S-C-1",
+      "currency": "USD",
+      "impresiones": 174861,
+      "leads": 112,
+      "clics": 2554,
+      "spendNative": 1471.05,
+      "months": 6
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "Pauta Septiembre 1",
+      "currency": "USD",
+      "impresiones": 447551,
+      "leads": 102,
+      "clics": 7162,
+      "spendNative": 1311.58,
+      "months": 1
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "Pauta tripost amenidades",
+      "currency": "USD",
+      "impresiones": 265410,
+      "leads": 101,
+      "clics": 6017,
+      "spendNative": 552.11,
+      "months": 1
+    },
+    {
+      "account": "Casa Elisa",
+      "campaign": "Último apartamento 1 habitación",
+      "currency": "USD",
+      "impresiones": 87945,
+      "leads": 101,
+      "clics": 2187,
+      "spendNative": 138.94,
+      "months": 1
+    },
+    {
+      "account": "Casa Elisa",
+      "campaign": "Conversion-fb",
+      "currency": "USD",
+      "impresiones": 1235046,
+      "leads": 97,
+      "clics": 16385,
+      "spendNative": 3005.89,
+      "months": 10
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "Campaña junio 2025",
+      "currency": "GTQ",
+      "impresiones": 549290,
+      "leads": 94,
+      "clics": 13816,
+      "spendNative": 1062.04,
+      "months": 1
+    },
+    {
+      "account": "Benestare",
+      "campaign": "Anuncios de Prueba",
+      "currency": "GTQ",
+      "impresiones": 64154,
+      "leads": 93,
+      "clics": 939,
+      "spendNative": 180.0,
+      "months": 1
+    },
+    {
+      "account": "Puerta Abierta",
+      "campaign": "Campaña NATU",
+      "currency": "GTQ",
+      "impresiones": 92466,
+      "leads": 87,
+      "clics": 1989,
+      "spendNative": 1117.63,
+      "months": 7
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "Pauta Octubre",
+      "currency": "USD",
+      "impresiones": 110589,
+      "leads": 84,
+      "clics": 1090,
+      "spendNative": 490.66,
+      "months": 1
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Bono 14 - Copia",
+      "currency": "GTQ",
+      "impresiones": 468941,
+      "leads": 83,
+      "clics": 5336,
+      "spendNative": 998.19,
+      "months": 1
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Pauta Septiembre 1",
+      "currency": "GTQ",
+      "impresiones": 422432,
+      "leads": 79,
+      "clics": 7421,
+      "spendNative": 1209.85,
+      "months": 1
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "Tipo de apartamento 2",
+      "currency": "USD",
+      "impresiones": 275377,
+      "leads": 77,
+      "clics": 5573,
+      "spendNative": 611.33,
+      "months": 2
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Bono 14",
+      "currency": "GTQ",
+      "impresiones": 482068,
+      "leads": 75,
+      "clics": 4565,
+      "spendNative": 939.86,
+      "months": 2
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Enganche fraccionado",
+      "currency": "GTQ",
+      "impresiones": 216705,
+      "leads": 72,
+      "clics": 2379,
+      "spendNative": 369.69,
+      "months": 1
+    },
+    {
+      "account": "Benestare",
+      "campaign": "cons_guat__kpa_WhatsappLeadsBNT_fb_lds_cpa_AO",
+      "currency": "GTQ",
+      "impresiones": 1191831,
+      "leads": 66,
+      "clics": 27350,
+      "spendNative": 2674.84,
+      "months": 9
+    },
+    {
+      "account": "Benestare",
+      "campaign": "Pauta ingreso familiar",
+      "currency": "GTQ",
+      "impresiones": 153207,
+      "leads": 64,
+      "clics": 3528,
+      "spendNative": 290.28,
+      "months": 1
+    },
+    {
+      "account": "Benestare",
+      "campaign": "BA-1",
+      "currency": "GTQ",
+      "impresiones": 172548,
+      "leads": 61,
+      "clics": 2856,
+      "spendNative": 388.18,
+      "months": 4
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "Video Pauta",
+      "currency": "USD",
+      "impresiones": 196500,
+      "leads": 60,
+      "clics": 3684,
+      "spendNative": 811.43,
+      "months": 1
+    },
+    {
+      "account": "Casa Elisa",
+      "campaign": "Camapañ habitaciones disponibles",
+      "currency": "USD",
+      "impresiones": 379764,
+      "leads": 59,
+      "clics": 3444,
+      "spendNative": 738.11,
+      "months": 2
+    },
+    {
+      "account": "Benestare",
+      "campaign": "Ca-1",
+      "currency": "GTQ",
+      "impresiones": 163258,
+      "leads": 55,
+      "clics": 2452,
+      "spendNative": 399.57,
+      "months": 4
+    },
+    {
+      "account": "Benestare",
+      "campaign": "3 habitaciones cuota 40 años",
+      "currency": "GTQ",
+      "impresiones": 35832,
+      "leads": 52,
+      "clics": 1485,
+      "spendNative": 65.93,
+      "months": 1
+    },
+    {
+      "account": "Puerta Abierta",
+      "campaign": "cons_guat__kpa_LeadsTerrenosPAI_fb_lds_cpl_AO",
+      "currency": "GTQ",
+      "impresiones": 22566,
+      "leads": 51,
+      "clics": 667,
+      "spendNative": 71.79,
+      "months": 1
+    },
+    {
+      "account": "Casa Elisa",
+      "campaign": "Pauta septiembre form",
+      "currency": "USD",
+      "impresiones": 38814,
+      "leads": 48,
+      "clics": 718,
+      "spendNative": 174.67,
+      "months": 1
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "Leads general Antigua Campaign",
+      "currency": "GTQ",
+      "impresiones": 258989,
+      "leads": 46,
+      "clics": 4390,
+      "spendNative": 1261.94,
+      "months": 4
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "Vista de proyecto general",
+      "currency": "GTQ",
+      "impresiones": 214380,
+      "leads": 40,
+      "clics": 6639,
+      "spendNative": 378.93,
+      "months": 2
+    },
+    {
+      "account": "Casa Elisa",
+      "campaign": "Pauta Junio 2025 diponible 3",
+      "currency": "USD",
+      "impresiones": 71182,
+      "leads": 39,
+      "clics": 1308,
+      "spendNative": 119.8,
+      "months": 1
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Pauta Salvavidas",
+      "currency": "GTQ",
+      "impresiones": 200849,
+      "leads": 37,
+      "clics": 1420,
+      "spendNative": 296.29,
+      "months": 1
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "Camapaña julio inglés",
+      "currency": "GTQ",
+      "impresiones": 466246,
+      "leads": 35,
+      "clics": 5090,
+      "spendNative": 2377.25,
+      "months": 1
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "Pauta 4 (Español)",
+      "currency": "GTQ",
+      "impresiones": 185153,
+      "leads": 33,
+      "clics": 3553,
+      "spendNative": 317.14,
+      "months": 1
+    },
+    {
+      "account": "Casa Elisa",
+      "campaign": "Locales",
+      "currency": "USD",
+      "impresiones": 7377,
+      "leads": 32,
+      "clics": 575,
+      "spendNative": 20.87,
+      "months": 1
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "Pauta Modelo B - Español",
+      "currency": "GTQ",
+      "impresiones": 358604,
+      "leads": 31,
+      "clics": 4692,
+      "spendNative": 1233.41,
+      "months": 1
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "Pauta septiembre form - Copia",
+      "currency": "USD",
+      "impresiones": 39486,
+      "leads": 31,
+      "clics": 390,
+      "spendNative": 173.27,
+      "months": 2
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Pauta Octubre 1",
+      "currency": "GTQ",
+      "impresiones": 76510,
+      "leads": 30,
+      "clics": 766,
+      "spendNative": 290.46,
+      "months": 1
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "Pauta Modelo B - Copia",
+      "currency": "GTQ",
+      "impresiones": 467568,
+      "leads": 28,
+      "clics": 4776,
+      "spendNative": 1336.82,
+      "months": 1
+    },
+    {
+      "account": "Puerta Abierta",
+      "campaign": "Campaña Bosque Las Tapias",
+      "currency": "GTQ",
+      "impresiones": 37893,
+      "leads": 27,
+      "clics": 635,
+      "spendNative": 343.95,
+      "months": 3
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "Amenidades",
+      "currency": "USD",
+      "impresiones": 46340,
+      "leads": 25,
+      "clics": 1340,
+      "spendNative": 132.03,
+      "months": 2
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "Jardín y precio",
+      "currency": "GTQ",
+      "impresiones": 58817,
+      "leads": 25,
+      "clics": 1573,
+      "spendNative": 177.28,
+      "months": 2
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "Pauta Modelo B Julio",
+      "currency": "GTQ",
+      "impresiones": 217926,
+      "leads": 24,
+      "clics": 2839,
+      "spendNative": 960.87,
+      "months": 1
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Proyecto render",
+      "currency": "GTQ",
+      "impresiones": 69157,
+      "leads": 23,
+      "clics": 1713,
+      "spendNative": 119.91,
+      "months": 2
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "BTL-M",
+      "currency": "GTQ",
+      "impresiones": 37183,
+      "leads": 21,
+      "clics": 677,
+      "spendNative": 171.09,
+      "months": 2
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "cons_guat__kpa_LeadsPotencialesBLT_fb_lds_cpa_AO",
+      "currency": "GTQ",
+      "impresiones": 22412,
+      "leads": 19,
+      "clics": 538,
+      "spendNative": 75.45,
+      "months": 1
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "cons_guat__kpa_WhatsappLeadsBLT_fb_lds_cpa_AO",
+      "currency": "GTQ",
+      "impresiones": 402850,
+      "leads": 16,
+      "clics": 18118,
+      "spendNative": 1936.56,
+      "months": 10
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "Pauta Antigua Agosto",
+      "currency": "GTQ",
+      "impresiones": 94980,
+      "leads": 14,
+      "clics": 3219,
+      "spendNative": 373.17,
+      "months": 2
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Proyecto autosuficiente con pozo propio",
+      "currency": "GTQ",
+      "impresiones": 53466,
+      "leads": 13,
+      "clics": 1025,
+      "spendNative": 113.93,
+      "months": 2
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Camapaña sala de ventas /Apto modelo Agosto - Copia",
+      "currency": "GTQ",
+      "impresiones": 61802,
+      "leads": 13,
+      "clics": 985,
+      "spendNative": 140.12,
+      "months": 1
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "Pauta 3 Vistas proyecto",
+      "currency": "GTQ",
+      "impresiones": 49148,
+      "leads": 12,
+      "clics": 1269,
+      "spendNative": 129.14,
+      "months": 1
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "T3 Bosque Las Tapias",
+      "currency": "GTQ",
+      "impresiones": 54351,
+      "leads": 12,
+      "clics": 592,
+      "spendNative": 105.88,
+      "months": 1
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "cons_guat__kpa_WhatsappLeadsBLVD5_fb_lds_cpa_AO",
+      "currency": "USD",
+      "impresiones": 905667,
+      "leads": 11,
+      "clics": 23958,
+      "spendNative": 2853.88,
+      "months": 10
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "Pauta Capital Agosto",
+      "currency": "GTQ",
+      "impresiones": 64855,
+      "leads": 9,
+      "clics": 1443,
+      "spendNative": 374.8,
+      "months": 2
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Pauta de emergencia",
+      "currency": "GTQ",
+      "impresiones": 146604,
+      "leads": 8,
+      "clics": 1145,
+      "spendNative": 259.25,
+      "months": 1
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Pauta Reserva Mayo",
+      "currency": "GTQ",
+      "impresiones": 22208,
+      "leads": 7,
+      "clics": 229,
+      "spendNative": 39.55,
+      "months": 1
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "Whatsapp",
+      "currency": "USD",
+      "impresiones": 311152,
+      "leads": 6,
+      "clics": 9022,
+      "spendNative": 946.85,
+      "months": 3
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "Conjunto tipos de apto",
+      "currency": "USD",
+      "impresiones": 65435,
+      "leads": 6,
+      "clics": 1197,
+      "spendNative": 148.06,
+      "months": 1
+    },
+    {
+      "account": "Benestare",
+      "campaign": "cons_guat__kpa_IGProfileViewsBNT_fb_traf_cpc_AO",
+      "currency": "GTQ",
+      "impresiones": 831408,
+      "leads": 6,
+      "clics": 41604,
+      "spendNative": 917.78,
+      "months": 4
+    },
+    {
+      "account": "Benestare",
+      "campaign": "Amenidades",
+      "currency": "GTQ",
+      "impresiones": 2290,
+      "leads": 5,
+      "clics": 86,
+      "spendNative": 10.46,
+      "months": 2
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "VIdeos julio 2025",
+      "currency": "GTQ",
+      "impresiones": 101534,
+      "leads": 5,
+      "clics": 1424,
+      "spendNative": 547.92,
+      "months": 1
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Open House Oct 25-26",
+      "currency": "GTQ",
+      "impresiones": 12527,
+      "leads": 5,
+      "clics": 160,
+      "spendNative": 65.16,
+      "months": 1
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "cons_guat__kpa_WebsiteTrafficSTEL_fb_lds_cpa_06febal28feb",
+      "currency": "GTQ",
+      "impresiones": 176828,
+      "leads": 5,
+      "clics": 9119,
+      "spendNative": 255.52,
+      "months": 2
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Cuota y render",
+      "currency": "GTQ",
+      "impresiones": 12021,
+      "leads": 4,
+      "clics": 278,
+      "spendNative": 24.44,
+      "months": 2
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "Campa;a nueva julio 2025",
+      "currency": "USD",
+      "impresiones": 67544,
+      "leads": 4,
+      "clics": 706,
+      "spendNative": 128.44,
+      "months": 1
+    },
+    {
+      "account": "Benestare",
+      "campaign": "Open House 12 y 13 julio",
+      "currency": "GTQ",
+      "impresiones": 109458,
+      "leads": 3,
+      "clics": 2869,
+      "spendNative": 228.03,
+      "months": 1
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Lanzamineto último aviso",
+      "currency": "GTQ",
+      "impresiones": 18537,
+      "leads": 2,
+      "clics": 844,
+      "spendNative": 75.18,
+      "months": 1
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Pauta 2 aptos",
+      "currency": "GTQ",
+      "impresiones": 31577,
+      "leads": 2,
+      "clics": 525,
+      "spendNative": 58.6,
+      "months": 2
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "Pocket Park",
+      "currency": "USD",
+      "impresiones": 7192,
+      "leads": 2,
+      "clics": 220,
+      "spendNative": 19.19,
+      "months": 1
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "Open House 18 y 19 de julio",
+      "currency": "USD",
+      "impresiones": 219286,
+      "leads": 2,
+      "clics": 3021,
+      "spendNative": 458.98,
+      "months": 1
+    },
+    {
+      "account": "Benestare",
+      "campaign": "Expomotos Suzuki",
+      "currency": "GTQ",
+      "impresiones": 49829,
+      "leads": 2,
+      "clics": 1317,
+      "spendNative": 67.92,
+      "months": 1
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "New Followers",
+      "currency": "GTQ",
+      "impresiones": 583131,
+      "leads": 1,
+      "clics": 13598,
+      "spendNative": 600.1,
+      "months": 6
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "Vistas y metraje",
+      "currency": "GTQ",
+      "impresiones": 8087,
+      "leads": 1,
+      "clics": 174,
+      "spendNative": 33.84,
+      "months": 2
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "FANS",
+      "currency": "GTQ",
+      "impresiones": 537879,
+      "leads": 0,
+      "clics": 9385,
+      "spendNative": 414.51,
+      "months": 7
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Followers",
+      "currency": "GTQ",
+      "impresiones": 280622,
+      "leads": 0,
+      "clics": 8084,
+      "spendNative": 197.55,
+      "months": 4
+    },
+    {
+      "account": "Benestare",
+      "campaign": "C0",
+      "currency": "GTQ",
+      "impresiones": 16310,
+      "leads": 0,
+      "clics": 1112,
+      "spendNative": 39.26,
+      "months": 2
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "Followers",
+      "currency": "GTQ",
+      "impresiones": 40162,
+      "leads": 0,
+      "clics": 1329,
+      "spendNative": 53.0,
+      "months": 1
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Lanzamiento 17 mayo",
+      "currency": "GTQ",
+      "impresiones": 44722,
+      "leads": 0,
+      "clics": 914,
+      "spendNative": 69.57,
+      "months": 1
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Open House",
+      "currency": "GTQ",
+      "impresiones": 401805,
+      "leads": 0,
+      "clics": 5513,
+      "spendNative": 519.72,
+      "months": 1
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "Open House 18 y 19 julio (inversión)",
+      "currency": "USD",
+      "impresiones": 199368,
+      "leads": 0,
+      "clics": 3474,
+      "spendNative": 450.93,
+      "months": 1
+    },
+    {
+      "account": "Santa Elena",
+      "campaign": "Open House Julio 2025",
+      "currency": "GTQ",
+      "impresiones": 14645,
+      "leads": 0,
+      "clics": 455,
+      "spendNative": 14.13,
+      "months": 1
+    },
+    {
+      "account": "Benestare",
+      "campaign": "Pauta feria 15 de agosto",
+      "currency": "GTQ",
+      "impresiones": 67917,
+      "leads": 0,
+      "clics": 1528,
+      "spendNative": 34.0,
+      "months": 1
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Pauta feria 15 de agosto",
+      "currency": "GTQ",
+      "impresiones": 105961,
+      "leads": 0,
+      "clics": 1673,
+      "spendNative": 33.99,
+      "months": 1
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "Campaña Expomoto",
+      "currency": "GTQ",
+      "impresiones": 216546,
+      "leads": 0,
+      "clics": 3407,
+      "spendNative": 119.23,
+      "months": 1
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "Camapaña Automatización",
+      "currency": "USD",
+      "impresiones": 223566,
+      "leads": 0,
+      "clics": 2431,
+      "spendNative": 69.84,
+      "months": 1
+    },
+    {
+      "account": "Bosque Las Tapias",
+      "campaign": "cons_guat__kpa_WhatsappLeads_fb_lds_cpa_6noval12nov",
+      "currency": "GTQ",
+      "impresiones": 21275,
+      "leads": 0,
+      "clics": 607,
+      "spendNative": 104.24,
+      "months": 1
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "Event: 🏠 Wine Party - Boulevard 5 | Ofertas Exclusivas en tu próximo apartamento",
+      "currency": "USD",
+      "impresiones": 143790,
+      "leads": 0,
+      "clics": 3439,
+      "spendNative": 99.99,
+      "months": 1
+    },
+    {
+      "account": "Boulevard5",
+      "campaign": "cons_guat__kpa_WhatsappLeadsBoulevard_fb_lds_cpa_6noval12nov",
+      "currency": "USD",
+      "impresiones": 13187,
+      "leads": 0,
+      "clics": 360,
+      "spendNative": 100.0,
+      "months": 1
+    },
+    {
+      "account": "Puerta Abierta",
+      "campaign": "Publicación de Instagram: Tu próximo paso...",
+      "currency": "GTQ",
+      "impresiones": 10877,
+      "leads": 0,
+      "clics": 329,
+      "spendNative": 35.17,
+      "months": 1
+    },
+    {
+      "account": "Puerta Abierta",
+      "campaign": "Publicación de Instagram: Hay ciudades que se...",
+      "currency": "GTQ",
+      "impresiones": 34590,
+      "leads": 0,
+      "clics": 1312,
+      "spendNative": 78.18,
+      "months": 1
+    },
+    {
+      "account": "Puerta Abierta",
+      "campaign": "Publicación de Instagram: Comprar un apartamento...",
+      "currency": "GTQ",
+      "impresiones": 49477,
+      "leads": 0,
+      "clics": 1641,
+      "spendNative": 135.54,
+      "months": 1
+    }
+  ],
+  "budget": [
+    {
+      "fecha": "31/11/2025",
+      "mes": "Noviembre",
+      "proyecto": "Boulevard 5",
+      "concepto": "Pauta META",
+      "proveedor": "META",
+      "inversion": 5643.0
+    },
+    {
+      "fecha": "31/11/2025",
+      "mes": "Noviembre",
+      "proyecto": "Bosque Las Tapias",
+      "concepto": "Pauta META",
+      "proveedor": "META",
+      "inversion": 3119.47
+    },
+    {
+      "fecha": "31/11/2025",
+      "mes": "Noviembre",
+      "proyecto": "Benestare",
+      "concepto": "Pauta META",
+      "proveedor": "META",
+      "inversion": 4847.34
+    },
+    {
+      "fecha": "31/11/2025",
+      "mes": "Noviembre",
+      "proyecto": "Benestare",
+      "concepto": "Mensajería WATI",
+      "proveedor": "WATI",
+      "inversion": 99.0
+    },
+    {
+      "fecha": "31/11/2025",
+      "mes": "Noviembre",
+      "proyecto": "Boulevard 5",
+      "concepto": "Mensajería WATI",
+      "proveedor": "WATI",
+      "inversion": 99.0
+    },
+    {
+      "fecha": "31/11/2025",
+      "mes": "Noviembre",
+      "proyecto": "Bosque Las Tapias",
+      "concepto": "Mensajería WATI",
+      "proveedor": "WATI",
+      "inversion": 99.0
+    },
+    {
+      "fecha": "31/12/2025",
+      "mes": "Diciembre",
+      "proyecto": "Boulevard 5",
+      "concepto": "Pauta META",
+      "proveedor": "WATI",
+      "inversion": 4568.0
+    },
+    {
+      "fecha": "31/12/2025",
+      "mes": "Diciembre",
+      "proyecto": "Bosque Las Tapias",
+      "concepto": "Pauta META",
+      "proveedor": "META",
+      "inversion": 3166.38
+    },
+    {
+      "fecha": "31/12/2025",
+      "mes": "Diciembre",
+      "proyecto": "Benestare",
+      "concepto": "Pauta META",
+      "proveedor": "META",
+      "inversion": 2861.8
+    },
+    {
+      "fecha": "31/12/2025",
+      "mes": "Diciembre",
+      "proyecto": "Bosque Las Tapias",
+      "concepto": "Pauta Google Ads",
+      "proveedor": "Google",
+      "inversion": 100.0
+    },
+    {
+      "fecha": "31/12/2025",
+      "mes": "Diciembre",
+      "proyecto": "Bosque Las Tapias",
+      "concepto": "Pauta Tik Tok Ads",
+      "proveedor": "Tik Tok",
+      "inversion": 100.0
+    },
+    {
+      "fecha": "31/01/2026",
+      "mes": "Enero",
+      "proyecto": "Boulevard 5",
+      "concepto": "Pauta META",
+      "proveedor": "META",
+      "inversion": 5643.0
+    },
+    {
+      "fecha": "31/01/2026",
+      "mes": "Enero",
+      "proyecto": "Bosque Las Tapias",
+      "concepto": "Pauta META",
+      "proveedor": "META",
+      "inversion": 3119.47
+    },
+    {
+      "fecha": "31/01/2026",
+      "mes": "Enero",
+      "proyecto": "Benestare",
+      "concepto": "Pauta META",
+      "proveedor": "META",
+      "inversion": 4847.34
+    },
+    {
+      "fecha": "31/01/2026",
+      "mes": "Enero",
+      "proyecto": "Benestare",
+      "concepto": "Mensajería WATI",
+      "proveedor": "WATI",
+      "inversion": 99.0
+    },
+    {
+      "fecha": "31/01/2026",
+      "mes": "Enero",
+      "proyecto": "Boulevard 5",
+      "concepto": "Mensajería WATI",
+      "proveedor": "WATI",
+      "inversion": 99.0
+    },
+    {
+      "fecha": "31/01/2026",
+      "mes": "Enero",
+      "proyecto": "Bosque Las Tapias",
+      "concepto": "Mensajería WATI",
+      "proveedor": "WATI",
+      "inversion": 99.0
+    },
+    {
+      "fecha": "31/01/2026",
+      "mes": "Enero",
+      "proyecto": "Boulevard 5",
+      "concepto": "Pauta META",
+      "proveedor": "WATI",
+      "inversion": 4568.0
+    },
+    {
+      "fecha": "28/02/2026",
+      "mes": "Febrero",
+      "proyecto": "Bosque Las Tapias",
+      "concepto": "Pauta META",
+      "proveedor": "META",
+      "inversion": 3166.38
+    },
+    {
+      "fecha": "28/02/2026",
+      "mes": "Febrero",
+      "proyecto": "Benestare",
+      "concepto": "Pauta META",
+      "proveedor": "META",
+      "inversion": 2861.8
+    },
+    {
+      "fecha": "28/02/2026",
+      "mes": "Febrero",
+      "proyecto": "Bosque Las Tapias",
+      "concepto": "Pauta Google Ads",
+      "proveedor": "Google",
+      "inversion": 100.0
+    },
+    {
+      "fecha": "28/02/2026",
+      "mes": "Febrero",
+      "proyecto": "Bosque Las Tapias",
+      "concepto": "Pauta Tik Tok Ads",
+      "proveedor": "Tik Tok",
+      "inversion": 100.0
+    },
+    {
+      "fecha": "28/02/2026",
+      "mes": "Febrero",
+      "proyecto": "Boulevard 5",
+      "concepto": "Pauta META",
+      "proveedor": "META",
+      "inversion": 5643.0
+    },
+    {
+      "fecha": "28/02/2026",
+      "mes": "Febrero",
+      "proyecto": "Bosque Las Tapias",
+      "concepto": "Pauta META",
+      "proveedor": "META",
+      "inversion": 3119.47
+    },
+    {
+      "fecha": "28/02/2026",
+      "mes": "Febrero",
+      "proyecto": "Benestare",
+      "concepto": "Pauta META",
+      "proveedor": "META",
+      "inversion": 4847.34
+    },
+    {
+      "fecha": "28/02/2026",
+      "mes": "Febrero",
+      "proyecto": "Benestare",
+      "concepto": "Mensajería WATI",
+      "proveedor": "WATI",
+      "inversion": 99.0
+    },
+    {
+      "fecha": "28/02/2026",
+      "mes": "Febrero",
+      "proyecto": "Boulevard 5",
+      "concepto": "Mensajería WATI",
+      "proveedor": "WATI",
+      "inversion": 99.0
+    },
+    {
+      "fecha": "28/02/2026",
+      "mes": "Febrero",
+      "proyecto": "Bosque Las Tapias",
+      "concepto": "Mensajería WATI",
+      "proveedor": "WATI",
+      "inversion": 99.0
+    },
+    {
+      "fecha": "28/02/2026",
+      "mes": "Febrero",
+      "proyecto": "Boulevard 5",
+      "concepto": "Pauta META",
+      "proveedor": "WATI",
+      "inversion": 4568.0
+    }
+  ]
+}

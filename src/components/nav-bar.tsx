@@ -7,10 +7,12 @@ import { ADMIN_ROLES, DATA_VIEWER_ROLES } from "@/lib/permissions";
 type NavLink = { href: string; label: string; roles?: string[] };
 
 const NON_VENTAS_LINKS: (NavLink | "divider")[] = [
-  { href: "/", label: "Dashboard" },
+  // Dashboard salió de aquí: se alcanza desde /ventas (VENTAS_SECTIONS).
   { href: "/projects", label: "Projects" },
   "divider",
-  { href: "/disponibilidad", label: "Disponibilidad" },
+  // Disponibilidad, Valorizacion, Promociones y Descuentos viven dentro de
+  // /ventas (ver VENTAS_SECTIONS en src/app/pabi/nav-links.ts). Sus rutas
+  // standalone siguen existiendo, pero ya no se enlazan desde la navegación.
   { href: "/admin/reservas", label: "Reservas", roles: ADMIN_ROLES },
   { href: "/admin/operaciones", label: "Operaciones", roles: ADMIN_ROLES },
   { href: "/cotizador", label: "Cotizador" },
@@ -18,13 +20,10 @@ const NON_VENTAS_LINKS: (NavLink | "divider")[] = [
   { href: "/ventas", label: "Ventas" },
   { href: "/referidos", label: "Referidos", roles: ADMIN_ROLES },
   { href: "/buyer-persona", label: "Buyer Persona", roles: ADMIN_ROLES },
-  { href: "/valorizacion", label: "Valorizacion", roles: ADMIN_ROLES },
   { href: "/creditos", label: "Créditos", roles: DATA_VIEWER_ROLES },
   { href: "/creditos/pipeline", label: "Expedientes", roles: DATA_VIEWER_ROLES },
   { href: "/cumplimiento", label: "Cumplimiento", roles: DATA_VIEWER_ROLES },
   { href: "/mercadeo", label: "Mercadeo", roles: DATA_VIEWER_ROLES },
-  { href: "/promociones", label: "Promociones", roles: DATA_VIEWER_ROLES },
-  { href: "/descuentos", label: "Descuentos", roles: DATA_VIEWER_ROLES },
   { href: "/entregas", label: "Entregas", roles: [...DATA_VIEWER_ROLES, "entregas_viewer", "entregas_editor"] },
   "divider",
   { href: "/cesion", label: "Cesion", roles: ADMIN_ROLES },

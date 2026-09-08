@@ -1,0 +1,6 @@
+{
+  "_note": "Placeholder. status becomes \"ready\" and rows gets filled once the accounting data lands — schema is provisional until we see the real payload shape.",
+  "status": "pending",
+  "updatedAt": null,
+  "rows": {}
+}

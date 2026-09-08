@@ -1,0 +1,49 @@
+{
+  "status": "ready",
+  "updatedAt": "2026-09-02",
+  "source": "Inventario Cesión de Derechos - Boulevard.xlsx · hoja Resumen JD",
+  "rows": {
+    "1": {
+      "kind": "cesion-clientes",
+      "casos": [
+        { "apartamento": "609", "cliente": "Luis Augusto Franco", "fechaFirmaPromesa": "2026-05-22", "fechaNuevaVenta": "2026-08-22", "engancheADevolver": 118167.00, "gapCliente": 25996.74, "gapFiston": 53179.84 },
+        { "apartamento": "703", "cliente": "Daniel Augusto Sántos Aragón", "fechaFirmaPromesa": "2025-03-15", "fechaNuevaVenta": "2026-06-18", "engancheADevolver": 90200.00, "gapCliente": 0, "gapFiston": 70970.00 },
+        { "apartamento": "817", "cliente": "Juan Antonio Escobedo", "fechaFirmaPromesa": "2026-06-12", "fechaNuevaVenta": "2026-08-09", "engancheADevolver": 65732.00, "gapCliente": 68136.17, "gapFiston": 78613.14 },
+        { "apartamento": "1011", "cliente": "Luis Arimany Monzón", "fechaFirmaPromesa": "2023-11-21", "fechaNuevaVenta": "2026-08-10", "engancheADevolver": 88485.00, "gapCliente": 34321.13, "gapFiston": 135805.12 },
+        { "apartamento": "1107", "cliente": "International Coffee Industry, S.A.", "fechaFirmaPromesa": "2023-08-16", "fechaNuevaVenta": "2026-08-22", "engancheADevolver": 0, "gapCliente": 145450.00, "gapFiston": 0 },
+        { "apartamento": "1207", "cliente": "David Arimany Monzón", "fechaFirmaPromesa": "2026-06-01", "fechaNuevaVenta": "2026-08-19", "engancheADevolver": 31500.00, "gapCliente": 43141.47, "gapFiston": 108263.13 },
+        { "apartamento": "1208", "cliente": "Marines Espino - JMX Inversiones S.A", "fechaFirmaPromesa": "2026-05-22", "fechaNuevaVenta": "2026-06-09", "engancheADevolver": 111100.00, "gapCliente": 75646.58, "gapFiston": 92456.93 },
+        { "apartamento": "1210", "cliente": "Marines Espino - JMX Inversiones S.A", "fechaFirmaPromesa": "2026-05-22", "fechaNuevaVenta": "2026-06-02", "engancheADevolver": 111100.00, "gapCliente": 84051.75, "gapFiston": 84051.75 },
+        { "apartamento": "1307", "cliente": "Fernando José Franco Jiménez", "fechaFirmaPromesa": "2026-05-22", "fechaNuevaVenta": "2026-08-10", "engancheADevolver": 8800.00, "gapCliente": 34319.62, "gapFiston": 117084.98 },
+        { "apartamento": "1409", "cliente": "International Coffee Industry, S.A.", "fechaFirmaPromesa": "2023-08-16", "fechaNuevaVenta": "2026-07-19", "engancheADevolver": 0, "gapCliente": 123410.00, "gapFiston": 0 },
+        { "apartamento": "1701", "cliente": "Emilia Aracely Larrazabal (Ramiro José Muñoz Jordán)", "fechaFirmaPromesa": null, "fechaNuevaVenta": "2026-06-03", "engancheADevolver": 79000.00, "gapCliente": 56441.71, "gapFiston": 49326.79 },
+        { "apartamento": "1705", "cliente": null, "fechaFirmaPromesa": "2025-04-30", "fechaNuevaVenta": "2026-07-24", "engancheADevolver": 144643.27, "gapCliente": 31385.61, "gapFiston": 31373.31 },
+        { "apartamento": "1706", "cliente": "David Arimany Monzón / Eugenia Pinto Frese / María Isabel Roca", "fechaFirmaPromesa": "2026-06-01", "fechaNuevaVenta": "2026-06-03", "engancheADevolver": 46800.00, "gapCliente": 55617.24, "gapFiston": 65369.31 },
+        { "apartamento": "1807", "cliente": "Yuly Marisol Rodríguez Ordóñez de Arimany", "fechaFirmaPromesa": "2023-03-29", "fechaNuevaVenta": "2026-07-24", "engancheADevolver": 12100.00, "gapCliente": 43117.09, "gapFiston": 129354.71 }
+      ],
+      "assumption": {
+        "decision": "Columna G de la hoja fuente (Fecha firma contrato) es la fecha de firma de la Promesa de Compra-Venta original, no la fecha de la cesión — así quedó etiquetada aquí. Nombres tomados de la hoja «Resumen JD», la que se confirmó como la correcta entre las dos versiones del archivo. El apartamento 1705 trae una referencia rota en el archivo fuente en vez de un nombre — se muestra vacío en vez de inventarlo.",
+        "ifChanged": "Editar rows[\"1\"].casos en este archivo. Si aparece un nombre correcto para 1705, o si «Resumen para jurídico» resulta ser la hoja correcta después de todo, hay que releer las 14 filas de la hoja indicada — están en las columnas B (cliente) y D (apartamento)."
+      }
+    },
+    "2": {
+      "kind": "cesion-directivo",
+      "monetario": {
+        "engancheADevolver": 907627.27,
+        "gapCliente": 821035.11,
+        "gapFiston": 1015849.01
+      },
+      "desistimientoPorBloque": [
+        { "name": "Boulevard 5", "desistidos": 9 },
+        { "name": "Bosque Las Tapias", "desistidos": 8 },
+        { "name": "Benestare", "desistidos": 4 },
+        { "name": "Santa Elena", "desistidos": 0 },
+        { "name": "Casa Elisa", "desistidos": 0 }
+      ],
+      "assumption": {
+        "decision": "«Bloque» se interpreta como proyecto, según lo confirmado. El desglose de desistimientos por proyecto reutiliza el mismo dato de Expedientes que la alerta de Cobros (21 tratos con motivoPerdido de desistimiento explícito). El monetario de cesión es la suma de los 14 casos de Resumen JD.",
+        "ifChanged": "Editar rows[\"2\"] en este archivo. Si «bloque» significa otra cosa (torre, fase comercial), esta fila necesita una fuente de dato distinta — no está en ningún archivo revisado hasta ahora."
+      }
+    }
+  }
+}

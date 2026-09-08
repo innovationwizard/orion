@@ -6,49 +6,66 @@ import { useScrollToHash } from "@/hooks/use-scroll-to-hash";
 
 type AccountRow = HudCobrosPayload["desistCandidates"][number];
 
+const LIST_PAGE_SIZE = 10;
+
 function money(amount: number, currency: string): string {
   return new Intl.NumberFormat("es-GT", { style: "currency", currency, maximumFractionDigits: 0 }).format(amount);
 }
 
 function AccountTable({ rows, showDays }: { rows: AccountRow[]; showDays: boolean }) {
+  const [expanded, setExpanded] = useState(false);
+  const visibleRows = expanded ? rows : rows.slice(0, LIST_PAGE_SIZE);
+
   return (
-    <div className="overflow-x-auto">
-      <table>
-        <thead>
-          <tr>
-            <th>Cliente</th>
-            <th>Proyecto</th>
-            <th>Unidad</th>
-            {showDays && <th>Días mora</th>}
-            <th>Esperado</th>
-            <th>Pagado</th>
-            <th>Cumplimiento</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r, i) => (
-            <tr key={`${r.project}-${r.unit}-${i}`}>
-              <td>
-                {r.client}
-                {r.isFF && (
-                  <span className="ml-2 text-[11px] font-semibold uppercase rounded-full px-1.5 py-0.5 bg-[#7c3aed]/10 text-[#7c3aed]">
-                    F&amp;F
-                  </span>
-                )}
-              </td>
-              <td>{r.project}</td>
-              <td>
-                <strong>{r.unit}</strong>
-              </td>
-              {showDays && <td className="text-danger">{r.daysDelinquent}</td>}
-              <td>{money(r.esperado, r.currency)}</td>
-              <td>{money(r.pagado, r.currency)}</td>
-              <td>{r.compliancePct != null ? `${Math.round(r.compliancePct)}%` : "—"}</td>
+    <>
+      <div className="overflow-x-auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Proyecto</th>
+              <th>Unidad</th>
+              {showDays && <th>Días mora</th>}
+              <th>Esperado</th>
+              <th>Pagado</th>
+              <th>Cumplimiento</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {visibleRows.map((r, i) => (
+              <tr key={`${r.project}-${r.unit}-${i}`}>
+                <td>
+                  {r.client}
+                  {r.isFF && (
+                    <span className="ml-2 text-[11px] font-semibold uppercase rounded-full px-1.5 py-0.5 bg-[#7c3aed]/10 text-[#7c3aed]">
+                      F&amp;F
+                    </span>
+                  )}
+                </td>
+                <td>{r.project}</td>
+                <td>
+                  <strong>{r.unit}</strong>
+                </td>
+                {showDays && <td className="text-danger">{r.daysDelinquent}</td>}
+                <td>{money(r.esperado, r.currency)}</td>
+                <td>{money(r.pagado, r.currency)}</td>
+                <td>{r.compliancePct != null ? `${Math.round(r.compliancePct)}%` : "—"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {rows.length > LIST_PAGE_SIZE && (
+        <button
+          type="button"
+          className="justify-self-center rounded-full font-semibold cursor-pointer transition-colors px-4 py-1.5 text-[13px] bg-transparent border border-border text-text-primary hover:bg-primary/[0.08] hover:border-primary hover:text-primary"
+          onClick={() => setExpanded(!expanded)}
+        >
+          {expanded ? "Ver menos" : `Ver más (${rows.length - LIST_PAGE_SIZE} restantes)`}
+        </button>
+      )}
+    </>
   );
 }
 

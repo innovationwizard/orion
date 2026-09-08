@@ -1,7 +1,22 @@
 {
   "_source": "Aggregated from creditos_snapshot_2026-08-07.csv (Pipedrive extraction, boundary 2026-08-05). Per-deal file contains client PII and stays OUT of the app; this JSON is aggregates only. Regenerate with scripts/extract-creditos-pipedrive.py after a fresh export.",
   "boundary": "2026-08-05",
+  "fechaExport": "2026-08-07",
   "totalTratos": 1052,
+  "proyectos": [
+    "Benestare",
+    "Bosques Las Tapias",
+    "Boulevard 5",
+    "Casa Elisa",
+    "Santa Elena"
+  ],
+  "embudoAProyecto": {
+    "Créditos BLT": "Bosques Las Tapias",
+    "Créditos BLV5": "Boulevard 5",
+    "Créditos Benestare": "Benestare",
+    "Créditos Casa Elisa": "Casa Elisa",
+    "Créditos Santa Elena": "Santa Elena"
+  },
   "estados": {
     "open": 656,
     "lost": 349,
@@ -74,6 +89,7 @@
   "etapasPorEmbudo": [
     {
       "embudo": "Créditos BLT",
+      "proyecto": "Bosques Las Tapias",
       "orden": 1,
       "etapa": "Promesa",
       "open": 61,
@@ -84,6 +100,7 @@
     },
     {
       "embudo": "Créditos BLV5",
+      "proyecto": "Boulevard 5",
       "orden": 1,
       "etapa": "Promesa",
       "open": 35,
@@ -94,6 +111,7 @@
     },
     {
       "embudo": "Créditos BLV5",
+      "proyecto": "Boulevard 5",
       "orden": 2,
       "etapa": "Armado de Expediente",
       "open": 9,
@@ -104,6 +122,7 @@
     },
     {
       "embudo": "Créditos BLV5",
+      "proyecto": "Boulevard 5",
       "orden": 3,
       "etapa": "Análisis",
       "open": 11,
@@ -114,6 +133,7 @@
     },
     {
       "embudo": "Créditos BLV5",
+      "proyecto": "Boulevard 5",
       "orden": 4,
       "etapa": "Suspendido",
       "open": 27,
@@ -124,6 +144,7 @@
     },
     {
       "embudo": "Créditos BLV5",
+      "proyecto": "Boulevard 5",
       "orden": 5,
       "etapa": "Re-análisis",
       "open": 13,
@@ -134,6 +155,7 @@
     },
     {
       "embudo": "Créditos BLV5",
+      "proyecto": "Boulevard 5",
       "orden": 6,
       "etapa": "Aprobación",
       "open": 115,
@@ -144,6 +166,7 @@
     },
     {
       "embudo": "Créditos BLV5",
+      "proyecto": "Boulevard 5",
       "orden": 7,
       "etapa": "Ingreso E. Técnico / Avalúo",
       "open": 19,
@@ -154,6 +177,7 @@
     },
     {
       "embudo": "Créditos BLV5",
+      "proyecto": "Boulevard 5",
       "orden": 9,
       "etapa": "Resguardo / Resolución",
       "open": 67,
@@ -164,6 +188,7 @@
     },
     {
       "embudo": "Créditos Benestare",
+      "proyecto": "Benestare",
       "orden": 1,
       "etapa": "Promesa",
       "open": 195,
@@ -174,6 +199,7 @@
     },
     {
       "embudo": "Créditos Casa Elisa",
+      "proyecto": "Casa Elisa",
       "orden": 1,
       "etapa": "Promesa",
       "open": 68,
@@ -184,6 +210,7 @@
     },
     {
       "embudo": "Créditos Casa Elisa",
+      "proyecto": "Casa Elisa",
       "orden": 2,
       "etapa": "Armado de Expediente",
       "open": 29,
@@ -194,6 +221,7 @@
     },
     {
       "embudo": "Créditos Casa Elisa",
+      "proyecto": "Casa Elisa",
       "orden": 6,
       "etapa": "Aprobación",
       "open": 6,
@@ -204,6 +232,7 @@
     },
     {
       "embudo": "Créditos Santa Elena",
+      "proyecto": "Santa Elena",
       "orden": 1,
       "etapa": "Promesa",
       "open": 1,
@@ -212,6 +241,559 @@
       "medianaDiasEnEtapa": 275,
       "conFechaEtapa": 1
     }
+  ],
+  "etapasCatalogo": [
+    {
+      "embudo": "Créditos Benestare",
+      "proyecto": "Benestare",
+      "stageId": 46,
+      "orden": 1,
+      "posicion": 1,
+      "etapa": "Promesa"
+    },
+    {
+      "embudo": "Créditos Benestare",
+      "proyecto": "Benestare",
+      "stageId": 47,
+      "orden": 2,
+      "posicion": 2,
+      "etapa": "Armado de Expediente"
+    },
+    {
+      "embudo": "Créditos Benestare",
+      "proyecto": "Benestare",
+      "stageId": 49,
+      "orden": 3,
+      "posicion": 3,
+      "etapa": "Análisis"
+    },
+    {
+      "embudo": "Créditos Benestare",
+      "proyecto": "Benestare",
+      "stageId": 50,
+      "orden": 4,
+      "posicion": 4,
+      "etapa": "Suspendido"
+    },
+    {
+      "embudo": "Créditos Benestare",
+      "proyecto": "Benestare",
+      "stageId": 51,
+      "orden": 5,
+      "posicion": 5,
+      "etapa": "Re-análisis"
+    },
+    {
+      "embudo": "Créditos Benestare",
+      "proyecto": "Benestare",
+      "stageId": 53,
+      "orden": 6,
+      "posicion": 6,
+      "etapa": "Aprobación"
+    },
+    {
+      "embudo": "Créditos Benestare",
+      "proyecto": "Benestare",
+      "stageId": 54,
+      "orden": 7,
+      "posicion": 7,
+      "etapa": "Expediente Técnico"
+    },
+    {
+      "embudo": "Créditos Benestare",
+      "proyecto": "Benestare",
+      "stageId": 52,
+      "orden": 8,
+      "posicion": 8,
+      "etapa": "Resguardo / Resolución"
+    },
+    {
+      "embudo": "Créditos Benestare",
+      "proyecto": "Benestare",
+      "stageId": 55,
+      "orden": 9,
+      "posicion": 9,
+      "etapa": "Escritura"
+    },
+    {
+      "embudo": "Créditos Benestare",
+      "proyecto": "Benestare",
+      "stageId": 130,
+      "orden": 10,
+      "posicion": 10,
+      "etapa": "Desembolso"
+    },
+    {
+      "embudo": "Créditos Benestare",
+      "proyecto": "Benestare",
+      "stageId": 131,
+      "orden": 11,
+      "posicion": 11,
+      "etapa": "Liquidación"
+    },
+    {
+      "embudo": "Créditos BLT",
+      "proyecto": "Bosques Las Tapias",
+      "stageId": 56,
+      "orden": 1,
+      "posicion": 1,
+      "etapa": "Promesa"
+    },
+    {
+      "embudo": "Créditos BLT",
+      "proyecto": "Bosques Las Tapias",
+      "stageId": 57,
+      "orden": 2,
+      "posicion": 2,
+      "etapa": "Armado de Expediente"
+    },
+    {
+      "embudo": "Créditos BLT",
+      "proyecto": "Bosques Las Tapias",
+      "stageId": 59,
+      "orden": 3,
+      "posicion": 3,
+      "etapa": "Análisis"
+    },
+    {
+      "embudo": "Créditos BLT",
+      "proyecto": "Bosques Las Tapias",
+      "stageId": 60,
+      "orden": 4,
+      "posicion": 4,
+      "etapa": "Suspendido"
+    },
+    {
+      "embudo": "Créditos BLT",
+      "proyecto": "Bosques Las Tapias",
+      "stageId": 61,
+      "orden": 5,
+      "posicion": 5,
+      "etapa": "Re-análisis"
+    },
+    {
+      "embudo": "Créditos BLT",
+      "proyecto": "Bosques Las Tapias",
+      "stageId": 63,
+      "orden": 6,
+      "posicion": 6,
+      "etapa": "Aprobación"
+    },
+    {
+      "embudo": "Créditos BLT",
+      "proyecto": "Bosques Las Tapias",
+      "stageId": 64,
+      "orden": 7,
+      "posicion": 7,
+      "etapa": "Expediente Técnico"
+    },
+    {
+      "embudo": "Créditos BLT",
+      "proyecto": "Bosques Las Tapias",
+      "stageId": 62,
+      "orden": 8,
+      "posicion": 8,
+      "etapa": "Resguardo / Resolución"
+    },
+    {
+      "embudo": "Créditos BLT",
+      "proyecto": "Bosques Las Tapias",
+      "stageId": 65,
+      "orden": 9,
+      "posicion": 9,
+      "etapa": "Escritura"
+    },
+    {
+      "embudo": "Créditos BLT",
+      "proyecto": "Bosques Las Tapias",
+      "stageId": 132,
+      "orden": 10,
+      "posicion": 10,
+      "etapa": "Desembolso"
+    },
+    {
+      "embudo": "Créditos BLT",
+      "proyecto": "Bosques Las Tapias",
+      "stageId": 133,
+      "orden": 11,
+      "posicion": 11,
+      "etapa": "Liquidación"
+    },
+    {
+      "embudo": "Créditos BLV5",
+      "proyecto": "Boulevard 5",
+      "stageId": 66,
+      "orden": 1,
+      "posicion": 1,
+      "etapa": "Promesa"
+    },
+    {
+      "embudo": "Créditos BLV5",
+      "proyecto": "Boulevard 5",
+      "stageId": 67,
+      "orden": 2,
+      "posicion": 2,
+      "etapa": "Armado de Expediente"
+    },
+    {
+      "embudo": "Créditos BLV5",
+      "proyecto": "Boulevard 5",
+      "stageId": 69,
+      "orden": 3,
+      "posicion": 3,
+      "etapa": "Análisis"
+    },
+    {
+      "embudo": "Créditos BLV5",
+      "proyecto": "Boulevard 5",
+      "stageId": 70,
+      "orden": 4,
+      "posicion": 4,
+      "etapa": "Suspendido"
+    },
+    {
+      "embudo": "Créditos BLV5",
+      "proyecto": "Boulevard 5",
+      "stageId": 71,
+      "orden": 5,
+      "posicion": 5,
+      "etapa": "Re-análisis"
+    },
+    {
+      "embudo": "Créditos BLV5",
+      "proyecto": "Boulevard 5",
+      "stageId": 73,
+      "orden": 6,
+      "posicion": 6,
+      "etapa": "Aprobación"
+    },
+    {
+      "embudo": "Créditos BLV5",
+      "proyecto": "Boulevard 5",
+      "stageId": 74,
+      "orden": 7,
+      "posicion": 7,
+      "etapa": "Ingreso E. Técnico / Avalúo"
+    },
+    {
+      "embudo": "Créditos BLV5",
+      "proyecto": "Boulevard 5",
+      "stageId": 163,
+      "orden": 8,
+      "posicion": 8,
+      "etapa": "Aprobación E. Técnico / Avalúo"
+    },
+    {
+      "embudo": "Créditos BLV5",
+      "proyecto": "Boulevard 5",
+      "stageId": 72,
+      "orden": 9,
+      "posicion": 9,
+      "etapa": "Resguardo / Resolución"
+    },
+    {
+      "embudo": "Créditos BLV5",
+      "proyecto": "Boulevard 5",
+      "stageId": 75,
+      "orden": 9,
+      "posicion": 10,
+      "etapa": "Escritura"
+    },
+    {
+      "embudo": "Créditos BLV5",
+      "proyecto": "Boulevard 5",
+      "stageId": 134,
+      "orden": 9,
+      "posicion": 11,
+      "etapa": "Desembolso"
+    },
+    {
+      "embudo": "Créditos BLV5",
+      "proyecto": "Boulevard 5",
+      "stageId": 135,
+      "orden": 9,
+      "posicion": 12,
+      "etapa": "Liquidación"
+    },
+    {
+      "embudo": "Créditos Santa Elena",
+      "proyecto": "Santa Elena",
+      "stageId": 76,
+      "orden": 1,
+      "posicion": 1,
+      "etapa": "Promesa"
+    },
+    {
+      "embudo": "Créditos Santa Elena",
+      "proyecto": "Santa Elena",
+      "stageId": 77,
+      "orden": 2,
+      "posicion": 2,
+      "etapa": "Armado de Expediente"
+    },
+    {
+      "embudo": "Créditos Santa Elena",
+      "proyecto": "Santa Elena",
+      "stageId": 79,
+      "orden": 3,
+      "posicion": 3,
+      "etapa": "Análisis"
+    },
+    {
+      "embudo": "Créditos Santa Elena",
+      "proyecto": "Santa Elena",
+      "stageId": 80,
+      "orden": 4,
+      "posicion": 4,
+      "etapa": "Suspendido"
+    },
+    {
+      "embudo": "Créditos Santa Elena",
+      "proyecto": "Santa Elena",
+      "stageId": 81,
+      "orden": 5,
+      "posicion": 5,
+      "etapa": "Re-análisis"
+    },
+    {
+      "embudo": "Créditos Santa Elena",
+      "proyecto": "Santa Elena",
+      "stageId": 83,
+      "orden": 6,
+      "posicion": 6,
+      "etapa": "Aprobación"
+    },
+    {
+      "embudo": "Créditos Santa Elena",
+      "proyecto": "Santa Elena",
+      "stageId": 84,
+      "orden": 7,
+      "posicion": 7,
+      "etapa": "Expediente Técnico"
+    },
+    {
+      "embudo": "Créditos Santa Elena",
+      "proyecto": "Santa Elena",
+      "stageId": 82,
+      "orden": 8,
+      "posicion": 8,
+      "etapa": "Resguardo / Resolución"
+    },
+    {
+      "embudo": "Créditos Santa Elena",
+      "proyecto": "Santa Elena",
+      "stageId": 85,
+      "orden": 9,
+      "posicion": 9,
+      "etapa": "Escritura"
+    },
+    {
+      "embudo": "Créditos Santa Elena",
+      "proyecto": "Santa Elena",
+      "stageId": 136,
+      "orden": 10,
+      "posicion": 10,
+      "etapa": "Desembolso"
+    },
+    {
+      "embudo": "Créditos Santa Elena",
+      "proyecto": "Santa Elena",
+      "stageId": 137,
+      "orden": 11,
+      "posicion": 11,
+      "etapa": "Liquidación"
+    },
+    {
+      "embudo": "Créditos Casa Elisa",
+      "proyecto": "Casa Elisa",
+      "stageId": 86,
+      "orden": 1,
+      "posicion": 1,
+      "etapa": "Promesa"
+    },
+    {
+      "embudo": "Créditos Casa Elisa",
+      "proyecto": "Casa Elisa",
+      "stageId": 87,
+      "orden": 2,
+      "posicion": 2,
+      "etapa": "Armado de Expediente"
+    },
+    {
+      "embudo": "Créditos Casa Elisa",
+      "proyecto": "Casa Elisa",
+      "stageId": 89,
+      "orden": 3,
+      "posicion": 3,
+      "etapa": "Análisis"
+    },
+    {
+      "embudo": "Créditos Casa Elisa",
+      "proyecto": "Casa Elisa",
+      "stageId": 90,
+      "orden": 4,
+      "posicion": 4,
+      "etapa": "Suspendido"
+    },
+    {
+      "embudo": "Créditos Casa Elisa",
+      "proyecto": "Casa Elisa",
+      "stageId": 91,
+      "orden": 5,
+      "posicion": 5,
+      "etapa": "Re-análisis"
+    },
+    {
+      "embudo": "Créditos Casa Elisa",
+      "proyecto": "Casa Elisa",
+      "stageId": 93,
+      "orden": 6,
+      "posicion": 6,
+      "etapa": "Aprobación"
+    },
+    {
+      "embudo": "Créditos Casa Elisa",
+      "proyecto": "Casa Elisa",
+      "stageId": 94,
+      "orden": 7,
+      "posicion": 7,
+      "etapa": "Expediente Técnico"
+    },
+    {
+      "embudo": "Créditos Casa Elisa",
+      "proyecto": "Casa Elisa",
+      "stageId": 92,
+      "orden": 8,
+      "posicion": 8,
+      "etapa": "Resguardo / Resolución"
+    },
+    {
+      "embudo": "Créditos Casa Elisa",
+      "proyecto": "Casa Elisa",
+      "stageId": 95,
+      "orden": 9,
+      "posicion": 9,
+      "etapa": "Escritura"
+    },
+    {
+      "embudo": "Créditos Casa Elisa",
+      "proyecto": "Casa Elisa",
+      "stageId": 138,
+      "orden": 10,
+      "posicion": 10,
+      "etapa": "Desembolso"
+    },
+    {
+      "embudo": "Créditos Casa Elisa",
+      "proyecto": "Casa Elisa",
+      "stageId": 139,
+      "orden": 11,
+      "posicion": 11,
+      "etapa": "Liquidación"
+    },
+    {
+      "embudo": "Créditos TCA",
+      "proyecto": "Torre Cobán",
+      "stageId": 148,
+      "orden": 1,
+      "posicion": 1,
+      "etapa": "Promesa"
+    },
+    {
+      "embudo": "Créditos TCA",
+      "proyecto": "Torre Cobán",
+      "stageId": 149,
+      "orden": 2,
+      "posicion": 2,
+      "etapa": "Armado de Expediente"
+    },
+    {
+      "embudo": "Créditos TCA",
+      "proyecto": "Torre Cobán",
+      "stageId": 150,
+      "orden": 3,
+      "posicion": 3,
+      "etapa": "Análisis"
+    },
+    {
+      "embudo": "Créditos TCA",
+      "proyecto": "Torre Cobán",
+      "stageId": 151,
+      "orden": 4,
+      "posicion": 4,
+      "etapa": "Suspendido"
+    },
+    {
+      "embudo": "Créditos TCA",
+      "proyecto": "Torre Cobán",
+      "stageId": 152,
+      "orden": 5,
+      "posicion": 5,
+      "etapa": "Re-análisis"
+    },
+    {
+      "embudo": "Créditos TCA",
+      "proyecto": "Torre Cobán",
+      "stageId": 153,
+      "orden": 6,
+      "posicion": 6,
+      "etapa": "Aprobación"
+    },
+    {
+      "embudo": "Créditos TCA",
+      "proyecto": "Torre Cobán",
+      "stageId": 154,
+      "orden": 7,
+      "posicion": 7,
+      "etapa": "Expediente Técnico"
+    },
+    {
+      "embudo": "Créditos TCA",
+      "proyecto": "Torre Cobán",
+      "stageId": 155,
+      "orden": 8,
+      "posicion": 8,
+      "etapa": "Resguardo / Resolución"
+    },
+    {
+      "embudo": "Créditos TCA",
+      "proyecto": "Torre Cobán",
+      "stageId": 156,
+      "orden": 9,
+      "posicion": 9,
+      "etapa": "Escritura"
+    },
+    {
+      "embudo": "Créditos TCA",
+      "proyecto": "Torre Cobán",
+      "stageId": 157,
+      "orden": 10,
+      "posicion": 10,
+      "etapa": "Desembolso"
+    },
+    {
+      "embudo": "Créditos TCA",
+      "proyecto": "Torre Cobán",
+      "stageId": 158,
+      "orden": 11,
+      "posicion": 11,
+      "etapa": "Liquidación"
+    }
+  ],
+  "etapasCatalogoGlobal": [
+    "Promesa",
+    "Armado de Expediente",
+    "Análisis",
+    "Suspendido",
+    "Re-análisis",
+    "Aprobación",
+    "Expediente Técnico",
+    "Ingreso E. Técnico / Avalúo",
+    "Aprobación E. Técnico / Avalúo",
+    "Resguardo / Resolución",
+    "Escritura",
+    "Desembolso",
+    "Liquidación"
   ],
   "bancos": {
     "Banco G&T Continental": 136,
@@ -242,6 +824,7 @@
     "'Ganado' se marca al armar expediente, NO al desembolsar (46/47 won están en Armado de Expediente).",
     "Ningún trato abierto en Escritura, Desembolso ni Liquidación — el registro operativo se detiene en Resguardo/Resolución.",
     "Tipo de Crédito consolidado de dos campos custom duplicados con erratas; ~55% sin dato.",
-    "Embudo Créditos TCA (Torre Cobán) existe con 0 tratos — proyecto no presente en la DB de Orion."
+    "Embudo Créditos TCA (Torre Cobán) existe con 0 tratos — proyecto no presente en la DB de Orion.",
+    "Los montos son los declarados en Pipedrive. Nada se deriva: si el campo está vacío el tablero muestra 'Data no existe'."
   ]
 }

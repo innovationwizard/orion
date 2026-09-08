@@ -8,11 +8,19 @@ export type BulletItem = {
 type BulletChartProps = {
   items: BulletItem[];
   formatValue?: (v: number) => string;
+  /**
+   * Invierte la semántica de color. Por defecto superar el objetivo es bueno
+   * (verde), que es lo correcto para una meta de ventas. Con `lowerIsBetter`
+   * se pinta verde al quedar por debajo del objetivo — el caso de gasto contra
+   * presupuesto, donde pasarse es malo.
+   */
+  lowerIsBetter?: boolean;
 };
 
 export default function BulletChart({
   items,
-  formatValue = (v) => `${Math.round(v)}%`
+  formatValue = (v) => `${Math.round(v)}%`,
+  lowerIsBetter = false
 }: BulletChartProps) {
   const maxScale = Math.max(
     120,
@@ -27,12 +35,22 @@ export default function BulletChart({
         const band1 = (60 / maxScale) * 100;
         const band2 = (80 / maxScale) * 100;
         const band3 = (100 / maxScale) * 100;
-        const met = item.value >= item.target;
+        const met = lowerIsBetter ? item.value <= item.target : item.value >= item.target;
+        // Quedar corto contra una meta de ventas es "todavía no", y se pinta
+        // neutro. Pasarse del presupuesto es un hecho malo, y se pinta rojo.
+        const barColor = met ? "bg-success" : lowerIsBetter ? "bg-danger" : "bg-primary";
 
         return (
-          <div key={item.label} className="grid grid-cols-[140px_1fr_56px] items-center gap-3">
+          <div key={item.label} className="grid grid-cols-[140px_1fr_minmax(56px,max-content)] items-center gap-3">
             <div className="flex flex-col gap-0.5 min-w-0">
-              <span className="text-[13px] font-semibold text-text-primary whitespace-nowrap overflow-hidden text-ellipsis">{item.label}</span>
+              {/* El ancho fijo de la etiqueta recorta los nombres largos, así que
+                  el nombre completo queda disponible al pasar el cursor. */}
+              <span
+                className="text-[13px] font-semibold text-text-primary whitespace-nowrap overflow-hidden text-ellipsis"
+                title={item.label}
+              >
+                {item.label}
+              </span>
               {item.subtitle ? (
                 <span className="text-[11px] text-muted">{item.subtitle}</span>
               ) : null}
@@ -45,12 +63,14 @@ export default function BulletChart({
               <div className="absolute top-0 left-0 h-full rounded-l bg-slate-400/14 z-[2]" style={{ width: `${band2}%` }} />
               <div className="absolute top-0 left-0 h-full rounded-l bg-slate-400/7 z-[3]" style={{ width: `${band3}%` }} />
               <div
-                className={`absolute top-1.5 left-0 h-3 rounded-[3px] z-[4] transition-[width] duration-500 ease-in-out ${met ? "bg-success" : "bg-primary"}`}
+                className={`absolute top-1.5 left-0 h-3 rounded-[3px] z-[4] transition-[width] duration-500 ease-in-out ${barColor}`}
                 style={{ width: `${valueWidth}%` }}
               />
               <div className="absolute top-0.5 w-0.5 h-5 bg-text-primary rounded-[1px] z-[5]" style={{ left: `${targetPos}%` }} />
             </div>
-            <span className={`text-[13px] font-bold text-right tabular-nums ${met ? "text-success" : "text-danger"}`}>
+            <span
+              className={`text-[13px] font-bold text-right tabular-nums whitespace-nowrap ${met ? "text-success" : "text-danger"}`}
+            >
               {formatValue(item.value)}
             </span>
           </div>

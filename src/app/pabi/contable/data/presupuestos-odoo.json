@@ -1,0 +1,34 @@
+{
+  "status": "ready",
+  "updatedAt": "2026-06-30",
+  "source": "03  06.26 Fondeo y Gastos de proyectos.xlsx · PRESUP FONDOS Y GTOS (2)",
+  "rows": {
+    "1": {
+      "kind": "presupuesto-vs-ejecutado",
+      "fuenteReal": "QuickBooks (\"Profit & Loss by Class\", Accrual Basis) — no proviene de Odoo",
+      "totalPresupuesto": 10781668.22,
+      "totalEjecutado": 11830750.65,
+      "porProyecto": [
+        { "name": "Casa Elisa", "presupuesto": 1031603.82, "ejecutado": 2778815.32 },
+        { "name": "Boulevard 5", "presupuesto": 3384900.00, "ejecutado": 3198796.62 },
+        { "name": "Benestare", "presupuesto": 2387096.40, "ejecutado": 2687758.38 },
+        { "name": "Bosque Las Tapias", "presupuesto": 2363000.00, "ejecutado": 1970307.97 },
+        { "name": "Santa Elena", "presupuesto": 1615068.00, "ejecutado": 1195072.36 }
+      ]
+    },
+    "2": {
+      "kind": "commission-economics",
+      "assumption": {
+        "decision": "«Status de comisiones: status de pago por proyecto, desglose 5%» usa la misma extracción por proyecto que Comisiones fila 3 — es la misma pregunta hecha desde la sección de presupuestos. Antes mostraba el mismo donut abstracto de 2.5/2.5 que aquella fila.",
+        "ifChanged": "Los datos vienen de data/comisiones-economia.json, que se regenera con src/app/pabi/contable/scripts/extract-comisiones.py."
+      }
+    },
+    "3": {
+      "kind": "status-repartido",
+      "assumption": {
+        "decision": "Esta fila mostraba la misma planilla de pago por proyecto que Comisiones fila 6, y no incluía a Puerta Abierta pese a que el entregable la nombra. Ahora reparte el 5% del período entre la estructura comercial y Puerta Abierta como área corporativa: la empresa retiene la mitad de cada comisión, que es la misma figura que en el fondeo se registra como Corporativo / Administrativo.",
+        "ifChanged": "Se eligió la cifra del período (columna PUERTA del libro de comisiones del corte) y no el acumulado histórico de la hoja «Resumen Ahorros», porque el resto de la fila y de la sección está en grano de período. El acumulado responde otra pregunta y su base está incompleta: las etiquetas de mes de esa hoja terminan en agosto 2025 aunque su última fila ya trae este período."
+      }
+    }
+  }
+}

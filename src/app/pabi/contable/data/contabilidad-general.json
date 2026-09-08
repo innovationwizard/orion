@@ -1,0 +1,31 @@
+{
+  "status": "ready",
+  "updatedAt": "2026-06-30",
+  "source": "03  06.26 Fondeo y Gastos de proyectos.xlsx · hoja Resúmen",
+  "rows": {
+    "1": {
+      "kind": "inventario-disponibilidad",
+      "source": "08.26 Reservas y cobros proyectos agosto 2026.xlsx · corte 30.08.2026",
+      "porProyecto": [
+        { "name": "Boulevard 5", "disponible": 5, "totalApartamentos": 298 },
+        { "name": "Benestare", "disponible": 57, "totalApartamentos": 278 },
+        { "name": "Bosque Las Tapias", "disponible": 163, "totalApartamentos": 234 }
+      ],
+      "fueraDeAlcance": ["Santa Elena", "Casa Elisa"],
+      "assumption": {
+        "decision": "Bienes raíces no llevan inventario en el sentido contable clásico — un apartamento no se acumula, se construye y se vende. Se interpreta «Inventarios» como Disponibilidad: unidades que aún no se han colocado, tomado del mismo corte de Cobros. Hipótesis del usuario, sin confirmar con Contabilidad todavía.",
+        "ifChanged": "Editar rows[\"1\"] en este archivo. Si Contabilidad define Inventarios de otra forma, este dato puede quedar obsoleto por completo — no asumir que sólo hay que ajustar números."
+      }
+    },
+    "2": {
+      "kind": "valor-proyectos",
+      "proyectos": [
+        { "name": "Boulevard 5", "valor": 291597449.07, "revalorizacion": 0.019235312338810276 },
+        { "name": "Bosque Las Tapias", "valor": 262600000.00, "revalorizacion": 0.008351345430312263 },
+        { "name": "Benestare", "valor": 123270892.00, "revalorizacion": 0.027971536865329088 },
+        { "name": "Santa Elena", "valor": 92594373.33, "revalorizacion": 0.01051821201369354 },
+        { "name": "Casa Elisa", "valor": null, "revalorizacion": null }
+      ]
+    }
+  }
+}

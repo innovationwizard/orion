@@ -1,0 +1,115 @@
+{
+  "status": "ready",
+  "updatedAt": "2026-07-31",
+  "source": "07.26 Comisiones nuevo formato - Julio 2026.xlsx",
+  "rows": {
+    "1": {
+      "kind": "comisiones-ventas",
+      "source": "08.26 Reservas y cobros proyectos agosto 2026.xlsx · corte 30.08.2026",
+      "porProyecto": [
+        { "name": "Boulevard 5", "vendidoReservado": 293, "totalApartamentos": 298 },
+        { "name": "Benestare", "vendidoReservado": 221, "totalApartamentos": 278 },
+        { "name": "Bosque Las Tapias", "vendidoReservado": 71, "totalApartamentos": 234 }
+      ],
+      "fueraDeAlcance": ["Santa Elena", "Casa Elisa"],
+      "assumption": {
+        "decision": "«Vendido/Reservado» = Total apartamentos − Disponible, del mismo corte de Cobros. No es un cierre de ventas del mes (altas nuevas); es la foto acumulada de unidades ya colocadas.",
+        "ifChanged": "Si aparece un archivo con altas de venta por mes, reemplazar rows[\"1\"] en este archivo — el componente ComisionesVentasChart no cambia."
+      }
+    },
+    "2": {
+      "kind": "cobros-resumen",
+      "corte": "30.08.2026",
+      "porProyecto": [
+        {
+          "name": "Boulevard 5",
+          "mesEsperado": 629460.00,
+          "mesEfectuado": 1636091.90,
+          "acumEsperado": 28260692.25,
+          "acumEfectuado": 56639679.65,
+          "totalAdeudado": 35358591.71,
+          "totalApartamentos": 298,
+          "clienteAlDia": 10,
+          "clienteAtrasado": 90,
+          "engancheCompletado": 68,
+          "superavitEnganche": 125,
+          "disponible": 5,
+          "conciliacionConfiable": false
+        },
+        {
+          "name": "Benestare",
+          "mesEsperado": 137814.78,
+          "mesEfectuado": 118299.58,
+          "acumEsperado": 1816264.66,
+          "acumEfectuado": 2565729.89,
+          "totalAdeudado": 4174435.12,
+          "totalApartamentos": 278,
+          "clienteAlDia": 49,
+          "clienteAtrasado": 103,
+          "engancheCompletado": 6,
+          "superavitEnganche": 63,
+          "disponible": 57,
+          "conciliacionConfiable": true
+        },
+        {
+          "name": "Bosque Las Tapias",
+          "mesEsperado": 89359.87,
+          "mesEfectuado": 61547.57,
+          "acumEsperado": 634483.94,
+          "acumEfectuado": 1125790.66,
+          "totalAdeudado": 2783239.00,
+          "totalApartamentos": 234,
+          "clienteAlDia": 23,
+          "clienteAtrasado": 31,
+          "engancheCompletado": 0,
+          "superavitEnganche": 17,
+          "disponible": 163,
+          "conciliacionConfiable": false
+        }
+      ],
+      "fueraDeAlcance": ["Santa Elena", "Casa Elisa"]
+    },
+    "3": {
+      "kind": "commission-economics",
+      "assumption": {
+        "decision": "Esta fila ya no muestra la estructura abstracta del 5% (un donut de 2.5/2.5 y barras de 30/30/40): esos son ratios sin dinero y sin proyecto. Ahora muestra la economía real por proyecto — valor vendido, base sin impuestos, el 5% que generan esas ventas, su reparto, y lo liberado en el período por fase.",
+        "ifChanged": "Los datos vienen de data/comisiones-economia.json, que se regenera con src/app/pabi/contable/scripts/extract-comisiones.py. No se editan a mano."
+      }
+    },
+    "4-5": {
+      "kind": "approval-status",
+      "period": "Julio 2026",
+      "audiencias": [
+        {
+          "name": "Revisión Dirección General",
+          "que": "Mira el total del período y el cuadre por proyecto para saber cómo va el negocio."
+        },
+        {
+          "name": "Revisión Ejecutivos",
+          "que": "Mira la misma planilla para confirmar que su liquidación individual está incluida en el total."
+        }
+      ],
+      "projects": [
+        { "name": "Boulevard 5", "status": "ok", "total": 59341.78 },
+        { "name": "Benestare", "status": "ok", "total": 52777.26 },
+        { "name": "Bosque Las Tapias", "status": "ok", "total": 20097.46 },
+        { "name": "Casa Elisa", "status": "sin-actividad", "total": 0 }
+      ],
+      "assumption": {
+        "decision": "El Calendario Contable lista «Revisión Dirección General» y «Revisión Ejecutivos» como entregables 4 y 5, pero ambos traen exactamente la misma cifra sobre la misma planilla. Se muestran fusionados en una sola fila con las dos audiencias rotuladas, en vez de repetir el mismo componente con los mismos datos.",
+        "ifChanged": "Si alguna de las dos revisiones llega a tener datos propios (por ejemplo fecha de aprobación o quién firmó), volver a separarlas en las claves \"4\" y \"5\" y restaurar las dos filas en entregables.ts."
+      }
+    },
+    "6": {
+      "kind": "payment-run",
+      "period": "Julio 2026",
+      "total": 132216.50,
+      "projects": [
+        { "name": "Boulevard 5", "total": 59341.78 },
+        { "name": "Benestare", "total": 52777.26 },
+        { "name": "Bosque Las Tapias", "total": 20097.46 },
+        { "name": "Casa Elisa", "total": 0 }
+      ]
+    }
+  }
+}

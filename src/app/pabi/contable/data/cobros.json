@@ -1,0 +1,76 @@
+{
+  "status": "ready",
+  "updatedAt": "2026-08-30",
+  "source": "08.26 Reservas y cobros proyectos agosto 2026.xlsx",
+  "rows": {
+    "1": {
+      "kind": "cobros-resumen",
+      "corte": "30.08.2026",
+      "porProyecto": [
+        {
+          "name": "Boulevard 5",
+          "mesEsperado": 629460.00,
+          "mesEfectuado": 1636091.90,
+          "acumEsperado": 28260692.25,
+          "acumEfectuado": 56639679.65,
+          "totalAdeudado": 35358591.71,
+          "totalApartamentos": 298,
+          "clienteAlDia": 10,
+          "clienteAtrasado": 90,
+          "engancheCompletado": 68,
+          "superavitEnganche": 125,
+          "disponible": 5,
+          "conciliacionConfiable": false
+        },
+        {
+          "name": "Benestare",
+          "mesEsperado": 137814.78,
+          "mesEfectuado": 118299.58,
+          "acumEsperado": 1816264.66,
+          "acumEfectuado": 2565729.89,
+          "totalAdeudado": 4174435.12,
+          "totalApartamentos": 278,
+          "clienteAlDia": 49,
+          "clienteAtrasado": 103,
+          "engancheCompletado": 6,
+          "superavitEnganche": 63,
+          "disponible": 57,
+          "conciliacionConfiable": true
+        },
+        {
+          "name": "Bosque Las Tapias",
+          "mesEsperado": 89359.87,
+          "mesEfectuado": 61547.57,
+          "acumEsperado": 634483.94,
+          "acumEfectuado": 1125790.66,
+          "totalAdeudado": 2783239.00,
+          "totalApartamentos": 234,
+          "clienteAlDia": 23,
+          "clienteAtrasado": 31,
+          "engancheCompletado": 0,
+          "superavitEnganche": 17,
+          "disponible": 163,
+          "conciliacionConfiable": false
+        }
+      ],
+      "fueraDeAlcance": ["Santa Elena", "Casa Elisa"]
+    },
+    "2": {
+      "kind": "cobros-alertas-desistimiento",
+      "source": "Pipedrive · src/lib/creditos/deals-snapshot.json (boundary 2026-08-05)",
+      "totalDesistidos": 21,
+      "totalTratosPerdidos": 349,
+      "porProyecto": [
+        { "name": "Boulevard 5", "desistidos": 9 },
+        { "name": "Bosque Las Tapias", "desistidos": 8 },
+        { "name": "Benestare", "desistidos": 4 },
+        { "name": "Santa Elena", "desistidos": 0 },
+        { "name": "Casa Elisa", "desistidos": 0 }
+      ],
+      "assumption": {
+        "decision": "Se cuentan como desistimiento sólo los tratos con motivoPerdido exactamente igual a 'Desistimiento comercial por falta de pago de enganche' o 'Desistimiento administrativo por cumplimiento' — 21 de 349 tratos perdidos. Los otros 328 (p.ej. 'Problemas personales para continuar', 240 casos) no se cuentan como desistimiento porque el archivo no los etiqueta así explícitamente.",
+        "ifChanged": "Editar rows[\"2\"] en este archivo. Los conteos exactos por motivo están en src/lib/creditos/deals-snapshot.json (campo motivoPerdido, estado=lost) — recalcular con el mismo filtro si cambia el criterio."
+      }
+    }
+  }
+}

@@ -83,6 +83,8 @@ const currency = new Intl.NumberFormat("es-GT", {
   maximumFractionDigits: 0
 });
 
+const LIST_PAGE_SIZE = 10;
+
 const AGING_BUCKETS = [
   { key: "current", label: "Al día", color: "bg-success/20 text-success" },
   { key: "days1_30", label: "1–30", color: "bg-warning/20 text-warning" },
@@ -141,6 +143,7 @@ export default function DashboardClient({ role }: { role?: string }) {
   const [selectedUnit, setSelectedUnit] = useState<PaymentAnalyticsUnit | null>(null);
   const [aptoFilter, setAptoFilter] = useState("");
   const [showAllUnits, setShowAllUnits] = useState(false);
+  const [moraRowsExpanded, setMoraRowsExpanded] = useState(false);
   const [activeMonths2026, setActiveMonths2026] = useState<string[]>([]);
 
   const visibleTabs = role === "gerencia"
@@ -327,6 +330,9 @@ export default function DashboardClient({ role }: { role?: string }) {
 
   const delinquentUnits = allUnits.filter((u) => (u.daysDelinquent ?? 0) > 0);
   const displayedUnits = showAllUnits ? allUnits : delinquentUnits;
+  const visibleUnits = moraRowsExpanded
+    ? displayedUnits
+    : displayedUnits.slice(0, LIST_PAGE_SIZE);
 
   const projectBullets = paymentProjects.map((p) => {
     const expected = p.units.reduce((s, u) => s + u.totalExpected, 0);
@@ -613,7 +619,7 @@ export default function DashboardClient({ role }: { role?: string }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {displayedUnits.map((u) => {
+                    {visibleUnits.map((u) => {
                       const pct =
                         u.totalExpected > 0
                           ? Math.round((u.totalPaid / u.totalExpected) * 100)
@@ -662,6 +668,18 @@ export default function DashboardClient({ role }: { role?: string }) {
                     ? "No hay datos de pagos."
                     : "No hay cuentas en mora."}
               </div>
+            )}
+
+            {displayedUnits.length > LIST_PAGE_SIZE && (
+              <button
+                type="button"
+                className="justify-self-center rounded-full font-semibold cursor-pointer transition-colors px-4 py-1.5 text-[13px] bg-transparent border border-border text-text-primary hover:bg-primary/[0.08] hover:border-primary hover:text-primary"
+                onClick={() => setMoraRowsExpanded(!moraRowsExpanded)}
+              >
+                {moraRowsExpanded
+                  ? "Ver menos"
+                  : `Ver más (${displayedUnits.length - LIST_PAGE_SIZE} restantes)`}
+              </button>
             )}
           </section>
 

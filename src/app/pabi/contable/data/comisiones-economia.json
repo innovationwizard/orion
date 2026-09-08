@@ -1,0 +1,82 @@
+{
+  "status": "ready",
+  "updatedAt": "2026-07-31",
+  "source": "07.26 Comisiones nuevo formato - Julio 2026.xlsx",
+  "generatedBy": "src/app/pabi/contable/scripts/extract-comisiones.py",
+  "periodo": "Julio 2026",
+  "factorImpuestos": 1.093,
+  "cap": 0.05,
+  "proyectos": [
+    {
+      "name": "Boulevard 5",
+      "unidades": 317,
+      "valorVendido": 341289413.68,
+      "baseSinImpuestos": 312272238.46,
+      "comisionTotal": 15613611.92,
+      "puertaAbierta": 7806805.96,
+      "estructuraComercial": 7806805.96,
+      "periodo": {
+        "fase1": 90521.5,
+        "fase2": 48546.21,
+        "fase3": 0.0,
+        "total": 139067.71,
+        "puertaAbierta": 69533.86,
+        "estructuraComercial": 69533.86,
+        "aFacturar": 61861.69,
+        "aPagar": 59341.78,
+        "cuadrado": true
+      }
+    },
+    {
+      "name": "Benestare",
+      "unidades": 241,
+      "valorVendido": 118367600.0,
+      "baseSinImpuestos": 108296065.87,
+      "comisionTotal": 5414803.29,
+      "puertaAbierta": 2707401.65,
+      "estructuraComercial": 2707401.65,
+      "periodo": {
+        "fase1": 84326.62,
+        "fase2": 47564.16,
+        "fase3": 0.0,
+        "total": 131890.78,
+        "puertaAbierta": 65945.39,
+        "estructuraComercial": 65945.39,
+        "aFacturar": 54550.62,
+        "aPagar": 52777.26,
+        "cuadrado": true
+      }
+    },
+    {
+      "name": "Bosque Las Tapias",
+      "unidades": 77,
+      "valorVendido": 54303412.0,
+      "baseSinImpuestos": 49682902.1,
+      "comisionTotal": 2484145.11,
+      "puertaAbierta": 1242072.55,
+      "estructuraComercial": 1242072.55,
+      "periodo": {
+        "fase1": 33266.24,
+        "fase2": 16096.81,
+        "fase3": 0.0,
+        "total": 49363.05,
+        "puertaAbierta": 24681.53,
+        "estructuraComercial": 24681.53,
+        "aFacturar": 20393.64,
+        "aPagar": 20097.46,
+        "cuadrado": true
+      }
+    }
+  ],
+  "sinDatoDeVida": [
+    {
+      "name": "Casa Elisa",
+      "aPagarPeriodo": 0.0,
+      "motivo": "El libro trae tres hojas de Casa Elisa con 73, 75 y 76 unidades y totales distintos. No se elige una a criterio propio: el valor vendido y el 5% acumulado del proyecto quedan sin publicar hasta que Contabilidad indique cuál hoja es la vigente. La planilla de pago del período sí es firme y es cero."
+    }
+  ],
+  "assumption": {
+    "decision": "El monto del período se lee de la fila de totales de cada hoja, no de una re-suma de las columnas: debajo de esa fila el libro repite filas de unidades que no entran en el total de la hoja. Los tres proyectos cuadran exactamente contra la columna PUERTA de 'Resumen Ahorros' (Boulevard 5 Q69,533.86 · Benestare Q65,945.39 · Bosque Las Tapias Q24,681.53), que es la verificación de que la fila leída es la correcta.",
+    "ifChanged": "Para el corte siguiente: cambiar SOURCE y PERIODO en src/app/pabi/contable/scripts/extract-comisiones.py y volver a correrlo. Si Contabilidad confirma cuál hoja de Casa Elisa es la vigente, agregarla a PROJECT_SHEETS y quitarla de sinDatoDeVida."
+  }
+}

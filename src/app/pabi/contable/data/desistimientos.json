@@ -1,0 +1,11 @@
+{
+  "status": "ready",
+  "updatedAt": null,
+  "source": "/api/hud/ventas — mismo dato en vivo que usa /valorizacion, no un archivo estático",
+  "rows": {
+    "1": { "kind": "live-desistimientos" },
+    "2": { "kind": "live-desistimientos" },
+    "3": { "kind": "live-desistimientos" },
+    "4": { "kind": "live-desistimientos" }
+  }
+}

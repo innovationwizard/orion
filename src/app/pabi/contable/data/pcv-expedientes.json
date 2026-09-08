@@ -1,0 +1,8 @@
+{
+  "status": "ready",
+  "updatedAt": "2026-08-05",
+  "source": "/api/creditos/pipeline — mismo dato en vivo que usa /creditos/pipeline (Expedientes), no un archivo estático",
+  "rows": {
+    "1": { "kind": "live-expedientes" }
+  }
+}
