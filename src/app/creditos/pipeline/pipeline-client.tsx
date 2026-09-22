@@ -1,12 +1,18 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import SiteNav from "@/components/site-nav";
 import KpiCard from "@/components/kpi-card";
+import Tabs from "@/components/tabs";
 import HorizontalBarChart, { type BarDatum } from "@/components/charts/horizontal-bar-chart";
 import type { CreditosPipelinePayload, PipelineDeal } from "@/app/api/creditos/pipeline/route";
 import { useScrollToHash } from "@/hooks/use-scroll-to-hash";
+import { useRole } from "@/hooks/use-role";
+import OperacionPanel from "./nuevo-expediente";
+
+/** Roles that work expedientes. Presentation only — every API route checks again. */
+const ROLES_OPERACION = new Set(["creditos", "master"]);
 
 const nf = new Intl.NumberFormat("es-GT");
 const qf = new Intl.NumberFormat("es-GT", { maximumFractionDigits: 0 });
@@ -106,6 +112,9 @@ function Fecha({ value }: { value: string | null }) {
 
 export default function PipelineClient() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const role = useRole();
   const [data, setData] = useState<CreditosPipelinePayload | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [proyecto, setProyecto] = useState<string>(searchParams.get("proyecto") ?? "todos");
@@ -113,7 +122,24 @@ export default function PipelineClient() {
   const [etapa, setEtapa] = useState<string>(searchParams.get("etapa") ?? "todas");
   const [estado, setEstado] = useState<string>(searchParams.get("estado") ?? "open");
   const [search, setSearch] = useState(searchParams.get("q") ?? "");
+  const [tab, setTab] = useState<string>(
+    searchParams.get("tab") === "operacion" ? "operacion" : "resumen",
+  );
   useScrollToHash(data != null);
+
+  const puedeOperar = role != null && ROLES_OPERACION.has(role);
+  const activeTab = puedeOperar ? tab : "resumen";
+
+  /**
+   * The tab travels in the URL, like the expediente id beside it. Without this, a
+   * reload lands on Resumen and the expediente the panel is still holding looks lost.
+   */
+  function cambiarTab(value: string) {
+    setTab(value);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", value);
+    router.replace(`${pathname}?${params}`, { scroll: false });
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -248,29 +274,38 @@ export default function PipelineClient() {
   const alcance = estado === "todos" ? "todos los tratos" : (ESTADO_LABELS[estado] ?? estado).toLowerCase();
   const alcanceProyecto = proyecto === "todos" ? "todos los proyectos" : proyecto;
 
-  if (error) {
-    return (
-      <div>
-        <SiteNav />
-        <div className="p-6 text-danger text-sm">No se pudo cargar el pipeline: {error}</div>
-      </div>
-    );
-  }
-
   return (
     <div>
       <SiteNav />
       <div className="p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[1600px] mx-auto">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">Pipeline de Expedientes de Crédito</h1>
-          <p className="text-sm text-muted mt-1">
+          {activeTab === "resumen" ? <p className="text-sm text-muted mt-1">
             Pipedrive al {data?.boundary ?? "…"} — corte de la extracción, no la fecha del archivo
             {data?.fechaExport ? ` (exportado el ${data.fechaExport})` : ""}. Se actualiza colocando
             el nuevo export y regenerando con scripts/extract-creditos-pipedrive.py
-          </p>
+          </p> : null}
         </div>
 
-        {!data ? (
+        {puedeOperar ? (
+          <Tabs
+            tabs={[
+              { id: "resumen", label: "Resumen" },
+              { id: "operacion", label: "Operación" },
+            ]}
+            value={activeTab}
+            onChange={cambiarTab}
+          />
+        ) : null}
+
+        {puedeOperar ? <div hidden={activeTab !== "operacion"}><OperacionPanel /></div> : null}
+
+        {activeTab === "resumen" && error ? (
+          <p role="alert" className="text-danger text-sm">No se pudo cargar el pipeline: {error}</p>
+        ) : null}
+
+        {activeTab === "resumen" && !error &&
+          (!data ? (
           <div className="grid gap-3 animate-pulse">
             <div className="h-24 rounded-2xl bg-border/50" />
             <div className="h-64 rounded-2xl bg-border/50" />
@@ -711,7 +746,7 @@ export default function PipelineClient() {
               Pipedrive.
             </p>
           </>
-        )}
+          ))}
       </div>
     </div>
   );

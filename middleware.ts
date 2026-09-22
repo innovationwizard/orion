@@ -93,6 +93,7 @@ export async function middleware(request: NextRequest) {
 
     // Redirect logged-in users from /login to their home page
     if (isLoginRoute) {
+      if (role === "creditos") return redirectTo("/creditos/pipeline");
       if (role === "ventas") return redirectTo("/ventas/dashboard");
       if (role === "entregas_viewer" || role === "entregas_editor") return redirectTo("/entregas");
       if (role && [...ADMIN_PAGE_ROLES, ...DATA_PAGE_ROLES, "marketing"].includes(role)) {
@@ -123,6 +124,10 @@ export async function middleware(request: NextRequest) {
       ];
       if (!allowedPrefixes.some((prefix) => pathname.startsWith(prefix))) {
         return redirectTo("/ventas/dashboard");
+      }
+    } else if (role === "creditos") {
+      if (pathname !== "/creditos/pipeline" && !pathname.startsWith("/auth/")) {
+        return redirectTo("/creditos/pipeline");
       }
     } else if (role === "entregas_viewer" || role === "entregas_editor") {
       // Single-purpose roles: the entregas board and nothing else.

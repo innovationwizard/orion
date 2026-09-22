@@ -42,6 +42,7 @@ export async function requireAuth() {
 
 export type Role =
   | "master"
+  | "creditos"
   | "gerencia"
   | "financiero"
   | "contabilidad"
@@ -52,11 +53,12 @@ export type Role =
   | "entregas_editor"
   | "torredecontrol";
 
-// Note: entregas_viewer and entregas_editor are single-purpose (access to
-// /entregas and nothing else), so their levels carry no hierarchical meaning —
+// Note: creditos, entregas_viewer and entregas_editor are single-purpose roles,
+// so their levels carry no hierarchical meaning —
 // they are listed only to satisfy the Record<Role, number> contract. Never
 // grant access by comparing against them.
 const ROLE_LEVEL: Record<Role, number> = {
+  creditos: 15,
   ventas: 10,
   entregas_viewer: 15,
   entregas_editor: 16,

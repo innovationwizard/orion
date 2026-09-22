@@ -1,0 +1,251 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pai.app/spec/schema.json",
+  "title": "PAI APP · definición de modelo",
+  "description": "The shape of one model definition file. A definition describes STRUCTURE only — fields, constraints, indexes and access. Behaviour (the state machine, the checklist completeness rule, the Entregas gate) lives in the domain service, and the two mirror triggers are hand-written SQL beside the generated file. From these definitions the generator emits the Supabase SQL (scripts/migrations/) and the module's TypeScript types; the same definitions can later emit an Odoo addon. Selection values and value maps are shared in selections.json and referenced by name, so the same list is never written twice. See resources/database_architecture.md §5 and resources/guide.md §14.",
+  "type": "object",
+  "required": ["model", "label_es", "fields", "access"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Relative path to this file, so editors validate the definition as it is written."
+    },
+    "model": {
+      "type": "string",
+      "pattern": "^pai(\\.[a-z][a-z0-9_]*)+$",
+      "description": "Dotted model name, e.g. pai.credito.expediente. The table name is this name with dots turned into underscores — it is derived, never written by hand."
+    },
+    "label_es": {
+      "type": "string",
+      "description": "What a person calls one record of this model, in Spanish and in the singular."
+    },
+    "description": {
+      "type": "string",
+      "description": "What the model is for. Becomes the table's COMMENT ON, in Spanish."
+    },
+    "log_access": {
+      "type": "boolean",
+      "default": true,
+      "description": "Adds create_uid, create_date, write_uid and write_date. Odoo adds these to every model; in PAI APP mode the repository sets them and a trigger touches write_date. create_uid and write_uid point at auth.users and BLOCK the deletion of an account that has touched a row — what every existing migration in this repository already does. Accounts here are disabled or have their role changed, never deleted (decided 2026-09-21)."
+    },
+    "soft_delete": {
+      "type": "boolean",
+      "default": false,
+      "description": "Adds active (default true), deleted_date and deleted_by_id, plus the CHECK that keeps the three coherent. deleted_by_id blocks the deletion of that account, like the log_access columns. Default reads filter active IS TRUE. Nothing in this module is ever hard-deleted."
+    },
+    "order_by": {
+      "type": "string",
+      "description": "Default ordering for reads, as a SQL fragment, e.g. 'sequence, id'."
+    },
+    "fields": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": { "pattern": "^[a-z][a-z0-9_]*$" },
+      "additionalProperties": { "$ref": "#/$defs/field" },
+      "description": "The model's own fields. id and the columns added by log_access and soft_delete are implicit — never declare them here."
+    },
+    "constraints": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/constraint" },
+      "description": "Rules the database refuses on its own, in both backends. Their names are the same on both sides so the two databases can be compared object for object."
+    },
+    "access": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": { "pattern": "^[a-z][a-z0-9_]*$" },
+      "additionalProperties": { "$ref": "#/$defs/access" },
+      "description": "What each role may do, keyed by the role name jwt_role() returns. A role that is absent has no access at all. Emits the RLS policies in PAI APP mode, and ir.model.access in Odoo mode."
+    },
+    "seed": {
+      "type": "object",
+      "required": ["file", "key"],
+      "additionalProperties": false,
+      "description": "Reference data loaded with the migration and kept in step with it.",
+      "properties": {
+        "file": {
+          "type": "string",
+          "description": "CSV relative to orion/spec/."
+        },
+        "key": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "description": "Columns that identify a row, so loading the seed twice updates rather than duplicates."
+        }
+      }
+    }
+  },
+  "$defs": {
+    "field": {
+      "type": "object",
+      "required": ["type", "label_es"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": ["char", "text", "label", "boolean", "integer", "date", "datetime", "json", "selection", "many2one", "one2many"],
+          "description": "char/text: plain strings. label: text shown on screen, in Spanish (plain text in PAI APP mode; a translatable field in Odoo). datetime: stored as timestamptz in PAI APP mode and as UTC without a time zone in Odoo — the same instant. selection: a fixed list of values, stored as text with a CHECK, never a PostgreSQL enum type. one2many: no column; navigation only."
+        },
+        "label_es": {
+          "type": "string",
+          "description": "What the field is called on screen, in Spanish."
+        },
+        "description": {
+          "type": "string",
+          "description": "Becomes the column's COMMENT ON, in Spanish."
+        },
+        "required": { "type": "boolean", "default": false },
+        "index": { "type": "boolean", "default": false },
+        "default": {
+          "description": "Literal default. For a selection, one of its values."
+        },
+        "immutable": {
+          "type": "boolean",
+          "default": false,
+          "description": "The value is set once and never changes. The service refuses to change it and, in PAI APP mode, a hand-written trigger refuses it too; the generated types mark it read-only."
+        },
+        "values_ref": {
+          "type": "string",
+          "description": "selection only: the name of a list in selections.json."
+        },
+        "values": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["value", "label_es"],
+            "additionalProperties": false,
+            "properties": {
+              "value": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+              "label_es": { "type": "string" }
+            }
+          },
+          "description": "selection only: values used by this model alone. A list shared by more than one model belongs in selections.json instead."
+        },
+        "target": {
+          "$ref": "#/$defs/target",
+          "description": "many2one only: what the field points at."
+        },
+        "on_delete": {
+          "enum": ["restrict", "cascade", "set_null"],
+          "default": "restrict",
+          "description": "many2one only: what happens to this row when the row it points at is deleted."
+        },
+        "target_model": {
+          "type": "string",
+          "description": "one2many only: the model whose rows point back here."
+        },
+        "inverse": {
+          "type": "string",
+          "description": "one2many only: the field on that model that points here."
+        },
+        "related": {
+          "type": "string",
+          "description": "Value copied from another record and stored, written as <many2one field>.<field>. In Odoo a stored related field; in PAI APP mode a trigger fills it on insert."
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "selection" } }, "required": ["type"] },
+          "then": {
+            "oneOf": [
+              { "required": ["values_ref"] },
+              { "required": ["values"] }
+            ]
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "many2one" } }, "required": ["type"] },
+          "then": { "required": ["target"] }
+        },
+        {
+          "if": { "properties": { "type": { "const": "one2many" } }, "required": ["type"] },
+          "then": { "required": ["target_model", "inverse"] }
+        }
+      ]
+    },
+    "target": {
+      "type": "object",
+      "required": ["pai_app"],
+      "additionalProperties": false,
+      "description": "Where a many2one points, per backend. The two differ because this module points at tables the rest of the app already owns: in PAI APP mode those are the app's own tables, named exactly as they are today; in Odoo mode the matching models belong to the Odoo instance built in parallel, and are named here only so the definition is complete.",
+      "properties": {
+        "pai_app": {
+          "type": "string",
+          "description": "Table in the PAI APP database, e.g. reservations, rv_units, projects, auth.users, or another table of this module."
+        },
+        "odoo": {
+          "type": "string",
+          "description": "Odoo model, e.g. res.company or res.users. Unknown for models that belong to the parallel Odoo instance; leave it out rather than guessing."
+        }
+      }
+    },
+    "constraint": {
+      "type": "object",
+      "required": ["name", "kind", "message_es"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "description": "Suffix of the object's name. The generator prefixes the table, giving e.g. pai_credito_expediente_reservation_active_uniq."
+        },
+        "kind": {
+          "enum": ["check", "unique", "unique_index", "selection_pair"],
+          "description": "check: a boolean SQL expression. unique: a UNIQUE constraint. unique_index: a unique index, which may cover part of the table. selection_pair: a child selection must belong to its parent's value, built from a map in selections.json so the rule and the values cannot drift apart."
+        },
+        "message_es": {
+          "type": "string",
+          "description": "What the person sees when the database refuses the row, in Spanish."
+        },
+        "sql": {
+          "type": "string",
+          "description": "check only: the expression inside CHECK (...). PostgreSQL in both backends."
+        },
+        "columns": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "description": "unique and unique_index only."
+        },
+        "where": {
+          "type": "string",
+          "description": "unique_index only: limits the index to part of the table, e.g. active IS TRUE."
+        },
+        "parent": { "type": "string", "description": "selection_pair only: the field holding the parent value." },
+        "child": { "type": "string", "description": "selection_pair only: the field that must belong to it." },
+        "map_ref": { "type": "string", "description": "selection_pair only: the map in selections.json listing which children belong to each parent." }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "const": "check" } }, "required": ["kind"] },
+          "then": { "required": ["sql"] }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "unique" } }, "required": ["kind"] },
+          "then": { "required": ["columns"] }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "unique_index" } }, "required": ["kind"] },
+          "then": { "required": ["columns"] }
+        },
+        {
+          "if": { "properties": { "kind": { "const": "selection_pair" } }, "required": ["kind"] },
+          "then": { "required": ["parent", "child", "map_ref"] }
+        }
+      ]
+    },
+    "access": {
+      "type": "object",
+      "required": ["read", "create", "write", "delete"],
+      "additionalProperties": false,
+      "description": "delete means removing the row from the database. It is false everywhere in this module: an expediente is retired with soft_delete, and the history is never touched at all.",
+      "properties": {
+        "read": { "type": "boolean" },
+        "create": { "type": "boolean" },
+        "write": { "type": "boolean" },
+        "delete": { "type": "boolean" }
+      }
+    }
+  }
+}

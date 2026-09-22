@@ -1,0 +1,96 @@
+{
+  "$schema": "./schema.json",
+  "model": "pai.credito.expediente.evento",
+  "label_es": "Evento del historial",
+  "description": "El historial del expediente: qué pasó, quién lo hizo y cuándo. Solo admite inserción, para todos los roles, incluido el equipo de Créditos. Sobrevive a la eliminación lógica del expediente e impide su borrado físico. Cada evento se escribe dentro de la misma transacción que el cambio que lo produjo: si el historial falla, el cambio no se confirma. Es además el único lugar del que puede calcularse el tiempo en cada etapa.",
+  "log_access": true,
+  "soft_delete": false,
+  "order_by": "create_date, id",
+  "fields": {
+    "expediente_id": {
+      "type": "many2one",
+      "label_es": "Expediente",
+      "description": "Nunca se borra con su expediente: por eso restrict y no cascade.",
+      "target": { "pai_app": "pai_credito_expediente" },
+      "required": true,
+      "index": true,
+      "on_delete": "restrict",
+      "immutable": true
+    },
+    "company_id": {
+      "type": "many2one",
+      "label_es": "Proyecto",
+      "description": "El proyecto del expediente, guardado en la fila.",
+      "target": { "pai_app": "projects", "odoo": "res.company" },
+      "related": "expediente_id.company_id",
+      "index": true
+    },
+    "action": {
+      "type": "selection",
+      "label_es": "Acción",
+      "values_ref": "event_action",
+      "required": true,
+      "immutable": true
+    },
+    "from_state": {
+      "type": "selection",
+      "label_es": "Estado anterior",
+      "description": "Solo en las transiciones.",
+      "values_ref": "expediente_state",
+      "immutable": true
+    },
+    "to_state": {
+      "type": "selection",
+      "label_es": "Estado nuevo",
+      "description": "Solo en las transiciones.",
+      "values_ref": "expediente_state",
+      "immutable": true
+    },
+    "desistido_reason": {
+      "type": "selection",
+      "label_es": "Motivo de desistimiento",
+      "description": "Cuando la transición es a desistido.",
+      "values_ref": "desistido_reason",
+      "immutable": true
+    },
+    "detail": {
+      "type": "json",
+      "label_es": "Detalle",
+      "description": "Qué cambió: el documento que se marcó, el valor anterior y el nuevo.",
+      "immutable": true
+    },
+    "note": {
+      "type": "text",
+      "label_es": "Nota",
+      "description": "Texto libre. El equipo lo necesita para situaciones que la máquina de estados no expresa, como un cliente que quiere pasarse a contado.",
+      "immutable": true
+    },
+    "actor_id": {
+      "type": "many2one",
+      "label_es": "Quién",
+      "description": "Explícito, y no create_uid, para que el historial se lea igual en las dos bases.",
+      "target": { "pai_app": "auth.users", "odoo": "res.users" },
+      "required": true,
+      "on_delete": "restrict",
+      "immutable": true
+    }
+  },
+  "constraints": [
+    {
+      "name": "transition_has_states",
+      "kind": "check",
+      "sql": "action <> 'transicion' OR (from_state IS NOT NULL AND to_state IS NOT NULL)",
+      "message_es": "Una transición registra el estado anterior y el nuevo."
+    },
+    {
+      "name": "reason_requires_desistido",
+      "kind": "check",
+      "sql": "desistido_reason IS NULL OR to_state = 'desistido'",
+      "message_es": "El motivo de desistimiento solo acompaña a una transición a desistido."
+    }
+  ],
+  "access": {
+    "creditos": { "read": true, "create": true, "write": false, "delete": false },
+    "master": { "read": true, "create": true, "write": false, "delete": false }
+  }
+}

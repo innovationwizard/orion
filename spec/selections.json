@@ -1,0 +1,102 @@
+{
+  "description": "Value lists and value maps shared by the module's definitions. A list lives here when more than one model uses it, so the same values are never written twice. Identifiers are stable lowercase snake_case and are in Spanish; the labels are what people see. The 19 states follow the team's own step catalogue: the apartment is delivered before the closing steps (SDD v5 §8.1).",
+  "selections": {
+    "credit_type": {
+      "label_es": "Tipo de crédito",
+      "values": [
+        { "value": "contado", "label_es": "Contado" },
+        { "value": "directo", "label_es": "Crédito directo" },
+        { "value": "fha", "label_es": "FHA" }
+      ]
+    },
+    "credit_subtype": {
+      "label_es": "Subtipo de crédito",
+      "description": "Los ocho subtipos con checklist propio. Crédito Directo no tiene Extranjero: el banco no presta a quien no reside en el país.",
+      "values": [
+        { "value": "contado_individual", "label_es": "Contado · Persona individual" },
+        { "value": "contado_juridica", "label_es": "Contado · Persona jurídica" },
+        { "value": "directo_negocio_propio", "label_es": "Directo · Negocio propio" },
+        { "value": "directo_relacion_dependencia", "label_es": "Directo · Relación de dependencia" },
+        { "value": "directo_servicios_profesionales", "label_es": "Directo · Servicios profesionales" },
+        { "value": "fha_negocio_servicios", "label_es": "FHA · Negocio propio / Servicios profesionales" },
+        { "value": "fha_relacion_dependencia", "label_es": "FHA · Relación de dependencia" },
+        { "value": "fha_extranjero", "label_es": "FHA · Guatemalteco en el extranjero" }
+      ]
+    },
+    "expediente_state": {
+      "label_es": "Estado del expediente",
+      "description": "Los 19 estados, en el orden real del proceso. Autorización de contado es solo de Contado; análisis, suspensión, reanálisis, expediente técnico, aprobación final, desembolso y liquidación son solo de Directo y FHA. Archivado y desistido son terminales.",
+      "values": [
+        { "value": "en_armado", "label_es": "En armado" },
+        { "value": "expediente_completo", "label_es": "Expediente completo" },
+        { "value": "autorizacion_contado", "label_es": "Autorización de ventas al contado" },
+        { "value": "en_analisis", "label_es": "En análisis" },
+        { "value": "suspendido", "label_es": "Suspendido" },
+        { "value": "en_reanalisis", "label_es": "Re-análisis" },
+        { "value": "aprobado", "label_es": "Aprobado" },
+        { "value": "tecnico_validado", "label_es": "Expediente técnico" },
+        { "value": "aprobacion_final", "label_es": "Aprobación final" },
+        { "value": "en_escrituracion", "label_es": "Escrituración en proceso" },
+        { "value": "escrituracion_completada", "label_es": "Escrituración completada" },
+        { "value": "entregado", "label_es": "Entregado" },
+        { "value": "firma_completada", "label_es": "Recaudación de firmas" },
+        { "value": "impuestos_pagados", "label_es": "Pago de impuestos" },
+        { "value": "registrado_rgp", "label_es": "Ingreso al registro" },
+        { "value": "desembolso_parcial", "label_es": "Desembolso" },
+        { "value": "liquidado", "label_es": "Liquidación" },
+        { "value": "archivado", "label_es": "Archivado" },
+        { "value": "desistido", "label_es": "Desistido" }
+      ]
+    },
+    "checklist_item_state": {
+      "label_es": "Estado del documento",
+      "values": [
+        { "value": "pendiente", "label_es": "Pendiente" },
+        { "value": "recibido", "label_es": "Recibido" },
+        { "value": "na", "label_es": "No aplica" }
+      ]
+    },
+    "event_action": {
+      "label_es": "Acción",
+      "description": "Qué ocurrió. La nota no cambia el estado; la edición solo alcanza a la categoría de cumplimiento; la eliminación es lógica.",
+      "values": [
+        { "value": "creacion", "label_es": "Creación" },
+        { "value": "transicion", "label_es": "Transición" },
+        { "value": "marca_checklist", "label_es": "Marca de checklist" },
+        { "value": "edicion", "label_es": "Edición" },
+        { "value": "nota", "label_es": "Nota" },
+        { "value": "eliminacion", "label_es": "Eliminación" }
+      ]
+    },
+    "desistido_reason": {
+      "label_es": "Motivo de desistimiento",
+      "description": "Cinco motivos, sin uno nuevo para el cambio de tipo de compra: ese caso se registra como «el equipo desiste» con una nota.",
+      "values": [
+        { "value": "cliente_no_interesado", "label_es": "El cliente ya no está interesado" },
+        { "value": "cliente_no_puede_pagar", "label_es": "El cliente no puede pagar" },
+        { "value": "cliente_sin_respuesta", "label_es": "El cliente no responde" },
+        { "value": "equipo_desiste", "label_es": "El equipo desiste" },
+        { "value": "banco_rechazo_definitivo", "label_es": "Rechazo definitivo del banco" }
+      ]
+    },
+    "cumplimiento_categoria": {
+      "label_es": "Categoría de cumplimiento",
+      "description": "Espejo manual de Cumplimiento. Este módulo no escribe ni dispara nada en ese proceso.",
+      "values": [
+        { "value": "normal", "label_es": "Normal" },
+        { "value": "pep", "label_es": "PEP" },
+        { "value": "cpe", "label_es": "CPE" }
+      ]
+    }
+  },
+  "maps": {
+    "subtypes_by_type": {
+      "description": "Qué subtipos pertenecen a cada tipo de crédito. De aquí sale la restricción que la base impone, de modo que los valores y la regla no puedan separarse.",
+      "values": {
+        "contado": ["contado_individual", "contado_juridica"],
+        "directo": ["directo_negocio_propio", "directo_relacion_dependencia", "directo_servicios_profesionales"],
+        "fha": ["fha_negocio_servicios", "fha_relacion_dependencia", "fha_extranjero"]
+      }
+    }
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "$schema": "./schema.json",
+  "model": "pai.credito.checklist.item",
+  "label_es": "Documento del checklist",
+  "description": "Un documento que este expediente requiere. Es una copia congelada de la fila del catálogo hecha al crear el expediente: editar el catálogo después no altera los documentos ni las marcas de un expediente ya abierto. El equipo también puede agregar aquí un documento que el banco pidió y que el catálogo no lista.",
+  "log_access": true,
+  "soft_delete": false,
+  "order_by": "sequence, id",
+  "fields": {
+    "expediente_id": {
+      "type": "many2one",
+      "label_es": "Expediente",
+      "target": { "pai_app": "pai_credito_expediente" },
+      "required": true,
+      "index": true,
+      "on_delete": "cascade",
+      "immutable": true
+    },
+    "company_id": {
+      "type": "many2one",
+      "label_es": "Proyecto",
+      "description": "El proyecto del expediente, guardado en la fila.",
+      "target": { "pai_app": "projects", "odoo": "res.company" },
+      "related": "expediente_id.company_id",
+      "index": true
+    },
+    "document_key": {
+      "type": "char",
+      "label_es": "Clave del documento",
+      "required": true
+    },
+    "name": {
+      "type": "label",
+      "label_es": "Documento",
+      "description": "Copiado del catálogo al crear el expediente.",
+      "required": true
+    },
+    "condition": {
+      "type": "label",
+      "label_es": "Condición",
+      "description": "Copiada del catálogo."
+    },
+    "is_conditional": {
+      "type": "boolean",
+      "label_es": "Condicional",
+      "description": "Copiado del catálogo: el documento solo aplica en ciertos casos («si aplica», «si co-solicitante»).",
+      "default": false
+    },
+    "is_required": {
+      "type": "boolean",
+      "label_es": "Obligatorio para este caso",
+      "description": "Si este documento debe estar recibido o marcado no aplica antes de declarar el expediente completo. Al copiar el catálogo vale lo contrario de condicional; al agregar un documento a mano lo elige quien lo agrega. Es el único campo que la regla de completitud consulta.",
+      "default": true
+    },
+    "is_extra": {
+      "type": "boolean",
+      "label_es": "Agregado a mano",
+      "description": "Documento que el equipo agregó solo a este expediente, porque el banco lo pidió. Deja constancia de su origen; que detenga o no el avance lo dice obligatorio para este caso.",
+      "default": false
+    },
+    "sequence": {
+      "type": "integer",
+      "label_es": "Orden",
+      "default": 10
+    },
+    "state": {
+      "type": "selection",
+      "label_es": "Estado",
+      "description": "Se marca al recibir el documento, y la marca puede deshacerse: equivocarse de fila es un error corriente.",
+      "values_ref": "checklist_item_state",
+      "required": true,
+      "default": "pendiente"
+    },
+    "received_date": {
+      "type": "datetime",
+      "label_es": "Recibido el"
+    },
+    "marked_by_id": {
+      "type": "many2one",
+      "label_es": "Marcado por",
+      "target": { "pai_app": "auth.users", "odoo": "res.users" },
+      "on_delete": "restrict"
+    }
+  },
+  "constraints": [
+    {
+      "name": "expediente_document_uniq",
+      "kind": "unique",
+      "columns": ["expediente_id", "document_key"],
+      "message_es": "Ese documento ya está en el checklist del expediente."
+    }
+  ],
+  "access": {
+    "creditos": { "read": true, "create": true, "write": true, "delete": false },
+    "master": { "read": true, "create": true, "write": true, "delete": false }
+  }
+}

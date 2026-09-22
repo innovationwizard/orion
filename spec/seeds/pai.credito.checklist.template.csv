@@ -1,0 +1,89 @@
+credit_type,credit_subtype,document_key,name,condition,is_conditional,sequence
+directo,directo_negocio_propio,constancia_ingresos,Constancia de ingresos de perito contador,Original,false,10
+directo,directo_negocio_propio,estados_financieros,Estados financieros,Últimos 2 o 3 años,false,20
+directo,directo_negocio_propio,estados_cuenta,Estados de cuenta bancarios,Últimos 3 meses,false,30
+directo,directo_negocio_propio,dpi,DPI,,false,40
+directo,directo_negocio_propio,rtu,RTU,,false,50
+directo,directo_negocio_propio,recibo_servicios,Recibo de servicios,,false,60
+directo,directo_negocio_propio,patente_comercio,Patente de comercio,,false,70
+directo,directo_negocio_propio,flujo_efectivo,Flujo de efectivo,Si aplica y si el banco lo solicita,true,80
+directo,directo_negocio_propio,recopilacion_datos,Documento de recopilación de datos,,false,90
+directo,directo_negocio_propio,formularios_banco,Formularios del banco,Los llena el proyecto y se envían al cliente para firma,false,100
+directo,directo_negocio_propio,documento_parentesco,Documento de parentesco,"Si participa en el crédito con otra persona: certificado de matrimonio, partida de nacimiento, acta de compromiso",true,110
+directo,directo_relacion_dependencia,constancia_ingresos,Constancia de ingresos membretada,Original,false,10
+directo,directo_relacion_dependencia,estados_cuenta,Estados de cuenta bancarios,Últimos 3 meses,false,20
+directo,directo_relacion_dependencia,dpi,DPI,,false,30
+directo,directo_relacion_dependencia,rtu,RTU,,false,40
+directo,directo_relacion_dependencia,recibo_servicios,Recibo de servicios,,false,50
+directo,directo_relacion_dependencia,recopilacion_datos,Documento de recopilación de datos,,false,60
+directo,directo_relacion_dependencia,formularios_banco,Formularios del banco,Los llena el proyecto y se envían al cliente para firma,false,70
+directo,directo_relacion_dependencia,documento_parentesco,Documento de parentesco,"Si participa en el crédito con otra persona: certificado de matrimonio, partida de nacimiento, acta de compromiso",true,80
+directo,directo_servicios_profesionales,constancia_ingresos,Constancia de ingresos de perito contador,Original,false,10
+directo,directo_servicios_profesionales,facturas,Facturas,Últimos 3 meses,false,20
+directo,directo_servicios_profesionales,declaraciones_sat,Declaraciones de impuestos ante SAT,Últimos 3 meses,false,30
+directo,directo_servicios_profesionales,estados_cuenta,Estados de cuenta bancarios,Últimos 3 meses,false,40
+directo,directo_servicios_profesionales,dpi,DPI,,false,50
+directo,directo_servicios_profesionales,rtu,RTU,,false,60
+directo,directo_servicios_profesionales,recibo_servicios,Recibo de servicios,,false,70
+directo,directo_servicios_profesionales,recopilacion_datos,Documento de recopilación de datos,,false,80
+directo,directo_servicios_profesionales,formularios_banco,Formularios del banco,Los llena el proyecto y se envían al cliente para firma,false,90
+directo,directo_servicios_profesionales,documento_parentesco,Documento de parentesco,"Si participa en el crédito con otra persona: certificado de matrimonio, partida de nacimiento, acta de compromiso",true,100
+fha,fha_negocio_servicios,constancia_ingresos,Constancia de ingresos de perito contador,Original,false,10
+fha,fha_negocio_servicios,facturas,Facturas,Últimos 3 meses; solo servicios profesionales,true,20
+fha,fha_negocio_servicios,declaraciones_sat,Declaraciones de impuestos ante SAT (IVA e ISR),Últimos 3 meses,false,30
+fha,fha_negocio_servicios,patente_comercio,Patente de comercio,Si aplica,true,40
+fha,fha_negocio_servicios,estados_cuenta,Estados de cuenta bancarios,Últimos 3 meses,false,50
+fha,fha_negocio_servicios,dpi,DPI,,false,60
+fha,fha_negocio_servicios,rtu,RTU,,false,70
+fha,fha_negocio_servicios,recibo_servicios,Recibo de servicios,,false,80
+fha,fha_negocio_servicios,recopilacion_datos,Documento de recopilación de datos,,false,90
+fha,fha_negocio_servicios,formularios_fha,Formularios FHA,Los llena el proyecto y se envían al cliente para firma,false,100
+fha,fha_negocio_servicios,formularios_banco,Formularios del banco,Los llena el proyecto y se envían al cliente para firma,false,110
+fha,fha_negocio_servicios,documento_parentesco,Documento de parentesco,"Si participa en el crédito con otra persona: certificado de matrimonio, partida de nacimiento, acta de compromiso",true,120
+fha,fha_relacion_dependencia,constancia_ingresos,Constancia de ingresos membretada,Original; mínimo 1 año de estabilidad laboral,false,10
+fha,fha_relacion_dependencia,carta_continuidad_laboral,Carta de continuidad laboral,Si no tiene 1 año de estabilidad laboral,true,20
+fha,fha_relacion_dependencia,estados_cuenta,Estados de cuenta bancarios,Últimos 3 meses,false,30
+fha,fha_relacion_dependencia,dpi,DPI,,false,40
+fha,fha_relacion_dependencia,rtu,RTU,,false,50
+fha,fha_relacion_dependencia,recibo_servicios,Recibo de servicios,,false,60
+fha,fha_relacion_dependencia,recopilacion_datos,Documento de recopilación de datos,,false,70
+fha,fha_relacion_dependencia,formularios_fha,Formularios FHA,Los llena el proyecto y se envían al cliente para firma,false,80
+fha,fha_relacion_dependencia,formularios_banco,Formularios del banco,Los llena el proyecto y se envían al cliente para firma,false,90
+fha,fha_relacion_dependencia,documento_parentesco,Documento de parentesco,"Si participa en el crédito con otra persona: certificado de matrimonio, partida de nacimiento, acta de compromiso",true,100
+fha,fha_extranjero,dpi,DPI del solicitante,"Copia certificada por notario guatemalteco, con pases de ley o apostilla",false,10
+fha,fha_extranjero,rtu,RTU del solicitante,"Copia certificada por notario guatemalteco, con pases de ley o apostilla",false,20
+fha,fha_extranjero,recibo_servicios_mandatario,Recibo de servicios del mandatario,"Copia certificada por notario guatemalteco, con pases de ley o apostilla",false,30
+fha,fha_extranjero,dpi_mandatario,DPI del mandatario,"Copia certificada por notario guatemalteco, con pases de ley o apostilla",false,40
+fha,fha_extranjero,rtu_mandatario,RTU del mandatario,"Copia certificada por notario guatemalteco, con pases de ley o apostilla",false,50
+fha,fha_extranjero,constancia_ingresos,Constancia de ingresos,"Original, en papel membretado de la empresa o emitida por el contador si tiene negocio propio",false,60
+fha,fha_extranjero,traduccion_jurada,Traducción jurada de la constancia de ingresos,"Certificada por notario guatemalteco, con pases de ley o apostilla",false,70
+fha,fha_extranjero,estados_cuenta,Estados de cuenta bancarios,Últimos 3 meses,false,80
+fha,fha_extranjero,declaracion_isr_extranjero,Declaración anual de impuestos sobre la renta y sus anexos (TAXES),De su país de residencia; últimos 2 años y lo parcial del año en curso,false,90
+fha,fha_extranjero,mandato_judicial,Mandato General Judicial con Representación y Cláusula Especial,"Que permita comprar, hipotecar y ceder en pago; en español",false,100
+contado,contado_individual,estados_cuenta,Estados de cuenta,Últimos 6 meses,false,10
+contado,contado_individual,dpi,DPI,Actualizado,false,20
+contado,contado_individual,rtu,RTU,Actualizado,false,30
+contado,contado_individual,recibo_servicios,Recibo de servicios,,false,40
+contado,contado_individual,constancia_ingresos,Constancia de ingresos,Si trabaja en relación de dependencia,true,50
+contado,contado_individual,certificacion_contador,Certificación de contador,Si tiene negocio propio o presta servicios profesionales,true,60
+contado,contado_individual,estados_financieros,Estados financieros,1 año y lo parcial del año en curso; si tiene negocio propio,true,70
+contado,contado_individual,facturas_declaraciones_sat,Facturas por servicios y declaraciones ante SAT,Últimos 6 meses; si presta servicios profesionales o tiene negocio propio,true,80
+contado,contado_individual,respaldo_pago_contado,Documento que respalde el pago de contado,,false,90
+contado,contado_individual,escritura_constitucion,Escritura de constitución de sociedad,Si el apartamento se escritura a nombre de una sociedad,true,100
+contado,contado_individual,nombramiento_representante,Nombramiento de representante legal,Si el apartamento se escritura a nombre de una sociedad,true,110
+contado,contado_individual,patente_sociedad,Patente de comercio y de sociedad,Si se escritura a nombre de una sociedad y si la posee,true,120
+contado,contado_individual,rtu_sociedad,RTU de la sociedad,Si el apartamento se escritura a nombre de una sociedad,true,130
+contado,contado_individual,dpi_representante,DPI del representante legal,Si el apartamento se escritura a nombre de una sociedad,true,140
+contado,contado_individual,rtu_representante,RTU del representante legal,Si el apartamento se escritura a nombre de una sociedad,true,150
+contado,contado_individual,recibo_servicios_sociedad,Recibo de servicios de la sociedad,Si el apartamento se escritura a nombre de una sociedad,true,160
+contado,contado_individual,recibo_servicios_representante,Recibo de servicios del representante legal,Si el apartamento se escritura a nombre de una sociedad,true,170
+contado,contado_individual,punto_acta,Punto de acta,Si el nombramiento no faculta al representante legal para aportar inmuebles a la sociedad,true,180
+contado,contado_juridica,escritura_constitucion,Escritura de constitución de sociedad,,false,10
+contado,contado_juridica,nombramiento_representante,Nombramiento de representante legal,,false,20
+contado,contado_juridica,patente_sociedad,Patente de comercio y de sociedad,Si la posee,true,30
+contado,contado_juridica,rtu_sociedad,RTU de la sociedad,,false,40
+contado,contado_juridica,recibo_servicios_sociedad,Recibo de servicios de la sociedad,,false,50
+contado,contado_juridica,recibo_servicios_representante,Recibo de servicios del representante legal,,false,60
+contado,contado_juridica,estados_financieros,Estados financieros,Último año y lo parcial del presente,false,70
+contado,contado_juridica,estados_cuenta,Estados de cuenta bancarios,Últimos 6 meses,false,80
+contado,contado_juridica,punto_acta,Punto de acta,Si el nombramiento no faculta al representante legal para aportar inmuebles a la sociedad,true,90

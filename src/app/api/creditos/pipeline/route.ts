@@ -84,7 +84,7 @@ export type CreditosPipelinePayload = {
 };
 
 export async function GET() {
-  const auth = await requireRole(DATA_VIEWER_ROLES);
+  const auth = await requireRole([...DATA_VIEWER_ROLES, "creditos"]);
   if (auth.response) {
     return auth.response;
   }

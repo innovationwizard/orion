@@ -6,6 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "generate:spec": "node scripts/generate-spec.mjs",
+    "check:spec": "node scripts/generate-spec.mjs --check",
     "export:bex": "node scripts/export-bex-chart.mjs",
     "export:odoo": "node scripts/export-odoo-chart.mjs"
   },

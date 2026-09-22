@@ -1,0 +1,77 @@
+{
+  "$schema": "./schema.json",
+  "model": "pai.credito.checklist.template",
+  "label_es": "Plantilla de checklist",
+  "description": "El catálogo de documentos que exige cada subtipo de crédito, transcrito de los ocho checklists en PDF, que son la autoridad literal. Un solo juego para todos los proyectos: la papelería depende del tipo y subtipo, nunca de la sociedad. Por eso el catálogo no lleva proyecto.",
+  "log_access": true,
+  "soft_delete": false,
+  "order_by": "credit_subtype, sequence, id",
+  "fields": {
+    "credit_type": {
+      "type": "selection",
+      "label_es": "Tipo de crédito",
+      "values_ref": "credit_type",
+      "required": true
+    },
+    "credit_subtype": {
+      "type": "selection",
+      "label_es": "Subtipo de crédito",
+      "values_ref": "credit_subtype",
+      "required": true,
+      "index": true
+    },
+    "document_key": {
+      "type": "char",
+      "label_es": "Clave del documento",
+      "description": "Identificador estable del documento (dpi, rtu, estados_cuenta, …). Es lo que permite comparar el mismo requisito entre subtipos.",
+      "required": true
+    },
+    "name": {
+      "type": "label",
+      "label_es": "Documento",
+      "description": "Cómo se llama el documento en pantalla, en español.",
+      "required": true
+    },
+    "condition": {
+      "type": "label",
+      "label_es": "Condición",
+      "description": "La salvedad con que el PDF lo pide: «últimos 3 meses», «si co-solicitante», «si posee patente»."
+    },
+    "is_conditional": {
+      "type": "boolean",
+      "label_es": "Condicional",
+      "description": "Verdadero cuando el documento solo aplica en ciertos casos. Los condicionales no impiden declarar el expediente completo.",
+      "default": false
+    },
+    "sequence": {
+      "type": "integer",
+      "label_es": "Orden",
+      "description": "Orden en que se muestran los documentos del subtipo.",
+      "default": 10
+    }
+  },
+  "constraints": [
+    {
+      "name": "subtype_document_uniq",
+      "kind": "unique",
+      "columns": ["credit_subtype", "document_key"],
+      "message_es": "Este documento ya está en la plantilla de ese subtipo."
+    },
+    {
+      "name": "subtype_matches_type",
+      "kind": "selection_pair",
+      "parent": "credit_type",
+      "child": "credit_subtype",
+      "map_ref": "subtypes_by_type",
+      "message_es": "El subtipo no corresponde al tipo de crédito."
+    }
+  ],
+  "access": {
+    "creditos": { "read": true, "create": false, "write": false, "delete": false },
+    "master": { "read": true, "create": true, "write": true, "delete": false }
+  },
+  "seed": {
+    "file": "seeds/pai.credito.checklist.template.csv",
+    "key": ["credit_subtype", "document_key"]
+  }
+}

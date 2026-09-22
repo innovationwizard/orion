@@ -1,0 +1,118 @@
+{
+  "$schema": "./schema.json",
+  "model": "pai.credito.expediente",
+  "label_es": "Expediente de crédito",
+  "description": "El expediente de crédito de una compra, desde que Créditos recibe la PCV hasta su archivo o su desistimiento. Uno por reserva. El expediente físico sigue siendo el documento legal: la aplicación refleja lo que ocurre en papel.",
+  "log_access": true,
+  "soft_delete": true,
+  "order_by": "create_date desc",
+  "fields": {
+    "reservation_id": {
+      "type": "many2one",
+      "label_es": "Reserva",
+      "description": "La compra. Solo se abre expediente contra una reserva CONFIRMED: esa confirmación significa que la PCV está firmada y el primer pago recibido.",
+      "target": { "pai_app": "reservations" },
+      "required": true,
+      "index": true,
+      "on_delete": "restrict",
+      "immutable": true
+    },
+    "unit_id": {
+      "type": "many2one",
+      "label_es": "Unidad",
+      "description": "Tomada de la reserva, como ya lo hace entregas.",
+      "target": { "pai_app": "rv_units" },
+      "required": true,
+      "on_delete": "restrict",
+      "immutable": true
+    },
+    "company_id": {
+      "type": "many2one",
+      "label_es": "Proyecto",
+      "description": "El proyecto de la unidad. Se llama company_id porque en Odoo cada proyecto es una compañía.",
+      "target": { "pai_app": "projects", "odoo": "res.company" },
+      "required": true,
+      "index": true,
+      "on_delete": "restrict",
+      "immutable": true
+    },
+    "credit_type": {
+      "type": "selection",
+      "label_es": "Tipo de crédito",
+      "description": "Se elige al crear y no se modifica nunca. Cambiar de contado a crédito es un hecho del negocio, no una edición.",
+      "values_ref": "credit_type",
+      "required": true,
+      "immutable": true
+    },
+    "credit_subtype": {
+      "type": "selection",
+      "label_es": "Subtipo de crédito",
+      "description": "Gobierna qué checklist se copia. Tampoco se modifica: cambiarlo invalidaría el checklist ya marcado.",
+      "values_ref": "credit_subtype",
+      "required": true,
+      "immutable": true
+    },
+    "state": {
+      "type": "selection",
+      "label_es": "Estado",
+      "description": "Estado actual del proceso. Solo avanza, y solo por las transiciones que el servicio permite para ese tipo de crédito.",
+      "values_ref": "expediente_state",
+      "required": true,
+      "default": "en_armado",
+      "index": true
+    },
+    "cumplimiento_categoria": {
+      "type": "selection",
+      "label_es": "Categoría de cumplimiento",
+      "description": "Espejo informativo de Cumplimiento y único campo editable del expediente.",
+      "values_ref": "cumplimiento_categoria"
+    },
+    "desistido_reason": {
+      "type": "selection",
+      "label_es": "Motivo de desistimiento",
+      "description": "Se registra junto con la transición a desistido, y solo entonces.",
+      "values_ref": "desistido_reason"
+    },
+    "checklist_item_ids": {
+      "type": "one2many",
+      "label_es": "Checklist",
+      "description": "Los documentos que este caso requiere, copiados del catálogo al crear el expediente.",
+      "target_model": "pai.credito.checklist.item",
+      "inverse": "expediente_id"
+    },
+    "evento_ids": {
+      "type": "one2many",
+      "label_es": "Historial",
+      "description": "Todo lo que se hizo sobre el expediente, en orden.",
+      "target_model": "pai.credito.expediente.evento",
+      "inverse": "expediente_id"
+    }
+  },
+  "constraints": [
+    {
+      "name": "subtype_matches_type",
+      "kind": "selection_pair",
+      "parent": "credit_type",
+      "child": "credit_subtype",
+      "map_ref": "subtypes_by_type",
+      "message_es": "El subtipo no corresponde al tipo de crédito."
+    },
+    {
+      "name": "desistido_reason_coherent",
+      "kind": "check",
+      "sql": "(state = 'desistido') = (desistido_reason IS NOT NULL)",
+      "message_es": "El motivo de desistimiento existe exactamente cuando el expediente está desistido."
+    },
+    {
+      "name": "reservation_active_uniq",
+      "kind": "unique_index",
+      "columns": ["reservation_id"],
+      "where": "active IS TRUE",
+      "message_es": "Esta reserva ya tiene un expediente."
+    }
+  ],
+  "access": {
+    "creditos": { "read": true, "create": true, "write": true, "delete": false },
+    "master": { "read": true, "create": true, "write": true, "delete": false }
+  }
+}
