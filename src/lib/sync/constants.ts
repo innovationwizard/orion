@@ -11,10 +11,10 @@ import type { RvUnitStatus } from "@/lib/reservas/types";
 // ---------------------------------------------------------------------------
 
 /** The OneDrive for Business user whose drive contains the SSOT files. */
-export const ONEDRIVE_USER = "alek.hernandez@puertaabierta.com.gt";
+export const ONEDRIVE_USER = "antonio.rada@puertaabierta.com.gt";
 
 /** Base path within the user's OneDrive. */
-export const ONEDRIVE_BASE = "Documentos/0. Estatus Proyectos";
+export const ONEDRIVE_BASE = "ESTATUS DE PROYECTOS";
 
 /** File key → relative path (under ONEDRIVE_BASE). */
 export const ONEDRIVE_FILES: Record<string, string> = {
