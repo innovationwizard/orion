@@ -174,6 +174,24 @@ export async function runSync(
 }
 
 // ---------------------------------------------------------------------------
+// Name normalization
+// ---------------------------------------------------------------------------
+
+/**
+ * Normalize a person's name for lookup: collapse whitespace, fold case, and
+ * strip diacritics. Salespeople names arrive from Excel with inconsistent
+ * capitalization and missing accents, while the DB stores the accented form.
+ */
+function normalizeName(name: string): string {
+  return name
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+// ---------------------------------------------------------------------------
 // Change detection
 // ---------------------------------------------------------------------------
 
@@ -317,9 +335,11 @@ async function syncNewReservations(
     .select("id, full_name")
     .eq("is_active", true);
 
+  // Keyed by normalized name: Excel spellings vary in case and accents
+  // (e.g. "Javier soto", "Pablo Marroquin" vs DB "Pablo Marroquín").
   const spMap = new Map<string, string>();
   for (const sp of salespeople ?? []) {
-    spMap.set(sp.full_name, sp.id);
+    spMap.set(normalizeName(sp.full_name), sp.id);
   }
 
   // Deduplicate: keep latest record per unit (by fecha, then last-seen)
@@ -347,7 +367,7 @@ async function syncNewReservations(
 
     // Skip if no salesperson can be resolved
     if (!sale.salespersonName) continue;
-    const spId = spMap.get(sale.salespersonName);
+    const spId = spMap.get(normalizeName(sale.salespersonName));
     if (!spId) {
       errors.push(`Salesperson not found: "${sale.salespersonName}" for unit ${sale.unitNumber}`);
       continue;
