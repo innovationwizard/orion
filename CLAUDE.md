@@ -44,6 +44,40 @@ When rules conflict, follow this hierarchy. No exceptions.
 20. **No fake business data.** Mock data is banned in production logic, production databases, and as a substitute for missing requirements.
 21. **Test fixtures must be isolated.** Synthetic/test data is allowed only when explicitly labeled, confined to test environments, and structurally separated from production code paths.
 
+## F. Shell & Environment Rules
+
+Verified facts about this machine, not assumptions. Violating these wastes a
+tool call and produces a misleading error.
+
+22. **No `timeout` binary.** This is macOS (darwin); GNU coreutils are NOT
+    installed. `timeout`, `gtimeout` and `psql` do not exist. Never prefix a
+    command with `timeout Ns` — it fails with `command not found: timeout` and
+    the real command never runs. To bound a long command, use the Bash tool's
+    own `timeout` parameter (milliseconds, max 600000). `jq` and `realpath` do
+    exist.
+23. **No direct DB connection.** `.env.local` holds only
+    `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
+    `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_URL` and `NEXT_PUBLIC_SITE_URL`.
+    There is no `DATABASE_URL`, no `psql`, and no `exec_sql` RPC. supabase-js
+    reads and writes rows but CANNOT execute DDL. Migrations must be handed to
+    the user to run in the Supabase SQL editor — say so plainly instead of
+    implying a migration was applied.
+24. **Throwaway scripts run from the repo root.** `node_modules` resolves from
+    `/Users/orion-tech/Documents/_git/orion`. A `tsx` script placed in the
+    scratchpad and run from there fails with `Cannot find module
+    '@supabase/supabase-js'`. Write it to the repo root as `./.name-tmp.ts`,
+    run it, and `rm -f` it in the same command.
+25. **`next lint` and `next build` mutate the repo.** Both rewrite
+    `"jsx": "react-jsx"` → `"jsx": "preserve"` in `tsconfig.json` and touch
+    `next-env.d.ts`. `next lint` is also unconfigured here and goes
+    interactive. Run `git checkout tsconfig.json next-env.d.ts` afterwards.
+    Prefer `npx tsc --noEmit` for type checking.
+26. **Prove whether breakage is pre-existing.** Before reporting a failing
+    build or test, stash your changes, re-run, and state which it is. As of
+    2026-09-28 `src/app/api/creditos/expedientes/[id]/checklist/route.ts`
+    fails `next build` (it exports `documentKeyFrom`, which Next 15 forbids in
+    a route file). This blocks deploys and is not caused by new work.
+
 ---
 
 ## Mission

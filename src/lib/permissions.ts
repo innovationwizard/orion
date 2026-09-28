@@ -63,6 +63,10 @@ const D = DATA_VIEWER_ROLES;
 const M: Role[] = ["master"]; // Master only
 const MF: Role[] = ["master", "financiero"]; // Master + financiero
 const MK: Role[] = ["master", "torredecontrol", "marketing"]; // Admin + marketing
+/** Admin + entregas_editor. Correcting a titular's misspelled name is part of
+ *  running the cronograma, so the entregas editor edits rv_clients directly
+ *  rather than routing every accent through Torre de Control. */
+const AE: Role[] = [...ADMIN_ROLES, "entregas_editor"];
 /** Data viewers + the single-purpose entregas roles. Board read audience. */
 const DE: Role[] = [...DATA_VIEWER_ROLES, "entregas_viewer", "entregas_editor"];
 /** Roles that may schedule/reschedule/cancel entregas. torredecontrol edits the
@@ -123,7 +127,7 @@ export const PERMISSIONS: Record<Resource, Partial<Record<Action, Role[]>>> = {
   },
   clients: {
     view: A,
-    update: A,
+    update: AE,
   },
   salespeople: {
     view: A,

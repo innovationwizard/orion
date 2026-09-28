@@ -475,6 +475,27 @@ export default function EntregasClient({ canEdit }: Props) {
     setCitas((prev) => prev.filter((c) => c.cita_id !== citaId));
   }, []);
 
+  /**
+   * A titular renamed in one modal is the same person on every other cita —
+   * the other hito of the visit, and any other unit they own. Patch them all so
+   * the board never shows two spellings of one client at once.
+   */
+  const applyRenames = useCallback((cambios: { client_id: string; full_name: string }[]) => {
+    if (cambios.length === 0) return;
+    const porId = new Map(cambios.map((c) => [c.client_id, c.full_name]));
+    setCitas((prev) =>
+      prev.map((cita) => {
+        const titulares = cita.titulares ?? [];
+        if (!titulares.some((t) => porId.has(t.client_id))) return cita;
+        const next = titulares.map((t) =>
+          porId.has(t.client_id) ? { ...t, full_name: porId.get(t.client_id)! } : t,
+        );
+        const primary = next.find((t) => t.is_primary);
+        return { ...cita, titulares: next, cliente: primary?.full_name ?? cita.cliente };
+      }),
+    );
+  }, []);
+
   const weekLabel = `${fmtDayMonth(weekDays[0])} – ${fmtDayMonth(weekDays[4])}, ${weekDays[4].getFullYear()}`;
   const todayIso = isoOf(new Date());
 
@@ -979,6 +1000,7 @@ export default function EntregasClient({ canEdit }: Props) {
           onClose={() => setDetalle(null)}
           onSaved={applyCitas}
           onDeleted={removeCita}
+          onRenamed={applyRenames}
         />
       )}
 
@@ -1092,6 +1114,7 @@ function DetalleModal({
   onClose,
   onSaved,
   onDeleted,
+  onRenamed,
 }: {
   /** The visit: one cita, or the two hitos sharing the slot. Ordered escritura → llaves. */
   citas: EntregaCitaFull[];
@@ -1099,6 +1122,8 @@ function DetalleModal({
   onClose: () => void;
   onSaved: (citas: EntregaCitaFull[]) => void;
   onDeleted: (citaId: string) => void;
+  /** A renamed titular reaches every cita that names them, not just this visit. */
+  onRenamed: (cambios: { client_id: string; full_name: string }[]) => void;
 }) {
   // Every cita of a group shares fecha, hora, apartamento and expediente, so the
   // first one speaks for the visit.
@@ -1128,6 +1153,14 @@ function DetalleModal({
   );
   const [tipoPago, setTipoPago] = useState<"" | EntregaTipoPago>(principal.tipo_pago ?? "");
   const [banco, setBanco] = useState(principal.banco ?? "");
+  /**
+   * Titular names, keyed by rv_clients.id. Spelling fixes only — the errors are
+   * accents and transposed letters, not structure. Includes copropietarios,
+   * which the read view does not list but which carry the same typos.
+   */
+  const [nombres, setNombres] = useState<Record<string, string>>(() =>
+    Object.fromEntries((principal.titulares ?? []).map((t) => [t.client_id, t.full_name])),
+  );
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
@@ -1141,6 +1174,17 @@ function DetalleModal({
     for (const c of citas) {
       if (estados[c.cita_id] === "CANCELADA" && (motivos[c.cita_id] ?? "").trim() === "") {
         setErr(`Cancelar la ${MILESTONE_LABELS[c.milestone].toLowerCase()} requiere un motivo.`);
+        return;
+      }
+    }
+
+    const titulares = principal.titulares ?? [];
+    const renombrados = titulares.filter(
+      (t) => (nombres[t.client_id] ?? "").trim() !== t.full_name,
+    );
+    for (const t of renombrados) {
+      if ((nombres[t.client_id] ?? "").trim() === "") {
+        setErr("El nombre del titular no puede quedar vacío.");
         return;
       }
     }
@@ -1159,6 +1203,33 @@ function DetalleModal({
     const guardadas: EntregaCitaFull[] = [];
 
     try {
+      // Titulares first, and in their own requests: the name lives in
+      // rv_clients, the visit in entrega_citas. Keeping them separate means a
+      // spelling fix never touches the cita — and never trips the
+      // reprogramaciones counter.
+      if (renombrados.length > 0) {
+        const aplicados: { client_id: string; full_name: string }[] = [];
+        try {
+          for (const t of renombrados) {
+            const nuevo = nombres[t.client_id].trim();
+            const res = await fetch(`/api/reservas/admin/clients/${t.client_id}`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ full_name: nuevo }),
+            });
+            const body = await res.json();
+            if (!res.ok) {
+              throw new Error(`${t.full_name}: ${body?.error ?? `Error ${res.status}`}`);
+            }
+            aplicados.push({ client_id: t.client_id, full_name: body.full_name as string });
+          }
+        } finally {
+          // Whatever landed is pushed to the board even if a later name failed,
+          // so the screen never shows a name the DB no longer holds.
+          if (aplicados.length > 0) onRenamed(aplicados);
+        }
+      }
+
       for (const c of citas) {
         const payload: Record<string, unknown> = {};
 
@@ -1242,6 +1313,9 @@ function DetalleModal({
     setNotas(porCita(citas, (c) => c.cita_notas ?? ""));
     setTipoPago(principal.tipo_pago ?? "");
     setBanco(principal.banco ?? "");
+    setNombres(
+      Object.fromEntries((principal.titulares ?? []).map((t) => [t.client_id, t.full_name])),
+    );
   }
 
   const bloqueHito: React.CSSProperties = combinada
@@ -1344,6 +1418,33 @@ function DetalleModal({
         </>
       ) : (
         <div style={{ display: "grid", gap: 13 }}>
+          {(principal.titulares ?? []).length > 0 && (
+            <div style={{ display: "grid", gap: 9 }}>
+              {(principal.titulares ?? []).map((t) => (
+                <div key={t.client_id}>
+                  <label style={labelStyle} htmlFor={`edit-titular-${t.client_id}`}>
+                    {t.is_primary ? "Titular" : "Copropietario"}
+                  </label>
+                  <input
+                    id={`edit-titular-${t.client_id}`}
+                    type="text"
+                    value={nombres[t.client_id] ?? ""}
+                    onChange={(e) =>
+                      setNombres((prev) => ({ ...prev, [t.client_id]: e.target.value }))
+                    }
+                    style={inputStyle}
+                    autoComplete="off"
+                    spellCheck={false}
+                  />
+                </div>
+              ))}
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.38)" }}>
+                Corrige la ortografía. El nombre cambia en todo el sistema —
+                reservas, comisiones y créditos — no solo en el cronograma.
+              </div>
+            </div>
+          )}
+
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
             <div>
               <label style={labelStyle} htmlFor="edit-fecha">

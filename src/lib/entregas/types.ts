@@ -17,6 +17,18 @@ export type EntregaEstado = "PROGRAMADA" | "CONFIRMADA" | "COMPLETADA" | "CANCEL
 
 export type EntregaTipoPago = "FHA" | "CREDITO_DIRECTO" | "CONTADO";
 
+/**
+ * One titular of the reservation behind an entrega. Carries the `rv_clients.id`
+ * so a misspelled name can be corrected from the board; `cliente` on the cita
+ * row is only the primary one's name and has no id attached.
+ */
+export interface EntregaTitular {
+  client_id: string;
+  full_name: string;
+  phone: string | null;
+  is_primary: boolean;
+}
+
 /** One row of `v_entregas_full` — a single cita with unit, project and titular resolved. */
 export interface EntregaCitaFull {
   cita_id: string;
@@ -47,6 +59,8 @@ export interface EntregaCitaFull {
   cliente: string | null;
   cliente_phone: string | null;
   titulares_count: number;
+  /** Every titular of the reservation, primary first. Editable from the modal. */
+  titulares: EntregaTitular[];
 }
 
 /** A milestone already in the cronograma for a candidate unit. */
