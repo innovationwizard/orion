@@ -1,4 +1,4 @@
-import { requireRole } from "@/lib/auth";
+import { getUserRole, isSuperuser, requireRole, type Role } from "@/lib/auth";
 import { rolesFor } from "@/lib/permissions";
 import { logAudit } from "@/lib/audit";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -8,10 +8,23 @@ import { ENTREGAS_PROJECT_SLUG, MILESTONE_LABELS, MILESTONES } from "@/lib/entre
 import type { EntregaCitaFull, EntregaMilestone } from "@/lib/entregas/types";
 
 /**
+ * True when Postgres or PostgREST does not know `publicada` yet. Migration 076
+ * adds it. Until that file has been run, the board must keep its previous
+ * behaviour instead of failing closed.
+ */
+function missingPublicadaColumn(error: { code?: string; message?: string }): boolean {
+  const message = error.message ?? "";
+  return (error.code === "PGRST204" || error.code === "42703") && message.includes("publicada");
+}
+
+/**
  * GET /api/entregas?desde=YYYY-MM-DD&hasta=YYYY-MM-DD
  *
- * Returns every cita of the cronograma, newest state included. Date bounds are
- * optional — the board loads the full cronograma so week navigation is instant.
+ * Returns the cronograma. Date bounds are optional — the board loads the full
+ * cronograma so week navigation is instant.
+ *
+ * Readers see published citas only. Roles that can publish see drafts too.
+ * The service-role client bypasses RLS, so this filter is what the board enforces.
  *
  * Auth: data viewers + entregas_viewer + entregas_editor.
  */
@@ -22,19 +35,34 @@ export async function GET(request: Request) {
   const { data: query, error: qErr } = parseQuery(request, entregasQuerySchema);
   if (qErr) return jsonError(400, qErr.error, qErr.details);
 
+  const role = getUserRole(auth.user ?? null);
+  const seesDrafts =
+    isSuperuser(auth.user?.email ?? null) ||
+    (role !== null && rolesFor("entregas", "publish").includes(role as Role));
+
   const supabase = createAdminClient();
 
-  let builder = supabase
-    .from("v_entregas_full")
-    .select("*")
-    .eq("project_slug", ENTREGAS_PROJECT_SLUG);
+  const loadBoard = (onlyPublished: boolean) => {
+    let builder = supabase
+      .from("v_entregas_full")
+      .select("*")
+      .eq("project_slug", ENTREGAS_PROJECT_SLUG);
 
-  if (query.desde) builder = builder.gte("fecha", query.desde);
-  if (query.hasta) builder = builder.lte("fecha", query.hasta);
+    if (onlyPublished) builder = builder.eq("publicada", true);
+    if (query.desde) builder = builder.gte("fecha", query.desde);
+    if (query.hasta) builder = builder.lte("fecha", query.hasta);
 
-  const { data, error } = await builder
-    .order("fecha", { ascending: true })
-    .order("hora", { ascending: true });
+    return builder.order("fecha", { ascending: true }).order("hora", { ascending: true });
+  };
+
+  let onlyPublished = !seesDrafts;
+  let { data, error } = await loadBoard(onlyPublished);
+  if (error && onlyPublished && missingPublicadaColumn(error)) {
+    console.error(
+      "[GET /api/entregas] migration 076 is not applied; returning every cita until it is",
+    );
+    ({ data, error } = await loadBoard(false));
+  }
 
   if (error) {
     console.error("[GET /api/entregas]", error);
@@ -57,7 +85,10 @@ export async function GET(request: Request) {
  * The expediente is created on first use and reused afterwards, so tipo de pago
  * and banco are captured once per unit rather than once per cita.
  *
- * Auth: master + entregas_editor.
+ * New citas are unpublished. Readers of the board do not see them until
+ * POST /api/entregas/citas/[id]/publicar. `estado` stays PROGRAMADA.
+ *
+ * Auth: master + torredecontrol + entregas_editor.
  */
 export async function POST(request: Request) {
   const auth = await requireRole(rolesFor("entregas", "create"));
@@ -191,20 +222,32 @@ export async function POST(request: Request) {
   // ---- Citas --------------------------------------------------------------
   // One statement: if the second row violates the unique constraint, neither
   // row is written and the caller retries a coherent request.
-  const { data: nuevas, error: citaErr } = await supabase
+  const citaRows = milestones.map((milestone) => ({
+    entrega_id: entregaId,
+    milestone,
+    fecha: input.fecha,
+    hora: input.hora,
+    notas: input.notas,
+    created_by: auth.user!.id,
+    updated_by: auth.user!.id,
+  }));
+
+  // Explicit false: the column default is true so a writer that omits it keeps
+  // the previous behaviour. This insert is the draft.
+  let { data: nuevas, error: citaErr } = await supabase
     .from("entrega_citas")
-    .insert(
-      milestones.map((milestone) => ({
-        entrega_id: entregaId,
-        milestone,
-        fecha: input.fecha,
-        hora: input.hora,
-        notas: input.notas,
-        created_by: auth.user!.id,
-        updated_by: auth.user!.id,
-      }))
-    )
+    .insert(citaRows.map((row) => ({ ...row, publicada: false })))
     .select("id, milestone");
+
+  if (citaErr && missingPublicadaColumn(citaErr)) {
+    console.error(
+      "[POST /api/entregas] migration 076 is not applied; scheduling without a draft flag",
+    );
+    ({ data: nuevas, error: citaErr } = await supabase
+      .from("entrega_citas")
+      .insert(citaRows)
+      .select("id, milestone"));
+  }
 
   if (citaErr) {
     // The pre-check above catches the ordinary case; this covers a concurrent

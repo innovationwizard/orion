@@ -147,6 +147,11 @@ function hitosLabel(citas: EntregaCitaFull[]): string {
     .join(" y ");
 }
 
+/** A visit is a draft while any of its citas is still unpublished. */
+function esBorrador(citas: EntregaCitaFull[]): boolean {
+  return citas.some((c) => c.publicada === false);
+}
+
 // ---------------------------------------------------------------------------
 // Presentation tokens — Boulevard 5 palette
 // ---------------------------------------------------------------------------
@@ -242,6 +247,27 @@ function EstadoChip({ estado }: { estado: EntregaEstado }) {
   );
 }
 
+function BorradorChip() {
+  return (
+    <span
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        padding: "2px 9px",
+        borderRadius: 999,
+        fontSize: 10.5,
+        fontWeight: 600,
+        color: "#ffd79a",
+        background: "rgba(255,215,154,0.12)",
+        border: "1px solid rgba(255,215,154,0.38)",
+        whiteSpace: "nowrap",
+      }}
+    >
+      Borrador
+    </span>
+  );
+}
+
 function MilestoneChip({ milestone }: { milestone: EntregaMilestone }) {
   const isEscritura = milestone === "ESCRITURA";
   return (
@@ -306,6 +332,7 @@ function StatCard({ num, label, accent }: { num: number; label: string; accent?:
 
 interface Props {
   canEdit: boolean;
+  canPublish: boolean;
 }
 
 type Filters = {
@@ -314,7 +341,7 @@ type Filters = {
   estado: "" | EntregaEstado;
 };
 
-export default function EntregasClient({ canEdit }: Props) {
+export default function EntregasClient({ canEdit, canPublish }: Props) {
   const [citas, setCitas] = useState<EntregaCitaFull[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -323,6 +350,8 @@ export default function EntregasClient({ canEdit }: Props) {
   /** The citas of the open slot — one, or both milestones of a shared visit. */
   const [detalle, setDetalle] = useState<EntregaCitaFull[] | null>(null);
   const [agendarOpen, setAgendarOpen] = useState(false);
+  const [publishError, setPublishError] = useState<string | null>(null);
+  const [publicando, setPublicando] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -469,6 +498,20 @@ export default function EntregasClient({ canEdit }: Props) {
     });
   }, []);
 
+  const publicar = useCallback(
+    async (grupo: EntregaCitaFull[]) => {
+      const anchor = grupo.find((c) => c.publicada === false);
+      if (!anchor) return;
+      const res = await fetch(`/api/entregas/citas/${anchor.cita_id}/publicar`, {
+        method: "POST",
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body?.error ?? `Error ${res.status}`);
+      applyCitas(body.citas as EntregaCitaFull[]);
+    },
+    [applyCitas],
+  );
+
   // The detail modal stays open if the visit still has another milestone; the
   // sync effect above closes it once nothing is left.
   const removeCita = useCallback((citaId: string) => {
@@ -569,6 +612,9 @@ export default function EntregasClient({ canEdit }: Props) {
             La escrituración y la entrega de llaves se agendan por separado, o juntas en una
             misma cita cuando el cliente firma y recibe llaves en la misma visita. Cada hito
             conserva su propio estado y su historial de reprogramaciones.
+            {canPublish
+              ? " Una cita nueva queda en borrador hasta que se publica la visita."
+              : ""}
           </p>
           <div style={{ display: "flex", gap: 9, flexWrap: "wrap", marginTop: 13 }}>
             {[
@@ -620,6 +666,20 @@ export default function EntregasClient({ canEdit }: Props) {
             <button type="button" style={buttonStyle("ghost")} onClick={() => void load()}>
               Reintentar
             </button>
+          </div>
+        )}
+
+        {publishError && (
+          <div
+            role="alert"
+            style={{
+              ...glass,
+              marginTop: 14,
+              padding: "12px 18px",
+              borderColor: "rgba(255,128,149,0.4)",
+            }}
+          >
+            <span style={{ fontSize: 13, color: "#ff8095" }}>{publishError}</span>
           </div>
         )}
 
@@ -853,16 +913,19 @@ export default function EntregasClient({ canEdit }: Props) {
                       const reprogramaciones = Math.max(
                         ...grupo.citas.map((c) => c.reprogramaciones),
                       );
+                      const borrador = canPublish && esBorrador(grupo.citas);
 
                       return (
+                        <div key={grupo.key} style={{ display: "grid", gap: 6 }}>
                         <button
-                          key={grupo.key}
                           type="button"
                           onClick={() => setDetalle(grupo.citas)}
                           style={{
                             textAlign: "left",
                             background: "rgba(255,255,255,0.055)",
-                            border: "1px solid rgba(255,255,255,0.12)",
+                            border: borrador
+                              ? "1px solid rgba(255,215,154,0.45)"
+                              : "1px solid rgba(255,255,255,0.12)",
                             borderRadius: 12,
                             padding: "10px 12px",
                             cursor: "pointer",
@@ -914,8 +977,34 @@ export default function EntregasClient({ canEdit }: Props) {
                             {reprogramaciones > 0 && (
                               <ReprogramadaChip veces={reprogramaciones} />
                             )}
+                            {borrador && <BorradorChip />}
                           </div>
                         </button>
+                        {borrador && (
+                          <button
+                            type="button"
+                            style={{ ...buttonStyle("primary"), padding: "6px 10px", fontSize: 12 }}
+                            disabled={publicando !== null}
+                            onClick={() => {
+                              if (publicando !== null) return;
+                              const key = grupo.key;
+                              setPublishError(null);
+                              setPublicando(key);
+                              void publicar(grupo.citas)
+                                .catch((e: unknown) => {
+                                  setPublishError(
+                                    e instanceof Error ? e.message : "No se pudo publicar",
+                                  );
+                                })
+                                .finally(() => {
+                                  setPublicando((current) => (current === key ? null : current));
+                                });
+                            }}
+                          >
+                            {publicando === grupo.key ? "Publicando…" : "Publicar"}
+                          </button>
+                        )}
+                        </div>
                       );
                     })
                   )}
@@ -997,8 +1086,10 @@ export default function EntregasClient({ canEdit }: Props) {
           key={detalle.map((c) => c.cita_id).join("|")}
           citas={detalle}
           canEdit={canEdit}
+          canPublish={canPublish}
           onClose={() => setDetalle(null)}
           onSaved={applyCitas}
+          onPublish={publicar}
           onDeleted={removeCita}
           onRenamed={applyRenames}
         />
@@ -1111,16 +1202,21 @@ function Row({ k, v }: { k: string; v: React.ReactNode }) {
 function DetalleModal({
   citas,
   canEdit,
+  canPublish,
   onClose,
   onSaved,
+  onPublish,
   onDeleted,
   onRenamed,
 }: {
   /** The visit: one cita, or the two hitos sharing the slot. Ordered escritura → llaves. */
   citas: EntregaCitaFull[];
   canEdit: boolean;
+  canPublish: boolean;
   onClose: () => void;
   onSaved: (citas: EntregaCitaFull[]) => void;
+  /** Publishes every unpublished cita of this visit. Does not change estado. */
+  onPublish: (citas: EntregaCitaFull[]) => Promise<void>;
   onDeleted: (citaId: string) => void;
   /** A renamed titular reaches every cita that names them, not just this visit. */
   onRenamed: (cambios: { client_id: string; full_name: string }[]) => void;
@@ -1162,6 +1258,7 @@ function DetalleModal({
     Object.fromEntries((principal.titulares ?? []).map((t) => [t.client_id, t.full_name])),
   );
   const [saving, setSaving] = useState(false);
+  const [publishing, setPublishing] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
   const moved = fecha !== principal.fecha || hora !== toInputTime(principal.hora);
@@ -1279,6 +1376,18 @@ function DetalleModal({
     }
   }
 
+  async function publish() {
+    setPublishing(true);
+    setErr(null);
+    try {
+      await onPublish(citas);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "No se pudo publicar");
+    } finally {
+      setPublishing(false);
+    }
+  }
+
   async function remove(cita: EntregaCitaFull) {
     if (
       !window.confirm(
@@ -1383,6 +1492,12 @@ function DetalleModal({
             </div>
           ))}
 
+          {canPublish && esBorrador(citas) && (
+            <p style={{ fontSize: 12.5, color: "#ffd79a", margin: "14px 0 0", lineHeight: 1.5 }}>
+              Borrador. Quien consulta el tablero no ve esta visita hasta que se publique.
+            </p>
+          )}
+
           {err && (
             <div role="alert" style={{ fontSize: 12.5, color: "#ff8095", marginTop: 12 }}>
               {err}
@@ -1390,8 +1505,23 @@ function DetalleModal({
           )}
 
           <div style={{ display: "flex", gap: 9, marginTop: 18, flexWrap: "wrap" }}>
+            {canPublish && esBorrador(citas) && (
+              <button
+                type="button"
+                style={buttonStyle("primary")}
+                onClick={() => void publish()}
+                disabled={publishing || saving}
+              >
+                {publishing ? "Publicando…" : "Publicar"}
+              </button>
+            )}
             {canEdit && (
-              <button type="button" style={buttonStyle("primary")} onClick={() => setEditing(true)}>
+              <button
+                type="button"
+                style={buttonStyle("primary")}
+                onClick={() => setEditing(true)}
+                disabled={publishing || saving}
+              >
                 Editar
               </button>
             )}
@@ -1402,7 +1532,7 @@ function DetalleModal({
                   type="button"
                   style={buttonStyle("danger")}
                   onClick={() => void remove(c)}
-                  disabled={saving}
+                  disabled={publishing || saving}
                 >
                   {combinada ? `Eliminar ${MILESTONE_SHORT[c.milestone].toLowerCase()}` : "Eliminar"}
                 </button>
@@ -2082,6 +2212,10 @@ function AgendarModal({
               {err}
             </div>
           )}
+
+          <p style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", margin: 0, lineHeight: 1.5 }}>
+            La cita queda en borrador. Quien consulta el tablero la ve cuando se publica la visita.
+          </p>
 
           <div style={{ display: "flex", gap: 9, marginTop: 4 }}>
             <button

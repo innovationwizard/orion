@@ -46,7 +46,8 @@ export type Action =
   | "confirm_rate"
   | "invite"
   | "assign_project"
-  | "send_password_link";
+  | "send_password_link"
+  | "publish";
 
 // ────────────────────────────────────────────────────────────────
 // Role group shorthands (same values as ADMIN_ROLES / DATA_VIEWER_ROLES
@@ -196,12 +197,14 @@ export const PERMISSIONS: Record<Resource, Partial<Record<Action, Role[]>>> = {
     delete: A,
   },
   entregas: {
-    // Board is readable by data viewers + both entregas roles;
-    // master, torredecontrol + entregas_editor schedule.
+    // Board is readable by data viewers + both entregas roles.
+    // Unpublished citas are withheld from every role that cannot publish.
+    // master, torredecontrol + entregas_editor schedule and publish.
     view: DE,
     create: EW,
     update: EW,
     delete: EW,
+    publish: EW,
   },
   sync: {
     view: M,

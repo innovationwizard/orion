@@ -1,6 +1,6 @@
 # Orion Access Control Matrix
 
-> **Auto-generated** from `src/lib/permissions.ts` on 2026-08-27.
+> **Auto-generated** from `src/lib/permissions.ts` on 2026-09-30.
 > Do not edit manually. Run `npx tsx scripts/generate-access-matrix.ts` to regenerate.
 
 | Resource | Action | master | torredecontrol | gerencia | financiero | contabilidad | marketing | inventario | ventas | entregas_viewer | entregas_editor |
@@ -27,7 +27,7 @@
 | projects | update | ✓ | ✓ |  |  |  |  |  |  |  |  |
 | projects | delete | ✓ | ✓ |  |  |  |  |  |  |  |  |
 | clients | view | ✓ | ✓ |  |  |  |  |  |  |  |  |
-| clients | update | ✓ | ✓ |  |  |  |  |  |  |  |  |
+| clients | update | ✓ | ✓ |  |  |  |  |  |  |  | ✓ |
 | salespeople | view | ✓ | ✓ |  |  |  |  |  |  |  |  |
 | salespeople | invite | ✓ | ✓ |  |  |  |  |  |  |  |  |
 | salespeople | assign_project | ✓ | ✓ |  |  |  |  |  |  |  |  |
@@ -67,6 +67,7 @@
 | entregas | create | ✓ | ✓ |  |  |  |  |  |  |  | ✓ |
 | entregas | update | ✓ | ✓ |  |  |  |  |  |  |  | ✓ |
 | entregas | delete | ✓ | ✓ |  |  |  |  |  |  |  | ✓ |
+| entregas | publish | ✓ | ✓ |  |  |  |  |  |  |  | ✓ |
 | sync | view | ✓ |  |  |  |  |  |  |  |  |  |
 | sync | create | ✓ |  |  |  |  |  |  |  |  |  |
 
@@ -75,6 +76,6 @@
 ## Summary
 
 - **Resources:** 26
-- **Permission triples (resource × action):** 64
-- **Total role grants:** 168
+- **Permission triples (resource × action):** 65
+- **Total role grants:** 172
 - **Roles defined:** 10 (master, torredecontrol, gerencia, financiero, contabilidad, marketing, inventario, ventas, entregas_viewer, entregas_editor)

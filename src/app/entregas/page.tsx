@@ -40,7 +40,10 @@ export default async function EntregasPage() {
 
   return (
     <Suspense>
-      <EntregasClient canEdit={can(role, "entregas", "update")} />
+      <EntregasClient
+        canEdit={can(role, "entregas", "update")}
+        canPublish={can(role, "entregas", "publish")}
+      />
     </Suspense>
   );
 }

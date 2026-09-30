@@ -38,6 +38,14 @@ export interface EntregaCitaFull {
   /** 24h time, HH:MM:SS as returned by Postgres. */
   hora: string;
   estado: EntregaEstado;
+  /**
+   * Readers of the board see the cita only after an editor publishes the visit.
+   * Orthogonal to `estado`: publishing does not move PROGRAMADA, CONFIRMADA,
+   * COMPLETADA, or CANCELADA.
+   */
+  publicada: boolean;
+  /** Set when the cita becomes visible. Null while it is still a draft. */
+  publicada_at: string | null;
   reprogramaciones: number;
   completada_at: string | null;
   cancelada_motivo: string | null;
