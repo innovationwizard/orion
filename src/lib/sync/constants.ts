@@ -62,6 +62,7 @@ export const DEFAULT_TOWER_NAME = "Principal";
 export const STATUS_MAP: Record<string, RvUnitStatus> = {
   disponible: "AVAILABLE",
   reservado: "RESERVED",
+  reservada: "RESERVED", // Santa Elena writes the feminine form
   pcv: "SOLD",
   promesa: "SOLD",
   vendido: "SOLD",
@@ -97,71 +98,109 @@ export const VENTAS_HEADER_MAP: Record<string, string> = {
 // ---------------------------------------------------------------------------
 
 /**
+ * List-price header text, matched after trimming, case-folding, and
+ * accent-folding. The column is never taken from a fixed index.
+ *
+ * Bosque Las Tapias' title spans three columns. Santa Elena's amount is
+ * US dollars — the only project priced in USD — and is stored as dollars.
+ */
+export const LIST_PRICE_HEADER = {
+  blt: "Aproximacion - FHA",
+  b5: "Precio promesa",
+  ce: "Precio FINAL",
+  ben: "Precio de Venta",
+  se: "PRECIO TOTAL",
+} as const;
+
+/**
+ * Benestare columns, matched by header text.
+ * Status is "Estatus" (row 2: PCV, Disponible). "ESTADO" (row 3: Vendido)
+ * is a different column and is not the unit status.
+ * "Torre." is accepted as "Torre".
+ */
+export const BEN_COLUMN_HEADER = {
+  unit: "NÚMERO",
+  status: "Estatus",
+  tower: "Torre",
+  modelo: "TIPO",
+} as const;
+
+/**
+ * Bosque Las Tapias columns, on Excel row 2.
+ * The tower is not a column — it is the tab name ("Precios Torre C",
+ * "Precios Torre B NUEVA"). Cotizador tabs are not inventory.
+ */
+export const BLT_COLUMN_HEADER = {
+  unit: "Número",
+  status: "Estatus",
+  modelo: "Tipo",
+} as const;
+
+/** 0-indexed. Excel row 2. */
+export const BLT_HEADER_ROW = 1;
+
+/**
+ * Boulevard 5 columns. There is no tower column — the project has one tower.
+ * List price remains "Precio promesa".
+ */
+export const B5_COLUMN_HEADER = {
+  unit: "Número",
+  status: "Estatus",
+  modelo: "Tipo",
+} as const;
+
+/**
+ * Casa Elisa columns. There is no tower column — the project has one tower.
+ * Two columns are headed "Número". They hold the same id now; a row whose
+ * two values differ is skipped.
+ */
+export const CE_COLUMN_HEADER = {
+  unit: "Número",
+  status: "Estatus",
+  modelo: "Tipo",
+} as const;
+
+/**
+ * Santa Elena columns. There is no tower column — eleven separate houses,
+ * stored under the single tower name "Principal". Prices are US dollars.
+ */
+export const SE_COLUMN_HEADER = {
+  unit: "Unidad",
+  status: "Estatus",
+  modelo: "Modelo",
+} as const;
+
+/**
  * Column positions for Disponibilidad files.
  * These are 0-indexed (xlsx library convention).
  * Each project has different column layouts.
+ * List price is not here — see LIST_PRICE_HEADER.
  */
 export const DISP_COLUMNS = {
-  blt_c: {
-    sheet: "Precios Torre C",
-    towerName: "Torre C",
-    unitCol: 1,      // B
-    statusCol: 26,   // AA
-    clientCol: 27,   // AB
-    asesorCol: 28,   // AC
-    priceCol: 17,    // R (Aproximación FHA)
-    headerRow: 1,    // 0-indexed row for header validation
-  },
-  blt_b: {
-    sheet: "Precios Torre B",
-    towerName: "Torre B",
-    unitCol: 1,      // B
-    statusCol: 25,   // Z  — "Estatus" (was 23/X before column insertion)
-    clientCol: 26,   // AA — "Cliente"
-    asesorCol: 27,   // AB — "Asesor"
-    priceCol: 16,    // Q  — "Aproximación FHA" (was 15/P before column insertion)
-    headerRow: 1,
-  },
   b5: {
     sheet: "Matriz Precios A",
     towerName: "Principal",
-    unitCol: 1,      // B
-    statusCol: 57,   // BF
     clientCol: 58,   // BG
     asesorCol: 59,   // BH
-    priceCol: 40,    // AO (Precio Final REDONDEADO)
     headerRow: 2,
   },
   ce: {
     sheet: "Disponibilidad",
     towerName: "Principal",
-    unitCol: 1,      // B
-    statusCol: 48,   // AW
     clientCol: 47,   // AV
     asesorCol: 50,   // AY
-    priceCol: 38,    // AM (Precio FINAL)
     headerRow: 2,
   },
   ben: {
     sheet: "Precios",
-    towerName: null,  // Read from column K
-    unitCol: 3,       // D (NUMERO)
-    statusCol: 40,    // AO
+    towerName: null,  // Header "Torre"
     clientCol: 41,    // AP
     asesorCol: 43,    // AR
-    priceCol: 22,     // W (Precio de Venta)
-    towerCol: 10,     // K (Torre letter)
     headerRow: 2,
   },
   se: {
     sheet: "Disponibilidad",
     towerName: "Principal",
-    unitCol: 1,       // B (or similar — TBD on first observation)
-    statusCol: -1,    // TBD
-    clientCol: -1,    // TBD
-    asesorCol: -1,    // TBD
-    priceCol: -1,     // TBD
-    headerRow: 1,
   },
 } as const;
 

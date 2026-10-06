@@ -19,6 +19,8 @@ export interface ParsedUnitStatus {
   priceList: number | null;
   clientName: string | null;
   salespersonName: string | null;
+  /** Benestare modelo, from the "TIPO" header. Absent for other projects. */
+  unitType?: string | null;
 }
 
 /** A sale row parsed from a Reporte de Ventas sheet. */

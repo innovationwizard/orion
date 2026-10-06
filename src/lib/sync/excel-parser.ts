@@ -15,7 +15,14 @@ import {
   STATUS_MAP,
   SINGLE_TOWER_PROJECTS,
   DEFAULT_TOWER_NAME,
+  BEN_COLUMN_HEADER,
+  BLT_COLUMN_HEADER,
+  BLT_HEADER_ROW,
+  B5_COLUMN_HEADER,
+  CE_COLUMN_HEADER,
+  SE_COLUMN_HEADER,
   DISP_COLUMNS,
+  LIST_PRICE_HEADER,
   VENTAS_HEADER_MAP,
 } from "./constants";
 import { SALESPERSON_CANONICAL, SALESPERSON_EXCLUDE } from "./salesperson-map";
@@ -207,12 +214,39 @@ export function normalizeTower(raw: string | null, projectSlug: string): string 
   return text;
 }
 
-/** Map Spanish status string to RvUnitStatus. */
-export function normalizeStatus(raw: string | null | undefined): RvUnitStatus {
+/**
+ * Map Spanish status string to RvUnitStatus.
+ *
+ * A blank cell means the unit is available — that is how the workbooks
+ * represent it. An unrecognized string is a different matter: it means
+ * someone typed a status this system does not know, and silently treating
+ * it as AVAILABLE could release a sold unit. Those throw.
+ */
+export function normalizeStatus(
+  raw: string | null | undefined,
+  context?: string,
+): RvUnitStatus {
   if (raw == null) return "AVAILABLE";
   const key = String(raw).trim().toLowerCase();
   if (!key) return "AVAILABLE";
-  return STATUS_MAP[key] ?? "AVAILABLE";
+
+  const mapped = STATUS_MAP[key];
+  if (!mapped) {
+    const where = context ? ` (${context})` : "";
+    throw new UnknownStatusError(
+      `Unknown status "${String(raw).trim()}"${where}. ` +
+        `Known statuses: ${Object.keys(STATUS_MAP).join(", ")}.`,
+    );
+  }
+  return mapped;
+}
+
+/** Raised when a Disponibilidad cell holds a status string we do not recognize. */
+export class UnknownStatusError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "UnknownStatusError";
+  }
 }
 
 /** Read a cell value from a worksheet. row/col are 0-indexed. */
@@ -230,40 +264,300 @@ function cellStr(ws: XLSX.WorkSheet, row: number, col: number): string | null {
   return s || null;
 }
 
+/**
+ * Header text comparison: ignore case, accents, and surrounding space.
+ * Hyphens with or without spaces compare equal ("Aproximacion-FHA" and
+ * "Aproximación - FHA" both match the Bosque title).
+ */
+function normalizeHeaderLabel(raw: string): string {
+  return stripAccents(raw)
+    .toLowerCase()
+    .replace(/[\u2010-\u2015]/g, "-")
+    .replace(/\s*-\s*/g, " - ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/\.+$/, "");
+}
+
+/**
+ * Smallest amount treated as a list price when a header covers several
+ * columns. Skips year numbers, column indexes, and currency tokens.
+ * The derived figure under Bosque's title (about 10% of the price) is
+ * larger than this, so column order — not the threshold — keeps it out.
+ */
+const LIST_PRICE_MIN = 10_000;
+
+interface HeaderSpan {
+  row: number;
+  startCol: number;
+  endCol: number;
+}
+
+/** Exact header matches in the first rows of a sheet. A merge is reported as its full span. */
+function findHeaderSpans(ws: XLSX.WorkSheet, expectedHeader: string): HeaderSpan[] {
+  const range = XLSX.utils.decode_range(ws["!ref"] ?? "A1");
+  const want = normalizeHeaderLabel(expectedHeader);
+  const lastHeaderRow = Math.min(range.e.r, 14);
+  const unique = new Map<string, HeaderSpan>();
+
+  for (let r = 0; r <= lastHeaderRow; r++) {
+    for (let c = 0; c <= range.e.c; c++) {
+      const text = cellStr(ws, r, c);
+      if (!text || normalizeHeaderLabel(text) !== want) continue;
+
+      const merge = (ws["!merges"] ?? []).find(
+        (m) => r >= m.s.r && r <= m.e.r && c >= m.s.c && c <= m.e.c,
+      );
+      const hit: HeaderSpan = {
+        row: r,
+        startCol: merge ? merge.s.c : c,
+        endCol: merge ? merge.e.c : c,
+      };
+      unique.set(`${hit.startCol}:${hit.endCol}`, hit);
+    }
+  }
+
+  return [...unique.values()];
+}
+
+/**
+ * Column whose header text is `expectedHeader`.
+ * Several matches are returned left to right. Casa Elisa has two "Número"
+ * columns; every other caller requires exactly one.
+ */
+function resolveHeaderColumns(
+  ws: XLSX.WorkSheet,
+  expectedHeader: string,
+  sheetLabel: string,
+  errors: string[],
+  onlyRow?: number,
+): HeaderSpan[] {
+  const hits = findHeaderSpans(ws, expectedHeader)
+    .filter((hit) => onlyRow == null || hit.row === onlyRow)
+    .sort((a, b) => a.startCol - b.startCol);
+  if (hits.length === 0) {
+    errors.push(
+      `${sheetLabel}: header "${expectedHeader}" not found — that column was not read.`,
+    );
+    return [];
+  }
+  const cols = hits.map((hit) => XLSX.utils.encode_col(hit.startCol)).join(", ");
+  console.info(`[sync:parser] ${sheetLabel}: "${expectedHeader}" → column ${cols}`);
+  return hits;
+}
+
+/**
+ * Column whose header text is `expectedHeader`.
+ * Missing or repeated headers return null and record an error — callers
+ * must not fall back to a column index.
+ */
+function resolveHeaderColumn(
+  ws: XLSX.WorkSheet,
+  expectedHeader: string,
+  sheetLabel: string,
+  errors: string[],
+  onlyRow?: number,
+): HeaderSpan | null {
+  const hits = resolveHeaderColumns(ws, expectedHeader, sheetLabel, errors, onlyRow);
+  if (hits.length === 0) return null;
+  if (hits.length > 1) {
+    const where = hits.map((hit) => XLSX.utils.encode_col(hit.startCol)).join(", ");
+    errors.push(
+      `${sheetLabel}: header "${expectedHeader}" matched columns ${where} — refusing to guess.`,
+    );
+    return null;
+  }
+  return hits[0];
+}
+
+/**
+ * Find the list-price column by header text.
+ *
+ * Returns null, and records an error, when the header is missing or appears
+ * in more than one place. Callers then leave price_list unchanged.
+ *
+ * A merged header stores its label in the leftmost cell. Bosque's
+ * "Aproximacion - FHA" covers three columns: the rounded list price, a
+ * currency mark, and a smaller derived amount. The list price is the
+ * leftmost column of that span that holds an amount.
+ */
+function resolveListPriceColumn(
+  ws: XLSX.WorkSheet,
+  expectedHeader: string,
+  sheetLabel: string,
+  errors: string[],
+): number | null {
+  const hits = findHeaderSpans(ws, expectedHeader);
+  if (hits.length === 0) {
+    errors.push(
+      `${sheetLabel}: list-price header "${expectedHeader}" not found — prices left unchanged.`,
+    );
+    return null;
+  }
+  if (hits.length > 1) {
+    const where = hits.map((hit) => XLSX.utils.encode_col(hit.startCol)).join(", ");
+    errors.push(
+      `${sheetLabel}: list-price header "${expectedHeader}" matched columns ${where} — refusing to guess, prices left unchanged.`,
+    );
+    return null;
+  }
+
+  const hit = hits[0];
+  const range = XLSX.utils.decode_range(ws["!ref"] ?? "A1");
+  let priceCol = hit.startCol;
+
+  if (hit.endCol > hit.startCol) {
+    let found: number | null = null;
+    for (let c = hit.startCol; c <= hit.endCol && found == null; c++) {
+      for (let r = hit.row + 1; r <= range.e.r; r++) {
+        const amount = safeFloat(cellVal(ws, r, c));
+        if (amount != null && amount >= LIST_PRICE_MIN) {
+          found = c;
+          break;
+        }
+      }
+    }
+    if (found == null) {
+      errors.push(
+        `${sheetLabel}: header "${expectedHeader}" spans ` +
+          `${XLSX.utils.encode_col(hit.startCol)}:${XLSX.utils.encode_col(hit.endCol)} ` +
+          `but none of those columns hold a list price — prices left unchanged.`,
+      );
+      return null;
+    }
+    priceCol = found;
+  }
+
+  console.info(
+    `[sync:parser] ${sheetLabel}: list price "${expectedHeader}" → ` +
+      `column ${XLSX.utils.encode_col(priceCol)}`,
+  );
+  return priceCol;
+}
+
 // ---------------------------------------------------------------------------
 // Disponibilidad parsers — project-specific
 // ---------------------------------------------------------------------------
 
-/** Parse BLT Disponibilidad — two sheets (Torre C, Torre B). */
-export function parseDispBlt(buffer: ArrayBuffer): ParsedUnitStatus[] {
+/**
+ * Resolve a unit's status, recording unknown values instead of guessing.
+ *
+ * Returns null when the status cannot be trusted, so the caller skips the row
+ * and leaves the DB value alone — the previous status survives rather than
+ * being overwritten with a guess.
+ */
+function resolveStatus(
+  raw: string | null,
+  context: string,
+  errors: string[],
+): RvUnitStatus | null {
+  try {
+    return normalizeStatus(raw, context);
+  } catch (err) {
+    if (err instanceof UnknownStatusError) {
+      errors.push(err.message);
+      console.error(`[sync:parser] ${err.message}`);
+      return null;
+    }
+    throw err;
+  }
+}
+
+/**
+ * Tower from a Bosque inventory tab. "Precios Torre B NUEVA" → "Torre B".
+ * Cotizador tabs are not inventory.
+ */
+function bltTowerFromSheet(sheetName: string): string | null {
+  const name = stripAccents(sheetName).toLowerCase().replace(/\s+/g, " ").trim();
+  if (!name.startsWith("precios")) return null;
+  const match = name.match(/\btorre\s+([a-e])\b/);
+  if (!match) return null;
+  return `Torre ${match[1].toUpperCase()}`;
+}
+
+/** Parse BLT Disponibilidad. One sheet per tower; the tab name is the tower. */
+export function parseDispBlt(buffer: ArrayBuffer, errors: string[] = []): ParsedUnitStatus[] {
   const wb = XLSX.read(buffer, { type: "array" });
   const results: ParsedUnitStatus[] = [];
 
-  const configs = [DISP_COLUMNS.blt_c, DISP_COLUMNS.blt_b] as const;
+  const byTower = new Map<string, string[]>();
+  for (const sheetName of wb.SheetNames) {
+    const tower = bltTowerFromSheet(sheetName);
+    if (!tower) continue;
+    const names = byTower.get(tower) ?? [];
+    names.push(sheetName);
+    byTower.set(tower, names);
+  }
 
-  for (const cfg of configs) {
-    const ws = wb.Sheets[cfg.sheet];
+  if (byTower.size === 0) {
+    errors.push(
+      'BLT: no "Precios Torre …" sheet found — workbook not parsed.',
+    );
+    return results;
+  }
+
+  for (const [towerName, sheetNames] of byTower) {
+    if (sheetNames.length > 1) {
+      errors.push(
+        `BLT ${towerName}: more than one precios sheet (${sheetNames.join(", ")}) — refusing to guess.`,
+      );
+      continue;
+    }
+
+    const sheetName = sheetNames[0];
+    const ws = wb.Sheets[sheetName];
     if (!ws) continue;
 
+    const label = `BLT ${sheetName}`;
     const range = XLSX.utils.decode_range(ws["!ref"] ?? "A1");
-    for (let r = 2; r <= range.e.r; r++) {
-      const rawUnit = cellVal(ws, r, cfg.unitCol);
-      const unitNum = safeInt(rawUnit);
+    const unitHit = resolveHeaderColumn(
+      ws,
+      BLT_COLUMN_HEADER.unit,
+      label,
+      errors,
+      BLT_HEADER_ROW,
+    );
+    const statusHit = resolveHeaderColumn(
+      ws,
+      BLT_COLUMN_HEADER.status,
+      label,
+      errors,
+      BLT_HEADER_ROW,
+    );
+    const modeloHit = resolveHeaderColumn(
+      ws,
+      BLT_COLUMN_HEADER.modelo,
+      label,
+      errors,
+      BLT_HEADER_ROW,
+    );
+    const priceCol = resolveListPriceColumn(ws, LIST_PRICE_HEADER.blt, label, errors);
+
+    if (unitHit == null || statusHit == null) continue;
+
+    for (let r = BLT_HEADER_ROW + 1; r <= range.e.r; r++) {
+      const unitNum = safeInt(cellVal(ws, r, unitHit.startCol));
       if (unitNum == null || unitNum < 100) continue;
 
-      const status = normalizeStatus(cellStr(ws, r, cfg.statusCol));
-      const client = cellStr(ws, r, cfg.clientCol);
-      const asesor = normalizeSalesperson(cellStr(ws, r, cfg.asesorCol));
-      const price = safeFloat(cellVal(ws, r, cfg.priceCol));
+      const status = resolveStatus(
+        cellStr(ws, r, statusHit.startCol),
+        `BLT ${towerName} unit ${unitNum}, row ${r + 1}`,
+        errors,
+      );
+      if (status == null) continue;
+
+      const price = priceCol == null ? null : safeFloat(cellVal(ws, r, priceCol));
+      const unitType = modeloHit ? cellStr(ws, r, modeloHit.startCol) : null;
 
       results.push({
         projectSlug: "bosque-las-tapias",
-        towerName: cfg.towerName,
+        towerName,
         unitNumber: String(unitNum),
         status,
         priceList: price,
-        clientName: client && client.length >= 3 ? client : null,
-        salespersonName: asesor,
+        clientName: null,
+        salespersonName: null,
+        unitType,
       });
     }
   }
@@ -271,25 +565,41 @@ export function parseDispBlt(buffer: ArrayBuffer): ParsedUnitStatus[] {
   return results;
 }
 
-/** Parse B5 Disponibilidad — "Matriz Precios A" sheet. */
-export function parseDispB5(buffer: ArrayBuffer): ParsedUnitStatus[] {
+/** Parse B5 Disponibilidad — "Matriz Precios A" sheet. One tower. */
+export function parseDispB5(buffer: ArrayBuffer, errors: string[] = []): ParsedUnitStatus[] {
   const wb = XLSX.read(buffer, { type: "array" });
   const cfg = DISP_COLUMNS.b5;
   const ws = wb.Sheets[cfg.sheet];
   if (!ws) return [];
 
   const results: ParsedUnitStatus[] = [];
+  const label = `B5 ${cfg.sheet}`;
   const range = XLSX.utils.decode_range(ws["!ref"] ?? "A1");
+  const unitHit = resolveHeaderColumn(ws, B5_COLUMN_HEADER.unit, label, errors);
+  const statusHit = resolveHeaderColumn(ws, B5_COLUMN_HEADER.status, label, errors);
+  const modeloHit = resolveHeaderColumn(ws, B5_COLUMN_HEADER.modelo, label, errors);
+  const priceCol = resolveListPriceColumn(ws, LIST_PRICE_HEADER.b5, label, errors);
 
-  for (let r = 3; r <= range.e.r; r++) {
-    const rawUnit = cellVal(ws, r, cfg.unitCol);
-    const unitNum = safeInt(rawUnit);
+  if (unitHit == null || statusHit == null) return results;
+
+  const headerRows = [unitHit.row, statusHit.row];
+  if (modeloHit) headerRows.push(modeloHit.row);
+  const dataStart = Math.max(...headerRows) + 1;
+
+  for (let r = dataStart; r <= range.e.r; r++) {
+    const unitNum = safeInt(cellVal(ws, r, unitHit.startCol));
     if (unitNum == null || unitNum < 100) continue;
 
-    const status = normalizeStatus(cellStr(ws, r, cfg.statusCol));
+    const status = resolveStatus(
+      cellStr(ws, r, statusHit.startCol),
+      `B5 unit ${unitNum}, row ${r + 1}`,
+      errors,
+    );
+    if (status == null) continue;
     const client = cellStr(ws, r, cfg.clientCol);
     const asesor = normalizeSalesperson(cellStr(ws, r, cfg.asesorCol));
-    const price = safeFloat(cellVal(ws, r, cfg.priceCol));
+    const price = priceCol == null ? null : safeFloat(cellVal(ws, r, priceCol));
+    const unitType = modeloHit ? cellStr(ws, r, modeloHit.startCol) : null;
 
     results.push({
       projectSlug: "boulevard-5",
@@ -299,37 +609,88 @@ export function parseDispB5(buffer: ArrayBuffer): ParsedUnitStatus[] {
       priceList: price,
       clientName: client && client.length >= 3 ? client : null,
       salespersonName: asesor,
+      unitType,
     });
   }
 
   return results;
 }
 
-/** Parse CE Disponibilidad — "Disponibilidad" sheet. */
-export function parseDispCe(buffer: ArrayBuffer): ParsedUnitStatus[] {
+/** A Casa Elisa unit id: "101" or "L-1". Anything else is not an id. */
+function readCeUnitId(raw: unknown): string | null {
+  if (raw == null) return null;
+  const text = String(raw).trim();
+  if (!text) return null;
+  if (text.toUpperCase().startsWith("L-")) return text.toUpperCase();
+  const n = safeInt(text);
+  if (n != null && n >= 100) return String(n);
+  return null;
+}
+
+/**
+ * Text used to compare the two Número columns.
+ * Unit ids are normalized ("l-1" and 101 match "L-1" and "101").
+ * Any other non-empty text is kept so a different nomenclature still conflicts.
+ */
+function ceUnitIdentity(raw: unknown): string | null {
+  if (raw == null) return null;
+  const text = String(raw).trim();
+  if (!text) return null;
+  return readCeUnitId(raw) ?? text;
+}
+
+/** Parse CE Disponibilidad — "Disponibilidad" sheet. One tower. */
+export function parseDispCe(buffer: ArrayBuffer, errors: string[] = []): ParsedUnitStatus[] {
   const wb = XLSX.read(buffer, { type: "array" });
   const cfg = DISP_COLUMNS.ce;
   const ws = wb.Sheets[cfg.sheet];
   if (!ws) return [];
 
   const results: ParsedUnitStatus[] = [];
+  const label = `CE ${cfg.sheet}`;
   const range = XLSX.utils.decode_range(ws["!ref"] ?? "A1");
+  const unitHits = resolveHeaderColumns(ws, CE_COLUMN_HEADER.unit, label, errors);
+  const statusHit = resolveHeaderColumn(ws, CE_COLUMN_HEADER.status, label, errors);
+  const modeloHit = resolveHeaderColumn(ws, CE_COLUMN_HEADER.modelo, label, errors);
+  const priceCol = resolveListPriceColumn(ws, LIST_PRICE_HEADER.ce, label, errors);
 
-  for (let r = 4; r <= range.e.r; r++) {
-    const rawUnit = cellVal(ws, r, cfg.unitCol);
-    const text = rawUnit != null ? String(rawUnit).trim() : "";
+  if (unitHits.length === 0 || statusHit == null) return results;
 
-    const isLocale = text.toUpperCase().startsWith("L-");
-    const unitNum = safeInt(rawUnit);
+  const headerRows = [statusHit.row, ...unitHits.map((hit) => hit.row)];
+  if (modeloHit) headerRows.push(modeloHit.row);
+  const dataStart = Math.max(...headerRows) + 1;
 
-    if (!isLocale && (unitNum == null || unitNum < 100)) continue;
+  for (let r = dataStart; r <= range.e.r; r++) {
+    const identities = unitHits.map((hit) => ceUnitIdentity(cellVal(ws, r, hit.startCol)));
+    const present = identities.filter((id): id is string => id != null);
+    if (present.length === 0) continue;
+    if (!present.every((id) => id === present[0])) {
+      const shown = unitHits
+        .map((hit) => {
+          const raw = cellStr(ws, r, hit.startCol);
+          return raw == null ? null : `${XLSX.utils.encode_col(hit.startCol)}="${raw}"`;
+        })
+        .filter((part): part is string => part != null)
+        .join(", ");
+      errors.push(
+        `CE ${cfg.sheet} row ${r + 1}: Número columns disagree (${shown}) — row skipped.`,
+      );
+      continue;
+    }
 
-    const unitNumber = isLocale ? text.toUpperCase() : String(unitNum);
+    const unitNumber = readCeUnitId(present[0]);
+    if (unitNumber == null) continue;
 
-    const status = normalizeStatus(cellStr(ws, r, cfg.statusCol));
+    const status = resolveStatus(
+      cellStr(ws, r, statusHit.startCol),
+      `CE unit ${unitNumber}, row ${r + 1}`,
+      errors,
+    );
+    if (status == null) continue;
     const client = cellStr(ws, r, cfg.clientCol);
     const asesor = normalizeSalesperson(cellStr(ws, r, cfg.asesorCol));
-    const price = safeFloat(cellVal(ws, r, cfg.priceCol));
+    const price = priceCol == null ? null : safeFloat(cellVal(ws, r, priceCol));
+    const unitType = modeloHit ? cellStr(ws, r, modeloHit.startCol) : null;
 
     results.push({
       projectSlug: "casa-elisa",
@@ -339,36 +700,56 @@ export function parseDispCe(buffer: ArrayBuffer): ParsedUnitStatus[] {
       priceList: price,
       clientName: client && client.length >= 3 ? client : null,
       salespersonName: asesor,
+      unitType,
     });
   }
 
   return results;
 }
 
-/** Parse BEN Disponibilidad — "Precios" sheet. Tower from column K. */
-export function parseDispBen(buffer: ArrayBuffer): ParsedUnitStatus[] {
+/** Parse BEN Disponibilidad — "Precios" sheet. Columns come from header text. */
+export function parseDispBen(buffer: ArrayBuffer, errors: string[] = []): ParsedUnitStatus[] {
   const wb = XLSX.read(buffer, { type: "array" });
   const cfg = DISP_COLUMNS.ben;
   const ws = wb.Sheets[cfg.sheet];
   if (!ws) return [];
 
   const results: ParsedUnitStatus[] = [];
+  const label = `BEN ${cfg.sheet}`;
   const range = XLSX.utils.decode_range(ws["!ref"] ?? "A1");
+  const unitHit = resolveHeaderColumn(ws, BEN_COLUMN_HEADER.unit, label, errors);
+  const statusHit = resolveHeaderColumn(ws, BEN_COLUMN_HEADER.status, label, errors);
+  const towerHit = resolveHeaderColumn(ws, BEN_COLUMN_HEADER.tower, label, errors);
+  const modeloHit = resolveHeaderColumn(ws, BEN_COLUMN_HEADER.modelo, label, errors);
+  const priceCol = resolveListPriceColumn(ws, LIST_PRICE_HEADER.ben, label, errors);
 
-  for (let r = 3; r <= range.e.r; r++) {
-    const rawUnit = cellVal(ws, r, cfg.unitCol);
+  // Without these, a positional guess could sell or release the wrong unit.
+  // "ESTADO" is not a stand-in for "Estatus".
+  if (unitHit == null || statusHit == null || towerHit == null) return results;
+
+  const headerRows = [unitHit.row, statusHit.row, towerHit.row];
+  if (modeloHit) headerRows.push(modeloHit.row);
+  const dataStart = Math.max(...headerRows) + 1;
+
+  for (let r = dataStart; r <= range.e.r; r++) {
+    const rawUnit = cellVal(ws, r, unitHit.startCol);
     const unitNum = safeInt(rawUnit);
     if (unitNum == null || unitNum < 100) continue;
 
-    // Tower from column K (letter → "Torre X")
-    const towerLetter = cellStr(ws, r, cfg.towerCol!);
+    const towerLetter = cellStr(ws, r, towerHit.startCol);
     if (!towerLetter || towerLetter.length > 2) continue;
     const towerName = `Torre ${towerLetter.toUpperCase()}`;
 
-    const status = normalizeStatus(cellStr(ws, r, cfg.statusCol));
+    const status = resolveStatus(
+      cellStr(ws, r, statusHit.startCol),
+      `BEN ${towerName} unit ${unitNum}, row ${r + 1}`,
+      errors,
+    );
+    if (status == null) continue;
     const client = cellStr(ws, r, cfg.clientCol);
     const asesor = normalizeSalesperson(cellStr(ws, r, cfg.asesorCol));
-    const price = safeFloat(cellVal(ws, r, cfg.priceCol));
+    const price = priceCol == null ? null : safeFloat(cellVal(ws, r, priceCol));
+    const unitType = modeloHit ? cellStr(ws, r, modeloHit.startCol) : null;
 
     results.push({
       projectSlug: "benestare",
@@ -378,67 +759,57 @@ export function parseDispBen(buffer: ArrayBuffer): ParsedUnitStatus[] {
       priceList: price,
       clientName: client && client.length >= 3 ? client : null,
       salespersonName: asesor,
+      unitType,
     });
   }
 
   return results;
 }
 
-/** Parse SE Disponibilidad — "Disponibilidad" sheet. */
-export function parseDispSe(buffer: ArrayBuffer): ParsedUnitStatus[] {
+/** Parse SE Disponibilidad — "Disponibilidad" sheet. Eleven houses, one tower name. */
+export function parseDispSe(buffer: ArrayBuffer, errors: string[] = []): ParsedUnitStatus[] {
   const wb = XLSX.read(buffer, { type: "array" });
-  const ws = wb.Sheets["Disponibilidad"];
+  const cfg = DISP_COLUMNS.se;
+  const ws = wb.Sheets[cfg.sheet];
   if (!ws) return [];
 
   const results: ParsedUnitStatus[] = [];
+  const label = `SE ${cfg.sheet}`;
   const range = XLSX.utils.decode_range(ws["!ref"] ?? "A1");
+  const unitHit = resolveHeaderColumn(ws, SE_COLUMN_HEADER.unit, label, errors);
+  const statusHit = resolveHeaderColumn(ws, SE_COLUMN_HEADER.status, label, errors);
+  const modeloHit = resolveHeaderColumn(ws, SE_COLUMN_HEADER.modelo, label, errors);
+  // "PRECIO TOTAL", not "Precio sin impuestos". The amount is USD.
+  const priceCol = resolveListPriceColumn(ws, LIST_PRICE_HEADER.se, label, errors);
 
-  // SE has a simpler structure — dynamically detect columns
-  // Look for header row with "Casa" or "Número" and "Estatus"
-  let headerRow = -1;
-  let unitCol = -1;
-  let statusCol = -1;
-  let clientCol = -1;
-  let asesorCol = -1;
-  let priceCol = -1;
+  if (unitHit == null || statusHit == null) return results;
 
-  for (let r = 0; r <= Math.min(5, range.e.r); r++) {
-    for (let c = 0; c <= Math.min(30, range.e.c); c++) {
-      const val = cellStr(ws, r, c);
-      if (!val) continue;
-      const lower = val.toLowerCase().trim();
-      if (lower === "casa" || lower === "numero" || lower === "número") unitCol = c;
-      if (lower.includes("estatus") || lower.includes("status")) statusCol = c;
-      if (lower === "cliente") clientCol = c;
-      if (lower === "asesor" || lower === "vendedor") asesorCol = c;
-      if (lower.includes("precio")) priceCol = c;
-    }
-    if (unitCol >= 0 && statusCol >= 0) {
-      headerRow = r;
-      break;
-    }
-  }
+  const headerRows = [unitHit.row, statusHit.row];
+  if (modeloHit) headerRows.push(modeloHit.row);
+  const dataStart = Math.max(...headerRows) + 1;
 
-  if (headerRow < 0 || unitCol < 0) return results;
-
-  for (let r = headerRow + 1; r <= range.e.r; r++) {
-    const rawUnit = cellVal(ws, r, unitCol);
-    const unitNumber = normalizeUnitNumber(rawUnit);
+  for (let r = dataStart; r <= range.e.r; r++) {
+    const unitNumber = normalizeUnitNumber(cellVal(ws, r, unitHit.startCol));
     if (!unitNumber) continue;
 
-    const status = statusCol >= 0 ? normalizeStatus(cellStr(ws, r, statusCol)) : "AVAILABLE" as RvUnitStatus;
-    const client = clientCol >= 0 ? cellStr(ws, r, clientCol) : null;
-    const asesor = asesorCol >= 0 ? normalizeSalesperson(cellStr(ws, r, asesorCol)) : null;
-    const price = priceCol >= 0 ? safeFloat(cellVal(ws, r, priceCol)) : null;
+    const status = resolveStatus(
+      cellStr(ws, r, statusHit.startCol),
+      `SE unit ${unitNumber}, row ${r + 1}`,
+      errors,
+    );
+    if (status == null) continue;
+    const price = priceCol == null ? null : safeFloat(cellVal(ws, r, priceCol));
+    const unitType = modeloHit ? cellStr(ws, r, modeloHit.startCol) : null;
 
     results.push({
       projectSlug: "santa-elena",
-      towerName: "Principal",
+      towerName: cfg.towerName,
       unitNumber,
       status,
       priceList: price,
-      clientName: client && client.length >= 3 ? client : null,
-      salespersonName: asesor,
+      clientName: null,
+      salespersonName: null,
+      unitType,
     });
   }
 
@@ -623,11 +994,12 @@ export function parseCesion(buffer: ArrayBuffer): ParsedCesionRecord[] {
 export function parseDisponibilidad(
   buffer: ArrayBuffer,
   fileKey: string,
+  errors: string[] = [],
 ): ParsedUnitStatus[] {
-  if (fileKey.startsWith("blt")) return parseDispBlt(buffer);
-  if (fileKey.startsWith("b5")) return parseDispB5(buffer);
-  if (fileKey.startsWith("ce")) return parseDispCe(buffer);
-  if (fileKey.startsWith("ben")) return parseDispBen(buffer);
-  if (fileKey.startsWith("se")) return parseDispSe(buffer);
+  if (fileKey.startsWith("blt")) return parseDispBlt(buffer, errors);
+  if (fileKey.startsWith("b5")) return parseDispB5(buffer, errors);
+  if (fileKey.startsWith("ce")) return parseDispCe(buffer, errors);
+  if (fileKey.startsWith("ben")) return parseDispBen(buffer, errors);
+  if (fileKey.startsWith("se")) return parseDispSe(buffer, errors);
   return [];
 }

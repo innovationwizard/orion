@@ -125,7 +125,7 @@ export async function runSync(
 
       // Route to appropriate sync handler
       if (fileKey.endsWith("_disp")) {
-        const parsed = parseDisponibilidad(buffer, fileKey);
+        const parsed = parseDisponibilidad(buffer, fileKey, fileResult.errors);
         const projectKey = projectKeyFromFileKey(fileKey);
         const projectSlug = FILE_KEY_TO_PROJECT_SLUG[projectKey];
         if (projectSlug) {
@@ -231,7 +231,7 @@ async function syncUnitStatuses(
   // Load current DB state for this project
   const { data: dbUnits, error: fetchErr } = await supabase
     .from("v_rv_units_full")
-    .select("id, unit_number, tower_name, status, price_list")
+    .select("id, unit_number, tower_name, status, price_list, unit_type")
     .eq("project_slug", projectSlug);
 
   if (fetchErr) {
@@ -240,10 +240,18 @@ async function syncUnitStatuses(
   }
 
   // Build lookup: "tower:unit" → DB row
-  const dbMap = new Map<string, { id: string; status: RvUnitStatus; price_list: number | null }>();
+  const dbMap = new Map<
+    string,
+    { id: string; status: RvUnitStatus; price_list: number | null; unit_type: string | null }
+  >();
   for (const u of dbUnits ?? []) {
     const key = `${u.tower_name}:${u.unit_number}`;
-    dbMap.set(key, { id: u.id, status: u.status, price_list: u.price_list });
+    dbMap.set(key, {
+      id: u.id,
+      status: u.status,
+      price_list: u.price_list,
+      unit_type: u.unit_type,
+    });
   }
 
   let updated = 0;
@@ -266,6 +274,10 @@ async function syncUnitStatuses(
 
     if (parsed_unit.priceList != null && parsed_unit.priceList !== Number(db.price_list)) {
       changes.price_list = parsed_unit.priceList;
+    }
+
+    if (parsed_unit.unitType && parsed_unit.unitType !== db.unit_type) {
+      changes.unit_type = parsed_unit.unitType;
     }
 
     if (Object.keys(changes).length === 0) continue;
