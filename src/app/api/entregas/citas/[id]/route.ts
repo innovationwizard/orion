@@ -3,8 +3,12 @@ import { rolesFor } from "@/lib/permissions";
 import { logAudit } from "@/lib/audit";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonOk, jsonError, parseJson } from "@/lib/api";
-import { actualizarCitaSchema } from "@/lib/entregas/validations";
-import { ESTADO_LABELS, MILESTONE_LABELS } from "@/lib/entregas/constants";
+import {
+  actualizarCitaSchema,
+  esConstraintDiaNoHabil,
+  esRechazoDiaNoHabil,
+} from "@/lib/entregas/validations";
+import { DIA_NO_HABIL_MENSAJE, ESTADO_LABELS, MILESTONE_LABELS } from "@/lib/entregas/constants";
 import type { EntregaCitaFull, EntregaEstado, EntregaMilestone } from "@/lib/entregas/types";
 
 /** Postgres returns HH:MM:SS; the client sends HH:MM. Compare on HH:MM. */
@@ -38,7 +42,10 @@ export async function PATCH(
 
   const { id } = await params;
   const { data: input, error: pErr } = await parseJson(request, actualizarCitaSchema);
-  if (pErr) return jsonError(400, pErr.error, pErr.details);
+  if (pErr) {
+    if (esRechazoDiaNoHabil(pErr.details)) return jsonError(400, DIA_NO_HABIL_MENSAJE);
+    return jsonError(400, pErr.error, pErr.details);
+  }
 
   const supabase = createAdminClient();
 
@@ -121,6 +128,7 @@ export async function PATCH(
     .eq("id", id);
 
   if (updateErr) {
+    if (esConstraintDiaNoHabil(updateErr)) return jsonError(400, DIA_NO_HABIL_MENSAJE);
     console.error("[PATCH /api/entregas/citas]", updateErr);
     return jsonError(500, updateErr.message);
   }

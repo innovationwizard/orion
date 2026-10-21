@@ -6,6 +6,7 @@ import SiteNav from "@/components/site-nav";
 import {
   CITAS_POR_DIA,
   DIA_LABELS,
+  DIA_NO_HABIL_MENSAJE,
   ESTADO_COLORS,
   ESTADO_LABELS,
   ESTADOS,
@@ -16,6 +17,7 @@ import {
   MILESTONES,
   TIPO_PAGO_LABELS,
   TIPOS_PAGO,
+  isDiaHabil,
 } from "@/lib/entregas/constants";
 import type {
   EntregaCandidato,
@@ -436,7 +438,7 @@ export default function EntregasClient({ canEdit, canPublish }: Props) {
   );
 
   const weekDays = useMemo(
-    () => Array.from({ length: 5 }, (_, i) => addDays(monday, i)),
+    () => Array.from({ length: DIA_LABELS.length }, (_, i) => addDays(monday, i)),
     [monday],
   );
 
@@ -539,7 +541,8 @@ export default function EntregasClient({ canEdit, canPublish }: Props) {
     );
   }, []);
 
-  const weekLabel = `${fmtDayMonth(weekDays[0])} – ${fmtDayMonth(weekDays[4])}, ${weekDays[4].getFullYear()}`;
+  const weekEnd = weekDays[weekDays.length - 1];
+  const weekLabel = `${fmtDayMonth(weekDays[0])} – ${fmtDayMonth(weekEnd)}, ${weekEnd.getFullYear()}`;
   const todayIso = isoOf(new Date());
 
   return (
@@ -620,7 +623,7 @@ export default function EntregasClient({ canEdit, canPublish }: Props) {
             {[
               { dot: "#04b0d6", text: `${CITAS_POR_DIA} citas por día` },
               { dot: "#0573b0", text: "9:00 a.m. – 6:00 p.m." },
-              { dot: "#4ee9ab", text: "Lunes a viernes" },
+              { dot: "#4ee9ab", text: "Lunes a sábado" },
             ].map((b) => (
               <span
                 key={b.text}
@@ -1275,6 +1278,11 @@ function DetalleModal({
       }
     }
 
+    if (citas.some((c) => enAlcance(c) && fecha !== c.fecha) && !isDiaHabil(fecha)) {
+      setErr(DIA_NO_HABIL_MENSAJE);
+      return;
+    }
+
     const titulares = principal.titulares ?? [];
     const renombrados = titulares.filter(
       (t) => (nombres[t.client_id] ?? "").trim() !== t.full_name,
@@ -1889,6 +1897,10 @@ function AgendarModal({
 
   async function submit() {
     if (!selected || milestones.length === 0) return;
+    if (!isDiaHabil(fecha)) {
+      setErr(DIA_NO_HABIL_MENSAJE);
+      return;
+    }
     setSaving(true);
     setErr(null);
     try {

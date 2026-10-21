@@ -50,15 +50,49 @@ export const TIPO_PAGO_LABELS: Record<EntregaTipoPago, string> = {
 export const TIPOS_PAGO: EntregaTipoPago[] = ["FHA", "CREDITO_DIRECTO", "CONTADO"];
 
 /**
- * Agenda shape from the retired sheet: 4 citas per weekday, 09:00–18:00,
- * Monday to Friday. Used for capacity display and slot suggestions — it is
- * NOT enforced in the DB, so an exceptional sixth cita is always possible.
+ * Agenda shape: 4 citas per operating day, 09:00–18:00, Monday to Saturday.
+ * Capacity is a guide for the board — a fifth visit on a day is still stored.
+ * Sunday is not an operating day. Migration 077 rejects it in the database.
  */
 export const CITAS_POR_DIA = 4;
 export const HORAS_SUGERIDAS = ["09:00", "11:00", "13:30", "16:00"] as const;
-export const DIAS_HABILES = [1, 2, 3, 4, 5] as const; // 1 = Monday … 5 = Friday
+/** ISO weekday, Monday = 1 … Saturday = 6. Matches Postgres `ISODOW`. */
+export const DIAS_HABILES = [1, 2, 3, 4, 5, 6] as const;
 
-export const DIA_LABELS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"] as const;
+export const DIA_LABELS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"] as const;
+
+export const DIA_NO_HABIL_MENSAJE =
+  "Las entregas se agendan de lunes a sábado. El domingo no está disponible.";
+
+/**
+ * ISO weekday of a `YYYY-MM-DD` date. Monday = 1 … Sunday = 7.
+ * Built from the date parts in UTC so a Guatemala session does not shift the day.
+ * Returns null when the string is not a real calendar date.
+ */
+export function isoDow(iso: string): number | null {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+  if (!match) return null;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const utc = new Date(Date.UTC(year, month - 1, day));
+  if (
+    utc.getUTCFullYear() !== year ||
+    utc.getUTCMonth() !== month - 1 ||
+    utc.getUTCDate() !== day
+  ) {
+    return null;
+  }
+  const dow = utc.getUTCDay();
+  return dow === 0 ? 7 : dow;
+}
+
+/** True for Monday–Saturday. An unparseable date is not an operating day. */
+export function isDiaHabil(iso: string): boolean {
+  const dow = isoDow(iso);
+  if (dow === null) return false;
+  return (DIAS_HABILES as readonly number[]).includes(dow);
+}
 
 export const MESES = [
   "enero",

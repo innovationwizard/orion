@@ -3,8 +3,18 @@ import { rolesFor } from "@/lib/permissions";
 import { logAudit } from "@/lib/audit";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { jsonOk, jsonError, parseJson, parseQuery } from "@/lib/api";
-import { agendarCitaSchema, entregasQuerySchema } from "@/lib/entregas/validations";
-import { ENTREGAS_PROJECT_SLUG, MILESTONE_LABELS, MILESTONES } from "@/lib/entregas/constants";
+import {
+  agendarCitaSchema,
+  entregasQuerySchema,
+  esConstraintDiaNoHabil,
+  esRechazoDiaNoHabil,
+} from "@/lib/entregas/validations";
+import {
+  DIA_NO_HABIL_MENSAJE,
+  ENTREGAS_PROJECT_SLUG,
+  MILESTONE_LABELS,
+  MILESTONES,
+} from "@/lib/entregas/constants";
 import type { EntregaCitaFull, EntregaMilestone } from "@/lib/entregas/types";
 
 /**
@@ -95,7 +105,10 @@ export async function POST(request: Request) {
   if (auth.response) return auth.response;
 
   const { data: input, error: pErr } = await parseJson(request, agendarCitaSchema);
-  if (pErr) return jsonError(400, pErr.error, pErr.details);
+  if (pErr) {
+    if (esRechazoDiaNoHabil(pErr.details)) return jsonError(400, DIA_NO_HABIL_MENSAJE);
+    return jsonError(400, pErr.error, pErr.details);
+  }
 
   const supabase = createAdminClient();
 
@@ -258,6 +271,7 @@ export async function POST(request: Request) {
         `La unidad ${unit.unit_number} ya tiene agendada su ${etiquetaHitos}.`
       );
     }
+    if (esConstraintDiaNoHabil(citaErr)) return jsonError(400, DIA_NO_HABIL_MENSAJE);
     console.error("[POST /api/entregas] cita insert", citaErr);
     return jsonError(500, citaErr.message);
   }

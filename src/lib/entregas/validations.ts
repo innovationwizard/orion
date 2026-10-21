@@ -1,9 +1,26 @@
 import { z } from "zod";
-import { ESTADOS, MILESTONES, TIPOS_PAGO } from "./constants";
+import { DIA_NO_HABIL_MENSAJE, ESTADOS, MILESTONES, TIPOS_PAGO, isDiaHabil } from "./constants";
 
 const isoDate = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/, "Formato de fecha: YYYY-MM-DD");
+
+/** A cita date. Monday–Saturday. Query bounds stay on `isoDate` and may name a Sunday. */
+const fechaHabil = isoDate.refine(isDiaHabil, { message: DIA_NO_HABIL_MENSAJE });
+
+const CONSTRAINT_DIA_HABIL = "entrega_citas_fecha_habil";
+
+/** True when a Zod flatten() payload rejected `fecha` for falling outside Monday–Saturday. */
+export function esRechazoDiaNoHabil(details: unknown): boolean {
+  if (!details || typeof details !== "object") return false;
+  const fecha = (details as { fieldErrors?: { fecha?: unknown } }).fieldErrors?.fecha;
+  return Array.isArray(fecha) && fecha.includes(DIA_NO_HABIL_MENSAJE);
+}
+
+/** True when Postgres rejected the row with `entrega_citas_fecha_habil`. */
+export function esConstraintDiaNoHabil(error: { code?: string; message?: string }): boolean {
+  return error.code === "23514" && (error.message ?? "").includes(CONSTRAINT_DIA_HABIL);
+}
 
 /** Accepts HH:MM or HH:MM:SS (Postgres returns the latter). */
 const isoTime = z
@@ -34,7 +51,7 @@ export const agendarCitaSchema = z.object({
     .min(1, "Seleccione al menos un hito")
     .max(MILESTONES.length, "Hay más hitos de los que existen")
     .refine((m) => new Set(m).size === m.length, { message: "Hito repetido" }),
-  fecha: isoDate,
+  fecha: fechaHabil,
   hora: isoTime,
   tipo_pago: z.enum(TIPOS_PAGO as [string, ...string[]]).nullable().default(null),
   banco: z.string().trim().min(1).max(120).nullable().default(null),
@@ -49,7 +66,7 @@ export type AgendarCitaInput = z.infer<typeof agendarCitaSchema>;
 
 export const actualizarCitaSchema = z
   .object({
-    fecha: isoDate.optional(),
+    fecha: fechaHabil.optional(),
     hora: isoTime.optional(),
     estado: z.enum(ESTADOS as [string, ...string[]]).optional(),
     /**
