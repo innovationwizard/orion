@@ -68,6 +68,11 @@ function fmtFechaLarga(iso: string): string {
   return `${d.getDate()} de ${MESES[d.getMonth()]} de ${d.getFullYear()}`;
 }
 
+function fmtFechaCorta(iso: string): string {
+  const d = parseLocalDate(iso);
+  return `${d.getDate()} ${MESES[d.getMonth()].slice(0, 3)} ${d.getFullYear()}`;
+}
+
 /** Postgres returns HH:MM:SS; the pickers use HH:MM. */
 function toInputTime(hora: string): string {
   return hora.slice(0, 5);
@@ -312,20 +317,226 @@ function ReprogramadaChip({ veces }: { veces: number }) {
   );
 }
 
-function StatCard({ num, label, accent }: { num: number; label: string; accent?: boolean }) {
+function StatCard({
+  num,
+  label,
+  accent,
+  disabled,
+  onClick,
+}: {
+  num: number;
+  label: string;
+  accent?: boolean;
+  disabled?: boolean;
+  onClick: () => void;
+}) {
+  const [hover, setHover] = useState(false);
   return (
-    <div
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      aria-haspopup="dialog"
+      aria-label={`${label}: ${num}. Ver las filas que suman este número.`}
       style={{
         ...glass,
         borderRadius: 16,
         padding: "14px 18px",
+        textAlign: "left",
+        color: "inherit",
+        fontFamily: "inherit",
+        width: "100%",
+        height: "100%",
+        display: "block",
+        cursor: disabled ? "default" : "pointer",
         ...(accent ? { borderColor: "rgba(4,176,214,0.45)" } : {}),
+        ...(hover && !disabled
+          ? {
+              borderColor: accent ? "rgba(4,176,214,0.75)" : "rgba(255,255,255,0.34)",
+              background: "rgba(255,255,255,0.09)",
+            }
+          : {}),
       }}
     >
       <div style={{ fontSize: 26, fontWeight: 700, lineHeight: 1.1 }}>{num}</div>
       <div style={{ fontSize: 11.5, color: "rgba(255,255,255,0.55)", marginTop: 3 }}>{label}</div>
-    </div>
+    </button>
   );
+}
+
+// ---------------------------------------------------------------------------
+// KPI breakdown — the rows behind each card
+//
+// The five numbers are not the same kind of thing. The modal for a card lists
+// exactly the rows that produce its number, so the two cannot drift:
+//   hitos        — one row per cita
+//   completadas  — one row per entrega whose two hitos are both COMPLETADA
+//   confirmadas  — one row per visit slot that has a CONFIRMADA cita
+//   programadas  — one row per visit slot that has a PROGRAMADA cita
+//   atencion     — one row per cita that is cancelled, or rescheduled and open
+// ---------------------------------------------------------------------------
+
+type KpiId = "hitos" | "completadas" | "confirmadas" | "programadas" | "atencion";
+
+interface KpiRow {
+  key: string;
+  anchor: EntregaCitaFull;
+  /** Citas whose existence puts this row in the count. The matching date cell is marked. */
+  countedIds: ReadonlySet<string>;
+  escritura: EntregaCitaFull | null;
+  llaves: EntregaCitaFull | null;
+  /** Why the row is under "Requieren atención". Null on the other cards. */
+  atencion: string | null;
+}
+
+const KPI_DETALLE: Record<KpiId, { titulo: string; detalle: string }> = {
+  hitos: {
+    titulo: "Hitos agendados",
+    detalle:
+      "Cada fila es un hito. Una unidad con escrituración y entrega de llaves aparece dos veces.",
+  },
+  completadas: {
+    titulo: "Entregas completadas",
+    detalle:
+      "Cada fila es una unidad con la escrituración y la entrega de llaves ya completadas.",
+  },
+  confirmadas: {
+    titulo: "Confirmadas",
+    detalle:
+      "Cada fila es una visita. Escrituración y llaves en la misma fecha y hora cuentan como una.",
+  },
+  programadas: {
+    titulo: "Programadas",
+    detalle:
+      "Cada fila es una visita. Escrituración y llaves en la misma fecha y hora cuentan como una.",
+  },
+  atencion: {
+    titulo: "Requieren atención",
+    detalle: "Cada fila es un hito cancelado, o reprogramado que todavía no se completa.",
+  },
+};
+
+const KPI_ORDER: { id: KpiId; accent: boolean }[] = [
+  { id: "hitos", accent: false },
+  { id: "completadas", accent: false },
+  { id: "confirmadas", accent: true },
+  { id: "programadas", accent: false },
+  { id: "atencion", accent: false },
+];
+
+function cmpCita(a: EntregaCitaFull, b: EntregaCitaFull): number {
+  if (a.fecha !== b.fecha) return a.fecha.localeCompare(b.fecha);
+  if (a.hora !== b.hora) return a.hora.localeCompare(b.hora);
+  const unit = a.unit_number.localeCompare(b.unit_number, "es", { numeric: true });
+  if (unit !== 0) return unit;
+  return milestoneOrder(a.milestone) - milestoneOrder(b.milestone);
+}
+
+function citasPorEntrega(citas: EntregaCitaFull[]): Map<string, EntregaCitaFull[]> {
+  const map = new Map<string, EntregaCitaFull[]>();
+  for (const cita of citas) {
+    const list = map.get(cita.entrega_id);
+    if (list) list.push(cita);
+    else map.set(cita.entrega_id, [cita]);
+  }
+  return map;
+}
+
+function kpiRow(
+  key: string,
+  anchor: EntregaCitaFull,
+  counted: EntregaCitaFull[],
+  porEntrega: Map<string, EntregaCitaFull[]>,
+  atencion: string | null,
+): KpiRow {
+  const todas = porEntrega.get(anchor.entrega_id) ?? counted;
+  return {
+    key,
+    anchor,
+    countedIds: new Set(counted.map((c) => c.cita_id)),
+    escritura: todas.find((c) => c.milestone === "ESCRITURA") ?? null,
+    llaves: todas.find((c) => c.milestone === "LLAVES") ?? null,
+    atencion,
+  };
+}
+
+function motivoAtencion(cita: EntregaCitaFull): string {
+  const partes: string[] = [];
+  if (cita.estado === "CANCELADA") {
+    partes.push(cita.cancelada_motivo ? `Cancelada: ${cita.cancelada_motivo}` : "Cancelada");
+  }
+  if (cita.reprogramaciones > 0 && cita.estado !== "COMPLETADA") {
+    partes.push(`Reprogramada ×${cita.reprogramaciones}`);
+  }
+  return partes.join(" · ");
+}
+
+function filasPorEstado(
+  filtered: EntregaCitaFull[],
+  estado: EntregaEstado,
+  porEntrega: Map<string, EntregaCitaFull[]>,
+): KpiRow[] {
+  const keys = new Set(filtered.filter((c) => c.estado === estado).map(groupKeyOf));
+  const rows: KpiRow[] = [];
+  for (const key of keys) {
+    const members = filtered
+      .filter((c) => groupKeyOf(c) === key)
+      .sort((a, b) => milestoneOrder(a.milestone) - milestoneOrder(b.milestone));
+    const counted = members.filter((c) => c.estado === estado);
+    const anchor = counted[0];
+    if (!anchor) continue;
+    rows.push(kpiRow(key, anchor, counted, porEntrega, null));
+  }
+  rows.sort((a, b) => cmpCita(a.anchor, b.anchor));
+  return rows;
+}
+
+/**
+ * Rows behind each KPI. `all` supplies the other hito of a unit when the board
+ * filter hid it, so every row can still show both event dates. Membership —
+ * and therefore the number on the card — comes only from `filtered`.
+ */
+function filasKpi(filtered: EntregaCitaFull[], all: EntregaCitaFull[]): Record<KpiId, KpiRow[]> {
+  const porEntrega = citasPorEntrega(all);
+
+  const hitos = [...filtered]
+    .sort(cmpCita)
+    .map((c) => kpiRow(c.cita_id, c, [c], porEntrega, null));
+
+  const completadas: KpiRow[] = [];
+  const hechas = new Map<string, EntregaCitaFull[]>();
+  for (const c of filtered) {
+    if (c.estado !== "COMPLETADA") continue;
+    const list = hechas.get(c.entrega_id);
+    if (list) list.push(c);
+    else hechas.set(c.entrega_id, [c]);
+  }
+  for (const [entregaId, list] of hechas) {
+    const have = new Set(list.map((c) => c.milestone));
+    if (!MILESTONES.every((m) => have.has(m))) continue;
+    list.sort((a, b) => milestoneOrder(a.milestone) - milestoneOrder(b.milestone));
+    completadas.push(kpiRow(entregaId, list[0], list, porEntrega, null));
+  }
+  completadas.sort((a, b) =>
+    cmpCita(a.escritura ?? a.anchor, b.escritura ?? b.anchor),
+  );
+
+  const atencion = filtered
+    .filter(
+      (c) => c.estado === "CANCELADA" || (c.reprogramaciones > 0 && c.estado !== "COMPLETADA"),
+    )
+    .sort(cmpCita)
+    .map((c) => kpiRow(c.cita_id, c, [c], porEntrega, motivoAtencion(c)));
+
+  return {
+    hitos,
+    completadas,
+    confirmadas: filasPorEstado(filtered, "CONFIRMADA", porEntrega),
+    programadas: filasPorEstado(filtered, "PROGRAMADA", porEntrega),
+    atencion,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -352,6 +563,7 @@ export default function EntregasClient({ canEdit, canPublish }: Props) {
   /** The citas of the open slot — one, or both milestones of a shared visit. */
   const [detalle, setDetalle] = useState<EntregaCitaFull[] | null>(null);
   const [agendarOpen, setAgendarOpen] = useState(false);
+  const [kpiAbierto, setKpiAbierto] = useState<KpiId | null>(null);
   const [publishError, setPublishError] = useState<string | null>(null);
   const [publicando, setPublicando] = useState<string | null>(null);
 
@@ -404,33 +616,9 @@ export default function EntregasClient({ canEdit, canPublish }: Props) {
     });
   }, [citas, filters]);
 
-  const stats = useMemo(() => {
-    const total = filtered.length;
-    // An entrega is done only when both hitos are done: the escritura signed
-    // and the keys handed over. One milestone completed is still work pending.
-    const hitosPorEntrega = new Map<string, Set<EntregaMilestone>>();
-    for (const c of filtered) {
-      if (c.estado !== "COMPLETADA") continue;
-      const done = hitosPorEntrega.get(c.entrega_id);
-      if (done) done.add(c.milestone);
-      else hitosPorEntrega.set(c.entrega_id, new Set([c.milestone]));
-    }
-    const completadas = [...hitosPorEntrega.values()].filter((done) =>
-      MILESTONES.every((m) => done.has(m)),
-    ).length;
-    const confirmadas = new Set(
-      filtered.filter((c) => c.estado === "CONFIRMADA").map(groupKeyOf),
-    ).size;
-    // A visit where the escritura is signed and the keys handed over is one
-    // appointment, not two: programadas and confirmadas count slots, not hitos.
-    const programadas = new Set(
-      filtered.filter((c) => c.estado === "PROGRAMADA").map(groupKeyOf),
-    ).size;
-    const atencion = filtered.filter(
-      (c) => c.estado === "CANCELADA" || (c.reprogramaciones > 0 && c.estado !== "COMPLETADA"),
-    ).length;
-    return { total, completadas, confirmadas, programadas, atencion };
-  }, [filtered]);
+  const filas = useMemo(() => filasKpi(filtered, citas), [filtered, citas]);
+  const filteredIds = useMemo(() => new Set(filtered.map((c) => c.cita_id)), [filtered]);
+  const cardsDisabled = loading && citas.length === 0;
 
   const monday = useMemo(
     () => addDays(mondayOf(new Date()), weekOffset * 7),
@@ -695,11 +883,16 @@ export default function EntregasClient({ canEdit, canPublish }: Props) {
             marginTop: 14,
           }}
         >
-          <StatCard num={stats.total} label="Hitos agendados" />
-          <StatCard num={stats.completadas} label="Entregas completadas" />
-          <StatCard num={stats.confirmadas} label="Confirmadas" accent />
-          <StatCard num={stats.programadas} label="Programadas" />
-          <StatCard num={stats.atencion} label="Requieren atención" />
+          {KPI_ORDER.map(({ id, accent }) => (
+            <StatCard
+              key={id}
+              num={filas[id].length}
+              label={KPI_DETALLE[id].titulo}
+              accent={accent}
+              disabled={cardsDisabled}
+              onClick={() => setKpiAbierto(id)}
+            />
+          ))}
         </section>
 
         {/* ---------- Toolbar ---------- */}
@@ -1084,6 +1277,17 @@ export default function EntregasClient({ canEdit, canPublish }: Props) {
         </footer>
       </div>
 
+      {kpiAbierto && (
+        <KpiModal
+          kpi={kpiAbierto}
+          rows={filas[kpiAbierto]}
+          filteredIds={filteredIds}
+          filters={filters}
+          canPublish={canPublish}
+          onClose={() => setKpiAbierto(null)}
+        />
+      )}
+
       {detalle && (
         <DetalleModal
           key={detalle.map((c) => c.cita_id).join("|")}
@@ -1121,11 +1325,13 @@ function ModalShell({
   subtitle,
   onClose,
   children,
+  maxWidth,
 }: {
   title: string;
   subtitle?: string;
   onClose: () => void;
   children: React.ReactNode;
+  maxWidth?: string;
 }) {
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -1159,7 +1365,7 @@ function ModalShell({
         style={{
           ...glass,
           background: "rgba(12,10,48,0.94)",
-          width: "min(560px, 100%)",
+          width: maxWidth ?? "min(560px, 100%)",
           maxHeight: "88vh",
           overflowY: "auto",
           padding: "22px 24px",
@@ -1195,6 +1401,315 @@ function Row({ k, v }: { k: string; v: React.ReactNode }) {
       <span style={{ color: "rgba(255,255,255,0.45)" }}>{k}</span>
       <span style={{ textAlign: "right", fontWeight: 500 }}>{v}</span>
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// KPI detail — read only
+// ---------------------------------------------------------------------------
+
+const kpiTh: React.CSSProperties = {
+  position: "sticky",
+  top: 0,
+  background: "#0c0a30",
+  zIndex: 1,
+  textAlign: "left",
+  fontSize: 10.5,
+  letterSpacing: 0.5,
+  textTransform: "uppercase",
+  color: "rgba(255,255,255,0.45)",
+  fontWeight: 600,
+  padding: "8px 10px",
+  borderBottom: "1px solid rgba(255,255,255,0.12)",
+  whiteSpace: "nowrap",
+};
+
+const kpiTd: React.CSSProperties = {
+  padding: "10px",
+  borderBottom: "1px solid rgba(255,255,255,0.07)",
+  verticalAlign: "top",
+  fontSize: 13,
+};
+
+function textoFila(row: KpiRow): string {
+  const citas = [row.escritura, row.llaves].filter((c): c is EntregaCitaFull => c !== null);
+  const titulares = (row.anchor.titulares ?? []).map((t) => t.full_name);
+  return [
+    row.anchor.unit_number,
+    row.anchor.unit_code,
+    row.anchor.tower_name,
+    row.anchor.cliente,
+    row.anchor.cliente_phone,
+    row.anchor.banco,
+    row.anchor.tipo_pago ? TIPO_PAGO_LABELS[row.anchor.tipo_pago] : null,
+    row.atencion,
+    ...titulares,
+    ...citas.flatMap((c) => [
+      MILESTONE_LABELS[c.milestone],
+      MILESTONE_SHORT[c.milestone],
+      ESTADO_LABELS[c.estado],
+      fmtFechaCorta(c.fecha),
+      fmtHora(c.hora),
+      c.fecha,
+      c.cancelada_motivo,
+    ]),
+  ]
+    .filter((part): part is string => Boolean(part))
+    .join(" ")
+    .toLowerCase();
+}
+
+function etiquetaConteo(visible: number, total: number): string {
+  if (visible === total) return total === 1 ? "1 fila" : `${total} filas`;
+  return `${visible} de ${total}`;
+}
+
+function UnidadCell({ cita }: { cita: EntregaCitaFull }) {
+  const code = cita.unit_code && cita.unit_code !== cita.unit_number ? cita.unit_code : null;
+  return (
+    <div style={{ display: "grid", gap: 2 }}>
+      <span style={{ fontWeight: 700, whiteSpace: "nowrap" }}>Apto. {cita.unit_number}</span>
+      {cita.tower_name && (
+        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.48)" }}>{cita.tower_name}</span>
+      )}
+      {code && <span style={{ fontSize: 11, color: "rgba(255,255,255,0.38)" }}>{code}</span>}
+    </div>
+  );
+}
+
+function CompradorCell({ cita }: { cita: EntregaCitaFull }) {
+  const titulares = cita.titulares ?? [];
+  const nombre =
+    titulares.find((t) => t.is_primary)?.full_name ?? cita.cliente ?? "Sin titular registrado";
+  const otros = titulares.filter((t) => !t.is_primary).map((t) => t.full_name);
+  return (
+    <div style={{ display: "grid", gap: 2 }}>
+      <span style={{ fontWeight: 600 }}>{nombre}</span>
+      {otros.length > 0 && (
+        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.48)", lineHeight: 1.35 }}>
+          Copropietarios: {otros.join(" · ")}
+        </span>
+      )}
+      {cita.cliente_phone && (
+        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.42)" }}>{cita.cliente_phone}</span>
+      )}
+    </div>
+  );
+}
+
+function PagoCell({ cita }: { cita: EntregaCitaFull }) {
+  if (!cita.tipo_pago && !cita.banco) {
+    return <span style={{ color: "rgba(255,255,255,0.38)" }}>Sin registrar</span>;
+  }
+  return (
+    <div style={{ display: "grid", gap: 2 }}>
+      <span>{cita.tipo_pago ? TIPO_PAGO_LABELS[cita.tipo_pago] : "Sin tipo de pago"}</span>
+      {cita.banco && (
+        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.48)" }}>{cita.banco}</span>
+      )}
+    </div>
+  );
+}
+
+function EventoCell({
+  cita,
+  counted,
+  inFilter,
+  canPublish,
+}: {
+  cita: EntregaCitaFull | null;
+  counted: boolean;
+  inFilter: boolean;
+  canPublish: boolean;
+}) {
+  if (!cita) {
+    return <span style={{ color: "rgba(255,255,255,0.38)" }}>Sin agendar</span>;
+  }
+  return (
+    <div
+      style={{
+        display: "grid",
+        gap: 4,
+        justifyItems: "start",
+        padding: counted ? "6px 8px" : "2px 0",
+        borderRadius: 10,
+        background: counted ? "rgba(4,176,214,0.12)" : "transparent",
+        boxShadow: counted ? "inset 0 0 0 1px rgba(4,176,214,0.40)" : "none",
+      }}
+    >
+      <span style={{ fontWeight: 600, whiteSpace: "nowrap" }}>{fmtFechaCorta(cita.fecha)}</span>
+      <span style={{ color: "#04b0d6", fontWeight: 700, fontSize: 12 }}>{fmtHora(cita.hora)}</span>
+      <span style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+        <EstadoChip estado={cita.estado} />
+        {cita.reprogramaciones > 0 && <ReprogramadaChip veces={cita.reprogramaciones} />}
+        {canPublish && cita.publicada === false && <BorradorChip />}
+      </span>
+      {!inFilter && (
+        <span style={{ fontSize: 10.5, color: "rgba(255,255,255,0.40)" }}>Fuera del filtro</span>
+      )}
+    </div>
+  );
+}
+
+function KpiModal({
+  kpi,
+  rows,
+  filteredIds,
+  filters,
+  canPublish,
+  onClose,
+}: {
+  kpi: KpiId;
+  rows: KpiRow[];
+  filteredIds: ReadonlySet<string>;
+  filters: Filters;
+  canPublish: boolean;
+  onClose: () => void;
+}) {
+  const [q, setQ] = useState("");
+  const meta = KPI_DETALLE[kpi];
+  const filtrosActivos =
+    filters.q.trim() !== "" || filters.milestone !== "" || filters.estado !== "";
+  const consulta = q.trim().toLowerCase();
+  const visible = consulta === "" ? rows : rows.filter((row) => textoFila(row).includes(consulta));
+  const completadasVaciasPorFiltro =
+    kpi === "completadas" &&
+    rows.length === 0 &&
+    (filters.milestone !== "" || (filters.estado !== "" && filters.estado !== "COMPLETADA"));
+
+  return (
+    <ModalShell
+      title={meta.titulo}
+      subtitle={
+        meta.detalle +
+        (filtrosActivos ? " El número y estas filas respetan los filtros del cronograma." : "")
+      }
+      maxWidth="min(1120px, 100%)"
+      onClose={onClose}
+    >
+      <style>{`.entrega-kpi-row:hover { background: rgba(255,255,255,0.045); }`}</style>
+
+      {completadasVaciasPorFiltro && (
+        <p style={{ fontSize: 12.5, color: "#ffd79a", lineHeight: 1.5, margin: "0 0 12px" }}>
+          Esta tarjeta cuenta una unidad solo cuando la escrituración y la entrega de llaves están
+          completadas. El filtro actual quita uno de los dos hitos, y la cuenta queda en cero.
+        </p>
+      )}
+
+      <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+        {rows.length > 0 && (
+          <input
+            type="search"
+            value={q}
+            autoFocus
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Buscar apartamento, comprador, banco…"
+            aria-label="Buscar dentro de estas filas"
+            style={{ ...inputStyle, flex: "1 1 220px", width: "auto" }}
+          />
+        )}
+        <span style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", whiteSpace: "nowrap" }}>
+          {etiquetaConteo(visible.length, rows.length)}
+        </span>
+        {rows.length > 0 && (
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              fontSize: 11.5,
+              color: "rgba(255,255,255,0.48)",
+            }}
+          >
+            <span
+              aria-hidden
+              style={{
+                width: 12,
+                height: 12,
+                borderRadius: 4,
+                background: "rgba(4,176,214,0.12)",
+                boxShadow: "inset 0 0 0 1px rgba(4,176,214,0.40)",
+              }}
+            />
+            Suma en la tarjeta
+          </span>
+        )}
+        <button
+          type="button"
+          style={{ ...buttonStyle("ghost"), marginLeft: "auto" }}
+          onClick={onClose}
+          autoFocus={rows.length === 0}
+        >
+          Cerrar
+        </button>
+      </div>
+
+      <div style={{ overflow: "auto", maxHeight: "max(180px, min(560px, calc(88vh - 220px)))", marginTop: 12 }}>
+        {visible.length === 0 ? (
+          completadasVaciasPorFiltro ? null : (
+            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.55)", margin: "8px 0 0" }}>
+              {rows.length === 0
+                ? "Ninguna fila con los filtros actuales."
+                : "Ninguna fila coincide con la búsqueda."}
+            </p>
+          )
+        ) : (
+          <table
+            aria-label={meta.titulo}
+            style={{ width: "100%", borderCollapse: "collapse", minWidth: kpi === "atencion" ? 980 : 820 }}
+          >
+            <thead>
+              <tr>
+                <th style={kpiTh} scope="col">Apartamento</th>
+                <th style={kpiTh} scope="col">Comprador</th>
+                <th style={kpiTh} scope="col">Escrituración</th>
+                <th style={kpiTh} scope="col">Entrega de llaves</th>
+                <th style={kpiTh} scope="col">Pago</th>
+                {kpi === "atencion" && (
+                  <th style={kpiTh} scope="col">Atención</th>
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {visible.map((row) => (
+                <tr key={row.key} className="entrega-kpi-row">
+                  <td style={kpiTd}>
+                    <UnidadCell cita={row.anchor} />
+                  </td>
+                  <td style={kpiTd}>
+                    <CompradorCell cita={row.anchor} />
+                  </td>
+                  <td style={kpiTd}>
+                    <EventoCell
+                      cita={row.escritura}
+                      counted={row.escritura !== null && row.countedIds.has(row.escritura.cita_id)}
+                      inFilter={row.escritura !== null && filteredIds.has(row.escritura.cita_id)}
+                      canPublish={canPublish}
+                    />
+                  </td>
+                  <td style={kpiTd}>
+                    <EventoCell
+                      cita={row.llaves}
+                      counted={row.llaves !== null && row.countedIds.has(row.llaves.cita_id)}
+                      inFilter={row.llaves !== null && filteredIds.has(row.llaves.cita_id)}
+                      canPublish={canPublish}
+                    />
+                  </td>
+                  <td style={kpiTd}>
+                    <PagoCell cita={row.anchor} />
+                  </td>
+                  {kpi === "atencion" && (
+                    <td style={{ ...kpiTd, maxWidth: 240, lineHeight: 1.4 }}>
+                      {row.atencion}
+                    </td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </ModalShell>
   );
 }
 
