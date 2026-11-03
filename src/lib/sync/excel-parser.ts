@@ -17,7 +17,6 @@ import {
   DEFAULT_TOWER_NAME,
   BEN_COLUMN_HEADER,
   BLT_COLUMN_HEADER,
-  BLT_HEADER_ROW,
   B5_COLUMN_HEADER,
   CE_COLUMN_HEADER,
   SE_COLUMN_HEADER,
@@ -549,31 +548,68 @@ function bltTowerFromSheet(sheetName: string): string | null {
   return `Torre ${match[1].toUpperCase()}`;
 }
 
+function bltSheetIsReplacement(sheetName: string): boolean {
+  return stripAccents(sheetName).toLowerCase().includes("nueva");
+}
+
 /**
- * One inventory tab per tower. When the workbook still contains the previous
- * tab, "Precios Torre B NUEVA" is the one to read. Two replacements, or two
- * tabs with no replacement name, are not guessed.
+ * Read one Bosque inventory tab.
+ * Returns null when Número or Estatus cannot be resolved. The header row is
+ * wherever Número sits in the first rows, not a fixed Excel row.
  */
-function chooseBltSheet(
+function readBltSheet(
+  ws: XLSX.WorkSheet,
+  sheetName: string,
   towerName: string,
-  sheetNames: string[],
   errors: string[],
-): string | null {
-  if (sheetNames.length === 1) return sheetNames[0];
-  const replacements = sheetNames.filter((name) =>
-    stripAccents(name).toLowerCase().includes("nueva"),
-  );
-  if (replacements.length === 1) {
-    const ignored = sheetNames.filter((name) => name !== replacements[0]);
-    console.info(
-      `[sync:parser] BLT ${towerName}: using "${replacements[0]}", ignored ${ignored.join(", ")}`,
+): ParsedUnitStatus[] | null {
+  const label = `BLT ${sheetName}`;
+  const range = XLSX.utils.decode_range(ws["!ref"] ?? "A1");
+  const unitHit = resolveHeaderColumn(ws, BLT_COLUMN_HEADER.unit, label, errors);
+  const statusHit =
+    unitHit == null
+      ? null
+      : resolveHeaderColumn(ws, BLT_COLUMN_HEADER.status, label, errors, unitHit.row);
+  const modeloHit =
+    unitHit == null
+      ? null
+      : resolveHeaderColumn(ws, BLT_COLUMN_HEADER.modelo, label, errors, unitHit.row);
+  const priceCol = resolveListPriceColumn(ws, LIST_PRICE_HEADER.blt, label, errors);
+
+  if (unitHit == null || statusHit == null) return null;
+
+  const results: ParsedUnitStatus[] = [];
+  const headerRows = [unitHit.row, statusHit.row];
+  if (modeloHit) headerRows.push(modeloHit.row);
+  const dataStart = Math.max(...headerRows) + 1;
+
+  for (let r = dataStart; r <= range.e.r; r++) {
+    const unitNum = safeInt(cellVal(ws, r, unitHit.startCol));
+    if (unitNum == null || unitNum < 100) continue;
+
+    const status = resolveStatus(
+      cellStr(ws, r, statusHit.startCol),
+      `BLT ${towerName} unit ${unitNum}, row ${r + 1}`,
+      errors,
     );
-    return replacements[0];
+    if (status == null) continue;
+
+    const price = priceCol == null ? null : safeFloat(cellVal(ws, r, priceCol));
+    const unitType = modeloHit ? cellStr(ws, r, modeloHit.startCol) : null;
+
+    results.push({
+      projectSlug: "bosque-las-tapias",
+      towerName,
+      unitNumber: String(unitNum),
+      status,
+      priceList: price,
+      clientName: null,
+      salespersonName: null,
+      unitType,
+    });
   }
-  errors.push(
-    `BLT ${towerName}: more than one precios sheet (${sheetNames.join(", ")}) — refusing to guess.`,
-  );
-  return null;
+
+  return results;
 }
 
 /** Parse BLT Disponibilidad. One sheet per tower; the tab name is the tower. */
@@ -598,63 +634,44 @@ export function parseDispBlt(buffer: ArrayBuffer, errors: string[] = []): Parsed
   }
 
   for (const [towerName, sheetNames] of byTower) {
-    const sheetName = chooseBltSheet(towerName, sheetNames, errors);
-    if (sheetName == null) continue;
-    const ws = wb.Sheets[sheetName];
-    if (!ws) continue;
+    const readable: { sheetName: string; rows: ParsedUnitStatus[]; errors: string[] }[] = [];
+    const unreadable: { sheetName: string; errors: string[] }[] = [];
 
-    const label = `BLT ${sheetName}`;
-    const range = XLSX.utils.decode_range(ws["!ref"] ?? "A1");
-    const unitHit = resolveHeaderColumn(
-      ws,
-      BLT_COLUMN_HEADER.unit,
-      label,
-      errors,
-      BLT_HEADER_ROW,
-    );
-    const statusHit = resolveHeaderColumn(
-      ws,
-      BLT_COLUMN_HEADER.status,
-      label,
-      errors,
-      BLT_HEADER_ROW,
-    );
-    const modeloHit = resolveHeaderColumn(
-      ws,
-      BLT_COLUMN_HEADER.modelo,
-      label,
-      errors,
-      BLT_HEADER_ROW,
-    );
-    const priceCol = resolveListPriceColumn(ws, LIST_PRICE_HEADER.blt, label, errors);
-
-    if (unitHit == null || statusHit == null) continue;
-
-    for (let r = BLT_HEADER_ROW + 1; r <= range.e.r; r++) {
-      const unitNum = safeInt(cellVal(ws, r, unitHit.startCol));
-      if (unitNum == null || unitNum < 100) continue;
-
-      const status = resolveStatus(
-        cellStr(ws, r, statusHit.startCol),
-        `BLT ${towerName} unit ${unitNum}, row ${r + 1}`,
-        errors,
-      );
-      if (status == null) continue;
-
-      const price = priceCol == null ? null : safeFloat(cellVal(ws, r, priceCol));
-      const unitType = modeloHit ? cellStr(ws, r, modeloHit.startCol) : null;
-
-      results.push({
-        projectSlug: "bosque-las-tapias",
-        towerName,
-        unitNumber: String(unitNum),
-        status,
-        priceList: price,
-        clientName: null,
-        salespersonName: null,
-        unitType,
-      });
+    for (const sheetName of sheetNames) {
+      const ws = wb.Sheets[sheetName];
+      if (!ws) continue;
+      const localErrors: string[] = [];
+      const rows = readBltSheet(ws, sheetName, towerName, localErrors);
+      if (rows == null) unreadable.push({ sheetName, errors: localErrors });
+      else readable.push({ sheetName, rows, errors: localErrors });
     }
+
+    let chosen = readable;
+    if (readable.length > 1) {
+      const replacements = readable.filter((sheet) => bltSheetIsReplacement(sheet.sheetName));
+      if (replacements.length === 1) chosen = replacements;
+      else {
+        errors.push(
+          `BLT ${towerName}: more than one precios sheet (${sheetNames.join(", ")}) — refusing to guess.`,
+        );
+        continue;
+      }
+    }
+
+    if (chosen.length === 0) {
+      for (const sheet of unreadable) errors.push(...sheet.errors);
+      continue;
+    }
+
+    const pick = chosen[0];
+    const ignored = sheetNames.filter((name) => name !== pick.sheetName);
+    if (ignored.length > 0) {
+      console.info(
+        `[sync:parser] BLT ${towerName}: using "${pick.sheetName}", ignored ${ignored.join(", ")}`,
+      );
+    }
+    errors.push(...pick.errors);
+    results.push(...pick.rows);
   }
 
   return results;

@@ -128,9 +128,10 @@ export const BEN_COLUMN_HEADER = {
 } as const;
 
 /**
- * Bosque Las Tapias columns, on Excel row 2.
- * The tower is the tab name. When both "Precios Torre B" and
- * "Precios Torre B NUEVA" exist, NUEVA is the inventory tab.
+ * Bosque Las Tapias columns. The tower is the tab name.
+ * Número is found in the header band; Estatus and Tipo are read on that row.
+ * When both "Precios Torre B" and "Precios Torre B NUEVA" can be read, NUEVA
+ * is the inventory tab. A tab with no Número header is ignored.
  * Cotizador tabs are not inventory.
  */
 export const BLT_COLUMN_HEADER = {
@@ -138,9 +139,6 @@ export const BLT_COLUMN_HEADER = {
   status: "Estatus",
   modelo: "Tipo",
 } as const;
-
-/** 0-indexed. Excel row 2. */
-export const BLT_HEADER_ROW = 1;
 
 /**
  * Boulevard 5 columns. There is no tower column — the project has one tower.
