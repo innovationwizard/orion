@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import SiteNav from "@/components/site-nav";
 import type { SyncRun } from "@/lib/sync/types";
 
 const STATUS_COLORS: Record<string, string> = {
@@ -51,7 +52,9 @@ export function SyncClient() {
   const lastRun = runs[0];
 
   return (
-    <div style={{ maxWidth: 960, margin: "0 auto", padding: "2rem 1rem" }}>
+    <div className="p-[clamp(16px,3vw,32px)] grid gap-6 max-w-[1400px] mx-auto">
+      <SiteNav />
+      <div>
       <h1 style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: "1rem" }}>Sincronización OneDrive</h1>
       <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "1.5rem" }}>
         <button
@@ -193,6 +196,7 @@ export function SyncClient() {
           </div>
         );
       })()}
+      </div>
     </div>
   );
 }
