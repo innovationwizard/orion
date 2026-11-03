@@ -233,10 +233,12 @@ async function loadPreviousChecksums(
 }
 
 const DISP_REFUSAL = /refusing to guess|was not read|not parsed/;
+const UNKNOWN_STATUS = /Unknown status/;
 
 /**
- * Mtime of the latest disponibilidad attempt that parsed nothing because a
- * header could not be resolved. Skipped runs are ignored.
+ * Mtime of the latest disponibilidad attempt that did not fully apply.
+ * A header refusal with no updates, or a status the parser did not know yet,
+ * is downloaded again. Skipped runs are ignored.
  */
 async function loadRefusedDispMtimes(
   supabase: SupabaseClient,
@@ -262,10 +264,13 @@ async function loadRefusedDispMtimes(
         const file = raw as SyncFileResult;
         if (!file.fileKey?.endsWith("_disp") || seen.has(file.fileKey) || file.skipped) continue;
         seen.add(file.fileKey);
-        const failed =
-          file.unitsUpdated === 0 &&
-          (file.errors ?? []).some((err) => DISP_REFUSAL.test(err));
-        if (failed && file.lastModified) refused[file.fileKey] = file.lastModified;
+        const errors = file.errors ?? [];
+        const headerRefusal =
+          file.unitsUpdated === 0 && errors.some((err) => DISP_REFUSAL.test(err));
+        const unknownStatus = errors.some((err) => UNKNOWN_STATUS.test(err));
+        if ((headerRefusal || unknownStatus) && file.lastModified) {
+          refused[file.fileKey] = file.lastModified;
+        }
       }
     }
 

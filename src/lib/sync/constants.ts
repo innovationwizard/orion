@@ -69,6 +69,8 @@ export const STATUS_MAP: Record<string, RvUnitStatus> = {
   congelado: "FROZEN",
   "congelado junta directiva": "FROZEN",
   liberado: "AVAILABLE",
+  // Cesión de Derechos: the buyer returned the unit, so it is available again.
+  cd: "AVAILABLE",
 };
 
 // ---------------------------------------------------------------------------
