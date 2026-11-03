@@ -549,6 +549,33 @@ function bltTowerFromSheet(sheetName: string): string | null {
   return `Torre ${match[1].toUpperCase()}`;
 }
 
+/**
+ * One inventory tab per tower. When the workbook still contains the previous
+ * tab, "Precios Torre B NUEVA" is the one to read. Two replacements, or two
+ * tabs with no replacement name, are not guessed.
+ */
+function chooseBltSheet(
+  towerName: string,
+  sheetNames: string[],
+  errors: string[],
+): string | null {
+  if (sheetNames.length === 1) return sheetNames[0];
+  const replacements = sheetNames.filter((name) =>
+    stripAccents(name).toLowerCase().includes("nueva"),
+  );
+  if (replacements.length === 1) {
+    const ignored = sheetNames.filter((name) => name !== replacements[0]);
+    console.info(
+      `[sync:parser] BLT ${towerName}: using "${replacements[0]}", ignored ${ignored.join(", ")}`,
+    );
+    return replacements[0];
+  }
+  errors.push(
+    `BLT ${towerName}: more than one precios sheet (${sheetNames.join(", ")}) — refusing to guess.`,
+  );
+  return null;
+}
+
 /** Parse BLT Disponibilidad. One sheet per tower; the tab name is the tower. */
 export function parseDispBlt(buffer: ArrayBuffer, errors: string[] = []): ParsedUnitStatus[] {
   const wb = XLSX.read(buffer, { type: "array" });
@@ -571,14 +598,8 @@ export function parseDispBlt(buffer: ArrayBuffer, errors: string[] = []): Parsed
   }
 
   for (const [towerName, sheetNames] of byTower) {
-    if (sheetNames.length > 1) {
-      errors.push(
-        `BLT ${towerName}: more than one precios sheet (${sheetNames.join(", ")}) — refusing to guess.`,
-      );
-      continue;
-    }
-
-    const sheetName = sheetNames[0];
+    const sheetName = chooseBltSheet(towerName, sheetNames, errors);
+    if (sheetName == null) continue;
     const ws = wb.Sheets[sheetName];
     if (!ws) continue;
 

@@ -129,8 +129,9 @@ export const BEN_COLUMN_HEADER = {
 
 /**
  * Bosque Las Tapias columns, on Excel row 2.
- * The tower is not a column — it is the tab name ("Precios Torre C",
- * "Precios Torre B NUEVA"). Cotizador tabs are not inventory.
+ * The tower is the tab name. When both "Precios Torre B" and
+ * "Precios Torre B NUEVA" exist, NUEVA is the inventory tab.
+ * Cotizador tabs are not inventory.
  */
 export const BLT_COLUMN_HEADER = {
   unit: "Número",
