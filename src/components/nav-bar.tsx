@@ -8,11 +8,9 @@ type NavLink = { href: string; label: string; roles?: string[] };
 
 const NON_VENTAS_LINKS: (NavLink | "divider")[] = [
   // Dashboard salió de aquí: se alcanza desde /ventas (VENTAS_SECTIONS).
-  { href: "/projects", label: "Projects" },
+  { href: "/projects", label: "Proyectos" },
   "divider",
-  // Disponibilidad, Valorizacion, Promociones y Descuentos viven dentro de
-  // /ventas (ver VENTAS_SECTIONS en src/app/pabi/nav-links.ts). Sus rutas
-  // standalone siguen existiendo, pero ya no se enlazan desde la navegación.
+  { href: "/disponibilidad", label: "Disponibilidad" },
   { href: "/admin/reservas", label: "Reservas", roles: ADMIN_ROLES },
   { href: "/admin/operaciones", label: "Operaciones", roles: ADMIN_ROLES },
   { href: "/cotizador", label: "Cotizador" },

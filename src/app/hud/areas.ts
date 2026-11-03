@@ -1,3 +1,5 @@
+import { COBROS_DASHBOARD_HREF } from "@/app/pabi/nav-links";
+
 export type HudAreaKey =
   | "ventas"
   | "mercadeo"
@@ -190,7 +192,7 @@ export const HUD_AREAS: HudArea[] = [
             note: "Desplegado en /ventas (gráficas mensual y acumulada) y en el dashboard analítico.",
             proof: [
               { href: "/ventas", label: "Gráficas mensual y acumulada" },
-              { href: "/", label: "Dashboard analítico" },
+              { href: COBROS_DASHBOARD_HREF, label: "Dashboard analítico" },
             ],
           },
         ],
@@ -322,14 +324,14 @@ export const HUD_AREAS: HudArea[] = [
             label: "Cobros por proyecto",
             status: "COMPLETA",
             note: "Desplegado en el dashboard analítico (/) con filtro por proyecto: KPIs Esperado a la fecha, Cobrado, % Cumplimiento.",
-            proof: [{ href: "/", label: "Dashboard — KPIs con filtro por proyecto" }],
+            proof: [{ href: COBROS_DASHBOARD_HREF, label: "Dashboard — KPIs con filtro por proyecto" }],
           },
           {
             id: "b2",
             label: "Cobros acumulados: monto y porcentaje",
             status: "COMPLETA",
             note: "Desplegado en el dashboard: KPIs Cobrado y % Cumplimiento (acumulado a la fecha).",
-            proof: [{ href: "/", label: "Dashboard — KPIs Cobrado y % Cumplimiento" }],
+            proof: [{ href: COBROS_DASHBOARD_HREF, label: "Dashboard — KPIs Cobrado y % Cumplimiento" }],
           },
           {
             id: "b3",
@@ -349,14 +351,14 @@ export const HUD_AREAS: HudArea[] = [
             label: "Déficit",
             status: "COMPLETA",
             note: "Desplegado en el dashboard: KPI Varianza (negativa = déficit) vs plan de pagos contractual.",
-            proof: [{ href: "/", label: "Dashboard — KPI Varianza" }],
+            proof: [{ href: COBROS_DASHBOARD_HREF, label: "Dashboard — KPI Varianza" }],
           },
           {
             id: "b5",
             label: "Superávit",
             status: "COMPLETA",
             note: "Desplegado en el dashboard: KPI Varianza (positiva = superávit) vs plan de pagos contractual.",
-            proof: [{ href: "/", label: "Dashboard — KPI Varianza" }],
+            proof: [{ href: COBROS_DASHBOARD_HREF, label: "Dashboard — KPI Varianza" }],
           },
           {
             id: "b6",

@@ -4,12 +4,27 @@ import { ADMIN_ROLES, DATA_VIEWER_ROLES } from "@/lib/permissions";
 export type PanelLink = { href: string; label: string; roles?: string[] };
 export type PanelCategory = { name: string; links: PanelLink[] };
 
+/**
+ * Bare `/` is a blank landing. The cobros dashboard still lives on `/` and is
+ * opened by the query keys it already uses for tabs and filters.
+ */
+export const COBROS_DASHBOARD_QUERY_KEYS = [
+  "tab",
+  "project_id",
+  "start_date",
+  "end_date",
+  "exclude_ff",
+] as const;
+
+export const COBROS_DASHBOARD_HREF = "/?tab=overview";
+
 export const NON_VENTAS_CATEGORIES: PanelCategory[] = [
   {
     name: "Comercial",
     links: [
       // Dashboard salió de aquí: ahora es "Dashboard de Cobros" en Finanzas.
-      { href: "/projects", label: "Projects" },
+      { href: "/projects", label: "Proyectos" },
+      { href: "/disponibilidad", label: "Disponibilidad" },
       { href: "/admin/reservas", label: "Reservas", roles: ADMIN_ROLES },
       { href: "/admin/operaciones", label: "Operaciones", roles: ADMIN_ROLES },
       { href: "/cotizador", label: "Cotizador" },
@@ -29,7 +44,7 @@ export const NON_VENTAS_CATEGORIES: PanelCategory[] = [
   {
     name: "Finanzas",
     links: [
-      { href: "/", label: "Dashboard de Cobros", roles: DATA_VIEWER_ROLES },
+      { href: COBROS_DASHBOARD_HREF, label: "Dashboard de Cobros", roles: DATA_VIEWER_ROLES },
       { href: "/creditos", label: "Créditos", roles: DATA_VIEWER_ROLES },
       { href: "/creditos/pipeline", label: "Expedientes", roles: DATA_VIEWER_ROLES },
       { href: "/cumplimiento", label: "Cumplimiento", roles: DATA_VIEWER_ROLES },
@@ -71,9 +86,10 @@ export const VENTAS_CATEGORIES: PanelCategory[] = [
 
 /**
  * Sections of the consolidated `/ventas` page, in the order of the "Ventas por
- * Proyecto" block of the commercial reporting sheet. Disponibilidad,
- * Valorización, Descuentos and Promociones used to be their own Panel entries;
- * they now live inside `/ventas` and are reached through its in-page SectionNav.
+ * Proyecto" block of the commercial reporting sheet. Valorización, Descuentos
+ * and Promociones used to be their own Panel entries; they now live inside
+ * `/ventas` and are reached through its in-page SectionNav. Disponibilidad is
+ * a section here and also a Comercial link to its own page.
  *
  * `roles` here only decides what the UI offers — each underlying API route
  * still enforces its own `requireRole(...)`.

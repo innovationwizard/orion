@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import ErrorBanner from "@/components/error-banner";
 import SiteNav from "@/components/site-nav";
+import { COBROS_DASHBOARD_HREF } from "@/app/pabi/nav-links";
 import type { Project } from "@/lib/types";
 
 type ProjectPayload = {
@@ -152,7 +153,7 @@ export default function ProjectsPage() {
           <h1 className="m-0 text-[clamp(20px,3vw,28px)]">Gestión de proyectos</h1>
         </div>
         <div className="flex flex-wrap gap-3 items-center">
-          <a className="bg-transparent border border-border text-text-primary hover:bg-primary/[0.08] hover:border-primary hover:text-primary px-4 py-2.5 rounded-full font-semibold cursor-pointer transition-colors no-underline" href="/">
+          <a className="bg-transparent border border-border text-text-primary hover:bg-primary/[0.08] hover:border-primary hover:text-primary px-4 py-2.5 rounded-full font-semibold cursor-pointer transition-colors no-underline" href={COBROS_DASHBOARD_HREF}>
             Volver al dashboard
           </a>
         </div>
