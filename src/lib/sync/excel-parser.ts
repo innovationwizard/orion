@@ -371,10 +371,70 @@ function resolveHeaderColumn(
 }
 
 /**
+ * Benestare repeats Torre, TIPO, and Precio de Venta in a block about thirty
+ * columns to the right of NÚMERO. The inventory column is the one next to
+ * NÚMERO. Two hits only a few columns apart stay ambiguous.
+ */
+const BEN_REPEAT_GAP = 8;
+
+function chooseSpacedHit(hits: HeaderSpan[], anchorCol: number): HeaderSpan | null {
+  if (hits.length === 1) return hits[0];
+  const ranked = [...hits].sort(
+    (a, b) =>
+      Math.abs(a.startCol - anchorCol) - Math.abs(b.startCol - anchorCol) ||
+      a.startCol - b.startCol,
+  );
+  const gap =
+    Math.abs(ranked[1].startCol - anchorCol) - Math.abs(ranked[0].startCol - anchorCol);
+  if (gap < BEN_REPEAT_GAP) return null;
+  return ranked[0];
+}
+
+/**
+ * Header on the same row as `anchor`, which is the NÚMERO column.
+ * A distant repeated title is ignored. A second title near NÚMERO is not.
+ */
+function resolveBenInventoryColumn(
+  ws: XLSX.WorkSheet,
+  expectedHeader: string,
+  sheetLabel: string,
+  errors: string[],
+  anchor: HeaderSpan,
+): HeaderSpan | null {
+  const hits = findHeaderSpans(ws, expectedHeader)
+    .filter((hit) => hit.row === anchor.row)
+    .sort((a, b) => a.startCol - b.startCol);
+  if (hits.length === 0) {
+    errors.push(
+      `${sheetLabel}: header "${expectedHeader}" not found — that column was not read.`,
+    );
+    return null;
+  }
+  const chosen = chooseSpacedHit(hits, anchor.startCol);
+  if (chosen == null) {
+    const where = hits.map((hit) => XLSX.utils.encode_col(hit.startCol)).join(", ");
+    errors.push(
+      `${sheetLabel}: header "${expectedHeader}" matched columns ${where} — refusing to guess.`,
+    );
+    return null;
+  }
+  const ignored = hits.filter((hit) => hit !== chosen);
+  const extra =
+    ignored.length === 0
+      ? ""
+      : ` (ignored ${ignored.map((hit) => XLSX.utils.encode_col(hit.startCol)).join(", ")})`;
+  console.info(
+    `[sync:parser] ${sheetLabel}: "${expectedHeader}" → column ${XLSX.utils.encode_col(chosen.startCol)}${extra}`,
+  );
+  return chosen;
+}
+
+/**
  * Find the list-price column by header text.
  *
  * Returns null, and records an error, when the header is missing or appears
  * in more than one place. Callers then leave price_list unchanged.
+ * Benestare passes `anchorCol` so a distant repeated price title is dropped.
  *
  * A merged header stores its label in the leftmost cell. Bosque's
  * "Aproximacion - FHA" covers three columns: the rounded list price, a
@@ -387,8 +447,9 @@ function resolveListPriceColumn(
   sheetLabel: string,
   errors: string[],
   onlyRow?: number,
+  anchorCol?: number,
 ): number | null {
-  const hits = findHeaderSpans(ws, expectedHeader).filter(
+  let hits = findHeaderSpans(ws, expectedHeader).filter(
     (hit) => onlyRow == null || hit.row === onlyRow,
   );
   if (hits.length === 0) {
@@ -398,11 +459,21 @@ function resolveListPriceColumn(
     return null;
   }
   if (hits.length > 1) {
-    const where = hits.map((hit) => XLSX.utils.encode_col(hit.startCol)).join(", ");
-    errors.push(
-      `${sheetLabel}: list-price header "${expectedHeader}" matched columns ${where} — refusing to guess, prices left unchanged.`,
+    const chosen = anchorCol == null ? null : chooseSpacedHit(hits, anchorCol);
+    if (chosen == null) {
+      const where = hits.map((hit) => XLSX.utils.encode_col(hit.startCol)).join(", ");
+      errors.push(
+        `${sheetLabel}: list-price header "${expectedHeader}" matched columns ${where} — refusing to guess, prices left unchanged.`,
+      );
+      return null;
+    }
+    const ignored = hits.filter((hit) => hit !== chosen);
+    console.info(
+      `[sync:parser] ${sheetLabel}: list price "${expectedHeader}" kept column ` +
+        `${XLSX.utils.encode_col(chosen.startCol)}, ignored ` +
+        ignored.map((hit) => XLSX.utils.encode_col(hit.startCol)).join(", "),
     );
-    return null;
+    hits = [chosen];
   }
 
   const hit = hits[0];
@@ -722,24 +793,24 @@ export function parseDispBen(buffer: ArrayBuffer, errors: string[] = []): Parsed
   const range = XLSX.utils.decode_range(ws["!ref"] ?? "A1");
   const unitHit = resolveHeaderColumn(ws, BEN_COLUMN_HEADER.unit, label, errors);
   const statusHit = resolveHeaderColumn(ws, BEN_COLUMN_HEADER.status, label, errors);
-  // Estatus sits on its own row. Torre, TIPO, and list price are read from
-  // the NÚMERO row. The same titles are repeated on the Estatus row; that
-  // band is not inventory. A second Torre on the NÚMERO row still aborts.
+  // Estatus is its own column and must be unique. Torre, TIPO, and list price
+  // are the copies nearest NÚMERO. The sheet repeats those titles in a block
+  // beside Estatus; that block is not inventory. Two hits near NÚMERO still abort.
   if (unitHit == null || statusHit == null) return results;
 
-  const towerHit = resolveHeaderColumn(
+  const towerHit = resolveBenInventoryColumn(
     ws,
     BEN_COLUMN_HEADER.tower,
     label,
     errors,
-    unitHit.row,
+    unitHit,
   );
-  const modeloHit = resolveHeaderColumn(
+  const modeloHit = resolveBenInventoryColumn(
     ws,
     BEN_COLUMN_HEADER.modelo,
     label,
     errors,
-    unitHit.row,
+    unitHit,
   );
   const priceCol = resolveListPriceColumn(
     ws,
@@ -747,6 +818,7 @@ export function parseDispBen(buffer: ArrayBuffer, errors: string[] = []): Parsed
     label,
     errors,
     unitHit.row,
+    unitHit.startCol,
   );
 
   // Without these, a positional guess could sell or release the wrong unit.

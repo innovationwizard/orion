@@ -116,8 +116,8 @@ export const LIST_PRICE_HEADER = {
  * Benestare columns, matched by header text.
  * Status is "Estatus" on its own header row (PCV, Disponible, Liberado).
  * "ESTADO" is a different column and is not the unit status.
- * Torre, TIPO, and Precio de Venta are taken from the same row as NÚMERO.
- * The sheet repeats those titles beside Estatus; that band is ignored.
+ * Torre, TIPO, and Precio de Venta are the matches nearest NÚMERO.
+ * The same titles repeat in a distant block beside Estatus; that block is ignored.
  * "Torre." is accepted as "Torre".
  */
 export const BEN_COLUMN_HEADER = {
