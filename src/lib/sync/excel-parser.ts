@@ -386,8 +386,11 @@ function resolveListPriceColumn(
   expectedHeader: string,
   sheetLabel: string,
   errors: string[],
+  onlyRow?: number,
 ): number | null {
-  const hits = findHeaderSpans(ws, expectedHeader);
+  const hits = findHeaderSpans(ws, expectedHeader).filter(
+    (hit) => onlyRow == null || hit.row === onlyRow,
+  );
   if (hits.length === 0) {
     errors.push(
       `${sheetLabel}: list-price header "${expectedHeader}" not found — prices left unchanged.`,
@@ -719,13 +722,36 @@ export function parseDispBen(buffer: ArrayBuffer, errors: string[] = []): Parsed
   const range = XLSX.utils.decode_range(ws["!ref"] ?? "A1");
   const unitHit = resolveHeaderColumn(ws, BEN_COLUMN_HEADER.unit, label, errors);
   const statusHit = resolveHeaderColumn(ws, BEN_COLUMN_HEADER.status, label, errors);
-  const towerHit = resolveHeaderColumn(ws, BEN_COLUMN_HEADER.tower, label, errors);
-  const modeloHit = resolveHeaderColumn(ws, BEN_COLUMN_HEADER.modelo, label, errors);
-  const priceCol = resolveListPriceColumn(ws, LIST_PRICE_HEADER.ben, label, errors);
+  // Estatus sits on its own row. Torre, TIPO, and list price are read from
+  // the NÚMERO row. The same titles are repeated on the Estatus row; that
+  // band is not inventory. A second Torre on the NÚMERO row still aborts.
+  if (unitHit == null || statusHit == null) return results;
+
+  const towerHit = resolveHeaderColumn(
+    ws,
+    BEN_COLUMN_HEADER.tower,
+    label,
+    errors,
+    unitHit.row,
+  );
+  const modeloHit = resolveHeaderColumn(
+    ws,
+    BEN_COLUMN_HEADER.modelo,
+    label,
+    errors,
+    unitHit.row,
+  );
+  const priceCol = resolveListPriceColumn(
+    ws,
+    LIST_PRICE_HEADER.ben,
+    label,
+    errors,
+    unitHit.row,
+  );
 
   // Without these, a positional guess could sell or release the wrong unit.
   // "ESTADO" is not a stand-in for "Estatus".
-  if (unitHit == null || statusHit == null || towerHit == null) return results;
+  if (towerHit == null) return results;
 
   const headerRows = [unitHit.row, statusHit.row, towerHit.row];
   if (modeloHit) headerRows.push(modeloHit.row);

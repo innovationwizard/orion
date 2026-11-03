@@ -51,8 +51,12 @@ export async function runSync(
     fileChecksums: {},
   };
 
-  // Load previous checksums for change detection
+  // Load previous checksums for change detection.
+  // A disponibilidad file whose last real parse was refused is downloaded
+  // again even when the stored mtime matches. That refusal already advanced
+  // the checksum under the old code.
   const previousChecksums = await loadPreviousChecksums(supabase);
+  const refusedMtimes = await loadRefusedDispMtimes(supabase);
 
   // Sort files: disponibilidad first, then ventas, then cesion
   const fileKeys = Object.keys(ONEDRIVE_FILES).sort((a, b) => {
@@ -105,8 +109,11 @@ export async function runSync(
       fileResult.lastModified = meta.lastModifiedDateTime;
       result.fileChecksums[fileKey] = meta.lastModifiedDateTime;
 
-      // Skip unchanged files
-      if (previousChecksums[fileKey] === meta.lastModifiedDateTime) {
+      // Skip unchanged files. A refused disponibilidad parse is not unchanged:
+      // its mtime was stored, and the sheet was not applied.
+      const mtimeUnchanged = previousChecksums[fileKey] === meta.lastModifiedDateTime;
+      const retryRefused = refusedMtimes[fileKey] === meta.lastModifiedDateTime;
+      if (mtimeUnchanged && !retryRefused) {
         fileResult.skipped = true;
         fileResult.skipReason = "Unchanged since last sync";
         result.fileResults.push(fileResult);
@@ -126,6 +133,15 @@ export async function runSync(
       // Route to appropriate sync handler
       if (fileKey.endsWith("_disp")) {
         const parsed = parseDisponibilidad(buffer, fileKey, fileResult.errors);
+        // Header refusal parses nothing. Keeping this mtime would skip the
+        // file on every later run until someone resaves it.
+        if (parsed.length === 0 && fileResult.errors.length > 0) {
+          if (previousChecksums[fileKey]) {
+            result.fileChecksums[fileKey] = previousChecksums[fileKey];
+          } else {
+            delete result.fileChecksums[fileKey];
+          }
+        }
         const projectKey = projectKeyFromFileKey(fileKey);
         const projectSlug = FILE_KEY_TO_PROJECT_SLUG[projectKey];
         if (projectSlug) {
@@ -214,6 +230,49 @@ async function loadPreviousChecksums(
     return data.file_checksums as Record<string, string>;
   }
   return {};
+}
+
+const DISP_REFUSAL = /refusing to guess|was not read|not parsed/;
+
+/**
+ * Mtime of the latest disponibilidad attempt that parsed nothing because a
+ * header could not be resolved. Skipped runs are ignored.
+ */
+async function loadRefusedDispMtimes(
+  supabase: SupabaseClient,
+): Promise<Record<string, string>> {
+  const dispKeys = Object.keys(ONEDRIVE_FILES).filter((key) => key.endsWith("_disp"));
+  const refused: Record<string, string> = {};
+  const seen = new Set<string>();
+  const pageSize = 40;
+
+  for (let page = 0; page < 5 && seen.size < dispKeys.length; page++) {
+    const from = page * pageSize;
+    const { data, error } = await supabase
+      .from("sync_runs")
+      .select("file_results")
+      .order("started_at", { ascending: false })
+      .range(from, from + pageSize - 1);
+
+    if (error || !data || data.length === 0) break;
+
+    for (const run of data) {
+      const files = Array.isArray(run.file_results) ? run.file_results : [];
+      for (const raw of files) {
+        const file = raw as SyncFileResult;
+        if (!file.fileKey?.endsWith("_disp") || seen.has(file.fileKey) || file.skipped) continue;
+        seen.add(file.fileKey);
+        const failed =
+          file.unitsUpdated === 0 &&
+          (file.errors ?? []).some((err) => DISP_REFUSAL.test(err));
+        if (failed && file.lastModified) refused[file.fileKey] = file.lastModified;
+      }
+    }
+
+    if (data.length < pageSize) break;
+  }
+
+  return refused;
 }
 
 // ---------------------------------------------------------------------------
