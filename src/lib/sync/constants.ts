@@ -142,6 +142,8 @@ export const BLT_COLUMN_HEADER = {
 
 /**
  * Boulevard 5 columns. There is no tower column — the project has one tower.
+ * Número is the copy nearest the left edge. Tipo is the copy nearest that
+ * Número. Distant repeats of those titles are not inventory.
  * List price remains "Precio promesa".
  */
 export const B5_COLUMN_HEADER = {

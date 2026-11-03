@@ -390,18 +390,19 @@ function chooseSpacedHit(hits: HeaderSpan[], anchorCol: number): HeaderSpan | nu
 }
 
 /**
- * Header on the same row as `anchor`, which is the NÚMERO column.
- * A distant repeated title is ignored. A second title near NÚMERO is not.
+ * A repeated title far from `anchorCol` is the right-hand copy, not inventory.
+ * Two hits only a few columns apart stay ambiguous.
  */
-function resolveBenInventoryColumn(
+function resolveInventoryColumn(
   ws: XLSX.WorkSheet,
   expectedHeader: string,
   sheetLabel: string,
   errors: string[],
-  anchor: HeaderSpan,
+  anchorCol: number,
+  onlyRow?: number,
 ): HeaderSpan | null {
   const hits = findHeaderSpans(ws, expectedHeader)
-    .filter((hit) => hit.row === anchor.row)
+    .filter((hit) => onlyRow == null || hit.row === onlyRow)
     .sort((a, b) => a.startCol - b.startCol);
   if (hits.length === 0) {
     errors.push(
@@ -409,7 +410,7 @@ function resolveBenInventoryColumn(
     );
     return null;
   }
-  const chosen = chooseSpacedHit(hits, anchor.startCol);
+  const chosen = chooseSpacedHit(hits, anchorCol);
   if (chosen == null) {
     const where = hits.map((hit) => XLSX.utils.encode_col(hit.startCol)).join(", ");
     errors.push(
@@ -426,6 +427,27 @@ function resolveBenInventoryColumn(
     `[sync:parser] ${sheetLabel}: "${expectedHeader}" → column ${XLSX.utils.encode_col(chosen.startCol)}${extra}`,
   );
   return chosen;
+}
+
+/**
+ * Header on the same row as `anchor`, which is the NÚMERO column.
+ * A distant repeated title is ignored. A second title near NÚMERO is not.
+ */
+function resolveBenInventoryColumn(
+  ws: XLSX.WorkSheet,
+  expectedHeader: string,
+  sheetLabel: string,
+  errors: string[],
+  anchor: HeaderSpan,
+): HeaderSpan | null {
+  return resolveInventoryColumn(
+    ws,
+    expectedHeader,
+    sheetLabel,
+    errors,
+    anchor.startCol,
+    anchor.row,
+  );
 }
 
 /**
@@ -687,9 +709,20 @@ export function parseDispB5(buffer: ArrayBuffer, errors: string[] = []): ParsedU
   const results: ParsedUnitStatus[] = [];
   const label = `B5 ${cfg.sheet}`;
   const range = XLSX.utils.decode_range(ws["!ref"] ?? "A1");
-  const unitHit = resolveHeaderColumn(ws, B5_COLUMN_HEADER.unit, label, errors);
+  // Número in column B is the inventory id. BX is the same title repeated
+  // in the right-hand block. Tipo is the copy next to that Número.
+  const unitHit = resolveInventoryColumn(ws, B5_COLUMN_HEADER.unit, label, errors, 0);
   const statusHit = resolveHeaderColumn(ws, B5_COLUMN_HEADER.status, label, errors);
-  const modeloHit = resolveHeaderColumn(ws, B5_COLUMN_HEADER.modelo, label, errors);
+  const modeloHit =
+    unitHit == null
+      ? null
+      : resolveInventoryColumn(
+          ws,
+          B5_COLUMN_HEADER.modelo,
+          label,
+          errors,
+          unitHit.startCol,
+        );
   const priceCol = resolveListPriceColumn(ws, LIST_PRICE_HEADER.b5, label, errors);
 
   if (unitHit == null || statusHit == null) return results;
