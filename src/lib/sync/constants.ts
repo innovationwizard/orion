@@ -68,6 +68,7 @@ export const STATUS_MAP: Record<string, RvUnitStatus> = {
   vendido: "SOLD",
   congelado: "FROZEN",
   "congelado junta directiva": "FROZEN",
+  "congelado jd": "FROZEN", // Santa Elena abbreviates Junta Directiva as JD
   liberado: "AVAILABLE",
   // Cesión de Derechos: the buyer returned the unit, so it is available again.
   cd: "AVAILABLE",
