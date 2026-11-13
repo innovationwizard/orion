@@ -9,7 +9,7 @@
  * Change detection: compares file lastModifiedDateTime against previous run.
  * Only downloads and parses changed files.
  *
- * Conflict rule: Excel wins (overwrite), except SOFT_HOLD units are never touched.
+ * Conflict rule: Excel wins (overwrite), including units currently in SOFT_HOLD.
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -324,9 +324,6 @@ async function syncUnitStatuses(
     const key = `${parsed_unit.towerName}:${parsed_unit.unitNumber}`;
     const db = dbMap.get(key);
     if (!db) continue; // Unit not in DB — skip (don't create units from Disponibilidad)
-
-    // NEVER overwrite SOFT_HOLD — active reservation in progress
-    if (db.status === "SOFT_HOLD") continue;
 
     const changes: Record<string, unknown> = {};
 
